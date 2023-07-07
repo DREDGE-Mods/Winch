@@ -20,6 +20,8 @@ namespace Winch.Logging
         private bool _writeLogs;
         private LogLevel? _minLogLevel;
 
+		private LogSocket? _logSocket;
+
         public Logger()
         {
             _writeLogs = WinchConfig.GetProperty("WriteLogsToFile", true);
@@ -30,7 +32,13 @@ namespace Winch.Logging
             _log = new LogFile();
             _latestLog = new LogFile("latest.log");
 
-            CleanupLogs();
+			var portStr = WinchConfig.GetProperty("LogPort", string.Empty);
+			if (!string.IsNullOrEmpty(portStr) && int.TryParse(portStr, out var port))
+			{
+				_logSocket = new LogSocket(this, port);
+			}
+
+			CleanupLogs();
         }
 
         private static void CleanupLogs()
@@ -63,6 +71,13 @@ namespace Winch.Logging
 
         private void Log(LogLevel level, string message, string source)
         {
+			_logSocket?.WriteToSocket(new LogMessage()
+			{
+				Level = level.ToString(),
+				Message = message,
+				Source = source
+			});
+
             if (!_writeLogs)
                 return;
             if (level < _minLogLevel)
