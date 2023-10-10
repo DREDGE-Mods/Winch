@@ -93,5 +93,5 @@ jobs:
         - name: Pack nuget
           run: nuget pack Winch/Winch.nuspec -Properties "version=${{ steps.version.outputs.prop }}"
         - name: Publish nuget
-          run: nuget push "bin/Release/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+          run: nuget push "Winch/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
                 
