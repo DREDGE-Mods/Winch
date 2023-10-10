@@ -85,10 +85,15 @@ jobs:
             prop_path: Version
         - name: Set up nuget
           uses: NuGet/setup-nuget@v1.0.5
+        - name: Download Winch Asset
+          uses: actions/download-artifact@v3
+          with:
+            name: Winch
+            path: Winch/bin
         - name: Pack nuget
-          run: nuget pack Winch/Winch.nuspec -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }}"
+          run: nuget pack Winch/Winch.nuspec -OutputFileNamesWithoutVersion -OutputDirectory Winch/bin -Properties "version=${{ steps.version.outputs.prop }}"
 
         - name: Publish nuget
           run: |
-            nuget push "build/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+            nuget push "bin/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
                 
