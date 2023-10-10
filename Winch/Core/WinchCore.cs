@@ -24,7 +24,7 @@ namespace Winch.Core
             Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
             harmony.PatchAll();
 
-            foreach(ModAssembly modAssembly in ModAssemblyLoader.RegisteredAssemblies.Values)
+            foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
                 try
                 {
