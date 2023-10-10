@@ -58,8 +58,7 @@ jobs:
             zip -r $mod.zip *
             mv $mod.zip ../..
             cd ../..
-          done
-          
+          done          
       - name: Upload Asset
         uses: ncipollo/release-action@v1
         with:
@@ -76,11 +75,8 @@ jobs:
       needs: Update_Release
       runs-on: windows-latest
       steps:
-        - name: Download Winch Asset
-          uses: actions/download-artifact@v3
-          with:
-            name: Winch
-            path: Winch
+        - name: Checkout
+          uses: actions/checkout@v3
         - name: Get version
           id: version
           uses: notiz-dev/github-action-json-property@release
@@ -91,7 +87,8 @@ jobs:
           uses: NuGet/setup-nuget@v1.0.5
         - name: Pack nuget
           run: nuget pack package -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }};"
+
         - name: Publish nuget
           run: |
-            nuget push "build/Winch.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+            nuget push "Winch/bin/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
                 
