@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+    <version>$version$</version>
+
+    <id>Winch</id>
+    <title>Winch</title>
+    <authors>Hacktix, xen-42</authors>
+		<owners>xen-42</owners>
+    <description>A Harmony-based mod loader for the game Dredge.</description>
+		<license type="expression">MIT</license>
+  </metadata>
+	<files>
+		<file src="bin\Winch.dll" target="lib\net48" />
+	</files>
+</package>
