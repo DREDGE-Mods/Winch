@@ -89,7 +89,7 @@ jobs:
           run: |
             cd Winch
         - name: Pack nuget
-          run: nuget pack package -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }}"
+          run: nuget pack Winch.nuspec -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }}"
 
         - name: Publish nuget
           run: |
