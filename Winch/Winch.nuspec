@@ -3,12 +3,16 @@
   <metadata>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
 
-    <version>0.2.0</version>
+    <version>$version$</version>
 
     <id>Winch</id>
     <title>Winch</title>
-    <authors>xen-42</authors>
+    <authors>Hacktix, xen-42</authors>
+		<owners>xen-42</owners>
     <description>A Harmony-based mod loader for the game Dredge.</description>
-    <repository type="git" url="$git$" />
+		<license type="expression">MIT</license>
   </metadata>
+	<files>
+		<file src="bin\Winch.dll" target="lib\net48" />
+	</files>
 </package>
