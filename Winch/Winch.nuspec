@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+    <version>0.2.0</version>
+
+    <id>Winch</id>
+    <title>Winch</title>
+    <authors>xen-42</authors>
+    <description>A Harmony-based mod loader for the game Dredge.</description>
+    <repository type="git" url="$git$" />
+  </metadata>
+</package>
