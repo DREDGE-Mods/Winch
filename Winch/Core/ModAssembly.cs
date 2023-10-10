@@ -82,7 +82,7 @@ namespace Winch.Core
             else
             {
                 string minVer = Metadata["MinWinchVersion"].ToString();
-                string winchVer = VersionUtil.GetComparableVersion();
+                string winchVer = VersionUtil.GetVersion();
 
                 if (!VersionUtil.ValidateVersion(minVer))
                     throw new FormatException("MinWinchVersion not in correct format.");

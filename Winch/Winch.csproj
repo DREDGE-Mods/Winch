@@ -10,13 +10,6 @@
 		<NuspecFile>Winch.nuspec</NuspecFile>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<DebugType>none</DebugType>
-		<OutputPath>./bin</OutputPath>
-		<AssemblyVersion>1.4.*</AssemblyVersion>
-		<Deterministic>False</Deterministic>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="DredgeGameLibs" Version="1.2.0" />
 		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
@@ -45,6 +38,7 @@
 		<None Include="doorstop_config.ini">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Include="Winch.csproj.user" />
 	</ItemGroup>
 
 	<ItemGroup>
