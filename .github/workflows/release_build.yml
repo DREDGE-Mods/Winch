@@ -90,5 +90,5 @@ jobs:
 
         - name: Publish nuget
           run: |
-            nuget push "Winch/bin/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+            nuget push "build/Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
                 
