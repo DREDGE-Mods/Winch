@@ -85,11 +85,8 @@ jobs:
             prop_path: Version
         - name: Set up nuget
           uses: NuGet/setup-nuget@v1.0.5
-        - name: Change directory
-          run: |
-            cd Winch
         - name: Pack nuget
-          run: nuget pack Winch.nuspec -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }}"
+          run: nuget pack Winch/Winch.nuspec -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }}"
 
         - name: Publish nuget
           run: |
