@@ -26,6 +26,8 @@ jobs:
   Update_Release:
     name: 'Create/Update Release Asset'
     needs: Build
+    outputs:
+      version: ${{ steps.version.outputs.prop }}
     if: ${{ github.ref != 'refs/heads/master' && contains(github.event.pull_request.labels.*.name, 'update-pr') }}
     runs-on: ubuntu-latest
     steps:
@@ -69,3 +71,27 @@ jobs:
           artifacts: Winch.zip, DisasterButton.zip, ExampleItems.zip, IntroSkipper.zip
           draft: true
           prerelease: false
+  Pack_Nuget:
+      name: Pack nuget
+      needs: Update_Release
+      runs-on: windows-latest
+      steps:
+        - name: Download Winch Asset
+          uses: actions/download-artifact@v3
+          with:
+            name: Winch
+            path: Winch
+        - name: Get version
+          id: version
+          uses: notiz-dev/github-action-json-property@release
+          with:
+            path: Winch\mod_meta.json
+            prop_path: Version
+        - name: Set up nuget
+          uses: NuGet/setup-nuget@v1.0.5
+        - name: Pack nuget
+          run: nuget pack package -OutputFileNamesWithoutVersion -OutputDirectory build -Properties "version=${{ steps.version.outputs.prop }};"
+        - name: Publish nuget
+          run: |
+            nuget push "build/Winch.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+                
