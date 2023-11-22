@@ -1,4 +1,5 @@
 ﻿using CommandTerminal;
+using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -15,12 +16,19 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("Initializer started.");
 
-            InitializeAssetLoader();
+			try
+			{
+				InitializeAssetLoader();
 
-            if(WinchConfig.GetProperty("EnableDeveloperConsole", false))
-                InitializeDevConsole();
+				if (WinchConfig.GetProperty("EnableDeveloperConsole", false))
+					InitializeDevConsole();
 
-            DredgeEvent.TriggerManagersLoaded();
+				DredgeEvent.TriggerManagersLoaded();
+			}
+			catch (Exception e)
+			{
+				WinchCore.Log.Error($"Failed to initialize mods {e}");
+			}
         }
 
         internal static void InitializePostUnityLoad()
