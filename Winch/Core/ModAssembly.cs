@@ -47,6 +47,11 @@ namespace Winch.Core
             LoadedAssembly = Assembly.LoadFrom(assemblyPath);
 
             WinchCore.Log.Debug($"Loaded Assembly '{LoadedAssembly.GetName().Name}'.");
+
+			if (Metadata.ContainsKey("Preload"))
+			{
+				ProcessPreload();
+			}
         }
 
         internal void ExecuteAssembly()
@@ -130,5 +135,23 @@ namespace Winch.Core
             WinchCore.Log.Debug($"Invoking entrypoint {entrypointType}.{entrypointMethodName}...");
             entrypoint.Invoke(null, new object[0]);
         }
+
+		private void ProcessPreload()
+		{
+			string preloadSetting = Metadata["Preload"].ToString();
+			if (!preloadSetting.Contains("/"))
+				throw new ArgumentException("Malformed Preload in mod_meta.json");
+
+			string preloadTypeName = preloadSetting.Split('/')[0];
+			string preloadMethodName = preloadSetting.Split('/')[1];
+
+			Type entrypointType = LoadedAssembly?.GetType(preloadTypeName) ??
+								  throw new EntryPointNotFoundException($"Could not find type {preloadTypeName} in Mod Assembly");
+			MethodInfo preloader = entrypointType.GetMethod(preloadMethodName) ??
+									throw new EntryPointNotFoundException($"Could not find method {preloadTypeName} in type {preloadTypeName} in Mod Assembly");
+
+			WinchCore.Log.Debug($"Invoking preloader {entrypointType}.{preloadMethodName}...");
+			preloader.Invoke(null, new object[0]);
+		}
     }
 }
