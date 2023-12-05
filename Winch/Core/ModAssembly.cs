@@ -145,12 +145,12 @@ namespace Winch.Core
 			string preloadTypeName = preloadSetting.Split('/')[0];
 			string preloadMethodName = preloadSetting.Split('/')[1];
 
-			Type entrypointType = LoadedAssembly?.GetType(preloadTypeName) ??
+			Type preloaderType = LoadedAssembly?.GetType(preloadTypeName) ??
 								  throw new EntryPointNotFoundException($"Could not find type {preloadTypeName} in Mod Assembly");
-			MethodInfo preloader = entrypointType.GetMethod(preloadMethodName) ??
+			MethodInfo preloader = preloaderType.GetMethod(preloadMethodName) ??
 									throw new EntryPointNotFoundException($"Could not find method {preloadTypeName} in type {preloadTypeName} in Mod Assembly");
 
-			WinchCore.Log.Debug($"Invoking preloader {entrypointType}.{preloadMethodName}...");
+			WinchCore.Log.Debug($"Invoking preloader {preloaderType}.{preloadMethodName}...");
 			preloader.Invoke(null, new object[0]);
 		}
     }
