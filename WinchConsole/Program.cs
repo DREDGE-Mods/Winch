@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using Winch;
+
+/*
+ * Winch console logs were adapted from the log console for the Outer Wilds Mods Loader (OWML) under MIT license
+ * https://github.com/ow-mods/owml
+ */
 
 namespace WinchConsole
 {
