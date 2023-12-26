@@ -14,5 +14,6 @@
   </metadata>
 	<files>
 		<file src="bin\Winch.dll" target="lib\net48" />
+		<file src="bin\WinchCommon.dll" target="lib\net48" />
 	</files>
 </package>
