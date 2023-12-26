@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using Winch.Config;
 using Winch.Logging;
 
@@ -86,7 +85,7 @@ namespace Winch
 		{
 			var message = Encoding.UTF8.GetString(bytes, 0, count);
 
-			var jsons = message.Split('\n').SelectMany(SplitMessage);
+			var jsons = SplitMessage(message);
 
 			foreach (var json in jsons)
 			{
