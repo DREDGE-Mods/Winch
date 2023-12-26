@@ -12,7 +12,6 @@ namespace Winch.Logging
 		private Socket _socket;
 		private readonly int _port;
 		private readonly Logger _logger;
-		private const string IP = "127.0.0.1";
 
 		public LogSocket(Logger logger, int port)
 		{
@@ -30,14 +29,15 @@ namespace Winch.Logging
 
 			if (!_socket.Connected)
 			{
-				var endPoint = new IPEndPoint(IPAddress.Parse(IP), _port); try
+				var endPoint = new IPEndPoint(IPAddress.Parse(Constants.IP), _port); 
+				try
 				{
 					_socket?.Connect(endPoint);
 				}
 				catch (Exception ex)
 				{
 					_socket = null;
-					_logger.Error($"Could not connect to console at {IP}:{_port} - {ex}");
+					_logger.Error($"Could not connect to console at {Constants.IP}:{_port} - {ex}");
 				}
 			}
 

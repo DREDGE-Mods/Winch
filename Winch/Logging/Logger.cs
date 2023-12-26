@@ -7,12 +7,7 @@ using Winch.Config;
 
 namespace Winch.Logging
 {
-    enum LogLevel
-    {
-        UNITY = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4
-    }
-
-    public class Logger
+	public class Logger
     {
         private LogFile? _log;
         private LogFile? _latestLog;
@@ -73,7 +68,7 @@ namespace Winch.Logging
         {
 			_logSocket?.WriteToSocket(new LogMessage()
 			{
-				Level = level.ToString(),
+				Level = level,
 				Message = message,
 				Source = source
 			});

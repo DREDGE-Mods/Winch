@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using WinchCommon;
 
 namespace Winch.Logging
 {
@@ -8,7 +9,7 @@ namespace Winch.Logging
 		public string Source { get; set; }
 
 		[JsonProperty("level")]
-		public string Level { get; set; }
+		public LogLevel Level { get; set; }
 
 		[JsonProperty("message")]
 		public string Message { get; set; }

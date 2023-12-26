@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using Winch.Core;
+﻿using System.Reflection;
 
 namespace Winch.Config
 {
-    public class ModConfig : JSONConfig
+	public class ModConfig : JSONConfig
     {
         private static Dictionary<string, string> DefaultConfigs = new Dictionary<string, string>();
         private static Dictionary<string, ModConfig> Instances = new Dictionary<string, ModConfig>();
@@ -18,7 +15,7 @@ namespace Winch.Config
         {
             if(!DefaultConfigs.ContainsKey(modName))
             {
-                WinchCore.Log.Error($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
+                //WinchCore.Log.Error($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
                 throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
             }
             return DefaultConfigs[modName];
