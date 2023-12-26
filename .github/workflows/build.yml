@@ -25,7 +25,7 @@ jobs:
 
         - name: Copy WinchConsole into Winch folder
           run: |
-            mv WinchConsole/bin/* Winch/bin/*
+            mv WinchConsole/* Winch/*
 
         - name: Upload Winch Artifact
           uses: actions/upload-artifact@v3
