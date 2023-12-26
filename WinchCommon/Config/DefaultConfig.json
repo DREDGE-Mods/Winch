@@ -4,5 +4,6 @@
 	"LogsFolder": "Logs",
 	"DetailedLogSources": false,
 	"EnableDeveloperConsole": true,
-	"MaxLogFiles": 10
+	"MaxLogFiles": 10,
+	"EnableLogConsole": true
 }

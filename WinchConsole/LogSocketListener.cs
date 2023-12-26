@@ -22,21 +22,15 @@ namespace Winch
 
 		}
 
-		public void Init()
+		public void Run()
 		{
-			var listener = new TcpListener(IPAddress.Loopback, 0);
-			listener.Start();
-			_port = ((IPEndPoint)listener.LocalEndpoint).Port;
-			WriteByType(LogLevel.INFO, $"Found available port {_port}");
-			listener.Stop();
-			
-			WinchConfig.SetProperty("LogPort", $"{_port}");
+			var portStr = WinchConfig.GetProperty("LogPort", string.Empty);
 
-			SetupSocketListener();
-		}
+			if (string.IsNullOrEmpty(portStr) || !int.TryParse(portStr, out _port))
+			{
+				return;
+			}
 
-		private void SetupSocketListener()
-		{
 			WriteByType(LogLevel.INFO, $"Setting up socket listener {_port}");
 			try
 			{

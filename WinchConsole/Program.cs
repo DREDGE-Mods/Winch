@@ -24,7 +24,7 @@ namespace WinchConsole
 			}
 			else
 			{
-				new LogSocketListener().Init();
+				new LogSocketListener().Run();
 			}
 		}
 	}

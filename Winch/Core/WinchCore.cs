@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Winch.Logging;
@@ -16,22 +15,10 @@ namespace Winch.Core
 
 		public static Dictionary<string, object> WinchModConfig = new();
 
-		public static string WinchInstallLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 		public static void Main()
         {
-			Log.Info("Starting console");
-			try
-			{
-				Process.Start(Path.Combine(WinchInstallLocation, "WinchConsole.exe"));
-			}
-			catch (Exception e)
-			{
-				Log.Error($"Could not start console : {e}");
-			}
-
-			AppDomain.CurrentDomain.ProcessExit += new EventHandler(OnProcessExit);
-
 			try
 			{
 				string metaPath = Path.Combine(WinchInstallLocation, "mod_meta.json");
@@ -77,10 +64,5 @@ namespace Winch.Core
 
             Log.Debug("Harmony Patching complete.");
         }
-
-		public static void OnProcessExit(object sender, EventArgs e)
-		{
-			Log.Debug("DREDGE application exited");
-		}
     }
 }
