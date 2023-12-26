@@ -23,6 +23,10 @@ jobs:
         - name: Build Winch
           run: dotnet build -c ${{ inputs.build_type }}
 
+        - name: Copy WinchConsole into Winch folder
+          run: |
+            mv WinchConsole/bin/* Winch/bin/*
+
         - name: Upload Winch Artifact
           uses: actions/upload-artifact@v3
           with:
