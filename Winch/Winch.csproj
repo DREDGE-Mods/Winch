@@ -7,17 +7,11 @@
 		<LangVersion>11</LangVersion>
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<Nullable>enable</Nullable>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<DebugType>none</DebugType>
-		<OutputPath>./bin</OutputPath>
-		<AssemblyVersion>1.4.*</AssemblyVersion>
-		<Deterministic>False</Deterministic>
+		<NuspecFile>Winch.nuspec</NuspecFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DredgeGameLibs" Version="1.1.0" />
+		<PackageReference Include="DredgeGameLibs" Version="1.2.0" />
 		<PackageReference Include="Lib.Harmony" Version="2.2.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
@@ -36,5 +30,23 @@
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="mod_meta.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+		<None Include="doorstop_config.ini">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Include="Winch.csproj.user" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<DLLs Include="$(ProjectDir)lib\*.*"></DLLs>
+	</ItemGroup>
+
+	<Target Name="CopyDLLs" AfterTargets="Build">
+		<Copy SourceFiles="@(DLLs)" DestinationFolder="$(OutputPath)" />
+	</Target>
 
 </Project>
