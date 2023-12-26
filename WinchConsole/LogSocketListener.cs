@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -84,14 +86,7 @@ namespace Winch
 		{
 			var message = Encoding.UTF8.GetString(bytes, 0, count);
 
-			ProcessJson(message);
-
-			// OWML would split messages into multiple jsons but that bugs out here
-			// when we get a message that has a json object in it or just new lines generally
-			// weird
-
-			/*
-			var jsons = message.Split('\n');
+			var jsons = message.Split('\n').SelectMany(SplitMessage);
 
 			foreach (var json in jsons)
 			{
@@ -102,7 +97,38 @@ namespace Winch
 
 				ProcessJson(json);
 			}
-			*/
+		}
+
+		/// <summary>
+		/// Message can come in containing multiple JSON objects, we have to split them up into separate strings to parse
+		/// </summary>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		private string[] SplitMessage(string message)
+		{
+			var jsons = new List<string>();
+			var jsonStart = 0;
+			var bracketCount = 0;
+			for (int i = 0; i < message.Length; i++)
+			{
+				if (message[i] == '{')
+				{
+					bracketCount++;
+
+				}
+				else if (message[i] == '}')
+				{
+					bracketCount--;
+					if (bracketCount == 0)
+					{
+						var json = message.Substring(jsonStart, i + 1 - jsonStart);
+						jsons.Add(json);
+						jsonStart = i + 1;
+					}
+				}
+			}
+
+			return jsons.Any() ? jsons.ToArray() : new string[] { message };
 		}
 
 		private void ProcessJson(string json)
