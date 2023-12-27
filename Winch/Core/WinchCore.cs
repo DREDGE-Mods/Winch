@@ -4,21 +4,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text.RegularExpressions;
-using UnityEngine.Profiling.Memory.Experimental;
-using Winch.Config;
 using Winch.Logging;
 using Winch.Util;
 
 namespace Winch.Core
 {
-    public class WinchCore
+	public class WinchCore
     {
         public static Logger Log = new Logger();
 
 		public static Dictionary<string, object> WinchModConfig = new();
 
-		public static string WinchInstallLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+		public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
 		public static void Main()
         {

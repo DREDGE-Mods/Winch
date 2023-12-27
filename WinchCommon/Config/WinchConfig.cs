@@ -7,7 +7,7 @@ namespace Winch.Config
     {
         private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "WinchConfig.json");
 
-        private WinchConfig() : base(WinchConfigPath, Properties.Resources.DefaultConfig) { }
+        private WinchConfig() : base(WinchConfigPath, WinchCommon.Properties.Resources.DefaultConfig) { }
 
         private static WinchConfig? _instance;
         public static WinchConfig Instance
@@ -22,7 +22,19 @@ namespace Winch.Config
 
         public static new T? GetProperty<T>(string key, T defaultValue)
         {
-            return ((JSONConfig)Instance).GetProperty(key, defaultValue);
+			try
+			{
+				return ((JSONConfig)Instance).GetProperty(key, defaultValue);
+			}
+			catch
+			{
+				return defaultValue;
+			}
         }
+
+		public static new void SetProperty<T>(string key, T value)
+		{
+			((JSONConfig)Instance).SetProperty(key, value);
+		}
     }
 }
