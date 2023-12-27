@@ -34,7 +34,7 @@ namespace Winch.Logging
 				CleanupLogs();
 			}
 
-			_writeLogsToConsole = WinchConfig.GetProperty("EnableLogConsole", true);
+			_writeLogsToConsole = WinchConfig.GetProperty("WriteLogsToConsole", true);
 
 			if (_writeLogsToConsole)
 			{
