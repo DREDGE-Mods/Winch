@@ -63,6 +63,7 @@ namespace WinchCommon.Properties {
         /// <summary>
         ///   Looks up a localized string similar to {
         ///	&quot;WriteLogsToFile&quot;: true,
+        ///	&quot;WriteLogsToConsole&quot;: false,
         ///	&quot;LogLevel&quot;: &quot;DEBUG&quot;,
         ///	&quot;LogsFolder&quot;: &quot;Logs&quot;,
         ///	&quot;DetailedLogSources&quot;: false,
