@@ -13,6 +13,7 @@
 		<license type="expression">MIT</license>
   </metadata>
 	<files>
-		<file src="bin\Winch.dll" target="lib\net48" />
+		<file src="bin\Release\Winch.dll" target="lib\net48" />
+		<file src="bin\Release\WinchCommon.dll" target="lib\net48" />
 	</files>
 </package>
