@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+		<LangVersion>11</LangVersion>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="WinchConsole.csproj.user" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\WinchCommon\WinchCommon.csproj">
+			<Private>False</Private>
+			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="System.Net.Http" />
+	</ItemGroup>
+
+</Project>
