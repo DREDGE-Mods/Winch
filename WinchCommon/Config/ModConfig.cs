@@ -17,7 +17,7 @@ namespace Winch.Config
             if (!DefaultConfigs.ContainsKey(modName))
             {
                 //WinchCore.Log.Debug($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}");
-                DefaultConfigs.Add(modName, "{}");
+                return "{}";
             }
             return DefaultConfigs[modName];
         }
