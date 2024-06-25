@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using Winch.Core.API;
 
-namespace Randomizer.Patchers;
+namespace Winch.Patches.API;
 
 [HarmonyPatch(typeof(GameSceneInitializer))]
 [HarmonyPatch("Start")]
