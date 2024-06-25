@@ -45,14 +45,14 @@ namespace Winch.Config
             return GetConfig(modName, fileName, subDirectory).GetProperty(key, defaultValue);
         }
 
-        public static Dictionary<string, object?> GetFullConfig(string modName, string fileName = defaultConfigFile, string subDirectory = "")
-        {
-            return GetConfig(modName, fileName, subDirectory).Config;
-        }
-
         public static void RegisterDefaultConfig(string modName, string config)
         {
             DefaultConfigs.Add(modName, config);
+        }
+
+        public static Dictionary<string, object?> GetFullConfig(string modName, string fileName = defaultConfigFile, string subDirectory = "")
+        {
+            return GetConfig(modName, fileName, subDirectory).Config;
         }
     }
 }
