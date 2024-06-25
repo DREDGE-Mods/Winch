@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using Winch.Core;
 
 namespace Winch.Config
 {
@@ -19,7 +16,7 @@ namespace Winch.Config
         {
             if (!DefaultConfigs.ContainsKey(modName))
             {
-                WinchCore.Log.Debug($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}");
+                //WinchCore.Log.Debug($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}");
                 DefaultConfigs.Add(modName, "{}");
             }
             return DefaultConfigs[modName];
