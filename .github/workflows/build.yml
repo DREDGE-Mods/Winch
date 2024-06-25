@@ -1,0 +1,51 @@
+name: Build artifacts
+
+on:
+  workflow_call:
+    inputs:
+      build_type:
+        description: 'Build type to pass to dotnet, should be either "Debug" or "Release"'
+        required: false
+        default: "Debug"
+        type: string
+
+jobs:
+  build:
+    name: Create artifacts
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Setup .NET
+          uses: actions/setup-dotnet@v3
+
+        - name: Build Winch
+          run: dotnet build -c ${{ inputs.build_type }}
+
+        - name: Copy WinchConsole into Winch folder
+          run: |
+            cp -r WinchConsole/bin/* Winch/bin/
+
+        - name: Upload Winch Artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: Winch
+            path: Winch/bin
+            
+        - name: Move Example Mods
+          run: |
+            for mod in DisasterButton ExampleItems IntroSkipper
+            do
+              mkdir -p Examples/$mod
+              mv Winch.Examples/$mod/bin/* Examples/$mod/
+            done
+            
+        - name: Upload Example Mod Artifact
+          uses: actions/upload-artifact@v3
+          with:
+            name: Winch Examples
+            path: |
+                Examples/DisasterButton
+                Examples/ExampleItems
+                Examples/IntroSkipper

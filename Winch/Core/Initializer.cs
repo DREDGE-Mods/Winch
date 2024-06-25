@@ -1,4 +1,5 @@
 ﻿using CommandTerminal;
+using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -15,20 +16,24 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("Initializer started.");
 
-            InitializeAssetLoader();
+			try
+			{
+				InitializeAssetLoader();
 
-            if(WinchConfig.GetProperty("EnableDeveloperConsole", false))
-                InitializeDevConsole();
+				if (WinchConfig.GetProperty("EnableDeveloperConsole", false))
+					InitializeDevConsole();
 
-            DredgeEvent.TriggerManagersLoaded();
+				DredgeEvent.TriggerManagersLoaded();
+			}
+			catch (Exception e)
+			{
+				WinchCore.Log.Error($"Failed to initialize mods {e}");
+			}
         }
 
         internal static void InitializePostUnityLoad()
         {
             InitializeVersionLabel();
-
-            if (WinchConfig.GetProperty("CheckForUpdates", true))
-                CheckForUpdate();
         }
 
         private static void InitializeAssetLoader()
@@ -56,30 +61,6 @@ namespace Winch.Core
             GameObject term = new GameObject();
             term.AddComponent<Terminal>();
             UnityEngine.Object.DontDestroyOnLoad(term);
-        }
-
-        private static readonly HttpClient client = new HttpClient();
-        private static async void CheckForUpdate()
-        {
-            string latestPath = "https://github.com/Hacktix/Winch/releases/latest";
-            string content = await client.GetStringAsync(latestPath);
-
-            Regex titleRegex = new Regex("(?<=<title>)(.*)(?= · Hacktix)");
-            Match match = titleRegex.Match(content);
-
-            string latest = match.Value.Split(' ')[2];
-
-            string updateAvailableString;
-            if (VersionUtil.IsSameOrNewer(VersionUtil.GetComparableVersion(), latest))
-            {
-                updateAvailableString = $"Latest version installed";
-            }
-            else
-            {
-                updateAvailableString = $"Update {latest} available";
-            }
-
-            GameManager.Instance.BuildInfo.BuildNumber += $"\n{updateAvailableString}";
         }
     }
 }

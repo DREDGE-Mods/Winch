@@ -1,0 +1,17 @@
+name: Debug artifact
+
+on:
+  push:
+    branches-ignore: [master]
+    paths-ignore:
+      - "*.md"
+      - "LICENSE"
+      - ".gitignore"
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Build debug"
+    uses: ./.github/workflows/build.yml
+    with: 
+      build_type: "Debug"

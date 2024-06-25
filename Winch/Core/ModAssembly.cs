@@ -42,8 +42,6 @@ namespace Winch.Core
             if(!File.Exists(assemblyPath))
                 throw new FileNotFoundException($"Could not find mod assembly '{assemblyPath}'");
 
-            LoadedAssembly = Assembly.LoadFrom(assemblyPath);
-
             CheckCompatibility();
 
             string modConfig = Path.Combine("Config", Path.GetFileName(BasePath));
@@ -51,7 +49,14 @@ namespace Winch.Core
             if (!Directory.Exists(modConfig))
                 Directory.CreateDirectory(modConfig);
 
+            LoadedAssembly = Assembly.LoadFrom(assemblyPath);
+
             WinchCore.Log.Debug($"Loaded Assembly '{LoadedAssembly.GetName().Name}'.");
+
+			if (Metadata.ContainsKey("Preload"))
+			{
+				ProcessPreload();
+			}
         }
 
         internal void ExecuteAssembly()
@@ -79,12 +84,15 @@ namespace Winch.Core
             else if (!VersionUtil.ValidateVersion(Metadata["Version"].ToString()))
                 throw new FormatException("Mod Version has invalid format.");
 
+            if (!Metadata.ContainsKey("ModGUID"))
+                throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
+
             if (!Metadata.ContainsKey("MinWinchVersion"))
                 WinchCore.Log.Warn($"No MinWinchVersion defined. Mod will load anyway, but version conflicts may occur!");
             else
             {
                 string minVer = Metadata["MinWinchVersion"].ToString();
-                string winchVer = VersionUtil.GetComparableVersion();
+                string winchVer = VersionUtil.GetVersion();
 
                 if (!VersionUtil.ValidateVersion(minVer))
                     throw new FormatException("MinWinchVersion not in correct format.");
@@ -132,5 +140,23 @@ namespace Winch.Core
             WinchCore.Log.Debug($"Invoking entrypoint {entrypointType}.{entrypointMethodName}...");
             entrypoint.Invoke(null, new object[0]);
         }
+
+		private void ProcessPreload()
+		{
+			string preloadSetting = Metadata["Preload"].ToString();
+			if (!preloadSetting.Contains("/"))
+				throw new ArgumentException("Malformed Preload in mod_meta.json");
+
+			string preloadTypeName = preloadSetting.Split('/')[0];
+			string preloadMethodName = preloadSetting.Split('/')[1];
+
+			Type preloaderType = LoadedAssembly?.GetType(preloadTypeName) ??
+								  throw new EntryPointNotFoundException($"Could not find type {preloadTypeName} in Mod Assembly");
+			MethodInfo preloader = preloaderType.GetMethod(preloadMethodName) ??
+									throw new EntryPointNotFoundException($"Could not find method {preloadTypeName} in type {preloadTypeName} in Mod Assembly");
+
+			WinchCore.Log.Debug($"Invoking preloader {preloaderType}.{preloadMethodName}...");
+			preloader.Invoke(null, new object[0]);
+		}
     }
 }

@@ -5,7 +5,7 @@ using Winch.Core;
 
 namespace Winch.Config
 {
-    public class ModConfig : JSONConfig
+	public class ModConfig : JSONConfig
     {
         private static Dictionary<string, string> DefaultConfigs = new Dictionary<string, string>();
         private static Dictionary<string, ModConfig> Instances = new Dictionary<string, ModConfig>();
@@ -19,7 +19,7 @@ namespace Winch.Config
         {
             if (!DefaultConfigs.ContainsKey(modName))
             {
-                WinchCore.Log.Debug($"No default config found for {modName}");
+                WinchCore.Log.Debug($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}");
                 DefaultConfigs.Add(modName, "{}");
             }
             return DefaultConfigs[modName];
