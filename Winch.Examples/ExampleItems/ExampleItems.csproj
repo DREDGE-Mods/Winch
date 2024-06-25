@@ -23,6 +23,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\WinchCommon\WinchCommon.csproj">
+			<Private>False</Private>
+			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+		</ProjectReference>
 		<ProjectReference Include="..\..\Winch\Winch.csproj">
 			<Private>False</Private>
 			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
