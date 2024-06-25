@@ -2,35 +2,67 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Sockets;
+using System.Net;
 using System.Text.RegularExpressions;
 using Winch.Config;
+using Winch.Core;
 
 namespace Winch.Logging
 {
-    enum LogLevel
-    {
-        UNITY = 0, DEBUG = 1, INFO = 2, WARN = 3, ERROR = 4
-    }
-
-    public class Logger
+	public class Logger
     {
         private LogFile? _log;
         private LogFile? _latestLog;
 
-        private bool _writeLogs;
+        private bool _writeLogsToFile;
+		private bool _writeLogsToConsole;
         private LogLevel? _minLogLevel;
+
+		private LogSocket? _logSocket;
+
+		public string LogConsoleExe => Path.Combine(WinchCore.WinchInstallLocation, "WinchConsole.exe");
 
         public Logger()
         {
-            _writeLogs = WinchConfig.GetProperty("WriteLogsToFile", true);
-            if (!_writeLogs)
-                return;
+            _writeLogsToFile = WinchConfig.GetProperty("WriteLogsToFile", true);
+            if (_writeLogsToFile)
+			{
+				_minLogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), WinchConfig.GetProperty("LogLevel", "DEBUG"));
+				_log = new LogFile();
+				_latestLog = new LogFile("latest.log");
+				CleanupLogs();
+			}
 
-            _minLogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), WinchConfig.GetProperty("LogLevel", "DEBUG"));
-            _log = new LogFile();
-            _latestLog = new LogFile("latest.log");
+			_writeLogsToConsole = WinchConfig.GetProperty("WriteLogsToConsole", true);
 
-            CleanupLogs();
+			if (_writeLogsToConsole)
+			{
+				// Find an avialable port for the logs
+				var listener = new TcpListener(IPAddress.Loopback, 0);
+				listener.Start();
+				var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+				listener.Stop();
+
+				// Console exe will get the port from the WinchConfig file
+				WinchConfig.SetProperty("LogPort", $"{port}");
+
+				Info($"Writing logs to port {port}");
+
+				try
+				{
+					Info($"Starting console at path {LogConsoleExe}");
+					Process.Start(LogConsoleExe);
+
+					_logSocket = new LogSocket(this, port);
+				}
+				catch (Exception e)
+				{
+					Error($"Could not start console : {e}");
+				}
+			}
+
+			Info($"Writing logs to file: {_writeLogsToFile}. Writing logs to console: {_writeLogsToConsole}.");
         }
 
         private static void CleanupLogs()
@@ -63,14 +95,25 @@ namespace Winch.Logging
 
         private void Log(LogLevel level, string message, string source)
         {
-            if (!_writeLogs)
-                return;
-            if (level < _minLogLevel)
-                return;
-            
-            string logMessage = $"[{GetLogTimestamp()}] [{source}] [{level}] : {message}";
-            _log?.Write(logMessage);
-            _latestLog?.Write(logMessage);
+			if (level < _minLogLevel)
+				return;
+
+			if (_writeLogsToConsole)
+			{
+				_logSocket?.WriteToSocket(new LogMessage()
+				{
+					Level = level,
+					Message = message,
+					Source = source
+				});
+			}
+
+            if (_writeLogsToFile)
+			{
+				string logMessage = $"[{GetLogTimestamp()}] [{source}] [{level}] : {message}";
+				_log?.Write(logMessage);
+				_latestLog?.Write(logMessage);
+			}
         }
 
         private string GetLogTimestamp()
