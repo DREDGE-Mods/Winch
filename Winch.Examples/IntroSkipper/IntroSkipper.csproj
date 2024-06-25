@@ -30,6 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="IntroSkipper.csproj.user" />
 		<None Update="mod_meta.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

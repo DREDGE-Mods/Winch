@@ -38,6 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="ExampleItems.csproj.user" />
 		<None Update="Assets\Items\General\exampleitems.diamond.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

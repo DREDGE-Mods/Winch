@@ -30,6 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="DisasterButton.csproj.user" />
 		<None Update="Assets\Localization\de.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
