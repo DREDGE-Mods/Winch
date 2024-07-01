@@ -51,6 +51,7 @@ namespace Winch.Core
             {
                 { typeof(NonSpatialItemData), "NonSpatial"},
                 { typeof(SpatialItemData), "General"},
+                { typeof(HarvestableItemData), "Harvestable"},
                 { typeof(FishItemData), "Fish"},
                 { typeof(EngineItemData), "Engines"},
                 { typeof(LightItemData), "Lights"},
@@ -58,7 +59,7 @@ namespace Winch.Core
                 { typeof(RelicItemData), "Relics"},
                 { typeof(ResearchableItemData), "Books"},
                 { typeof(MessageItemData), "Messages"},
-                { typeof(DeployableItemData), "Pots"},
+                { typeof(DeployableItemData), "Deployable"},
                 { typeof(DredgeItemData), "Dredge"},
                 { typeof(DamageItemData), "Damage"},
             };

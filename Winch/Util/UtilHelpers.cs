@@ -32,6 +32,7 @@ public static class UtilHelpers
         string id = Path.GetFileNameWithoutExtension(metaPath);
         meta["id"] = id;
         T item = ScriptableObject.CreateInstance<T>();
+        if (item == null) return null;
         item.name = id;
         UnityEngine.Object.DontDestroyOnLoad(item);
         return item;

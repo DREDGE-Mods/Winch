@@ -17,6 +17,7 @@ internal static class ItemUtil
         { typeof(ResearchableItemData), new ResearchableItemDataConverter() },
         { typeof(SpatialItemData), new SpatialItemDataConverter() },
         { typeof(EngineItemData), new EngineItemDataConverter() },
+        { typeof(HarvestableItemData), new HarvestableItemDataConverter() },
         { typeof(FishItemData), new FishItemDataConverter() },
         { typeof(RelicItemData), new RelicItemDataConverter() },
         { typeof(DeployableItemData), new DeployableItemDataConverter() },
@@ -77,6 +78,11 @@ internal static class ItemUtil
             return;
         }
         var item = UtilHelpers.GetScriptableObjectFromMeta<T>(meta, metaPath);
+        if (item == null)
+        {
+            WinchCore.Log.Error($"Couldn't create {typeof(T).FullName}");
+            return;
+        }
         var id = (string)meta["id"];
         if (ModdedItemDataDict.ContainsKey(id))
         {
