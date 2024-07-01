@@ -25,7 +25,7 @@ internal static class ItemUtil
         { typeof(DamageItemData), new DamageItemDataConverter() },
     };
 
-    public static Dictionary<string, ItemData> HarvestableItemDataDict = new();
+    public static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
     public static Dictionary<string, ItemData> AllItemDataDict = new();
     public static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
@@ -39,9 +39,9 @@ internal static class ItemUtil
 
         foreach (var item in GameManager.Instance.ItemManager.allItems)
         {
-            if (item is FishItemData or RelicItemData or HarvestableItemData)
+            if (item is HarvestableItemData hitem) // Fish and Relics
             {
-                HarvestableItemDataDict.Add(item.id, item);
+                HarvestableItemDataDict.Add(item.id, hitem);
                 WinchCore.Log.Debug($"Added item {item.id} to HarvestableItemDataDict");
             }
             AllItemDataDict.Add(item.id, item);
