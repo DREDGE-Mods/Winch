@@ -9,7 +9,13 @@ namespace Winch.Util
     {
         private static Dictionary<string, Texture2D> TextureMap = new();
 
-        public static Texture2D? GetTexture(string key) => TextureMap[key];
+        public static Texture2D? GetTexture(string key)
+        {
+            if (TextureMap.TryGetValue(key, out Texture2D texture))
+                return texture;
+            else
+                return null;
+        }
 
         public static Sprite GetSprite(string key)
         {
