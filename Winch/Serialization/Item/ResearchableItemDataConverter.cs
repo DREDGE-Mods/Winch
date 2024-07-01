@@ -9,7 +9,8 @@ public class ResearchableItemDataConverter : NonSpatialItemDataConverter
         { "completedDescriptionKey", new( null, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
         { "daysToResearch", new( 1f, o => float.Parse(o.ToString())) },
         { "researchBenefitType", new(ResearchBenefitType.MOVEMENT_SPEED, o=> DredgeTypeHelpers.GetEnumValue<ResearchBenefitType>(o)) },
-        { "researchBenefitValue", new(0.05f, o => float.Parse(o.ToString())) }
+        { "researchBenefitValue", new(0.05f, o => float.Parse(o.ToString())) },
+        { "showInCabin", new(true, null)}
     };
 
     public ResearchableItemDataConverter()

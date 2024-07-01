@@ -10,6 +10,7 @@ public class RelicItemDataConverter : HarvestableItemDataConverter
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.RELIC, null) },
         { "canBeDiscardedByPlayer", new(false, null) },
+        { "harvestPOICategory", new(HarvestPOICategory.RELIC, null) },
         { "harvestableType", new(HarvestableType.DREDGE, null) },
         { "itemColor", new(new Color(0.5294f, 0.1137f, 0.3451f, 255f), null)}
     };

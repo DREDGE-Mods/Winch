@@ -27,6 +27,11 @@ internal static class ItemUtil
         { typeof(DamageItemData), new DamageItemDataConverter() },
     };
 
+    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta)
+    {
+        return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
+    }
+
     public static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
     public static Dictionary<string, ItemData> AllItemDataDict = new();
     public static Dictionary<string, ItemData> ModdedItemDataDict = new();

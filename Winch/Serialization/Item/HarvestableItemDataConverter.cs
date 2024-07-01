@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Winch.Serialization.Item;
 
@@ -6,6 +7,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemColor", new(new Color(0.2264f, 0.1563f, 0.125f, 255f), null)},
         { "harvestMinigameType", new( HarvestMinigameType.DREDGE_RADIAL, o => DredgeTypeHelpers.GetEnumValue<HarvestMinigameType>(o)) },
         { "perSpotMin", new( 1, o => int.Parse(o.ToString())) },
         { "perSpotMax", new(1, o => int.Parse(o.ToString())) },
