@@ -47,30 +47,32 @@ namespace Winch.Core
             if (Directory.Exists(harvestPoiPath)) LoadHarvestPoiFiles(harvestPoiPath);
         }
 
+        private static Dictionary<Type, string> _pathData = new Dictionary<Type, string>()
+            {
+                { typeof(NonSpatialItemData), "NonSpatial"},
+                { typeof(SpatialItemData), "General"},
+                { typeof(FishItemData), "Fish"},
+                { typeof(EngineItemData), "Engines"},
+                { typeof(LightItemData), "Lights"},
+                { typeof(RodItemData), "Rods"},
+                { typeof(RelicItemData), "Relics"},
+                { typeof(ResearchableItemData), "Books"},
+                { typeof(MessageItemData), "Messages"},
+                { typeof(DeployableItemData), "Pots"},
+                { typeof(DredgeItemData), "Dredge"},
+                { typeof(DamageItemData), "Damage"},
+            };
+
         private static void LoadItemFiles(string itemFolderPath)
         {
-            Dictionary<Type, string> _pathData = new Dictionary<Type, string>()
-            {
-                { typeof(NonSpatialItemData), Path.Combine(itemFolderPath, "NonSpatial")},
-                { typeof(SpatialItemData), Path.Combine(itemFolderPath, "General")},
-                { typeof(FishItemData), Path.Combine(itemFolderPath, "Fish")},
-                { typeof(EngineItemData), Path.Combine(itemFolderPath, "Engines")},
-                { typeof(LightItemData), Path.Combine(itemFolderPath, "Lights")},
-                { typeof(RodItemData), Path.Combine(itemFolderPath, "Rods")},
-                { typeof(RelicItemData), Path.Combine(itemFolderPath, "Relics")},
-                { typeof(ResearchableItemData), Path.Combine(itemFolderPath, "Books")},
-                { typeof(MessageItemData), Path.Combine(itemFolderPath, "Messages")},
-                { typeof(DeployableItemData), Path.Combine(itemFolderPath, "Pots")},
-                { typeof(DredgeItemData), Path.Combine(itemFolderPath, "Dredge")},
-                { typeof(DamageItemData), Path.Combine(itemFolderPath, "Damage")},
-            };
             foreach (KeyValuePair<Type, string> item in _pathData)
             {
                 var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadItemFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
                 var genericMethod = baseMethod.MakeGenericMethod(item.Key);
-                if (Directory.Exists(item.Value))
+                var itemPath = Path.Combine(itemFolderPath, item.Value);
+                if (Directory.Exists(itemPath))
                 {
-                    genericMethod.Invoke(null, new object[] { item.Value });
+                    genericMethod.Invoke(null, new object[] { itemPath });
                 }
                 
             }
