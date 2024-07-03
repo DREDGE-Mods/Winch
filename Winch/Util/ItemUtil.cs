@@ -29,14 +29,8 @@ internal static class ItemUtil
     public static Dictionary<string, ItemData> AllItemDataDict = new();
     public static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
-    private static bool _initialized;
-
     public static void PopulateItemData()
     {
-        if (_initialized) return;
-
-        _initialized = true;
-
         foreach (var item in GameManager.Instance.ItemManager.allItems)
         {
             if (item is HarvestableItemData hitem) // Fish and Relics
@@ -47,6 +41,14 @@ internal static class ItemUtil
             AllItemDataDict.Add(item.id, item);
             WinchCore.Log.Debug($"Added item {item.id} to AllItemDataDict");
         }
+    }
+
+    public static void ClearItemData()
+    {
+        AllItemDataDict.Clear();
+        WinchCore.Log.Debug($"AllItemDataDict cleared");
+        HarvestableItemDataDict.Clear();
+        WinchCore.Log.Debug($"HarvestableItemDataDict cleared");
     }
 
     internal static void AddItemFromMeta<T>(string metaPath) where T : ItemData
