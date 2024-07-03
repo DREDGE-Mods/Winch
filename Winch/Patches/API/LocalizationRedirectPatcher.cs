@@ -15,7 +15,16 @@ namespace Winch.Patches.API
             string localeCode = locale.Identifier.Code;
             string? localized = LocalizationUtil.GetLocalizedString(localeCode, key);
             if (localized == null)
-                return true;
+            {
+                if (localeCode != "en")
+                {
+                    localized = LocalizationUtil.GetLocalizedString("en", key); // Default to english
+                    if (localized == null)
+                        return true;
+                }
+                else
+                    return true;
+            }
 
             __result = localized;
             return false;
