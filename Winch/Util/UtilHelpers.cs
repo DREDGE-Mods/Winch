@@ -29,8 +29,11 @@ public static class UtilHelpers
 
     public static T GetScriptableObjectFromMeta<T>(Dictionary<string, object> meta, string metaPath) where T : ScriptableObject
     {
-        meta["id"] = Path.GetFileNameWithoutExtension(metaPath);
+        string id = Path.GetFileNameWithoutExtension(metaPath);
+        meta["id"] = id;
         T item = ScriptableObject.CreateInstance<T>();
+        item.name = id;
+        UnityEngine.Object.DontDestroyOnLoad(item);
         return item;
     }
 
