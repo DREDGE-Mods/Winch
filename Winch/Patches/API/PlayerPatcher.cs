@@ -14,7 +14,6 @@ public class PlayerPatch
         try
         {
             PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
-            ItemUtil.PopulateItemData();
             foreach (var customHarvestPoi in PoiUtil.CustomHarvestPois)
             {
                 var poiGameObject = PoiUtil.CreateGameObjectFromCustomHarvestPoi(customHarvestPoi);

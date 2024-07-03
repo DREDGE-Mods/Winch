@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Winch.Core;
 using Winch.Serialization;
 using Winch.Serialization.Item;
@@ -29,17 +30,33 @@ internal static class ItemUtil
     public static Dictionary<string, ItemData> AllItemDataDict = new();
     public static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
+    public static void AddModdedItemData()
+    {
+        foreach (var item in ModdedItemDataDict.Values)
+        {
+            GameManager.Instance.ItemManager.allItems.Add(item);
+        }
+    }
+
+    public static void AddModdedItemData(IList<ItemData> list)
+    {
+        foreach (var item in ModdedItemDataDict.Values)
+        {
+            list.Add(item);
+        }
+    }
+
     public static void PopulateItemData()
     {
         foreach (var item in GameManager.Instance.ItemManager.allItems)
         {
+            AllItemDataDict.Add(item.id, item);
+            WinchCore.Log.Debug($"Added item {item.id} to AllItemDataDict");
             if (item is HarvestableItemData hitem) // Fish and Relics
             {
                 HarvestableItemDataDict.Add(item.id, hitem);
                 WinchCore.Log.Debug($"Added item {item.id} to HarvestableItemDataDict");
             }
-            AllItemDataDict.Add(item.id, item);
-            WinchCore.Log.Debug($"Added item {item.id} to AllItemDataDict");
         }
     }
 
@@ -69,7 +86,6 @@ internal static class ItemUtil
         if (UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters))
         {
             ModdedItemDataDict.Add(id, item);
-            GameManager.Instance.ItemManager.allItems.Add(item);
         }
     }
 }
