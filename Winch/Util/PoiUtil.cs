@@ -35,8 +35,14 @@ internal static class PoiUtil
     public static Dictionary<string, IHarvestable> Harvestables = new();
     public static Dictionary<string, GameObject> HarvestParticlePrefabs = new();
 
+    private static bool _initialized;
+
     public static void PopulateHarvestablesAndHarvestParticlePrefabs()
     {
+        if (_initialized) return;
+
+        _initialized = true;
+
         var allHarvestPOIs = Traverse.Create(GameManager.Instance.HarvestPOIManager).Field("allHarvestPOIs").GetValue() as List<HarvestPOI>;
         foreach (var harvestPoi in allHarvestPOIs)
         {

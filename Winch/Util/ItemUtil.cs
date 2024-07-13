@@ -27,8 +27,13 @@ internal static class ItemUtil
 
     public static Dictionary<string, ItemData> HarvestableItemDataDict = new();
 
+    private static bool _initialized;
+
     public static void PopulateItemData()
     {
+        if (_initialized) return;
+        _initialized = true;
+
         foreach (var item in GameManager.Instance.ItemManager.allItems)
         {
             if (item is FishItemData or RelicItemData or HarvestableItemData)
