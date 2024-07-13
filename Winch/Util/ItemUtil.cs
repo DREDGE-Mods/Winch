@@ -32,6 +32,7 @@ internal static class ItemUtil
     public static void PopulateItemData()
     {
         if (_initialized) return;
+
         _initialized = true;
 
         foreach (var item in GameManager.Instance.ItemManager.allItems)
