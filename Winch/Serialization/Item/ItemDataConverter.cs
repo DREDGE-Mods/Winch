@@ -22,7 +22,7 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         { "dialogueNodeSpecificDescription", new( null, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
         { "itemType", new(ItemType.GENERAL, o => DredgeTypeHelpers.GetEnumValue<ItemType>(o)) },
         { "itemSubtype", new(ItemSubtype.GENERAL, o => DredgeTypeHelpers.GetEnumValue<ItemSubtype>(o)) },
-        { "tooltipTextColor", new(Color.white, o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
+        { "tooltipTextColor", new(new Color(0.4902f, 0.3843f, 0.2667f, 255f), o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
         { "tooltipNotesColor", new(Color.white, o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
         { "itemTypeIcon", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "harvestParticlePrefab", new(null, null) },
