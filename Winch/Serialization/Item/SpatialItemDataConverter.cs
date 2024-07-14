@@ -21,6 +21,11 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "itemColor", new(new Color(0.1922f, 0.1922f, 0.1922f, 255), o=> DredgeTypeHelpers.GetColorFromJsonObject(o)) }, // default game uses
         { "canBeDiscardedByPlayer", new(true, o => bool.Parse(o.ToString())) },
         { "canBeDiscardedDuringQuestPickup", new(true, o => bool.Parse(o.ToString())) },
+        { "hasSpecialDiscardAction", new(false, o => bool.Parse(o.ToString())) },
+        { "discardPromptOverride", new("", null) },
+        { "showAlertOnDiscardHold", new(false, o => bool.Parse(o.ToString())) },
+        { "discardHoldTimeOverride", new(false, o => bool.Parse(o.ToString())) },
+        { "discardHoldTimeSec", new(0, o => float.Parse(o.ToString())) },
         { "damageMode", new(DamageMode.NONE, o=> DredgeTypeHelpers.GetEnumValue<DamageMode>(o)) },
         { "moveMode", new(MoveMode.FREE, o=> DredgeTypeHelpers.GetEnumValue<MoveMode>(o)) },
         { "ignoreDamageWhenPlacing", new(false, o => bool.Parse(o.ToString())) },

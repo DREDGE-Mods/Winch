@@ -9,7 +9,10 @@ public class HarvesterItemDataConverter : SpatialItemDataConverter
     {
         { "itemType", new(ItemType.EQUIPMENT, null) },
         { "harvestableTypes", new(new HarvestableType[]{}, o => ParseHarvestableTypes((JArray)o)) },
-        { "aberrationBonus", new(0f, o => float.Parse(o.ToString())) }
+        { "aberrationBonus", new(0f, o => float.Parse(o.ToString())) },
+        { "showAlertOnDiscardHold", new(true, null) },
+        { "discardHoldTimeOverride", new(true, null) },
+        { "discardHoldTimeSec", new(2, null) }
     };
 
     public HarvesterItemDataConverter()

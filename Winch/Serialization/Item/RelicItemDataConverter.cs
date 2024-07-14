@@ -12,7 +12,10 @@ public class RelicItemDataConverter : HarvestableItemDataConverter
         { "canBeDiscardedByPlayer", new(false, null) },
         { "harvestPOICategory", new(HarvestPOICategory.RELIC, null) },
         { "harvestableType", new(HarvestableType.DREDGE, null) },
-        { "itemColor", new(new Color(0.5294f, 0.1137f, 0.3451f, 255f), null)}
+        { "itemColor", new(new Color(0.5294f, 0.1137f, 0.3451f, 255f), null)},
+        { "showAlertOnDiscardHold", new(true, null) },
+        { "discardHoldTimeOverride", new(true, null) },
+        { "discardHoldTimeSec", new(2, null) }
     };
     public RelicItemDataConverter()
     {
