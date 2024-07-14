@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization;
 
@@ -10,7 +11,10 @@ public static class DredgeTypeHelpers
 {
     public static TEnum GetEnumValue<TEnum>(object value) where TEnum : Enum
     {
-        return (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
+        if (EnumUtil.TryParse<TEnum>(value.ToString(), out TEnum enumValue))
+            return enumValue;
+        else
+            throw new InvalidOperationException($"{value} is not a valid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
     }
 
     public static Color GetColorFromJsonObject(object value)
