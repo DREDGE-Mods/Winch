@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Sirenix.OdinInspector;
 using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization.POI.Harvest;
 
-public class CustomHarvestPoi
+public class CustomHarvestPOI : CustomPOI
 {
-    public string id;
-    public Vector3 location;
     public string harvestableParticlePrefab;
     public List<string> items;
     public List<string> nightItems;
@@ -15,6 +16,18 @@ public class CustomHarvestPoi
     public bool doesRestock = true;
     public bool useTimeSpecificStock = false;
     public bool isCurrentlySpecial = false;
+
+    public List<HarvestableItemData> Items => ItemUtil.HarvestableItemDataDict.Where(kvp => items.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+    public List<HarvestableItemData> NightItems => ItemUtil.HarvestableItemDataDict.Where(kvp => items.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
+    public GameObject HarvestableParticlePrefab
+    {
+        get
+        {
+            if (PoiUtil.HarvestParticlePrefabs.TryGetValue(harvestableParticlePrefab, out var prefab))
+                return prefab;
+            return null;
+        }
+    }
 }
 
 

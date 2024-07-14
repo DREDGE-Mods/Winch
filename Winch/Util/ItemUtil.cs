@@ -94,9 +94,13 @@ internal static class ItemUtil
             WinchCore.Log.Error($"Duplicate item {id} at {metaPath} failed to load");
             return;
         }
-        if (UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters))
+        if (PopulateObjectFromMetaWithConverters<T>(item, meta))
         {
             ModdedItemDataDict.Add(id, item);
+        }
+        else
+        {
+            WinchCore.Log.Error($"No item data converter found for type {typeof(T)}");
         }
     }
 }

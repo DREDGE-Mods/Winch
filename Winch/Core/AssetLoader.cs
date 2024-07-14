@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using Winch.Util;
+using Winch.Serialization.POI;
+using Winch.Serialization.POI.Harvest;
 
 namespace Winch.Core
 {
@@ -35,19 +37,32 @@ namespace Winch.Core
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
         }
 
+        private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
+            {
+                { typeof(CustomHarvestPOI), "Harvest"},
+                //{ typeof(BaitHarvestPOI), "Bait"},
+                //{ typeof(PlacedHarvestPOI), "Placed"},
+                //{ typeof(AutoMovePOI), "Conversation/AutoMove"},
+                //{ typeof(ExplosivePOI), "Conversation/Explosive"},
+                //{ typeof(InspectPOI), "Conversation/Inspect"}
+            };
+
         private static void LoadPoiFiles(string poiFolderPath)
         {
-            WinchCore.Log.Debug("LoadingPOI files...");
-            string conversationPoiPath = Path.Combine(poiFolderPath, "Conversation");
-            string harvestPoiPath = Path.Combine(poiFolderPath, "Harvest");
+            foreach (KeyValuePair<Type, string> poi in _poiPathData)
+            {
+                var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadPoiFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
+                var genericMethod = baseMethod.MakeGenericMethod(poi.Key);
+                var itemPath = Path.Combine(poiFolderPath, poi.Value);
+                if (Directory.Exists(itemPath))
+                {
+                    genericMethod.Invoke(null, new object[] { itemPath });
+                }
 
-            WinchCore.Log.Debug("LoadingPOI files... Conversation");
-            if (Directory.Exists(poiFolderPath)) LoadConversationPoiFiles(conversationPoiPath);
-            WinchCore.Log.Debug("LoadingPOI files.. Harvest");
-            if (Directory.Exists(harvestPoiPath)) LoadHarvestPoiFiles(harvestPoiPath);
+            }
         }
 
-        private static Dictionary<Type, string> _pathData = new Dictionary<Type, string>()
+        private static Dictionary<Type, string> _itemDataPathData = new Dictionary<Type, string>()
             {
                 { typeof(NonSpatialItemData), "NonSpatial"},
                 { typeof(SpatialItemData), "General"},
@@ -66,7 +81,7 @@ namespace Winch.Core
 
         private static void LoadItemFiles(string itemFolderPath)
         {
-            foreach (KeyValuePair<Type, string> item in _pathData)
+            foreach (KeyValuePair<Type, string> item in _itemDataPathData)
             {
                 var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadItemFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
                 var genericMethod = baseMethod.MakeGenericMethod(item.Key);
@@ -79,53 +94,14 @@ namespace Winch.Core
             }
         }
 
-        private static void LoadConversationPoiFiles(string conversationPoiFolderPath)
-        {
-            string autoMovePoiPath = Path.Combine(conversationPoiFolderPath, "AutoMove");
-            string explosivePoiPath = Path.Combine(conversationPoiFolderPath, "Explosive");
-            string inspectPoiPath = Path.Combine(conversationPoiFolderPath, "Inspect");
-            
-            if (Directory.Exists(autoMovePoiPath)) LoadPoiFilesOfType<AutoMovePOI>(autoMovePoiPath);
-            if (Directory.Exists(explosivePoiPath)) LoadPoiFilesOfType<ExplosivePOI>(explosivePoiPath);
-            if (Directory.Exists(inspectPoiPath)) LoadPoiFilesOfType<InspectPOI>(inspectPoiPath);
-        }
-
-        private static void LoadHarvestPoiFiles(string harvestPoiFolderPath)
-        {
-            string baitHarvestPoiPath = Path.Combine(harvestPoiFolderPath, "Bait");
-            string placedHarvestPoiPath = Path.Combine(harvestPoiFolderPath, "Placed");
-            WinchCore.Log.Debug("LoadingPOI Folder.. Harvest");
-            if (Directory.Exists(harvestPoiFolderPath)) LoadCustomHarvestPoisFromMetadata(harvestPoiFolderPath);
-            WinchCore.Log.Debug("LoadingPOI Folder.. BaitHarvest");
-            if (Directory.Exists(baitHarvestPoiPath)) LoadPoiFilesOfType<BaitHarvestPOI>(baitHarvestPoiPath);
-            WinchCore.Log.Debug("LoadingPOI Folder.. PlacedHarvest");
-            if (Directory.Exists(placedHarvestPoiPath)) LoadPoiFilesOfType<PlacedHarvestPOI>(placedHarvestPoiPath);
-        }
-
-        private static void LoadCustomHarvestPoisFromMetadata(string poiFolderPath)
+        private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : CustomPOI
         {
             string[] poiFiles = Directory.GetFiles(poiFolderPath);
             foreach(string file in poiFiles)
             {
                 try
                 {
-                    PoiUtil.AddCustomHarvestPoiFromMetadata(file);
-                }
-                catch(Exception ex)
-                {
-                    WinchCore.Log.Error($"Failed to load POI from {file}: {ex}");
-                }
-            }
-        }
-
-        private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : POI
-        {
-            string[] poiFiles = Directory.GetFiles(poiFolderPath);
-            foreach(string file in poiFiles)
-            {
-                try
-                {
-                    // PoiUtil.AddPoiFromMeta<T>(file);
+                    PoiUtil.AddCustomPoiFromMeta<T>(file);
                 }
                 catch(Exception ex)
                 {
