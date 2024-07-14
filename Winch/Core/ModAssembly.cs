@@ -153,5 +153,7 @@ namespace Winch.Core
 			WinchCore.Log.Debug($"Invoking preloader {preloaderType}.{preloadMethodName}...");
 			preloader.Invoke(null, new object[0]);
 		}
+
+		public override string ToString() => (string)Metadata["ModGUID"];
     }
 }
