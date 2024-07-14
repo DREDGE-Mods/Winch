@@ -124,7 +124,13 @@ internal static class PoiUtil
         var harvestPoiDataModel = new HarvestPOIDataModel();
         harvestPoiDataModel.doesRestock = customHarvestPoi.doesRestock;
         harvestPoiDataModel.startStock = customHarvestPoi.startStock;
-        harvestPoiDataModel.usesTimeSpecificStock = customHarvestPoi.useTimeSpecificStock;
+        harvestPoiDataModel.maxStock = customHarvestPoi.maxStock;
+        harvestPoiDataModel.doesRestock = customHarvestPoi.doesRestock;
+        harvestPoiDataModel.usesTimeSpecificStock = customHarvestPoi.usesTimeSpecificStock;
+        harvestPoiDataModel.overrideDefaultDaySpecialChance = customHarvestPoi.overrideDefaultDaySpecialChance;
+        harvestPoiDataModel.overriddenDaytimeSpecialChance = customHarvestPoi.overriddenDaytimeSpecialChance;
+        harvestPoiDataModel.overrideDefaultNightSpecialChance = customHarvestPoi.overrideDefaultNightSpecialChance;
+        harvestPoiDataModel.overriddenNighttimeSpecialChance = customHarvestPoi.overriddenNighttimeSpecialChance;
 
         harvestPoiDataModel.items = customHarvestPoi.Items;
         harvestPoiDataModel.nightItems = customHarvestPoi.NightItems;

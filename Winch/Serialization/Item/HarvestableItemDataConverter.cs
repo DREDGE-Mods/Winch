@@ -10,7 +10,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
         { "damageMode", new(DamageMode.DESTROY, null) },
         { "itemColor", new(new Color(0.2264f, 0.1563f, 0.125f, 255f), null)},
         { "harvestMinigameType", new( HarvestMinigameType.DREDGE_RADIAL, o => DredgeTypeHelpers.GetEnumValue<HarvestMinigameType>(o)) },
-        { "perSpotMin", new( 1, o => int.Parse(o.ToString())) },
+        { "perSpotMin", new(1, o => int.Parse(o.ToString())) },
         { "perSpotMax", new(1, o => int.Parse(o.ToString())) },
         { "harvestItemWeight", new(1f, o => float.Parse(o.ToString())) },
         { "regenHarvestSpotOnDestroy", new(false, o => bool.Parse(o.ToString())) },

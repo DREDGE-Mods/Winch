@@ -29,14 +29,14 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "damageMode", new(DamageMode.NONE, o=> DredgeTypeHelpers.GetEnumValue<DamageMode>(o)) },
         { "moveMode", new(MoveMode.FREE, o=> DredgeTypeHelpers.GetEnumValue<MoveMode>(o)) },
         { "ignoreDamageWhenPlacing", new(false, o => bool.Parse(o.ToString())) },
-        { "isUnderlayItem", new(false, null) },
-        { "forbidStorageTray", new(false, null) },
+        { "isUnderlayItem", new(false, o => bool.Parse(o.ToString())) },
+        { "forbidStorageTray", new(false, o => bool.Parse(o.ToString())) },
         { "dimensions", new(new List<Vector2Int>(){ new Vector2Int(0,0) }, o => DredgeTypeHelpers.ParseDimensions((JArray)o)) },
         { "squishFactor", new(1f, o => float.Parse(o.ToString())) },
         { "itemOwnPrerequisites", new(null, null) },
         { "researchPrerequisites", new(null, null) },
         { "researchPointsRequired", new(0, o => int.Parse(o.ToString())) },
-        { "buyableWithoutResearch", new(true, o => bool.Parse(o.ToString())) }
+        { "buyableWithoutResearch", new(false, o => bool.Parse(o.ToString())) }
     };
 
     public SpatialItemDataConverter()
