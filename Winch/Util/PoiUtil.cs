@@ -53,6 +53,22 @@ internal static class PoiUtil
                 WinchCore.Log.Error($"Unable to add harvestable {harvestPoi.Harvestable.GetId()} to Harvestables and HarvestParticlePrefabs: {ex}");
             }
         }
+        var allItemPOIs = Traverse.Create(GameManager.Instance.HarvestPOIManager).Field("allItemPOIs").GetValue() as List<ItemPOI>;
+        foreach (var itemPoi in allItemPOIs)
+        {
+            try
+            {
+                if (!Harvestables.ContainsKey(itemPoi.Harvestable.GetId()))
+                    Harvestables.Add(itemPoi.Harvestable.GetId(), itemPoi.Harvestable);
+                var prefab = itemPoi.Harvestable.GetParticlePrefab();
+                if (!HarvestParticlePrefabs.ContainsKey(prefab.name))
+                    HarvestParticlePrefabs.Add(prefab.name, prefab);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Unable to add harvestable {itemPoi.Harvestable.GetId()} to Harvestables and HarvestParticlePrefabs: {ex}");
+            }
+        }
     }
 
     public static void ClearHarvestablesAndHarvestParticlePrefabs()
