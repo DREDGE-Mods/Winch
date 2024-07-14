@@ -20,7 +20,7 @@ internal static class ItemUtil
         { typeof(HarvestableItemData), new HarvestableItemDataConverter() },
         { typeof(FishItemData), new FishItemDataConverter() },
         { typeof(RelicItemData), new RelicItemDataConverter() },
-        { typeof(DeployableItemData), new DeployableItemDataConverter() },
+        { typeof(GridConfigDeployableItemData), new DeployableItemDataConverter() },
         { typeof(DredgeItemData), new DredgeItemDataConverter() },
         { typeof(RodItemData), new RodItemDataConverter() },
         { typeof(LightItemData), new LightItemDataConverter() },

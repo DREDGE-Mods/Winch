@@ -6,6 +6,7 @@ using Winch.Util;
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
+using Winch.Serialization.Item;
 
 namespace Winch.Core
 {
@@ -78,7 +79,7 @@ namespace Winch.Core
                 { typeof(RelicItemData), "Relics"},
                 { typeof(ResearchableItemData), "Books"},
                 { typeof(MessageItemData), "Messages"},
-                { typeof(DeployableItemData), "Deployable"},
+                { typeof(GridConfigDeployableItemData), "Deployable"},
                 { typeof(DredgeItemData), "Dredge"},
                 { typeof(DamageItemData), "Damage"},
                 { typeof(DurableItemData), "Durable"},
