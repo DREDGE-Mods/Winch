@@ -29,11 +29,13 @@ namespace Winch.Core
         {
             string localizationFolderPath = Path.Combine(path, "Localization");
             string textureFolderPath = Path.Combine(path, "Textures");
+            string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
+            if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
         }
@@ -93,7 +95,22 @@ namespace Winch.Core
                 {
                     genericMethod.Invoke(null, new object[] { itemPath });
                 }
-                
+            }
+        }
+
+        private static void LoadGridConfigFiles(string gridConfigFolderPath)
+        {
+            string[] gridConfigFiles = Directory.GetFiles(gridConfigFolderPath);
+            foreach(string file in gridConfigFiles)
+            {
+                try
+                {
+                    GridConfigUtil.AddGridConfigFromMeta(file);
+                }
+                catch(Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load Grid Configuration from {file}: {ex}");
+                }
             }
         }
 
