@@ -154,7 +154,7 @@ internal static class PoiUtil
 
         GameManager.Instance.HarvestPOIManager.allHarvestPOIs.Add(harvestPoi);
 
-        customPoi.layer = LayerMask.NameToLayer("POI");
+        customPoi.layer = Layer.POI;
         return customPoi;
     }
 
@@ -207,7 +207,7 @@ internal static class PoiUtil
 
         GameManager.Instance.HarvestPOIManager.allItemPOIs.Add(itemPoi);
 
-        customPoi.layer = LayerMask.NameToLayer("POI");
+        customPoi.layer = Layer.POI;
         return customPoi;
     }
 
