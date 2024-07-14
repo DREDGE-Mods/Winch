@@ -9,7 +9,7 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
 
-public static class Extensions
+public static class WinchExtensions
 {
     #region DREDGE
     public static void AddStock(this ItemPOI itemPoi)
