@@ -53,7 +53,7 @@ namespace Winch.Core
                     if (modAssembly.LoadedAssembly != null && hasPatches)
                     {
                         Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-                        harmony.PatchAll(modAssembly.LoadedAssembly);
+                        new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
                     }
                 }
                 catch(Exception ex)
