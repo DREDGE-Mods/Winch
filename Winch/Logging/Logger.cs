@@ -29,7 +29,7 @@ namespace Winch.Logging
             _writeLogsToFile = WinchConfig.GetProperty("WriteLogsToFile", true);
             if (_writeLogsToFile)
 			{
-				_minLogLevel = EnumUtil.Parse<LogLevel>(WinchConfig.GetProperty("LogLevel", "DEBUG"), LogLevel.DEBUG);
+				_minLogLevel = EnumUtil.Parse<LogLevel>(WinchConfig.GetProperty("LogLevel", "DEBUG"), true, LogLevel.DEBUG);
 				_log = new LogFile();
 				_latestLog = new LogFile("latest.log");
 				CleanupLogs();

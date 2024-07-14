@@ -11,7 +11,7 @@ public static class DredgeTypeHelpers
 {
     public static TEnum GetEnumValue<TEnum>(object value) where TEnum : Enum
     {
-        if (EnumUtil.TryParse<TEnum>(value.ToString(), out TEnum enumValue))
+        if (EnumUtil.TryParse<TEnum>(value.ToString(), true, out TEnum enumValue))
             return enumValue;
         else
             throw new InvalidOperationException($"{value} is not a valid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
