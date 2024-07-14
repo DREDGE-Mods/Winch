@@ -5,7 +5,7 @@
     "z": -354.0
   },
   "harvestableParticlePrefab" : "SquidParticles",
-  "items": ["catfish", "cod"],
+  "items": ["catfish", "exampleitems.mccod"],
   "nightItems" : ["grey-mullet"],
   "startStock" : 3,
   "maxStock" : 5,
