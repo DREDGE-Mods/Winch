@@ -2,8 +2,8 @@
   "location": {
     "x": 390.0,
     "y": 0.0,
-    "z": -360.0
+    "z": -365.0
   },
-  "harvestableParticlePrefab" : "MessageItem",
-  "items": ["exampleitems.diamond"]
+  "harvestableParticlePrefab" : "ImportantDredgeParticles",
+  "items": ["exampleitems.nautilus"]
 }
