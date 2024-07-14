@@ -1,5 +1,4 @@
 ﻿{
-	"Name": "Nautilus Shell",
 	"itemNameKey": "exampleitems.nautilus.name",
 	"itemDescriptionKey": "exampleitems.nautilus.desc",
 	"sprite": "exampleitems.nautilus",

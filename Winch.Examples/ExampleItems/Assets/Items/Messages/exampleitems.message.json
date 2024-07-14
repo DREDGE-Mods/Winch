@@ -1,5 +1,4 @@
 ﻿{
-    "Name": "Message",
     "itemNameKey": "exampleitems.message.name",
     "itemDescriptionKey": "exampleitems.message.desc",
     "chronologicalOrder": 0,

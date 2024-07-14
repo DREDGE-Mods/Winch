@@ -1,5 +1,4 @@
 ﻿{
-	"Name": "Music Disc",
 	"itemNameKey": "exampleitems.musicdisc.name",
 	"itemDescriptionKey": "exampleitems.musicdisc.desc",
 	"itemType": "GENERAL",

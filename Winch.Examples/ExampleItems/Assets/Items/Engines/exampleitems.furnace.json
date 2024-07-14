@@ -1,5 +1,4 @@
 ﻿{
-    "Name": "Furnace",
     "itemNameKey": "exampleitems.furnace.name",
     "itemDescriptionKey": "exampleitems.furnace.desc",
     "sprite": "exampleitems.furnace",

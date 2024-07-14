@@ -1,5 +1,4 @@
 ﻿{
-    "Name": "Torch",
     "itemNameKey": "exampleitems.torch.name",
     "itemDescriptionKey": "exampleitems.torch.desc",
     "sprite": "exampleitems.torch",

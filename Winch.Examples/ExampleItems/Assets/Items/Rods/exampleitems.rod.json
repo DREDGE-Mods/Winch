@@ -1,5 +1,4 @@
 ﻿{
-	"Name": "Rod",
 	"itemNameKey": "exampleitems.rod.name",
 	"itemDescriptionKey": "exampleitems.rod.desc",
 	"sprite": "exampleitems.rod",

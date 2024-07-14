@@ -1,5 +1,4 @@
 ﻿{
-    "Name": "Diamond",
     "itemNameKey": "exampleitems.diamond.name",
     "itemDescriptionKey": "exampleitems.diamond.desc",
     "itemType": "GENERAL",

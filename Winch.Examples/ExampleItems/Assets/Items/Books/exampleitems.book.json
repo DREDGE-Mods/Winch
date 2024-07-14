@@ -1,5 +1,4 @@
 ﻿{
-	"Name": "Book",
 	"itemNameKey": "exampleitems.book.name",
 	"itemDescriptionKey": "exampleitems.book.desc",
 	"researchBenefitValue": 0.05,

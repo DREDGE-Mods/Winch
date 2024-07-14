@@ -1,5 +1,4 @@
 ﻿{
-    "Name": "Journal",
     "itemNameKey": "exampleitems.journal.name",
     "itemDescriptionKey": "exampleitems.journal.desc",
     "chronologicalOrder": 0,
