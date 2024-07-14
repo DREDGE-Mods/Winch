@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Core
 {
@@ -37,6 +38,7 @@ namespace Winch.Core
         private void OnGameEnded()
         {
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
+            PoiUtil.ClearHarvestablesAndHarvestParticlePrefabs();
         }
     }
 }
