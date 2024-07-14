@@ -68,6 +68,16 @@ public static class DredgeTypeHelpers
 
     }
 
+    public static List<string> ParseStringList(JArray jArray)
+    {
+        var list = new List<string>();
+        foreach (var item in jArray)
+        {
+            list.Add(item.ToString());
+        }
+        return list;
+    }
+
     public static Color GetColorFromJsonObject(object value)
     {
         var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse color.");

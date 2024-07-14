@@ -10,8 +10,8 @@ public class CustomHarvestPOIConverter : CustomPOIConverter
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "harvestableParticlePrefab", new( null, null) },
-        { "items", new( null, o=>JarrayToList((JArray)o)) },
-        { "nightItems", new( null, o=>JarrayToList((JArray)o)) },
+        { "items", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
+        { "nightItems", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "startStock", new( 3, o=> int.Parse(o.ToString())) },
         { "maxStock", new( 5 , o=> int.Parse(o.ToString())) },
         { "doesRestock", new( true, null) },

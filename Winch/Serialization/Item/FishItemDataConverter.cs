@@ -14,7 +14,7 @@ public class FishItemDataConverter : HarvestableItemDataConverter
         { "itemSubtype", new(ItemSubtype.FISH, null) },
         { "minSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
         { "maxSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
-        { "aberrations", new( new List<string>(), o => ((JArray)o).Select(o => o.ToString()).ToList()) },
+        { "aberrations", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "isAberration", new( false, o => bool.Parse(o.ToString())) },
         { "nonAberrationParent", new( null, null) },
         { "minWorldPhaseRequired", new( 0, o => int.Parse(o.ToString())) },
