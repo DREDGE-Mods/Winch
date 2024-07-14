@@ -41,9 +41,16 @@ namespace Winch.Core
 
             ModAssemblyLoader.LoadModAssemblies();
 
-            var harmony = new Harmony("com.dredge.winch");
-            Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
-            harmony.PatchAll();
+            try
+            {
+                var harmony = new Harmony("com.dredge.winch");
+                Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
+                harmony.PatchAll();
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to apply winch patches: {ex}");
+            }
 
             foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
