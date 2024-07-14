@@ -80,6 +80,8 @@ namespace Winch.Core
                 { typeof(ResearchableItemData), "Books"},
                 { typeof(MessageItemData), "Messages"},
                 { typeof(GridConfigDeployableItemData), "Deployable"},
+                { typeof(CrabPotItemData), "Pots"},
+                { typeof(TrawlNetItemData), "Nets"},
                 { typeof(DredgeItemData), "Dredge"},
                 { typeof(DamageItemData), "Damage"},
                 { typeof(DurableItemData), "Durable"},

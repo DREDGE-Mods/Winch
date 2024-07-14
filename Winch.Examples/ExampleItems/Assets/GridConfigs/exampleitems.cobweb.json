@@ -1,0 +1,41 @@
+{
+	"columns": 7,
+	"rows": 7,
+	"cellGroupConfigs": [
+		{
+			"cells": [
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXX XXX",
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXXXXXX"
+			],
+			"itemType": "GENERAL",
+			"itemSubtype": "FISH",
+			"isHidden": false,
+			"damageImmune": false
+		},
+		{
+			"cells": [
+				"       ",
+				"       ",
+				"       ",
+				"   X   ",
+				"       ",
+				"       ",
+				"       "
+			],
+			"itemType": "GENERAL",
+			"itemSubtype": "TRINKET",
+			"isHidden": false,
+			"damageImmune": true
+		}
+	],
+	"mainItemType": "GENERAL",
+	"mainItemSubtype": "FISH",
+	"itemsInThisBelongToPlayer": true,
+	"canAddItemsInQuestMode": false,
+	"hasUnderlay": false
+}

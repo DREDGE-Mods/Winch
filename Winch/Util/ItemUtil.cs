@@ -21,6 +21,8 @@ internal static class ItemUtil
         { typeof(AberrationableFishItemData), new FishItemDataConverter() },
         { typeof(RelicItemData), new RelicItemDataConverter() },
         { typeof(GridConfigDeployableItemData), new DeployableItemDataConverter() },
+        { typeof(CrabPotItemData), new CrabPotItemDataConverter() },
+        { typeof(TrawlNetItemData), new TrawlNetItemDataConverter() },
         { typeof(DredgeItemData), new DredgeItemDataConverter() },
         { typeof(RodItemData), new RodItemDataConverter() },
         { typeof(LightItemData), new LightItemDataConverter() },

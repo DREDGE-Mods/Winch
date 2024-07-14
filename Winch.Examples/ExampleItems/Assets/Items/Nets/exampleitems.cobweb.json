@@ -1,0 +1,23 @@
+﻿{
+	"itemNameKey": "exampleitems.cobweb.name",
+	"itemDescriptionKey": "exampleitems.cobweb.desc",
+	"sprite": "exampleitems.cobweb",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"squishFactor": 1,
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [ "COASTAL", "SHALLOW", "OCEANIC", "ABYSSAL", "HADAL", "VOLCANIC", "MANGROVE", "DREDGE", "CRAB", "ICE" ],
+	"catchRate": 1,
+	"maxDurabilityDays": 7,
+	"timeBetweenCatchRolls": 0.01,
+	"aberrationBonus": 0.1,
+	"gridConfiguration": "exampleitems.cobweb"
+}
+

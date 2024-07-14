@@ -21,5 +21,6 @@
 	"perSpotMax": 1,
 	"harvestPOICategory": "TRINKET",
 	"harvestableType": "SHALLOW",
-	"harvestDifficulty": "VERY_EASY"
+	"harvestDifficulty": "VERY_EASY",
+	"canBeCaughtByNet": true
 }
