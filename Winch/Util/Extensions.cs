@@ -66,6 +66,20 @@ public static class Extensions
     #endregion
 
     #region Harmony
+    public static FieldInfo[] GetRuntimeFieldsIncludingBase(this Type type)
+    {
+        Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
+        while (type != null)
+        {
+            foreach (var field in type.GetRuntimeFields())
+            {
+                fields.SafeAdd(field.Name, field);
+            }
+            type = type.BaseType;
+        }
+        return fields.Values.ToArray();
+    }
+
     public static CodeMatcher LogInstructions(this CodeMatcher matcher, string prefix)
     {
         matcher.InstructionEnumeration().LogInstructions(prefix + " at " + matcher.Pos);
