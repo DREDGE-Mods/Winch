@@ -7,6 +7,7 @@ public class TrawlNetItemDataConverter : DeployableItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("TrawlIcon"), null) },
         { "itemSubtype", new(ItemSubtype.NET, null) },
         { "moveMode", new(MoveMode.INSTALL, null) },
     };

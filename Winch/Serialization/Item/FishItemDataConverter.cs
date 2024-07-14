@@ -2,6 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization.Item;
 
@@ -9,6 +10,7 @@ public class FishItemDataConverter : HarvestableItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("FishIcon"), null) },
         { "harvestMinigameType", new( HarvestMinigameType.FISHING_RADIAL, null) },
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.FISH, null) },

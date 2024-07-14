@@ -11,6 +11,7 @@ public class SpatialItemDataConverter : ItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("JunkIcon"), null) },
         { "canBeSoldByPlayer", new(true, o => bool.Parse(o.ToString())) },
         { "canBeSoldInBulkAction", new(true, o => bool.Parse(o.ToString())) },
         { "value", new(decimal.Zero, o => decimal.Parse(o.ToString())) },

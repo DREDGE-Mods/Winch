@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Winch.Core;
 
 namespace Winch.Util
 {
@@ -21,7 +22,9 @@ namespace Winch.Util
         {
             Texture2D tex = GetTexture(key) ?? throw new InvalidOperationException($"Texture '{key}' not found");
             Rect spriteRect = new Rect(0, 0, tex.width, tex.height);
-            return Sprite.Create(tex, spriteRect, Vector2.zero);
+            Sprite sprite = Sprite.Create(tex, spriteRect, new Vector2(tex.width / 2, tex.height / 2));
+            sprite.name = tex.name;
+            return sprite;
         }
 
         internal static void LoadTextureFromFile(string path)
@@ -29,8 +32,10 @@ namespace Winch.Util
             byte[] textureData = File.ReadAllBytes(path);
             var texture = new Texture2D(2, 2);
             texture.LoadImage(textureData);
+            texture.DontDestroyOnLoad();
             
             string fileName = Path.GetFileNameWithoutExtension(path);
+            texture.name = fileName;
             TextureMap[fileName] = texture;
         }
     }

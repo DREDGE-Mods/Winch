@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization.Item;
 
@@ -7,6 +8,7 @@ public class RelicItemDataConverter : HarvestableItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("QuestIcon"), null) },
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.RELIC, null) },
         { "canBeDiscarded", new(true, null) },

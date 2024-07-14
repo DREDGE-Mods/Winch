@@ -24,7 +24,7 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         { "itemSubtype", new(ItemSubtype.GENERAL, o => DredgeTypeHelpers.GetEnumValue<ItemSubtype>(o)) },
         { "tooltipTextColor", new(Color.white, o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
         { "tooltipNotesColor", new(Color.white, o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
-        { "itemTypeIcon", new(null, o => TextureUtil.GetSprite(o.ToString())) },
+        { "itemTypeIcon", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "harvestParticlePrefab", new(null, null) },
         { "overrideHarvestParticleDepth", new(false, o=> bool.Parse(o.ToString())) },
         { "harvestParticleDepthOffset", new(-3f, o=> float.Parse(o.ToString())) },
