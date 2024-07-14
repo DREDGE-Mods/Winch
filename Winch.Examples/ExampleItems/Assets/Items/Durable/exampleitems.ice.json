@@ -1,0 +1,18 @@
+﻿{
+	"itemNameKey": "exampleitems.ice.name",
+	"itemDescriptionKey": "exampleitems.ice.desc",
+	"sprite": "exampleitems.ice",
+	"itemColor": {
+		"r": 58,
+		"g": 40,
+		"b": 32,
+		"a": 255
+	},
+	"squishFactor": 1,
+	"value": 50,
+	"dimensions": [
+		"X"
+	],
+	"damageMode": "DESTROY"
+}
+

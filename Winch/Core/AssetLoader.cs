@@ -79,6 +79,7 @@ namespace Winch.Core
                 { typeof(DeployableItemData), "Deployable"},
                 { typeof(DredgeItemData), "Dredge"},
                 { typeof(DamageItemData), "Damage"},
+                { typeof(DurableItemData), "Durable"},
             };
 
         private static void LoadItemFiles(string itemFolderPath)

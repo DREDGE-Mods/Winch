@@ -25,6 +25,7 @@ internal static class ItemUtil
         { typeof(RodItemData), new RodItemDataConverter() },
         { typeof(LightItemData), new LightItemDataConverter() },
         { typeof(DamageItemData), new DamageItemDataConverter() },
+        { typeof(DurableItemData), new DurableItemDataConverter() },
     };
 
     public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta)
