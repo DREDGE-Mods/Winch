@@ -5,6 +5,7 @@ using System.IO;
 using Winch.Util;
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Harvest;
+using Winch.Serialization.POI.Item;
 
 namespace Winch.Core
 {
@@ -40,6 +41,7 @@ namespace Winch.Core
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
             {
                 { typeof(CustomHarvestPOI), "Harvest"},
+                { typeof(CustomItemPOI), "Item"},
                 //{ typeof(BaitHarvestPOI), "Bait"},
                 //{ typeof(PlacedHarvestPOI), "Placed"},
                 //{ typeof(AutoMovePOI), "Conversation/AutoMove"},

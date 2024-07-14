@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using HarmonyLib;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.Audio;
 using Winch.Core;
 using Winch.Serialization;
 
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Conversation;
 using Winch.Serialization.POI.Harvest;
+using Winch.Serialization.POI.Item;
 
 namespace Winch.Util;
 
@@ -29,6 +33,7 @@ internal static class PoiUtil
         //{ typeof(ConversationPOI), new ConversationPoiConverter() },
         //{ typeof(ExplosivePOI), new ExplosivePoiConverter() },
         { typeof(CustomHarvestPOI), new CustomHarvestPOIConverter()},
+        { typeof(CustomItemPOI), new CustomItemPOIConverter()}
     };
 
     public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta)
@@ -100,6 +105,10 @@ internal static class PoiUtil
         {
             return CreateGameObjectFromCustomHarvestPoi(customHarvestPoi);
         }
+        else if (customPoi is CustomItemPOI customItemPoi)
+        {
+            return CreateGameObjectFromCustomItemPoi(customItemPoi);
+        }
 
         return null;
     }
@@ -137,12 +146,66 @@ internal static class PoiUtil
 
         // This needs to be added to the GameManager.Instance.CullingBrain
         var cullable = customPoi.AddComponent<Cullable>();
+        cullable.sphereRadius = 5;
         GameManager.Instance.CullingBrain.AddCullable(cullable);
 
         // No setup needed
         customPoi.AddComponent<SimpleBuoyantObject>();
 
         GameManager.Instance.HarvestPOIManager.allHarvestPOIs.Add(harvestPoi);
+
+        customPoi.layer = LayerMask.NameToLayer("POI");
+        return customPoi;
+    }
+
+    public static GameObject CreateGameObjectFromCustomItemPoi(CustomItemPOI customItemPoi)
+    {
+        GameObject customPoi = new GameObject();
+        customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
+        customPoi.transform.position = customItemPoi.location;
+        customPoi.name = customItemPoi.id;
+        var itemPoi = customPoi.AddComponent<ParticledItemPOI>();
+
+        var itemPoiDataModel = new ItemPOIDataModel();
+
+        itemPoiDataModel.items = customItemPoi.Items;
+
+        itemPoiDataModel.id = customItemPoi.id;
+
+        itemPoi.itemPOIData = itemPoiDataModel;
+        itemPoi.Harvestable = itemPoiDataModel;
+
+        itemPoi.harvestParticlePrefab = customItemPoi.HarvestableParticlePrefab;
+
+        // Default Harvest POI Sphere Collider
+        var sphereCollider = customPoi.AddComponent<SphereCollider>();
+        sphereCollider.radius = 2;
+        sphereCollider.enabled = true;
+        sphereCollider.contactOffset = 0.01f;
+
+        itemPoi.poiCollider = sphereCollider;
+
+        // No setup needed
+        customPoi.AddComponent<SimpleBuoyantObject>();
+
+        // This needs to be added to the GameManager.Instance.CullingBrain
+        var cullable = customPoi.AddComponent<Cullable>();
+        cullable.sphereRadius = 1;
+        GameManager.Instance.CullingBrain.AddCullable(cullable);
+
+        var sfx = customPoi.AddComponent<IntermittentSFXPlayer>();
+        sfx.assetReferences = new List<AssetReference>();
+        sfx.audioMixerGroup = Resources.FindObjectsOfTypeAll<AudioMixerGroup>().FirstOrDefault(amg => amg.name == "WorldSFX");
+        sfx.audioRolloffMode = AudioRolloffMode.Linear;
+        sfx.volumeScale = 1;
+        sfx.minDelaySec = 3;
+        sfx.maxDelaySec = 5;
+        sfx.minDistance = 5;
+        sfx.maxDistance = 50;
+        sfx.affectedByDebugCommand = true;
+        itemPoi.intermittentSFXPlayer = sfx;
+
+        GameManager.Instance.HarvestPOIManager.allItemPOIs.Add(itemPoi);
 
         customPoi.layer = LayerMask.NameToLayer("POI");
         return customPoi;
