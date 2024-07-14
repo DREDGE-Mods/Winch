@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -39,28 +39,10 @@
 
 	<ItemGroup>
 		<None Include="ExampleItems.csproj.user" />
-		<None Update="Assets\Items\General\exampleitems.diamond.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Localization\en.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\POI\Harvest\exampleitems.exampleharvestpoi.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.diamond.png">
+		<None Include="Assets\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="mod_meta.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Items\Fish\exampleitems.mccod.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.mccod.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.mcicon.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

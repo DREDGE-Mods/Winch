@@ -1,0 +1,20 @@
+﻿{
+	"Name": "Rod",
+	"itemNameKey": "exampleitems.rod.name",
+	"itemDescriptionKey": "exampleitems.rod.desc",
+	"sprite": "exampleitems.rod",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"squishFactor": 1,
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [ "COASTAL", "SHALLOW", "OCEANIC", "ABYSSAL", "HADAL", "VOLCANIC", "MANGROVE", "DREDGE", "CRAB", "ICE" ],
+	"fishingSpeedModifier": 2,
+	"aberrationCatchBonus": 0.1
+}

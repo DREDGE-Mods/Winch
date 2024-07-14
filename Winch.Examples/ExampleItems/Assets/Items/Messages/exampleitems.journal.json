@@ -1,0 +1,8 @@
+﻿{
+    "Name": "Journal",
+    "itemNameKey": "exampleitems.journal.name",
+    "itemDescriptionKey": "exampleitems.journal.desc",
+    "chronologicalOrder": 0,
+    "messageBodyKey": "exampleitems.journal.body",
+    "set": "JOURNALS"
+}
