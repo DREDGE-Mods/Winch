@@ -18,7 +18,7 @@ internal static class ItemUtil
         { typeof(SpatialItemData), new SpatialItemDataConverter() },
         { typeof(EngineItemData), new EngineItemDataConverter() },
         { typeof(HarvestableItemData), new HarvestableItemDataConverter() },
-        { typeof(FishItemData), new FishItemDataConverter() },
+        { typeof(AberrationableFishItemData), new FishItemDataConverter() },
         { typeof(RelicItemData), new RelicItemDataConverter() },
         { typeof(GridConfigDeployableItemData), new DeployableItemDataConverter() },
         { typeof(DredgeItemData), new DredgeItemDataConverter() },
@@ -34,6 +34,7 @@ internal static class ItemUtil
     }
 
     public static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
+    public static Dictionary<string, FishItemData> FishItemDataDict = new();
     public static Dictionary<string, ItemData> AllItemDataDict = new();
     public static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
@@ -63,6 +64,11 @@ internal static class ItemUtil
             {
                 HarvestableItemDataDict.Add(item.id, hitem);
                 WinchCore.Log.Debug($"Added item {item.id} to HarvestableItemDataDict");
+                if (hitem is FishItemData fitem)
+                {
+                    FishItemDataDict.Add(item.id, fitem);
+                    WinchCore.Log.Debug($"Added item {item.id} to FishItemDataDict");
+                }
             }
         }
     }
@@ -73,6 +79,8 @@ internal static class ItemUtil
         WinchCore.Log.Debug($"AllItemDataDict cleared");
         HarvestableItemDataDict.Clear();
         WinchCore.Log.Debug($"HarvestableItemDataDict cleared");
+        FishItemDataDict.Clear();
+        WinchCore.Log.Debug($"FishItemDataDict cleared");
     }
 
     internal static void AddItemFromMeta<T>(string metaPath) where T : ItemData

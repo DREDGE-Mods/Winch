@@ -72,7 +72,7 @@ namespace Winch.Core
                 { typeof(NonSpatialItemData), "NonSpatial"},
                 { typeof(SpatialItemData), "General"},
                 { typeof(HarvestableItemData), "Harvestable"},
-                { typeof(FishItemData), "Fish"},
+                { typeof(AberrationableFishItemData), "Fish"},
                 { typeof(EngineItemData), "Engines"},
                 { typeof(LightItemData), "Lights"},
                 { typeof(RodItemData), "Rods"},

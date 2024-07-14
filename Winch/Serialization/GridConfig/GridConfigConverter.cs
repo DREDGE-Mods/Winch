@@ -12,7 +12,7 @@ public class GridConfigConverter : DredgeTypeConverter<GridConfiguration>
         { "cellGroupConfigs", new(new List<CellGroupConfiguration>(), o => DredgeTypeHelpers.ParseCellGroupConfigurations((JArray)o)) },
         { "mainItemData", new(null, null) },
         { "mainItemType", new(ItemType.GENERAL, o => DredgeTypeHelpers.ParseFlagsEnum<ItemType>(o)) },
-        { "mainItemSubtype", new(ItemSubtype.GENERAL, o => DredgeTypeHelpers.ParseFlagsEnum<ItemSubtype>(o)) },
+        { "mainItemSubtype", new(ItemSubtype.FISH, o => DredgeTypeHelpers.ParseFlagsEnum<ItemSubtype>(o)) },
         { "itemsInThisBelongToPlayer", new(false, o => bool.Parse(o.ToString())) },
         { "canAddItemsInQuestMode", new(false, o => bool.Parse(o.ToString())) },
         { "hasUnderlay", new(false, o => bool.Parse(o.ToString())) }, //Does this grid have an underlay (used for damage and reinforcement
