@@ -34,10 +34,13 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
             {
                 if (data.TryGetValue(field.Name, out var value))
                 {
-                    field.SetValue(obj,
-                        FieldDefinitions[field.Name].Parser != null
-                            ? FieldDefinitions[field.Name].Parser?.Invoke(value)
-                            : value);
+                    if (FieldDefinitions.TryGetValue(field.Name, out var definition))
+                    {
+                        field.SetValue(obj,
+                            definition.Parser != null
+                                ? definition.Parser.Invoke(value)
+                                : value);
+                    }
                 }
                 else
                 {
