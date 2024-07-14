@@ -28,7 +28,7 @@ internal static class ItemUtil
         { typeof(DurableItemData), new DurableItemDataConverter() },
     };
 
-    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta)
+    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData
     {
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }

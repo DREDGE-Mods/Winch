@@ -36,7 +36,7 @@ internal static class PoiUtil
         { typeof(CustomItemPOI), new CustomItemPOIConverter()}
     };
 
-    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta)
+    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : CustomPOI
     {
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }
