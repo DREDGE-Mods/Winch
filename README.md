@@ -18,3 +18,7 @@ An example of using Winch to add items to the game, adds a cod and diamonds from
 ### Intro Skipper
 
 Self explanatory. Skips the intro cutscene.
+
+## Credits
+
+Winch was originally made by Hacktix, this project is based off the [original repo](https://github.com/Hacktix/Winch).
