@@ -46,6 +46,7 @@ namespace Winch.Core
                 var harmony = new Harmony("com.dredge.winch");
                 Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
                 harmony.PatchAll();
+                EnumUtil.Initialize(harmony);
             }
             catch (Exception ex)
             {
