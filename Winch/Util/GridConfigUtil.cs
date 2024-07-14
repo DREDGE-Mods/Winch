@@ -23,7 +23,7 @@ internal static class GridConfigUtil
         return UtilHelpers.PopulateObjectFromMeta(config, meta, GridConfigConverter);
     }
 
-    public static bool PopulateCellGroupConfigFromMetaWithConverter(CellGroupConfiguration config, Dictionary<string, object> meta)
+    public static bool PopulateCellGroupConfigFromMetaWithConverter(UnstructedCellGroupConfiguration config, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(config, meta, CellGroupConfigConverter);
     }

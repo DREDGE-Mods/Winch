@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Winch.Core;
+using Winch.Serialization.GridConfig;
 using Winch.Util;
 
 namespace Winch.Serialization;
@@ -113,7 +114,7 @@ public static class DredgeTypeHelpers
 
     private static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
     {
-        var config = new CellGroupConfiguration();
+        var config = new UnstructedCellGroupConfiguration();
         var meta = cellGroupConfiguration.ToObject<Dictionary<string, object>>();
         GridConfigUtil.PopulateCellGroupConfigFromMetaWithConverter(config, meta);
         return config;

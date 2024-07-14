@@ -5,7 +5,7 @@ using Winch.Core;
 
 namespace Winch.Serialization.GridConfig;
 
-public class CellGroupConfigConverter : DredgeTypeConverter<CellGroupConfiguration>
+public class CellGroupConfigConverter : DredgeTypeConverter<UnstructedCellGroupConfiguration>
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
