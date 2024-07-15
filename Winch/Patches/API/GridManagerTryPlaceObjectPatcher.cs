@@ -14,6 +14,9 @@ namespace Winch.Patches.API
     [HarmonyPatch(nameof(GridManager.TryPlaceObject))]
     class GridManagerTryPlaceObjectPatcher
     {
+        /// <summary>
+        /// Fix nets ignoring slots that only accept certain types.
+        /// </summary>
         public static bool Prefix(GridManager __instance)
         {
             if (!__instance.currentlyHeldObject)
