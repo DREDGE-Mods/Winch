@@ -320,7 +320,7 @@ public static class WinchExtensions
         return copy;
     }
 
-    public static GameObject Instantiate(this GameObject original)
+    public static T Instantiate<T>(this T original) where T : UnityEngine.Object
     {
         var copy = UnityEngine.Object.Instantiate(original);
         copy.Rename(original.name);
