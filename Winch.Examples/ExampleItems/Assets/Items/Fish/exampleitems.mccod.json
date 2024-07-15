@@ -29,6 +29,6 @@
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "SHALLOW",
   "harvestDifficulty": "VERY_EASY",
-  "aberrations": ["exampleitems.mcsalmon","exampleitems.mcclownfish"]
+  "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"]
 }
 

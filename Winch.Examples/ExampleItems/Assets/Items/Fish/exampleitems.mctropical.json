@@ -1,9 +1,9 @@
 ﻿{
-  "itemNameKey": "exampleitems.mcclownfish.name",
-  "itemDescriptionKey": "exampleitems.mcclownfish.desc",
+  "itemNameKey": "exampleitems.mctropical.name",
+  "itemDescriptionKey": "exampleitems.mctropical.desc",
   "itemType": "GENERAL",
   "itemSubtype": "FISH",
-  "sprite": "exampleitems.mcclownfish",
+  "sprite": "exampleitems.mctropical",
   "itemColor": {
     "r": 136,
     "g": 0,

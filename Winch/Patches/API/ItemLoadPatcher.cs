@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Winch.Core;
 using Winch.Core.API;
 using Winch.Util;
 

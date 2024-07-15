@@ -1,10 +1,17 @@
-﻿using Newtonsoft.Json;
+﻿using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using DG.Tweening;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.Localization;
 using Winch.Core;
 using Winch.Serialization;
 using Winch.Serialization.Item;
+using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 namespace Winch.Util;
 
@@ -48,11 +55,58 @@ internal static class ItemUtil
         }
     }
 
+    /// <summary>
+    /// Cannot patch <see cref="Encyclopedia.Awake"/> or else game explodes for whatever reason (even just touching the method slightly makes the loading screen go black and spam the error below)
+    /// </summary>
+    /*
+    System.MissingMethodException:  assembly:<unknown assembly> type:<unknown type> member:(null)
+     at (wrapper managed-to-native) UnityEngine.Component.get_gameObject()
+     at UnityEngine.UI.Graphic.CacheCanvas()[0x00006]
+     at UnityEngine.UI.Graphic.get_canvas() [0x0000e]
+     at Coffee.UIExtensions.UIParticleUpdater.Refresh(Coffee.UIExtensions.UIParticle particle) [0x00015]
+     at Coffee.UIExtensions.UIParticleUpdater.Refresh() [0x00027]
+    */
+    public static void Encyclopedia()
+    {
+        WinchCore.Log.Info("[Encyclopedia] AddModdedFishItemData");
+        var encyclopedia = Resources.FindObjectsOfTypeAll<Encyclopedia>().FirstOrDefault();
+        AddModdedFishItemData(encyclopedia.allFish);
+        AddModdedEncyclopediaButton(encyclopedia);
+    }
+
+    public static void AddModdedEncyclopediaButton(Encyclopedia encyclopedia)
+    {
+        var container = encyclopedia.transform.parent.gameObject;
+        container.SetActive(true);
+        container.SetActive(false);
+        var zones = encyclopedia.dlc1ZoneButton.transform.parent as RectTransform;
+        zones.sizeDelta = new Vector2(zones.sizeDelta.x, zones.sizeDelta.y + 50);
+        var moddedButton = encyclopedia.dlc1ZoneButton.gameObject.InstantiateInactive();
+        moddedButton.transform.SetParent(zones, false);
+        var moddedButtonWrapper = moddedButton.GetComponent<BasicButtonWrapper>();
+        moddedButtonWrapper.localizedString.StringReference = new LocalizedString("Strings", "label.unknown");
+        moddedButton.name = "ModdedEncyclopediaTabButton";
+        moddedButton.SetActive(true);
+        encyclopedia.zoneButtons.Add(moddedButtonWrapper);
+        encyclopedia.SetZoneButtonPositions();
+        var image = moddedButton.GetComponent<Image>();
+        image.sprite = TextureUtil.GetSprite("EncyclopediaTabWinch");
+    }
+
+
     public static void AddModdedItemData(IList<ItemData> list)
     {
         foreach (var item in ModdedItemDataDict.Values)
         {
-            list.Add(item);
+            list.SafeAdd(item);
+        }
+    }
+
+    public static void AddModdedFishItemData(IList<FishItemData> list)
+    {
+        foreach (var item in ModdedItemDataDict.Values.WhereType<ItemData, FishItemData>())
+        {
+            list.SafeAdd(item);
         }
     }
 
