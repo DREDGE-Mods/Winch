@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine.Localization;
 using Winch.Core;
 
 namespace Winch.Util
@@ -8,6 +9,8 @@ namespace Winch.Util
     public static class LocalizationUtil
     {
         private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
+        public static LocalizedString Empty => new LocalizedString(string.Empty, string.Empty);
+
 
         public static void AddLocalizedString(string locale, string key, string value)
         {
