@@ -122,7 +122,7 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    private static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
+    public static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
     {
         var config = new UnstructedCellGroupConfiguration();
         var meta = cellGroupConfiguration.ToObject<Dictionary<string, object>>();

@@ -11,6 +11,8 @@
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<Nullable>enable</Nullable>
 		<NuspecFile>Winch.nuspec</NuspecFile>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<NoWarn>1591</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
