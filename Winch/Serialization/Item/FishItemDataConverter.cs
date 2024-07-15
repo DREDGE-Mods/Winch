@@ -8,6 +8,7 @@ public class FishItemDataConverter : HarvestableItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "harvestMinigameType", new( HarvestMinigameType.FISHING_RADIAL, null) },
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.FISH, null) },
         { "minSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
