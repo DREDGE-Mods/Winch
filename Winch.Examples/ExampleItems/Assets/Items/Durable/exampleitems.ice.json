@@ -1,6 +1,7 @@
 ﻿{
 	"itemNameKey": "exampleitems.ice.name",
 	"itemDescriptionKey": "exampleitems.ice.desc",
+	"additionalNoteKey": "item.ice-block-1.notes",
 	"sprite": "exampleitems.ice",
 	"itemColor": {
 		"r": 58,
