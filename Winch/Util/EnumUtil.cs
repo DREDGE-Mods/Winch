@@ -20,6 +20,7 @@ public static class EnumUtil
     {
         harmony.Patch(AccessTools.Method(typeof(System.Enum), "GetCachedValuesAndNames"), transpiler: new HarmonyMethod(AccessTools.Method(typeof(EnumInfoPatch), nameof(EnumInfoPatch.Transpiler))));
         WinchCore.Log.Debug("EnumUtil initialized.");
+        EnumUtil.RegisterAllEnumHolders(Assembly.GetExecutingAssembly());
     }
 
     private static class EnumInfoPatch
@@ -550,11 +551,13 @@ public static class EnumUtil
     /// Register all classes in an assembly with the Enum Holder attribute.
     /// </summary>
     /// <param name="assembly">The assembly to register enum holders in</param>
-    public static void RegisterAllEnumHolders(Assembly assembly)
+    internal static void RegisterAllEnumHolders(Assembly assembly)
     {
-        foreach (var type in assembly.GetTypes())
+        var enumHolders = assembly.GetTypes().Where(type => type.IsDefined(typeof(EnumHolderAttribute), true)).ToList();
+        if (enumHolders.Count > 0)
         {
-            if (type.IsDefined(typeof(EnumHolderAttribute), true))
+            WinchCore.Log.Debug($"Registering enum holders for {assembly.GetName().Name}");
+            foreach (var type in enumHolders)
             {
                 foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                 {
@@ -1404,7 +1407,6 @@ public static class EnumUtil
 
 /// <summary>
 /// Add this attribute to a class, and any static enum fields will have an enum value created with the name of the field.
-/// You must call <see cref="EnumUtils.RegisterAllEnumHolders(Assembly)"/> on your assembly for that to happen.
 /// </summary>
 public class EnumHolderAttribute : Attribute { }
 

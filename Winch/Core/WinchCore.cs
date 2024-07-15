@@ -57,6 +57,18 @@ namespace Winch.Core
             {
                 try
                 {
+                    if (modAssembly.LoadedAssembly != null)
+                    {
+                        EnumUtil.RegisterAllEnumHolders(modAssembly.LoadedAssembly);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Failed to register enum holders for {modAssembly.BasePath}: {ex}");
+                }
+
+                try
+                {
                     bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
                     if (modAssembly.LoadedAssembly != null && hasPatches)
                     {
