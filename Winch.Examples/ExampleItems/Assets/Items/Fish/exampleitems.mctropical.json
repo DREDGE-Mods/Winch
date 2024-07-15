@@ -21,6 +21,7 @@
   "dimensions": [
     "X"
   ],
+  "zonesFoundIn": "TWISTED_STRAND",
   "day": true,
   "night": true,
   "minSizeCentimeters": 5,

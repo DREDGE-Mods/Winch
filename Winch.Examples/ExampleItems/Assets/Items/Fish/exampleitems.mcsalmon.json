@@ -21,6 +21,7 @@
   "dimensions": [
     "X"
   ],
+  "zonesFoundIn": "OPEN_OCEAN",
   "day": true,
   "night": true,
   "minSizeCentimeters": 5,
