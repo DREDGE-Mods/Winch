@@ -23,17 +23,9 @@ public class CustomHarvestPOI : CustomPOI
     [Range(0f, 1f)]
     public float overriddenNighttimeSpecialChance = 0;
 
-    public List<HarvestableItemData> Items => ItemUtil.HarvestableItemDataDict.Where(kvp => items.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
-    public List<HarvestableItemData> NightItems => ItemUtil.HarvestableItemDataDict.Where(kvp => items.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
-    public GameObject HarvestableParticlePrefab
-    {
-        get
-        {
-            if (PoiUtil.HarvestParticlePrefabs.TryGetValue(harvestableParticlePrefab, out var prefab))
-                return prefab;
-            return null;
-        }
-    }
+    public List<HarvestableItemData> Items => ItemUtil.TryGetHarvestables(items);
+    public List<HarvestableItemData> NightItems => ItemUtil.TryGetHarvestables(nightItems);
+    public GameObject HarvestableParticlePrefab => PoiUtil.TryGetHarvestableParticlePrefab(harvestableParticlePrefab);
 }
 
 

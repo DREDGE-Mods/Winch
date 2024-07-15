@@ -91,6 +91,13 @@ internal static class PoiUtil
         HarvestParticlePrefabs.Clear();
     }
 
+    public static GameObject TryGetHarvestableParticlePrefab(string harvestableParticlePrefab)
+    {
+        if (PoiUtil.HarvestParticlePrefabs.TryGetValue(harvestableParticlePrefab, out var prefab))
+            return prefab;
+        return null;
+    }
+
     public static void CreateModdedPois()
     {
         foreach (var customPoi in ModdedPOIDict.Values)

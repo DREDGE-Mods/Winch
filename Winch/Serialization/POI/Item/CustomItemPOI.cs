@@ -11,16 +11,8 @@ public class CustomItemPOI : CustomPOI
     public string harvestableParticlePrefab;
     public List<string> items;
 
-    public List<ItemData> Items => ItemUtil.AllItemDataDict.Where(kvp => items.Contains(kvp.Key)).Select(kvp => kvp.Value).ToList();
-    public GameObject HarvestableParticlePrefab
-    {
-        get
-        {
-            if (PoiUtil.HarvestParticlePrefabs.TryGetValue(harvestableParticlePrefab, out var prefab))
-                return prefab;
-            return null;
-        }
-    }
+    public List<ItemData> Items => ItemUtil.TryGetItems(items);
+    public GameObject HarvestableParticlePrefab => PoiUtil.TryGetHarvestableParticlePrefab(harvestableParticlePrefab);
 }
 
 

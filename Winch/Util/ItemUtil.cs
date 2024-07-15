@@ -110,6 +110,42 @@ internal static class ItemUtil
         }
     }
 
+    public static List<ItemData> TryGetItems(List<string> ids)
+    {
+        List<ItemData> items = new List<ItemData>();
+
+        if (ids == null)
+            return items;
+
+        foreach (var item in ids)
+        {
+            if (!string.IsNullOrWhiteSpace(item) && AllItemDataDict.TryGetValue(item, out var itemData))
+            {
+                items.Add(itemData);
+            }
+        }
+
+        return items;
+    }
+
+    public static List<HarvestableItemData> TryGetHarvestables(List<string> ids)
+    {
+        List<HarvestableItemData> harvestables = new List<HarvestableItemData>();
+
+        if (ids == null)
+            return harvestables;
+
+        foreach (var harvestable in ids)
+        {
+            if (!string.IsNullOrWhiteSpace(harvestable) && HarvestableItemDataDict.TryGetValue(harvestable, out var itemData))
+            {
+                harvestables.Add(itemData);
+            }
+        }
+
+        return harvestables;
+    }
+
     public static void PopulateItemData()
     {
         foreach (var item in GameManager.Instance.ItemManager.allItems)
