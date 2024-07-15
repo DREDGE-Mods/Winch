@@ -22,6 +22,8 @@
         "XXX",
         "XXX"
     ],
+    "day": true,
+    "night": true,
     "minSizeCentimeters": 5,
     "maxSizeCentimeters": 10,
     "harvestMinigameType": "FISHING_RADIAL",

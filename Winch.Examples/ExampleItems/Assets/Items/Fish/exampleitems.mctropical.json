@@ -21,6 +21,8 @@
   "dimensions": [
     "X"
   ],
+  "day": true,
+  "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
   "harvestMinigameType": "DREDGE_RADIAL",
