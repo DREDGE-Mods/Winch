@@ -11,6 +11,8 @@ namespace Winch.Core
 {
 	public class WinchCore
     {
+        internal static Harmony Harmony;
+
         public static Logger Log = new Logger();
 
 		public static Dictionary<string, object> WinchModConfig = new();
@@ -41,12 +43,12 @@ namespace Winch.Core
 
             ModAssemblyLoader.LoadModAssemblies();
 
+            Harmony = new Harmony("com.dredge.winch");
+            Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
             try
             {
-                var harmony = new Harmony("com.dredge.winch");
-                Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
-                harmony.PatchAll();
-                EnumUtil.Initialize(harmony);
+                Harmony.PatchAll();
+                EnumUtil.Initialize(Harmony);
             }
             catch (Exception ex)
             {

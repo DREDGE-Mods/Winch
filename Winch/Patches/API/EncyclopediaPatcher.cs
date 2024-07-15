@@ -9,7 +9,7 @@ using Winch.Util;
 namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(Encyclopedia))]
-    class EncyclopediaPatcher
+    internal static class EncyclopediaPatcher
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(Encyclopedia.OnZoneButtonClicked))]

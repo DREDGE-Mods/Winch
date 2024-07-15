@@ -56,16 +56,8 @@ internal static class ItemUtil
     }
 
     /// <summary>
-    /// Cannot patch <see cref="Encyclopedia.Awake"/> or else game explodes for whatever reason (even just touching the method slightly makes the loading screen go black and spam the error below)
+    /// Encyclopedia doesn't run <see cref="Encyclopedia.Awake"/> until it is opened so we just search for it with Resources and add the fish
     /// </summary>
-    /*
-    System.MissingMethodException:  assembly:<unknown assembly> type:<unknown type> member:(null)
-     at (wrapper managed-to-native) UnityEngine.Component.get_gameObject()
-     at UnityEngine.UI.Graphic.CacheCanvas()[0x00006]
-     at UnityEngine.UI.Graphic.get_canvas() [0x0000e]
-     at Coffee.UIExtensions.UIParticleUpdater.Refresh(Coffee.UIExtensions.UIParticle particle) [0x00015]
-     at Coffee.UIExtensions.UIParticleUpdater.Refresh() [0x00027]
-    */
     public static void Encyclopedia()
     {
         WinchCore.Log.Info("[Encyclopedia] AddModdedFishItemData");
