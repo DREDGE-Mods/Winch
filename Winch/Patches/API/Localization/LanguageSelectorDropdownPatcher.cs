@@ -12,7 +12,7 @@ namespace Winch.Patches.API.Localization
         public static void Awake(LanguageSelectorDropdown __instance)
         {
             // Size it to 8 so it doesn't go off screen.
-            __instance.mainBoxRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 8 * __instance.heightPerLocale);
+            __instance.mainBoxRect.SetHeight(8 * __instance.heightPerLocale);
 
             // Enable scrollbar
             var scrollRect = __instance.mainBoxRect.GetComponent<ScrollRect>();
