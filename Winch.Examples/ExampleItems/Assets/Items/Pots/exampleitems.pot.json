@@ -13,7 +13,7 @@
 	"dimensions": [
 		"X"
 	],
-	"harvestableTypes": [ "COASTAL", "SHALLOW", "OCEANIC", "ABYSSAL", "HADAL", "VOLCANIC", "MANGROVE", "DREDGE", "CRAB", "ICE" ],
+	"harvestableTypes": [ "CRAB" ],
 	"catchRate": 1,
 	"maxDurabilityDays": 7,
 	"timeBetweenCatchRolls": 0.01,
