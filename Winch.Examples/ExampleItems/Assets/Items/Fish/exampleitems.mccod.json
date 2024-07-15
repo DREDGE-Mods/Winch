@@ -27,7 +27,7 @@
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
-  "harvestableType": "SHALLOW",
+  "harvestableType": "COASTAL",
   "harvestDifficulty": "VERY_EASY",
   "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"]
 }

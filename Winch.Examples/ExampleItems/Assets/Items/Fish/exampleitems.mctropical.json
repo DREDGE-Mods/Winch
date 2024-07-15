@@ -27,7 +27,7 @@
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
-  "harvestableType": "SHALLOW",
+  "harvestableType": "OCEANIC",
   "harvestDifficulty": "VERY_EASY",
   "isAberration": true,
   "nonAberrationParent": "exampleitems.mccod"
