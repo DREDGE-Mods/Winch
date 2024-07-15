@@ -14,6 +14,9 @@ namespace Winch.Util
 
         public static Texture2D? GetTexture(string key)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return null;
+
             if (TextureMap.TryGetValue(key, out Texture2D texture))
                 return texture;
             else
@@ -22,6 +25,9 @@ namespace Winch.Util
 
         public static Sprite GetSprite(string key)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return null;
+
             if (SpriteMap.TryGetValue(key, out Sprite sprite))
                 return sprite;
             else

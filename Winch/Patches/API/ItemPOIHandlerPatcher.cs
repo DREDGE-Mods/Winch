@@ -27,17 +27,27 @@ namespace Winch.Patches.API
         {
             Debug.Log("[ItemPOIHandler] OnPressComplete()");
 
-            var item = __instance.itemPOI.Harvestable.GetFirstItem();
+            var itemPOI = __instance.itemPOI;
+            var harvestable = itemPOI.Harvestable;
+            var item = harvestable.GetFirstItem();
+            if (item == null)
+            {
+                WinchCore.Log.Error($"[ItemPOIHandler] {harvestable.GetId()} does not have any item you can pick up.");
+                GameManager.Instance.Input.RemoveActionListener(new DredgePlayerActionPress[] { __instance.collectItemAction }, ActionLayer.BASE);
+                return false;
+            }
 
             var itemInstance = GameManager.Instance.ItemManager.AddItemById(item.id, GameManager.Instance.SaveData.Inventory, true);
-            var deduct = true;
 
+            if (itemInstance == null)
+                return false;
+
+            var deduct = true;
             if (itemInstance is SpatialItemInstance spatialItemInstance)
             {
                 if (spatialItemInstance.seen)
                 {
                     GameEvents.Instance.TriggerItemAddedEvent(spatialItemInstance, true);
-
                     if (spatialItemInstance is FishItemInstance fishItemInstance && fishItemInstance.GetItemData<FishItemData>().IsAberration)
                     {
                         SaveData saveData = GameManager.Instance.SaveData;
@@ -54,7 +64,7 @@ namespace Winch.Patches.API
             else
                 GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.quick-move-failed");
 
-            __instance.itemPOI.OnHarvested(deduct);
+            itemPOI.OnHarvested(deduct);
 
             if (deduct)
                 GameManager.Instance.Input.RemoveActionListener(new DredgePlayerActionPress[] { __instance.collectItemAction }, ActionLayer.BASE);
