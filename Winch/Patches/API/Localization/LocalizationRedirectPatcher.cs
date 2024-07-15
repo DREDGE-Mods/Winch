@@ -4,7 +4,7 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using Winch.Util;
 
-namespace Winch.Patches.API
+namespace Winch.Patches.API.Localization
 {
     [HarmonyPatch(typeof(LocalizedStringDatabase))]
     [HarmonyPatch("ProcessUntranslatedText")]
