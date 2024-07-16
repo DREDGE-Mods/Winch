@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using Winch.Util;
+using Winch.Serialization.POI;
+using Winch.Serialization.POI.Harvest;
+using Winch.Serialization.POI.Item;
+using Winch.Serialization.Item;
 
 namespace Winch.Core
 {
@@ -11,6 +15,10 @@ namespace Winch.Core
         internal static void LoadAssets()
         {
             WinchCore.Log.Debug("Loading assets...");
+
+            string winchAssetFolderPath = Path.Combine("Assets");
+            if (Directory.Exists(winchAssetFolderPath))
+                LoadAssetFolder(winchAssetFolderPath);
 
             string[] modDirs = Directory.GetDirectories("Mods");
             foreach (string modDir in modDirs)
@@ -26,103 +34,101 @@ namespace Winch.Core
         {
             string localizationFolderPath = Path.Combine(path, "Localization");
             string textureFolderPath = Path.Combine(path, "Textures");
+            string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
+            if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
         }
 
+        private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
+            {
+                { typeof(CustomHarvestPOI), "Harvest"},
+                { typeof(CustomItemPOI), "Item"},
+                //{ typeof(BaitHarvestPOI), "Bait"},
+                //{ typeof(PlacedHarvestPOI), "Placed"},
+                //{ typeof(AutoMovePOI), "Conversation/AutoMove"},
+                //{ typeof(ExplosivePOI), "Conversation/Explosive"},
+                //{ typeof(InspectPOI), "Conversation/Inspect"}
+            };
+
         private static void LoadPoiFiles(string poiFolderPath)
         {
-            WinchCore.Log.Debug("LoadingPOI files...");
-            string conversationPoiPath = Path.Combine(poiFolderPath, "Conversation");
-            string harvestPoiPath = Path.Combine(poiFolderPath, "Harvest");
+            foreach (KeyValuePair<Type, string> poi in _poiPathData)
+            {
+                var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadPoiFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
+                var genericMethod = baseMethod.MakeGenericMethod(poi.Key);
+                var itemPath = Path.Combine(poiFolderPath, poi.Value);
+                if (Directory.Exists(itemPath))
+                {
+                    genericMethod.Invoke(null, new object[] { itemPath });
+                }
 
-            WinchCore.Log.Debug("LoadingPOI files... Conversation");
-            if (Directory.Exists(poiFolderPath)) LoadConversationPoiFiles(conversationPoiPath);
-            WinchCore.Log.Debug("LoadingPOI files.. Harvest");
-            if (Directory.Exists(harvestPoiPath)) LoadHarvestPoiFiles(harvestPoiPath);
+            }
         }
+
+        private static Dictionary<Type, string> _itemDataPathData = new Dictionary<Type, string>()
+            {
+                { typeof(NonSpatialItemData), "NonSpatial"},
+                { typeof(SpatialItemData), "General"},
+                { typeof(HarvestableItemData), "Harvestable"},
+                { typeof(AberrationableFishItemData), "Fish"},
+                { typeof(EngineItemData), "Engines"},
+                { typeof(LightItemData), "Lights"},
+                { typeof(RodItemData), "Rods"},
+                { typeof(RelicItemData), "Relics"},
+                { typeof(ResearchableItemData), "Books"},
+                { typeof(MessageItemData), "Messages"},
+                { typeof(GridConfigDeployableItemData), "Deployable"},
+                { typeof(CrabPotItemData), "Pots"},
+                { typeof(TrawlNetItemData), "Nets"},
+                { typeof(DredgeItemData), "Dredge"},
+                { typeof(DamageItemData), "Damage"},
+                { typeof(DurableItemData), "Durable"},
+            };
 
         private static void LoadItemFiles(string itemFolderPath)
         {
-            Dictionary<Type, string> _pathData = new Dictionary<Type, string>()
-            {
-                { typeof(NonSpatialItemData), Path.Combine(itemFolderPath, "NonSpatial")},
-                { typeof(SpatialItemData), Path.Combine(itemFolderPath, "General")},
-                { typeof(FishItemData), Path.Combine(itemFolderPath, "Fish")},
-                { typeof(EngineItemData), Path.Combine(itemFolderPath, "Engines")},
-                { typeof(LightItemData), Path.Combine(itemFolderPath, "Lights")},
-                { typeof(RodItemData), Path.Combine(itemFolderPath, "Rods")},
-                { typeof(RelicItemData), Path.Combine(itemFolderPath, "Relics")},
-                { typeof(ResearchableItemData), Path.Combine(itemFolderPath, "Books")},
-                { typeof(MessageItemData), Path.Combine(itemFolderPath, "Messages")},
-                { typeof(DeployableItemData), Path.Combine(itemFolderPath, "Pots")},
-                { typeof(DredgeItemData), Path.Combine(itemFolderPath, "Dredge")},
-                { typeof(DamageItemData), Path.Combine(itemFolderPath, "Damage")},
-            };
-            foreach (KeyValuePair<Type, string> item in _pathData)
+            foreach (KeyValuePair<Type, string> item in _itemDataPathData)
             {
                 var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadItemFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
                 var genericMethod = baseMethod.MakeGenericMethod(item.Key);
-                if (Directory.Exists(item.Value))
+                var itemPath = Path.Combine(itemFolderPath, item.Value);
+                if (Directory.Exists(itemPath))
                 {
-                    genericMethod.Invoke(null, new object[] { item.Value });
+                    genericMethod.Invoke(null, new object[] { itemPath });
                 }
-                
             }
         }
 
-        private static void LoadConversationPoiFiles(string conversationPoiFolderPath)
+        private static void LoadGridConfigFiles(string gridConfigFolderPath)
         {
-            string autoMovePoiPath = Path.Combine(conversationPoiFolderPath, "AutoMove");
-            string explosivePoiPath = Path.Combine(conversationPoiFolderPath, "Explosive");
-            string inspectPoiPath = Path.Combine(conversationPoiFolderPath, "Inspect");
-            
-            if (Directory.Exists(autoMovePoiPath)) LoadPoiFilesOfType<AutoMovePOI>(autoMovePoiPath);
-            if (Directory.Exists(explosivePoiPath)) LoadPoiFilesOfType<ExplosivePOI>(explosivePoiPath);
-            if (Directory.Exists(inspectPoiPath)) LoadPoiFilesOfType<InspectPOI>(inspectPoiPath);
-        }
-
-        private static void LoadHarvestPoiFiles(string harvestPoiFolderPath)
-        {
-            string baitHarvestPoiPath = Path.Combine(harvestPoiFolderPath, "Bait");
-            string placedHarvestPoiPath = Path.Combine(harvestPoiFolderPath, "Placed");
-            WinchCore.Log.Debug("LoadingPOI Folder.. Harvest");
-            if (Directory.Exists(harvestPoiFolderPath)) LoadCustomHarvestPoisFromMetadata(harvestPoiFolderPath);
-            WinchCore.Log.Debug("LoadingPOI Folder.. BaitHarvest");
-            if (Directory.Exists(baitHarvestPoiPath)) LoadPoiFilesOfType<BaitHarvestPOI>(baitHarvestPoiPath);
-            WinchCore.Log.Debug("LoadingPOI Folder.. PlacedHarvest");
-            if (Directory.Exists(placedHarvestPoiPath)) LoadPoiFilesOfType<PlacedHarvestPOI>(placedHarvestPoiPath);
-        }
-
-        private static void LoadCustomHarvestPoisFromMetadata(string poiFolderPath)
-        {
-            string[] poiFiles = Directory.GetFiles(poiFolderPath);
-            foreach(string file in poiFiles)
+            string[] gridConfigFiles = Directory.GetFiles(gridConfigFolderPath);
+            foreach(string file in gridConfigFiles)
             {
                 try
                 {
-                    PoiUtil.AddCustomHarvestPoiFromMetadata(file);
+                    GridConfigUtil.AddGridConfigFromMeta(file);
                 }
                 catch(Exception ex)
                 {
-                    WinchCore.Log.Error($"Failed to load POI from {file}: {ex}");
+                    WinchCore.Log.Error($"Failed to load Grid Configuration from {file}: {ex}");
                 }
             }
         }
 
-        private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : POI
+        private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : CustomPOI
         {
             string[] poiFiles = Directory.GetFiles(poiFolderPath);
             foreach(string file in poiFiles)
             {
                 try
                 {
-                    // PoiUtil.AddPoiFromMeta<T>(file);
+                    PoiUtil.AddCustomPoiFromMeta<T>(file);
                 }
                 catch(Exception ex)
                 {

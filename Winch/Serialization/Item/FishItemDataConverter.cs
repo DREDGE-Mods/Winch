@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization.Item;
 
@@ -8,11 +10,13 @@ public class FishItemDataConverter : HarvestableItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("FishIcon"), null) },
+        { "harvestMinigameType", new( HarvestMinigameType.FISHING_RADIAL, null) },
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.FISH, null) },
         { "minSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
         { "maxSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
-        { "aberrations", new( new List<FishItemData>(), null) },
+        { "aberrations", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "isAberration", new( false, o => bool.Parse(o.ToString())) },
         { "nonAberrationParent", new( null, null) },
         { "minWorldPhaseRequired", new( 0, o => int.Parse(o.ToString())) },

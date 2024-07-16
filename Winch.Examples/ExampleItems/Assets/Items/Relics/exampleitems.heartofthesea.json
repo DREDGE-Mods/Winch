@@ -1,0 +1,21 @@
+﻿{
+	"itemNameKey": "exampleitems.heartofthesea.name",
+	"itemDescriptionKey": "exampleitems.heartofthesea.desc",
+	"sprite": "exampleitems.heartofthesea",
+	"itemColor": {
+		"r": 135,
+		"g": 29,
+		"b": 88,
+		"a": 255
+	},
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestMinigameType": "DREDGE_RADIAL",
+	"perSpotMin": 3,
+	"perSpotMax": 8,
+	"harvestableType": "SHALLOW",
+	"harvestDifficulty": "VERY_EASY"
+}
+

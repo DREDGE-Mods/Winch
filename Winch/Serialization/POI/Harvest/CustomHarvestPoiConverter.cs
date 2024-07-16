@@ -5,34 +5,25 @@ using UnityEngine;
 
 namespace Winch.Serialization.POI.Harvest;
 
-public class CustomHarvestPoiConverter : DredgeTypeConverter<CustomHarvestPoi>
+public class CustomHarvestPOIConverter : CustomPOIConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new( null, null) },
-        { "location", new( new Vector3(0,0,0), o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "harvestableParticlePrefab", new( null, null) },
-        { "items", new( null, o=>JarrayToList((JArray)o)) },
-        { "nightItems", new( null, o=>JarrayToList((JArray)o)) },
+        { "items", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
+        { "nightItems", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "startStock", new( 3, o=> int.Parse(o.ToString())) },
         { "maxStock", new( 5 , o=> int.Parse(o.ToString())) },
-        { "doesRestock", new( true, null) },
-        { "useTimeSpecificStock", new( false, null) },
-        { "isCurrentlySpecial", new( false, null) },
+        { "doesRestock", new( true, o => bool.Parse(o.ToString())) },
+        { "usesTimeSpecificStock", new( true, o => bool.Parse(o.ToString())) },
+        { "overrideDefaultDaySpecialChance", new( false, o => bool.Parse(o.ToString())) },
+        { "overriddenDaytimeSpecialChance", new( 0, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
+        { "overrideDefaultNightSpecialChance", new( false, o => bool.Parse(o.ToString())) },
+        { "overriddenNighttimeSpecialChance", new( 0, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
     };
-    
-    public CustomHarvestPoiConverter()
+
+    public CustomHarvestPOIConverter()
     {
         AddDefinitions(_definitions);
-    }
-    
-    public static List<string> JarrayToList(JArray jArray)
-    {
-        var list = new List<string>();
-        foreach (var item in jArray)
-        {
-            list.Add(item.ToString());
-        }
-        return list;
     }
 }

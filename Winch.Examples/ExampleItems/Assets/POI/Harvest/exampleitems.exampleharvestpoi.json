@@ -1,15 +1,17 @@
 {
-  "location": {
-    "x": 382.0,
-    "y": 0.0,
-    "z": -354.0
-  },
-  "harvestableParticlePrefab" : "SquidParticles",
-  "items": ["catfish", "cod"],
-  "nightItems" : ["grey-mullet"],
-  "startStock" : 3,
-  "maxStock" : 5,
-  "doesRestock": true,
-  "useTimeSpecificStock": true,
-  "isCurrentlySpecial": false
+    "location": {
+        "x": 382.0,
+        "y": 0.0,
+        "z": -354.0
+    },
+    "harvestableParticlePrefab": "SquidParticles",
+    "items": [ "catfish", "exampleitems.mccod", "exampleitems.diamond" ],
+    "startStock": 30,
+    "maxStock": 50,
+    "doesRestock": true,
+    "usesTimeSpecificStock": false,
+    "overrideDefaultDaySpecialChance": true,
+    "overriddenDaytimeSpecialChance": 0.5,
+    "overrideDefaultNightSpecialChance": true,
+    "overriddenNighttimeSpecialChance": 0.5
 }

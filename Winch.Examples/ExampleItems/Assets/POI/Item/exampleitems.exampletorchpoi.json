@@ -1,0 +1,9 @@
+{
+  "location": {
+    "x": 395.0,
+    "y": 0.0,
+    "z": -370.0
+  },
+  "harvestableParticlePrefab" : "WoodParticles",
+  "items": ["exampleitems.torch"]
+}

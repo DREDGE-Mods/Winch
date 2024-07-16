@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -23,6 +23,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\WinchCommon\WinchCommon.csproj">
+			<Private>False</Private>
+			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
+		</ProjectReference>
 		<ProjectReference Include="..\..\Winch\Winch.csproj">
 			<Private>False</Private>
 			<CopyLocalSatelliteAssemblies>False</CopyLocalSatelliteAssemblies>
@@ -30,29 +34,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DredgeGameLibs" Version="1.2.0" />
+		<PackageReference Include="DredgeGameLibs" Version="1.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="Assets\Items\General\exampleitems.diamond.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Localization\en.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.diamond.png">
+		<None Include="ExampleItems.csproj.user" />
+		<None Include="Assets\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="mod_meta.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Items\Fish\exampleitems.mccod.json">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.mccod.png">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-		<None Update="Assets\Textures\exampleitems.mcicon.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

@@ -1,0 +1,38 @@
+﻿{
+  "itemNameKey": "exampleitems.mcsalmon.name",
+  "itemDescriptionKey": "exampleitems.mcsalmon.desc",
+  "itemType": "GENERAL",
+  "itemSubtype": "FISH",
+  "sprite": "exampleitems.mcsalmon",
+  "itemColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "tooltipTextColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "squishFactor": 1,
+  "value": 5,
+  "dimensions": [
+    "X"
+  ],
+  "zonesFoundIn": "OPEN_OCEAN",
+  "day": true,
+  "night": true,
+  "minSizeCentimeters": 5,
+  "maxSizeCentimeters": 10,
+  "harvestMinigameType": "DREDGE_RADIAL",
+  "perSpotMin": 3,
+  "perSpotMax": 8,
+  "harvestPOICategory": "FISH_SMALL",
+  "harvestableType": "SHALLOW",
+  "harvestDifficulty": "VERY_EASY",
+  "isAberration": true,
+  "nonAberrationParent": "exampleitems.mccod"
+}
+

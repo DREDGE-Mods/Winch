@@ -1,0 +1,38 @@
+﻿{
+  "itemNameKey": "exampleitems.mctropical.name",
+  "itemDescriptionKey": "exampleitems.mctropical.desc",
+  "itemType": "GENERAL",
+  "itemSubtype": "FISH",
+  "sprite": "exampleitems.mctropical",
+  "itemColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "tooltipTextColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "squishFactor": 1,
+  "value": 5,
+  "dimensions": [
+    "X"
+  ],
+  "zonesFoundIn": "TWISTED_STRAND",
+  "day": true,
+  "night": true,
+  "minSizeCentimeters": 5,
+  "maxSizeCentimeters": 10,
+  "harvestMinigameType": "DREDGE_RADIAL",
+  "perSpotMin": 3,
+  "perSpotMax": 8,
+  "harvestPOICategory": "FISH_SMALL",
+  "harvestableType": "OCEANIC",
+  "harvestDifficulty": "VERY_EASY",
+  "isAberration": true,
+  "nonAberrationParent": "exampleitems.mccod"
+}
+

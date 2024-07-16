@@ -1,28 +1,37 @@
 ﻿{
-  "Name": "Raw Cod",
   "itemNameKey": "exampleitems.mccod.name",
   "itemDescriptionKey": "exampleitems.mccod.desc",
   "itemType": "GENERAL",
   "itemSubtype": "FISH",
   "sprite": "exampleitems.mccod",
   "itemColor": {
-    "r": 47,
-    "g": 64,
-    "b": 63,
-    "a": 8
+    "r": 74,
+    "g": 237,
+    "b": 217,
+    "a": 10
+  },
+  "tooltipTextColor": {
+    "r": 74,
+    "g": 237,
+    "b": 217,
+    "a": 255
   },
   "squishFactor": 1,
   "value": 5,
   "dimensions": [
     "X"
   ],
+  "zonesFoundIn": "OPEN_OCEAN",
+  "day": true,
+  "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
   "harvestMinigameType": "DREDGE_RADIAL",
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
-  "harvestableType": "SHALLOW",
-  "harvestDifficulty": "VERY_EASY", 
+  "harvestableType": "COASTAL",
+  "harvestDifficulty": "VERY_EASY",
+  "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"]
 }
 

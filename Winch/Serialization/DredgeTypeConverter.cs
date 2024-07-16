@@ -28,16 +28,19 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
     private void ProcessDictionaryEntries(object obj, Dictionary<string, object> data)
     {
         Type itemType = obj.GetType();
-        foreach (var field in itemType.GetRuntimeFields())
+        foreach (var field in itemType.GetRuntimeFieldsIncludingBase())
         {
             try
             {
                 if (data.TryGetValue(field.Name, out var value))
                 {
-                    field.SetValue(obj,
-                        FieldDefinitions[field.Name].Parser != null
-                            ? FieldDefinitions[field.Name].Parser?.Invoke(value)
-                            : value);
+                    if (FieldDefinitions.TryGetValue(field.Name, out var definition))
+                    {
+                        field.SetValue(obj,
+                            definition.Parser != null
+                                ? definition.Parser.Invoke(value)
+                                : value);
+                    }
                 }
                 else
                 {
@@ -64,8 +67,9 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
         Type objectType = obj.GetType();
         foreach (var rerouteKeyValPair in Reroutes)
         {
-            var targetField = objectType.GetRuntimeFields().FirstOrDefault(field => field.Name == rerouteKeyValPair.Key);
-            var sourceField = objectType.GetRuntimeFields().FirstOrDefault(field => field.Name == rerouteKeyValPair.Value);
+            var fields = objectType.GetRuntimeFieldsIncludingBase();
+            var targetField = fields.FirstOrDefault(field => field.Name == rerouteKeyValPair.Key);
+            var sourceField = fields.FirstOrDefault(field => field.Name == rerouteKeyValPair.Value);
             if (targetField != null && sourceField != null)
             {
                 if (targetField.GetValue(obj) == null)

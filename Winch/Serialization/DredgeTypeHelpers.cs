@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Core;
+using Winch.Serialization.GridConfig;
+using Winch.Util;
 
 namespace Winch.Serialization;
 
@@ -10,7 +15,67 @@ public static class DredgeTypeHelpers
 {
     public static TEnum GetEnumValue<TEnum>(object value) where TEnum : Enum
     {
-        return (TEnum)Enum.Parse(typeof(TEnum), value.ToString());
+        if (EnumUtil.TryParse<TEnum>(value.ToString(), true, out TEnum enumValue))
+            return enumValue;
+        else
+            throw new InvalidOperationException($"{value} is not a valid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
+    }
+
+    public static TEnum ParseFlagsEnum<TEnum>(object value) where TEnum : Enum
+    {
+        if (value is JArray values)
+        {
+            List<TEnum> types = new();
+            foreach (object type in values)
+            {
+                types.Add(GetEnumValue<TEnum>(type));
+            };
+            return GetFlagsFromEnumArray(types.ToArray());
+        }
+        else
+            return GetEnumValue<TEnum>(value);
+    }
+
+    public static TEnum GetFlagsFromEnumArray<TEnum>(TEnum[] array) where TEnum : Enum
+    {
+        TEnum merged = default(TEnum);
+        if (array != null)
+        {
+            var or = Operator<TEnum>.Or;
+            foreach (var value in array)
+            {
+                merged = or(merged, value);
+            }
+        }
+        return (TEnum)(object)merged;
+    }
+
+    private static class Operator<T>
+    {
+        public static readonly Func<T, T, T> Or;
+
+        static Operator()
+        {
+            var dn = new DynamicMethod("or", typeof(T),
+                new[] { typeof(T), typeof(T) }, typeof(DredgeTypeHelpers));
+            var il = dn.GetILGenerator();
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Or);
+            il.Emit(OpCodes.Ret);
+            Or = (Func<T, T, T>)dn.CreateDelegate(typeof(Func<T, T, T>));
+        }
+
+    }
+
+    public static List<string> ParseStringList(JArray jArray)
+    {
+        var list = new List<string>();
+        foreach (var item in jArray)
+        {
+            list.Add(item.ToString());
+        }
+        return list;
     }
 
     public static Color GetColorFromJsonObject(object value)
@@ -52,6 +117,26 @@ public static class DredgeTypeHelpers
                 if (pos != ' ')
                     parsed.Add(new Vector2Int(x, y));
             }
+        }
+
+        return parsed;
+    }
+
+    public static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
+    {
+        var config = new UnstructedCellGroupConfiguration();
+        var meta = cellGroupConfiguration.ToObject<Dictionary<string, object>>();
+        GridConfigUtil.PopulateCellGroupConfigFromMetaWithConverter(config, meta);
+        return config;
+    }
+
+    public static List<CellGroupConfiguration> ParseCellGroupConfigurations(JArray cellGroupConfigurations)
+    {
+        var parsed = new List<CellGroupConfiguration>();
+
+        foreach (var cellGroupConfiguration in cellGroupConfigurations)
+        {
+            parsed.Add(ParseCellGroupConfiguration(cellGroupConfiguration));
         }
 
         return parsed;

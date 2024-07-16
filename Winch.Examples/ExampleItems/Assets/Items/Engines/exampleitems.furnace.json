@@ -1,0 +1,17 @@
+﻿{
+    "itemNameKey": "exampleitems.furnace.name",
+    "itemDescriptionKey": "exampleitems.furnace.desc",
+    "sprite": "exampleitems.furnace",
+    "itemColor": {
+        "r": 49,
+        "g": 49,
+        "b": 49,
+        "a": 255
+    },
+    "squishFactor": 1,
+    "value": 5,
+    "dimensions": [
+        "X"
+    ],
+    "speedBonus": 128
+}

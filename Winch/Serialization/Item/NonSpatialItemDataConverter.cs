@@ -6,7 +6,9 @@ public class NonSpatialItemDataConverter : ItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "showInCabin", new(true, o => bool.Parse(o.ToString()))}
+        { "itemType", new(ItemType.NONE, null) },
+        { "itemSubtype", new(ItemSubtype.NONE, null) },
+        { "showInCabin", new(false, o => bool.Parse(o.ToString()))}
     };
 
     public NonSpatialItemDataConverter()

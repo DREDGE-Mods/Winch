@@ -1,0 +1,23 @@
+﻿{
+	"itemNameKey": "exampleitems.pot.name",
+	"itemDescriptionKey": "exampleitems.pot.desc",
+	"sprite": "exampleitems.pot",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"squishFactor": 1,
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [ "CRAB" ],
+	"catchRate": 1,
+	"maxDurabilityDays": 7,
+	"timeBetweenCatchRolls": 0.01,
+	"aberrationBonus": 0.1,
+	"gridConfiguration": "exampleitems.pot"
+}
+

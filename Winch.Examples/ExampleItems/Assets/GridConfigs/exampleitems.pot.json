@@ -1,0 +1,10 @@
+{
+	"columns": 7,
+	"rows": 7,
+	"cellGroupConfigs": [],
+	"mainItemType": "GENERAL",
+	"mainItemSubtype": "FISH",
+	"itemsInThisBelongToPlayer": true,
+	"canAddItemsInQuestMode": false,
+	"hasUnderlay": false
+}

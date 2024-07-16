@@ -4,7 +4,7 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using Winch.Util;
 
-namespace Winch.Patches.API
+namespace Winch.Patches.API.Localization
 {
     [HarmonyPatch(typeof(LocalizedStringDatabase))]
     [HarmonyPatch("ProcessUntranslatedText")]
@@ -15,7 +15,16 @@ namespace Winch.Patches.API
             string localeCode = locale.Identifier.Code;
             string? localized = LocalizationUtil.GetLocalizedString(localeCode, key);
             if (localized == null)
-                return true;
+            {
+                if (localeCode != "en")
+                {
+                    localized = LocalizationUtil.GetLocalizedString("en", key); // Default to english
+                    if (localized == null)
+                        return true;
+                }
+                else
+                    return true;
+            }
 
             __result = localized;
             return false;

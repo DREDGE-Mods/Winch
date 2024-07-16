@@ -47,5 +47,7 @@ namespace Winch.Config
             string confText = JsonConvert.SerializeObject(_config, Formatting.Indented);
             File.WriteAllText(_configPath, confText);
         }
+
+        public override string ToString() => _configPath;
     }
 }

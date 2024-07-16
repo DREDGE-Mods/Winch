@@ -1,0 +1,8 @@
+﻿{
+	"itemNameKey": "exampleitems.book.name",
+	"itemDescriptionKey": "exampleitems.book.desc",
+	"researchBenefitValue": 0.05,
+	"researchBenefitType": "MOVEMENT_SPEED",
+	"daysToResearch": 1,
+	"completedDescriptionKey": "exampleitems.book.completedDesc"
+}

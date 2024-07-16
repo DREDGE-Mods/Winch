@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
+using Winch.Util;
 
 namespace Winch.Serialization.Item;
 
@@ -6,8 +8,11 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "itemTypeIcon", new(TextureUtil.GetSprite("TrinketIcon"), null) },
+        { "damageMode", new(DamageMode.DESTROY, null) },
+        { "itemColor", new(new Color(0.2264f, 0.1563f, 0.125f, 255f), null)},
         { "harvestMinigameType", new( HarvestMinigameType.DREDGE_RADIAL, o => DredgeTypeHelpers.GetEnumValue<HarvestMinigameType>(o)) },
-        { "perSpotMin", new( 1, o => int.Parse(o.ToString())) },
+        { "perSpotMin", new(1, o => int.Parse(o.ToString())) },
         { "perSpotMax", new(1, o => int.Parse(o.ToString())) },
         { "harvestItemWeight", new(1f, o => float.Parse(o.ToString())) },
         { "regenHarvestSpotOnDestroy", new(false, o => bool.Parse(o.ToString())) },
@@ -23,7 +28,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
         { "minDepth", new(DepthEnum.SHALLOW, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
         { "hasMaxDepth", new(false, o => bool.Parse(o.ToString())) },
         { "maxDepth", new(DepthEnum.VERY_DEEP, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
-        { "zonesFoundIn", new(ZoneEnum.ALL, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
+        { "zonesFoundIn", new(ZoneEnum.OPEN_OCEAN, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
     };
     
     public HarvestableItemDataConverter()

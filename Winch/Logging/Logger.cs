@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using Winch.Config;
 using Winch.Core;
+using Winch.Util;
 
 namespace Winch.Logging
 {
@@ -28,7 +29,7 @@ namespace Winch.Logging
             _writeLogsToFile = WinchConfig.GetProperty("WriteLogsToFile", true);
             if (_writeLogsToFile)
 			{
-				_minLogLevel = (LogLevel)Enum.Parse(typeof(LogLevel), WinchConfig.GetProperty("LogLevel", "DEBUG"));
+				_minLogLevel = EnumUtil.Parse<LogLevel>(WinchConfig.GetProperty("LogLevel", "DEBUG"), true, LogLevel.DEBUG);
 				_log = new LogFile();
 				_latestLog = new LogFile("latest.log");
 				CleanupLogs();
@@ -133,7 +134,7 @@ namespace Winch.Logging
                 callingMethod = frames[i].GetMethod().Name;
                 callingClass = frames[i].GetMethod().ReflectedType?.Name;
                 callingAssembly = frames[i].GetMethod().ReflectedType?.Assembly.GetName().Name;
-                if(callingClass != null && !callingClass.Equals("Logger"))
+                if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)))
                     break;
             }
 

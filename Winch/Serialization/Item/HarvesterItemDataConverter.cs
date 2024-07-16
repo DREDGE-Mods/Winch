@@ -8,7 +8,11 @@ public class HarvesterItemDataConverter : SpatialItemDataConverter
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "itemType", new(ItemType.EQUIPMENT, null) },
-        { "harvestableTypes", new(new HarvestableType[]{}, o => ParseHarvestableTypes((JArray)o)) }
+        { "harvestableTypes", new(new HarvestableType[]{}, o => ParseHarvestableTypes((JArray)o)) },
+        { "aberrationBonus", new(0f, o => float.Parse(o.ToString())) },
+        { "showAlertOnDiscardHold", new(true, null) },
+        { "discardHoldTimeOverride", new(true, null) },
+        { "discardHoldTimeSec", new(2, null) }
     };
 
     public HarvesterItemDataConverter()

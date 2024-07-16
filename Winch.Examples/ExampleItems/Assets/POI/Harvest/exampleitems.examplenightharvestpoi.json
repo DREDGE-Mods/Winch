@@ -1,0 +1,18 @@
+{
+	"location": {
+		"x": 386.0,
+		"y": 0.0,
+		"z": -354.0
+	},
+	"harvestableParticlePrefab": "SquidParticles",
+	"items": [],
+	"nightItems": [ "grey-mullet", "exampleitems.musicdisc" ],
+	"startStock": 30,
+	"maxStock": 50,
+	"doesRestock": true,
+	"usesTimeSpecificStock": true,
+	"overrideDefaultDaySpecialChance": true,
+	"overriddenDaytimeSpecialChance": 0.5,
+	"overrideDefaultNightSpecialChance": true,
+	"overriddenNighttimeSpecialChance": 0.5
+}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Patches.API
 {
@@ -11,11 +12,13 @@ namespace Winch.Patches.API
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<GridConfiguration>> handle)
         {
+            GridConfigUtil.AddModdedGridConfigurations(handle.Result);
             DredgeEvent.AddressableEvents.GridConfigsLoaded.Trigger(__instance, handle, true);
         }
 
         public static void Postfix(DataLoader __instance, AsyncOperationHandle<IList<GridConfiguration>> handle)
         {
+            GridConfigUtil.PopulateGridConfigurations();
             DredgeEvent.AddressableEvents.GridConfigsLoaded.Trigger(__instance, handle, false);
         }
     }

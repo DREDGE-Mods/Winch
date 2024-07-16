@@ -29,8 +29,20 @@ public static class UtilHelpers
 
     public static T GetScriptableObjectFromMeta<T>(Dictionary<string, object> meta, string metaPath) where T : ScriptableObject
     {
-        meta["id"] = Path.GetFileNameWithoutExtension(metaPath);
+        string id = Path.GetFileNameWithoutExtension(metaPath);
+        meta["id"] = id;
         T item = ScriptableObject.CreateInstance<T>();
+        if (item == null) return null;
+        item.name = id;
+        UnityEngine.Object.DontDestroyOnLoad(item);
+        return item;
+    }
+
+    public static T GetScriptableObjectWithID<T>(string id) where T : ScriptableObject
+    {
+        T item = ScriptableObject.CreateInstance<T>();
+        if (item == null) return null;
+        item.name = id;
         return item;
     }
 
@@ -40,13 +52,20 @@ public static class UtilHelpers
         var itemType = typeof(T);
         if (converters.TryGetValue(itemType, out var converter))
         {
-            converter.PopulateFields(item, meta);
+            PopulateObjectFromMeta(item, meta, converter);
         }
         else
         {
             WinchCore.Log.Error($"No converter found for type {itemType}");
             return false;
         }
+        return true;
+    }
+
+    public static bool PopulateObjectFromMeta<T>(T item, Dictionary<string, object> meta, IDredgeTypeConverter converter)
+    {
+        if (item == null) throw new ArgumentNullException($"{nameof(item)} is null");
+        converter.PopulateFields(item, meta);
         return true;
     }
 }

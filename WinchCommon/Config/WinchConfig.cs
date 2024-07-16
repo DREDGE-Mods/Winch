@@ -20,16 +20,18 @@ namespace Winch.Config
             }
         }
 
-        public static new T? GetProperty<T>(string key, T defaultValue)
+        public static new T GetProperty<T>(string key, T defaultValue)
         {
-			try
-			{
-				return ((JSONConfig)Instance).GetProperty(key, defaultValue);
-			}
-			catch
-			{
-				return defaultValue;
-			}
+            try
+            {
+                var property = ((JSONConfig)Instance).GetProperty(key, defaultValue);
+                if (property == null) return defaultValue;
+                return property;
+            }
+            catch
+            {
+                return defaultValue;
+            }
         }
 
 		public static new void SetProperty<T>(string key, T value)

@@ -14,12 +14,8 @@ public class PlayerPatch
         try
         {
             PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
-            ItemUtil.PopulateItemData();
-            foreach (var customHarvestPoi in PoiUtil.CustomHarvestPois)
-            {
-                var poiGameObject = PoiUtil.CreateGameObjectFromCustomHarvestPoi(customHarvestPoi);
-                poiGameObject.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
-            }
+            PoiUtil.CreateModdedPois();
+            ItemUtil.Encyclopedia();
         }
         catch (Exception ex)
         {

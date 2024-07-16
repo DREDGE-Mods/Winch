@@ -11,6 +11,8 @@ namespace Winch.Core
 {
 	public class WinchCore
     {
+        internal static Harmony Harmony;
+
         public static Logger Log = new Logger();
 
 		public static Dictionary<string, object> WinchModConfig = new();
@@ -41,19 +43,39 @@ namespace Winch.Core
 
             ModAssemblyLoader.LoadModAssemblies();
 
-            var harmony = new Harmony("com.dredge.winch");
+            Harmony = new Harmony("com.dredge.winch");
             Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
-            harmony.PatchAll();
+            try
+            {
+                Harmony.PatchAll();
+                EnumUtil.Initialize(Harmony);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Failed to apply winch patches: {ex}");
+            }
 
             foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
+                try
+                {
+                    if (modAssembly.LoadedAssembly != null)
+                    {
+                        EnumUtil.RegisterAllEnumHolders(modAssembly.LoadedAssembly);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error($"Failed to register enum holders for {modAssembly.BasePath}: {ex}");
+                }
+
                 try
                 {
                     bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
                     if (modAssembly.LoadedAssembly != null && hasPatches)
                     {
                         Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-                        harmony.PatchAll(modAssembly.LoadedAssembly);
+                        new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
                     }
                 }
                 catch(Exception ex)

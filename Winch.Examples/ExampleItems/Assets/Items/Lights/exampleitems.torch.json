@@ -1,0 +1,18 @@
+﻿{
+    "itemNameKey": "exampleitems.torch.name",
+    "itemDescriptionKey": "exampleitems.torch.desc",
+    "sprite": "exampleitems.torch",
+    "itemColor": {
+        "r": 49,
+        "g": 49,
+        "b": 49,
+        "a": 255
+    },
+    "squishFactor": 1,
+    "value": 5,
+    "dimensions": [
+        "X"
+    ],
+    "lumens": 500,
+    "range": 10
+}

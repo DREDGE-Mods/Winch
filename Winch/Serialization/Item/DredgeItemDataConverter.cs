@@ -7,7 +7,7 @@ public class DredgeItemDataConverter : HarvesterItemDataConverter
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "itemSubtype", new(ItemSubtype.DREDGE, null) },
-        { "harvestableTypes", new(HarvestableType.DREDGE, null) },
+        { "harvestableTypes", new(new HarvestableType[1]{HarvestableType.DREDGE}, null) },
     };
 
     public DredgeItemDataConverter()
