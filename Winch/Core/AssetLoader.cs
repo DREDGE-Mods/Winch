@@ -20,10 +20,9 @@ namespace Winch.Core
             if (Directory.Exists(winchAssetFolderPath))
                 LoadAssetFolder(winchAssetFolderPath);
 
-            string[] modDirs = Directory.GetDirectories("Mods");
-            foreach (string modDir in modDirs)
+            foreach (var modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
-                string assetFolderPath = Path.Combine(modDir, "Assets");
+                string assetFolderPath = Path.Combine(modAssembly.BasePath, "Assets");
                 if (!Directory.Exists(assetFolderPath))
                     continue;
                 LoadAssetFolder(assetFolderPath);
