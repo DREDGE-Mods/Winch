@@ -105,4 +105,16 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
             this.Reroutes.Add(reroute.Key, reroute.Value);
         }
     }
+
+    protected static LocalizedString CreateLocalizedString(string key, string value)
+    {
+        var keyValueTuple = (key, value);
+        if (StringDefinitionCache.TryGetValue(keyValueTuple, out LocalizedString cached))
+        {
+            return cached;
+        }
+        var localizedString = new LocalizedString(key, value);
+        StringDefinitionCache.Add(keyValueTuple, localizedString);
+        return localizedString;
+    }
 }

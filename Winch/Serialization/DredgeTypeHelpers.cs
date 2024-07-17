@@ -122,6 +122,16 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
+    public static HarvestableType[] ParseHarvestableTypes(JArray values)
+    {
+        List<HarvestableType> types = new();
+        foreach (object type in values)
+        {
+            types.Add(DredgeTypeHelpers.GetEnumValue<HarvestableType>(type));
+        };
+        return types.ToArray();
+    }
+
     public static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
     {
         var config = new UnstructedCellGroupConfiguration();
