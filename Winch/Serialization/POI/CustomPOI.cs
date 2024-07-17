@@ -8,6 +8,7 @@ public class CustomPOI : SerializedScriptableObject
 {
     public string id;
     public Vector3 location;
+    public bool canBeGhostWindTarget;
 }
 
 

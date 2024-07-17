@@ -10,7 +10,8 @@ public class CustomPOIConverter : DredgeTypeConverter<CustomPOI>
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new( null, null) },
-        { "location", new( new Vector3(0,0,0), o=> DredgeTypeHelpers.ParseVector3(o)) }
+        { "location", new( new Vector3(0,0,0), o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "canBeGhostWindTarget", new( false, o=> bool.Parse(o.ToString())) }
     };
     
     public CustomPOIConverter()

@@ -149,6 +149,8 @@ internal static class PoiUtil
 
         harvestPoi.harvestParticlePrefab = customHarvestPoi.HarvestableParticlePrefab;
 
+        harvestPoi.canBeGhostWindTarget = customHarvestPoi.canBeGhostWindTarget;
+
         // Default Harvest POI Sphere Collider
         var sphereCollider = customPoi.AddComponent<SphereCollider>();
         sphereCollider.radius = 2;
@@ -189,6 +191,8 @@ internal static class PoiUtil
         itemPoi.Harvestable = itemPoiDataModel;
 
         itemPoi.harvestParticlePrefab = customItemPoi.HarvestableParticlePrefab;
+
+        itemPoi.canBeGhostWindTarget = customItemPoi.canBeGhostWindTarget;
 
         // Default Harvest POI Sphere Collider
         var sphereCollider = customPoi.AddComponent<SphereCollider>();
