@@ -9,6 +9,7 @@ public class DurableItemDataConverter : SpatialItemDataConverter
         { "damageMode", new(DamageMode.DESTROY, null) },
         { "displayDurabilityAsPercentage", new(true, o => bool.Parse(o.ToString())) },
         { "maxDurabilityDays", new(1f, o => float.Parse(o.ToString())) },
+        { "canBeDiscardedByPlayer", new(true, null) },
         { "canBeSoldInBulkAction", new(false, null) },
     };
 
