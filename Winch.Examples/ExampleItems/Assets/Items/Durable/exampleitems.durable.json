@@ -1,0 +1,19 @@
+﻿{
+	"itemNameKey": "exampleitems.durable.name",
+	"itemDescriptionKey": "exampleitems.durable.desc",
+	"sprite": "exampleitems.durable",
+	"itemColor": {
+		"r": 58,
+		"g": 40,
+		"b": 32,
+		"a": 255
+	},
+	"squishFactor": 1,
+	"value": 50,
+	"dimensions": [
+		"X"
+	],
+	"maxDurabilityDays": 1,
+	"displayDurabilityAsPercentage": true
+}
+

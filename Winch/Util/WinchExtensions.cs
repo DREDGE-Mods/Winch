@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
@@ -17,6 +18,11 @@ public static class WinchExtensions
     public static int GetNumberOfCells(this IEnumerable<SpatialItemData> itemDatas) => itemDatas.Aggregate(0, (int acc, SpatialItemData itemData) => acc + itemData.dimensions.Count);
     public static int GetNumberOfCells(this IEnumerable<SpatialItemInstance> instances) => instances.ToItemData().GetNumberOfCells();
     public static bool IsBroken(this SpatialItemInstance instance) => instance.durability <= 0f;
+    public static bool IsDurable(this SpatialItemData itemData) => itemData is DurableItemData && !itemData.IsThawable();
+    public static bool IsDurable(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>().IsDurable();
+    public static bool IsThawable(this SpatialItemData itemData) => (itemData is DurableItemData && itemData.id.StartsWith("ice-block")) || itemData is ThawableItemData;
+    public static bool IsThawable(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>().IsThawable();
+
     public static void AddStock(this ItemPOI itemPoi)
     {
         if (itemPoi.Stock == 0)
@@ -67,6 +73,24 @@ public static class WinchExtensions
                 })
             });
         }
+    }
+
+    public static void ShowNotificationWithItemName(this UIController UI, NotificationType notificationType, string notificationKey, LocalizedString itemNameKey, DredgeColorTypeEnum itemNameColor)
+    {
+        LocalizationSettings.StringDatabase.GetLocalizedStringAsync(itemNameKey.TableReference, itemNameKey.TableEntryReference, null, FallbackBehavior.UseProjectSettings, Array.Empty<object>()).Completed += delegate (AsyncOperationHandle<string> op)
+        {
+            if (op.Status == AsyncOperationStatus.Succeeded)
+            {
+                GameManager.Instance.UI.ShowNotification(notificationType, notificationKey, new object[] { string.Concat(new string[]
+                {
+                    "<color=#",
+                    GameManager.Instance.LanguageManager.GetColorCode(itemNameColor),
+                    ">",
+                    op.Result,
+                    "</color>"
+                }) });
+            }
+        };
     }
     #endregion
 

@@ -35,6 +35,7 @@ internal static class ItemUtil
         { typeof(LightItemData), new LightItemDataConverter() },
         { typeof(DamageItemData), new DamageItemDataConverter() },
         { typeof(DurableItemData), new DurableItemDataConverter() },
+        { typeof(ThawableItemData), new ThawableItemDataConverter() },
     };
 
     public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData

@@ -22,6 +22,18 @@ namespace Winch.Patches
         {
             harmony.Patch(AccessTools.Method(typeof(LanguageSelectorDropdown), nameof(LanguageSelectorDropdown.Awake)),
                 postfix: new HarmonyMethod(AccessTools.Method(typeof(LanguageSelectorDropdownPatcher), nameof(LanguageSelectorDropdownPatcher.Awake))));
+
+            harmony.Patch(AccessTools.Method(typeof(FreshnessCoroutine), nameof(FreshnessCoroutine.AdjustFreshnessForGrid)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.FreshnessCoroutine_AdjustFreshnessForGrid_Prefix))));
+
+            harmony.Patch(AccessTools.Method(typeof(ItemManager), nameof(ItemManager.GetItemValue)),
+                transpiler: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.ItemManager_GetItemValue_Transpiler))));
+
+            harmony.Patch(AccessTools.Method(typeof(GridManager), nameof(GridManager.AddDamageToInventory), new System.Type[] { typeof(int), typeof(int), typeof(int) }),
+                transpiler: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.GridManager_AddDamageToInventory_Transpiler))));
+
+            harmony.Patch(AccessTools.Method(typeof(TooltipSectionDurabilityDetails), nameof(TooltipSectionDurabilityDetails.RefreshUI)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.TooltipSectionDurabilityDetails_RefreshUI_Prefix))));
         }
     }
 }
