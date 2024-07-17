@@ -41,6 +41,7 @@ namespace Winch.Core
             string abilityFolderpath = Path.Combine(path, "Abilities");
             string worldEventFolderpath = Path.Combine(path, "WorldEvents");
             string dialogueFolderpath = Path.Combine(path, "Dialogues");
+            string characterFolderpath = Path.Combine(path, "Characters");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
@@ -51,6 +52,7 @@ namespace Winch.Core
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
             if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
             if(Directory.Exists(dialogueFolderpath)) LoadDialogueFiles(dialogueFolderpath);
+            if(Directory.Exists(characterFolderpath)) LoadCharacterFiles(characterFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -279,6 +281,23 @@ namespace Winch.Core
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load localized lines at path {dialogueFolderPath}: {ex}");
+            }
+        }
+
+        private static void LoadCharacterFiles(string charactersFolderPath)
+        {
+            string[] charactersFiles = Directory.GetFiles(charactersFolderPath);
+            foreach (string file in charactersFiles)
+            {
+                try
+                {
+                    WinchCore.Log.Debug("Loading character");
+                    CharacterUtil.AddCharacterFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load character from {file}: {ex}");
+                }
             }
         }
     }

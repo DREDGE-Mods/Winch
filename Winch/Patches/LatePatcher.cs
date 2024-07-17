@@ -38,6 +38,9 @@ namespace Winch.Patches
             harmony.Patch(AccessTools.Method(typeof(AbilityRadial), nameof(AbilityRadial.Awake)),
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(AbilityRadialPatcher), nameof(AbilityRadialPatcher.Prefix))),
                 transpiler: new HarmonyMethod(AccessTools.Method(typeof(AbilityRadialPatcher), nameof(AbilityRadialPatcher.Transpiler))));
+
+            harmony.Patch(AccessTools.Method(typeof(DredgeDialogueView), nameof(DredgeDialogueView.Awake)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(SpeakerDataLoadPatcher), nameof(SpeakerDataLoadPatcher.Postfix))));
         }
     }
 }

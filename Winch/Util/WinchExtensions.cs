@@ -906,9 +906,24 @@ public static class WinchExtensions
         rt.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
     }
 
+    public static void SetPosX(this RectTransform rt, float posX)
+    {
+        rt.localPosition = new Vector3(posX, rt.localPosition.y, rt.localPosition.z);
+    }
+
     public static void SetPosY(this RectTransform rt, float posY)
     {
         rt.localPosition = new Vector3(rt.localPosition.x, posY, rt.localPosition.z);
+    }
+
+    public static void SetAnchoredPosX(this RectTransform rt, float posX)
+    {
+        rt.anchoredPosition = new Vector3(posX, rt.anchoredPosition.y);
+    }
+
+    public static void SetAnchoredPosY(this RectTransform rt, float posY)
+    {
+        rt.anchoredPosition = new Vector3(rt.anchoredPosition.x, posY);
     }
     #endregion
     #endregion

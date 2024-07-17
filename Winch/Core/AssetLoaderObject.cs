@@ -52,6 +52,7 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
             PoiUtil.ClearHarvestablesAndHarvestParticlePrefabs();
+            CharacterUtil.ClearSpeakerData();
         }
     }
 }
