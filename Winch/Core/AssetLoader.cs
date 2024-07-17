@@ -40,6 +40,7 @@ namespace Winch.Core
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
             string abilityFolderpath = Path.Combine(path, "Abilities");
             string worldEventFolderpath = Path.Combine(path, "WorldEvents");
+            string dialogueFolderpath = Path.Combine(path, "Dialogues");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
@@ -49,6 +50,7 @@ namespace Winch.Core
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
             if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
+            if(Directory.Exists(dialogueFolderpath)) LoadDialogueFiles(dialogueFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -256,6 +258,27 @@ namespace Winch.Core
                         WinchCore.Log.Error($"Failed to load static world event data from {file}: {ex}");
                     }
                 }
+            }
+        }
+
+        private static void LoadDialogueFiles(string dialogueFolderPath)
+        {
+            try
+            {
+                DialogueUtil.LoadDialogueFiles(dialogueFolderPath);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load dialogue files at path {dialogueFolderPath}: {ex}");
+            }
+
+            try
+            {
+                DialogueUtil.LoadLocalizedLines(dialogueFolderPath);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load localized lines at path {dialogueFolderPath}: {ex}");
             }
         }
     }

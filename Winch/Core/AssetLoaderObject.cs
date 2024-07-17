@@ -45,6 +45,7 @@ namespace Winch.Core
         private void OnGameStarted()
         {
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameStarted()");
+            DialogueUtil.Inject();
         }
 
         private void OnGameEnded()
