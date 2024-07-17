@@ -8,10 +8,15 @@ using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
+using Winch.Serialization.Item;
 
 public static class WinchExtensions
 {
     #region DREDGE
+    public static IEnumerable<SpatialItemData> ToItemData(this IEnumerable<SpatialItemInstance> instances) => instances.Select(instance => instance.GetItemData<SpatialItemData>());
+    public static int GetNumberOfCells(this IEnumerable<SpatialItemData> itemDatas) => itemDatas.Aggregate(0, (int acc, SpatialItemData itemData) => acc + itemData.dimensions.Count);
+    public static int GetNumberOfCells(this IEnumerable<SpatialItemInstance> instances) => instances.ToItemData().GetNumberOfCells();
+    public static bool IsBroken(this SpatialItemInstance instance) => instance.durability <= 0f;
     public static void AddStock(this ItemPOI itemPoi)
     {
         if (itemPoi.Stock == 0)
@@ -32,11 +37,11 @@ public static class WinchExtensions
         };
     }
 
-    public static void ShowMoneyNotification(this UIController UI, string key, decimal value)
+    public static void ShowMoneyNotification(this UIController UI, decimal value)
     {
         if (value < 0)
         {
-            UI.ShowNotification(NotificationType.MONEY_LOST, key, new object[]
+            UI.ShowNotification(NotificationType.MONEY_LOST, "notification.funds-removed", new object[]
             {
                 string.Concat(new string[]
                 {
@@ -50,7 +55,7 @@ public static class WinchExtensions
         }
         else
         {
-            UI.ShowNotification(NotificationType.MONEY_GAINED, key, new object[]
+            UI.ShowNotification(NotificationType.MONEY_GAINED, "notification.funds-added", new object[]
             {
                 string.Concat(new string[]
                 {
@@ -144,17 +149,140 @@ public static class WinchExtensions
     #endregion
 
     #region Collections
+    /// <summary>
+    /// Add an item to an array
+    /// </summary>
+    /// <param name="array">The array to add to.</param>
+    /// <param name="item">The item to add.</param>
+    /// <returns>An array with <paramref name="item"/> added.</returns>
     public static T[] Add<T>(this T[] array, T item)
         => array.Concat(new T[] { item }).ToArray();
 
+    /// <summary>
+    /// Add items to an array
+    /// </summary>
+    /// <param name="array">The array to add to.</param>
+    /// <param name="items">The items to add.</param>
+    /// <returns>An array with <paramref name="items"/> added.</returns>
+    public static T[] AddRange<T>(this T[] array, T[] items)
+        => array.Concat(items).ToArray();
+
+    /// <summary>
+    /// Remove an item from an array
+    /// </summary>
+    /// <param name="array">The array to remove from.</param>
+    /// <param name="item">The item to remove.</param>
+    /// <returns>An array with <paramref name="item"/> removed.</returns>
     public static T[] Remove<T>(this T[] array, T item)
+        => Remove(array, item, out bool _);
+
+    /// <summary>
+    /// Remove an item from an array
+    /// </summary>
+    /// <param name="array">The array to remove from.</param>
+    /// <param name="item">The item to remove.</param>
+    /// <param name="removed">Whether the item was removed or not.</param>
+    /// <returns>An array with <paramref name="item"/> removed.</returns>
+    public static T[] Remove<T>(this T[] array, T item, out bool removed)
     {
         var list = new List<T>(array);
-        list.Remove(item);
+        removed = list.Remove(item);
         return list.ToArray();
     }
 
-    public static IEnumerable<TResult> WhereType<TSource, TResult>(this IEnumerable<TSource> source) => source.Where(item => item is TResult).Cast<TResult>();
+    /// <summary>Performs the specified action on each element of the <see cref="T:System.Collections.Generic.IEnumerable`1" />.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
+    /// <param name="action">The <see cref="T:System.Action`1" /> delegate to perform on each element of the <see cref="T:System.Collections.Generic.IEnumerable`1" />.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="action" /> is <see langword="null" />.</exception>
+    /// <exception cref="T:System.InvalidOperationException">An element in the collection has been modified.</exception>
+    public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> action)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (action == null) throw new ArgumentNullException("action");
+
+        foreach (TSource item in source)
+            action(item);
+    }
+
+    /// <summary>Performs the specified action on each element of the <see cref="T:System.Collections.Generic.IEnumerable`1" />.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
+    /// <param name="action">The <see cref="T:System.Action`2" /> delegate to perform on each element of the <see cref="T:System.Collections.Generic.IEnumerable`1" />.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="action" /> is <see langword="null" />.</exception>
+    /// <exception cref="T:System.InvalidOperationException">An element in the collection has been modified.</exception>
+    public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource, int> action)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (action == null) throw new ArgumentNullException("action");
+
+        int num = 0;
+        foreach (TSource item in source)
+            action(item, num++);
+    }
+
+    /// <summary>Searches for a sequence and returns the index of its first value that matches the condition.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to search.</param>
+    /// <param name="predicate">The condition used to locate the index in <paramref name="source" />.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <returns>The zero-based index of the first value that matches the condition in the entire <paramref name="source" />, if found; otherwise, -1.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="predicate"/> is <see langword="null" />.</exception>
+    public static int IndexOf<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (predicate == null) throw new ArgumentNullException("predicate");
+
+        var index = 0;
+        using IEnumerator<TSource> enumerator = source.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            if (predicate(enumerator.Current))
+            {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    /// <summary>Filters a sequence of values by testing if they match a specified type.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TResult">The type to filter and return.</typeparam>
+    /// <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains elements from the input sequence that are the type <typeparamref name="TResult"/>.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    public static IEnumerable<TResult> WhereType<TSource, TResult>(this IEnumerable<TSource> source)
+        => source.Where(item => item is TResult).Cast<TResult>();
+
+    /// <summary>Applies an accumulator function over a sequence.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to aggregate over.</param>
+    /// <param name="func">An accumulator function to be invoked on each element.</param>
+    /// <param name="initialValue">The initial accumulator value.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TAccumulate">The type of the accumulator value.</typeparam>
+    /// <returns>The final accumulator value.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="func" /> is <see langword="null" />.</exception>
+    public static TAccumulate Reduce<TSource, TAccumulate>(this IEnumerable<TSource> source, Func<TAccumulate, TSource, TAccumulate> func, TAccumulate initialValue = default)
+        => source.Aggregate(initialValue, func);
+
+    /// <summary>Projects each element of a sequence into a new form.</summary>
+    /// <param name="source">A sequence of values to invoke a transform function on.</param>
+    /// <param name="selector">A transform function to apply to each element.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by <paramref name="selector" />.</typeparam>
+    /// <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> whose elements are the result of invoking the transform function on each element of <paramref name="source" />.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="selector" /> is <see langword="null" />.</exception>
+    public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        => source.Select(selector);
+
+    /// <summary>Filters a sequence of values based on a predicate.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
+    /// <param name="predicate">A function to test each element for a condition.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains elements from the input sequence that satisfy the condition.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> or <paramref name="predicate" /> is <see langword="null" />.</exception>
+    public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
+        => source.Where(new Func<TSource, bool>(predicate));
 
     public static T KeyByValue<T, W>(IDictionary<T, W> dict, W val, T defaultValue = default)
     {
