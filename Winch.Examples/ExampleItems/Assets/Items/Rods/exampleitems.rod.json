@@ -13,7 +13,7 @@
 	"dimensions": [
 		"X"
 	],
-	"harvestableTypes": [ "COASTAL", "SHALLOW", "OCEANIC", "ABYSSAL", "HADAL", "VOLCANIC", "MANGROVE", "DREDGE", "CRAB", "ICE" ],
+	"harvestableTypes": [ "COASTAL", "SHALLOW", "OCEANIC", "ABYSSAL", "HADAL", "VOLCANIC", "MANGROVE", "CRAB", "ICE" ],
 	"fishingSpeedModifier": 2,
 	"aberrationCatchBonus": 0.1
 }
