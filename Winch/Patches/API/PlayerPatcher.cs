@@ -15,6 +15,7 @@ public class PlayerPatch
         {
             PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
             PoiUtil.CreateModdedPois();
+            HarvestZoneUtil.CreateModdedHarvestZones();
             ItemUtil.Encyclopedia();
         }
         catch (Exception ex)

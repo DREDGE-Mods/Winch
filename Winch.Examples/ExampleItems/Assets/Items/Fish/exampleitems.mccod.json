@@ -32,6 +32,8 @@
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "COASTAL",
   "harvestDifficulty": "VERY_EASY",
-  "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"]
+  "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"],
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
 }
 

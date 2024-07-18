@@ -7,6 +7,7 @@ using Winch.Serialization.POI;
 using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
 using Winch.Serialization.Item;
+using Winch.Serialization.HarvestZone;
 
 namespace Winch.Core
 {
@@ -36,12 +37,14 @@ namespace Winch.Core
             string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
+            string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
             if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
+            if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -180,6 +183,22 @@ namespace Winch.Core
                 catch(Exception ex)
                 {
                     WinchCore.Log.Error($"Failed to load texture file {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadHarvestZoneFiles(string harvestZoneFolderPath)
+        {
+            string[] harvestZoneFiles = Directory.GetFiles(harvestZoneFolderPath);
+            foreach (string file in harvestZoneFiles)
+            {
+                try
+                {
+                    HarvestZoneUtil.AddCustomHarvestZoneFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load Harvest Zone from {file}: {ex}");
                 }
             }
         }

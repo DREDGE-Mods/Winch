@@ -1,0 +1,11 @@
+{
+    "location": {
+        "x": 382.0,
+        "y": 0.0,
+        "z": -354.0
+    },
+    "radius": 50,
+    "harvestableItems": [ "exampleitems.mccod" ],
+    "day": true,
+    "night": true
+}
