@@ -13,25 +13,36 @@ using Winch.Serialization.GridConfig;
 
 namespace Winch.Util;
 
-internal static class GridConfigUtil
+public static class GridConfigUtil
 {
     private static CellGroupConfigConverter CellGroupConfigConverter = new CellGroupConfigConverter();
     private static GridConfigConverter GridConfigConverter = new GridConfigConverter();
 
-    public static bool PopulateGridConfigFromMetaWithConverter(GridConfiguration config, Dictionary<string, object> meta)
+    internal static bool PopulateGridConfigFromMetaWithConverter(GridConfiguration config, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(config, meta, GridConfigConverter);
     }
 
-    public static bool PopulateCellGroupConfigFromMetaWithConverter(UnstructedCellGroupConfiguration config, Dictionary<string, object> meta)
+    internal static bool PopulateCellGroupConfigFromMetaWithConverter(UnstructedCellGroupConfiguration config, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(config, meta, CellGroupConfigConverter);
     }
 
-    public static Dictionary<string, GridConfiguration> ModdedGridConfigDict = new();
-    public static Dictionary<string, GridConfiguration> AllGridConfigDict = new();
+    internal static Dictionary<string, GridConfiguration> ModdedGridConfigDict = new();
+    internal static Dictionary<string, GridConfiguration> AllGridConfigDict = new();
 
-    public static void AddModdedGridConfigurations()
+    public static GridConfiguration GetModdedGridConfiguration(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedGridConfigDict.TryGetValue(id, out GridConfiguration gridConfig))
+            return gridConfig;
+        else
+            return null;
+    }
+
+    internal static void AddModdedGridConfigurations()
     {
         foreach (var gridConfig in ModdedGridConfigDict)
         {
@@ -39,7 +50,7 @@ internal static class GridConfigUtil
         }
     }
 
-    public static void AddModdedGridConfigurations(IList<GridConfiguration> list)
+    internal static void AddModdedGridConfigurations(IList<GridConfiguration> list)
     {
         foreach (var gridConfig in ModdedGridConfigDict.Values)
         {
@@ -47,7 +58,7 @@ internal static class GridConfigUtil
         }
     }
 
-    public static void PopulateGridConfigurations()
+    internal static void PopulateGridConfigurations()
     {
         foreach (var gridConfig in GameManager.Instance.DataLoader.allGridConfigs)
         {
@@ -56,7 +67,7 @@ internal static class GridConfigUtil
         }
     }
 
-    public static void ClearGridConfigurations()
+    internal static void ClearGridConfigurations()
     {
         AllGridConfigDict.Clear();
     }

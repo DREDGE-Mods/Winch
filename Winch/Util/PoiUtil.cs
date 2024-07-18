@@ -17,7 +17,7 @@ using Winch.Serialization.POI.Item;
 
 namespace Winch.Util;
 
-internal static class PoiUtil
+public static class PoiUtil
 {
     private static Dictionary<Type, IDredgeTypeConverter> Converters = new()
     {
@@ -36,16 +36,28 @@ internal static class PoiUtil
         { typeof(CustomItemPOI), new CustomItemPOIConverter()}
     };
 
-    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : CustomPOI
+    internal static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : CustomPOI
     {
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }
 
-    public static Dictionary<string, CustomPOI> ModdedPOIDict = new();
-    public static Dictionary<string, IHarvestable> Harvestables = new();
-    public static Dictionary<string, GameObject> HarvestParticlePrefabs = new();
+    internal static Dictionary<string, CustomPOI> ModdedPOIDict = new();
+    internal static Dictionary<string, IHarvestable> Harvestables = new();
+    internal static Dictionary<string, GameObject> HarvestParticlePrefabs = new();
+    internal static Dictionary<string, GameObject> ModdedHarvestParticlePrefabs = new();
 
-    public static void PopulateHarvestablesAndHarvestParticlePrefabs()
+    public static CustomPOI GetModdedPOI(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedPOIDict.TryGetValue(id, out CustomPOI customPOI))
+            return customPOI;
+        else
+            return null;
+    }
+
+    internal static void PopulateHarvestablesAndHarvestParticlePrefabs()
     {
         foreach (var harvestPoi in GameManager.Instance.HarvestPOIManager.allHarvestPOIs)
         {
@@ -85,20 +97,49 @@ internal static class PoiUtil
         }
     }
 
-    public static void ClearHarvestablesAndHarvestParticlePrefabs()
+    internal static void ClearHarvestablesAndHarvestParticlePrefabs()
     {
         Harvestables.Clear();
         HarvestParticlePrefabs.Clear();
     }
 
-    public static GameObject TryGetHarvestableParticlePrefab(string harvestableParticlePrefab)
+    public static void AddModdedHarvestableParticlePrefab(string id, GameObject prefab)
     {
-        if (PoiUtil.HarvestParticlePrefabs.TryGetValue(harvestableParticlePrefab, out var prefab))
-            return prefab;
+        if (string.IsNullOrWhiteSpace(id))
+            return;
+
+        if (!PoiUtil.ModdedHarvestParticlePrefabs.ContainsKey(id))
+            PoiUtil.ModdedHarvestParticlePrefabs.Add(id, prefab.DontDestroyOnLoad());
+        else
+            WinchCore.Log.Error($"Modded harvest particle prefab \"{id}\" already registered");
+    }
+
+    public static GameObject GetModdedHarvestableParticlePrefab(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (PoiUtil.ModdedHarvestParticlePrefabs.TryGetValue(id, out var moddedPrefab))
+            return moddedPrefab;
+
         return null;
     }
 
-    public static void CreateModdedPois()
+    internal static GameObject GetHarvestableParticlePrefab(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (PoiUtil.HarvestParticlePrefabs.TryGetValue(id, out var prefab))
+            return prefab;
+
+        if (PoiUtil.ModdedHarvestParticlePrefabs.TryGetValue(id, out var moddedPrefab))
+            return moddedPrefab;
+
+        return null;
+    }
+
+    internal static void CreateModdedPois()
     {
         foreach (var customPoi in ModdedPOIDict.Values)
         {
@@ -106,7 +147,7 @@ internal static class PoiUtil
         }
     }
 
-    public static GameObject? CreateGameObjectFromCustomPoi(CustomPOI customPoi)
+    internal static GameObject? CreateGameObjectFromCustomPoi(CustomPOI customPoi)
     {
         if (customPoi is CustomHarvestPOI customHarvestPoi)
         {
@@ -120,7 +161,7 @@ internal static class PoiUtil
         return null;
     }
 
-    public static GameObject CreateGameObjectFromCustomHarvestPoi(CustomHarvestPOI customHarvestPoi)
+    internal static GameObject CreateGameObjectFromCustomHarvestPoi(CustomHarvestPOI customHarvestPoi)
     {
         GameObject customPoi = new GameObject();
         customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
@@ -173,7 +214,7 @@ internal static class PoiUtil
         return customPoi;
     }
 
-    public static GameObject CreateGameObjectFromCustomItemPoi(CustomItemPOI customItemPoi)
+    internal static GameObject CreateGameObjectFromCustomItemPoi(CustomItemPOI customItemPoi)
     {
         GameObject customPoi = new GameObject();
         customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);

@@ -25,7 +25,7 @@ public class CustomHarvestPOI : CustomPOI
 
     public List<HarvestableItemData> Items => ItemUtil.TryGetHarvestables(items);
     public List<HarvestableItemData> NightItems => ItemUtil.TryGetHarvestables(nightItems);
-    public GameObject HarvestableParticlePrefab => PoiUtil.TryGetHarvestableParticlePrefab(harvestableParticlePrefab);
+    public GameObject HarvestableParticlePrefab => PoiUtil.GetHarvestableParticlePrefab(harvestableParticlePrefab);
 }
 
 

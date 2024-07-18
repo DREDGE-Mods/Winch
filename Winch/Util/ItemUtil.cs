@@ -15,7 +15,7 @@ using UnityEngine.UI;
 
 namespace Winch.Util;
 
-internal static class ItemUtil
+public static class ItemUtil
 {
     private static readonly Dictionary<Type, IDredgeTypeConverter> Converters = new()
     {
@@ -38,17 +38,28 @@ internal static class ItemUtil
         { typeof(ThawableItemData), new ThawableItemDataConverter() },
     };
 
-    public static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData
+    internal static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData
     {
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }
 
-    public static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
-    public static Dictionary<string, FishItemData> FishItemDataDict = new();
-    public static Dictionary<string, ItemData> AllItemDataDict = new();
-    public static Dictionary<string, ItemData> ModdedItemDataDict = new();
+    internal static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
+    internal static Dictionary<string, FishItemData> FishItemDataDict = new();
+    internal static Dictionary<string, ItemData> AllItemDataDict = new();
+    internal static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
-    public static void AddModdedItemData()
+    public static ItemData GetModdedItemData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedItemDataDict.TryGetValue(id, out ItemData itemData))
+            return itemData;
+        else
+            return null;
+    }
+
+    internal static void AddModdedItemData()
     {
         foreach (var item in ModdedItemDataDict.Values)
         {
@@ -56,10 +67,26 @@ internal static class ItemUtil
         }
     }
 
+    internal static void AddModdedItemData(IList<ItemData> list)
+    {
+        foreach (var item in ModdedItemDataDict.Values)
+        {
+            list.SafeAdd(item);
+        }
+    }
+
+    public static void AddModdedFishItemData(IList<FishItemData> list)
+    {
+        foreach (var item in ModdedItemDataDict.Values.WhereType<ItemData, FishItemData>())
+        {
+            list.SafeAdd(item);
+        }
+    }
+
     /// <summary>
     /// Encyclopedia doesn't run <see cref="Encyclopedia.Awake"/> until it is opened so we just search for it with Resources and add the fish
     /// </summary>
-    public static void Encyclopedia()
+    internal static void Encyclopedia()
     {
         WinchCore.Log.Info("[Encyclopedia] AddModdedFishItemData");
         var encyclopedia = Resources.FindObjectsOfTypeAll<Encyclopedia>().FirstOrDefault();
@@ -67,7 +94,7 @@ internal static class ItemUtil
         AddModdedEncyclopediaButton(encyclopedia);
     }
 
-    public static void AddModdedEncyclopediaButton(Encyclopedia encyclopedia)
+    internal static void AddModdedEncyclopediaButton(Encyclopedia encyclopedia)
     {
         var container = encyclopedia.transform.parent.gameObject;
         container.SetActive(true);
@@ -86,24 +113,7 @@ internal static class ItemUtil
         image.sprite = TextureUtil.GetSprite("EncyclopediaTabWinch");
     }
 
-
-    public static void AddModdedItemData(IList<ItemData> list)
-    {
-        foreach (var item in ModdedItemDataDict.Values)
-        {
-            list.SafeAdd(item);
-        }
-    }
-
-    public static void AddModdedFishItemData(IList<FishItemData> list)
-    {
-        foreach (var item in ModdedItemDataDict.Values.WhereType<ItemData, FishItemData>())
-        {
-            list.SafeAdd(item);
-        }
-    }
-
-    public static List<ItemData> TryGetItems(List<string> ids)
+    internal static List<ItemData> TryGetItems(List<string> ids)
     {
         List<ItemData> items = new List<ItemData>();
 
@@ -121,7 +131,7 @@ internal static class ItemUtil
         return items;
     }
 
-    public static List<HarvestableItemData> TryGetHarvestables(List<string> ids)
+    internal static List<HarvestableItemData> TryGetHarvestables(List<string> ids)
     {
         List<HarvestableItemData> harvestables = new List<HarvestableItemData>();
 
@@ -139,7 +149,25 @@ internal static class ItemUtil
         return harvestables;
     }
 
-    public static void PopulateItemData()
+    internal static List<FishItemData> TryGetFish(List<string> ids)
+    {
+        List<FishItemData> fishes = new List<FishItemData>();
+
+        if (ids == null)
+            return fishes;
+
+        foreach (var fish in ids)
+        {
+            if (!string.IsNullOrWhiteSpace(fish) && FishItemDataDict.TryGetValue(fish, out var itemData))
+            {
+                fishes.Add(itemData);
+            }
+        }
+
+        return fishes;
+    }
+
+    internal static void PopulateItemData()
     {
         foreach (var item in GameManager.Instance.ItemManager.allItems)
         {
@@ -158,7 +186,7 @@ internal static class ItemUtil
         }
     }
 
-    public static void ClearItemData()
+    internal static void ClearItemData()
     {
         AllItemDataDict.Clear();
         WinchCore.Log.Debug($"AllItemDataDict cleared");
