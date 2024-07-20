@@ -1,3 +1,3 @@
-﻿### Intro Skipper
+﻿# DREDGE Intro Skipper
 
-Self explanatory. Skips the intro cutscene.
+Self explanatory. Skips the intro cutscene when starting the game.

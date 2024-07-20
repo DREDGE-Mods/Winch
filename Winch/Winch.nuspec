@@ -1,19 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package >
   <metadata>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!-- Identifier that must be unique within the hosting gallery -->
+    <id>Winch</id>
 
+    <!-- Package version number that is used when resolving dependencies -->
     <version>$version$</version>
 
-    <id>Winch</id>
+    <!-- Title -->
     <title>Winch</title>
-    <authors>Hacktix, xen-42</authors>
-		<owners>xen-42</owners>
-    <description>A Harmony-based mod loader for the game Dredge.</description>
-		<license type="expression">MIT</license>
+
+    <!-- 
+      The description can be used in package manager UI. Note that the
+      nuget.org gallery uses information you add in the portal. 
+    -->
+    <description>A Harmony-based mod loader for the game DREDGE.</description>
+
+    <!-- Small version of the description that is shown on package search page -->
+    <summary>A Harmony-based mod loader for the game DREDGE.</summary>
+
+    <!-- Authors contain text that appears directly on the gallery -->
+    <authors>Hacktix, xen-42, MegaPiggy</authors>
+
+    <!-- 
+      Owners are typically nuget.org identities that allow gallery
+      users to easily find other packages by the same owners.  
+    -->
+    <owners>xen-42</owners>
+
+    <!-- Project URL provides a link for the gallery -->
+    <projectUrl>https://github.com/DREDGE-Mods/Winch</projectUrl>
+
+    <!-- <repository type="git" url="https://github.com/DREDGE-Mods/Winch.git" /> -->
+
+    <!-- License information is displayed on the gallery -->
+    <license type="expression">MIT</license>
+
+    <!-- Icon is used in Visual Studio's package manager UI -->
+    <icon>images\icon.png</icon>
+    <iconUrl>https://raw.githubusercontent.com/DREDGE-Mods/Winch/master/Winch/icon.png</iconUrl>
+
+    <!-- 
+      If true, this value prompts the user to accept the license when
+      installing the package. 
+    -->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+    <!-- Tags appear in the gallery and can be used for tag searches -->
+    <tags>DREDGE</tags>
+
+    <!-- Dependencies are automatically installed when the package is installed -->
+    <dependencies>
+      <group targetFramework=".NETFramework4.8">
+        <dependency id="HarmonyX" version="2.10.1" />
+        <dependency id="Newtonsoft.Json" version="13.0.1" />
+      </group>
+    </dependencies>
+
+    <!-- References are automatically added to the project after the package is installed -->
+    <references>
+      <group targetFramework=".NETFramework4.8">
+        <reference file="Winch.dll" />
+        <reference file="WinchCommon.dll" />
+      </group>
+    </references>
   </metadata>
-	<files>
-		<file src="bin\Release\Winch.dll" target="lib\net48" />
-		<file src="bin\Release\WinchCommon.dll" target="lib\net48" />
-	</files>
+  <files>
+    <file src="bin\Release\Winch.dll" target="lib\net48" />
+    <file src="bin\Release\WinchCommon.dll" target="lib\net48" />
+    <file src="icon.png" target="images\" />
+  </files>
 </package>

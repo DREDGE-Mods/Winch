@@ -7,6 +7,7 @@ on:
       - "*.md"
       - "LICENSE"
       - ".gitignore"
+      - ".github/**"
   pull_request:
     branches: [master]
     types:
@@ -74,6 +75,7 @@ jobs:
       name: Pack nuget
       needs: Update_Release
       runs-on: windows-latest
+      if: github.ref == 'refs/heads/master'
       steps:
         - name: Checkout
           uses: actions/checkout@v3
