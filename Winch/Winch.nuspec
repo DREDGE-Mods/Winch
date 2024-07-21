@@ -52,8 +52,10 @@
     <!-- Dependencies are automatically installed when the package is installed -->
     <dependencies>
       <group targetFramework=".NETFramework4.8">
+        <dependency id="DredgeGameLibs" version="1.4.2" />
         <dependency id="HarmonyX" version="2.10.1" />
         <dependency id="Newtonsoft.Json" version="13.0.1" />
+        <dependency id="System.ComponentModel.Annotations" version="5.0.0" />
       </group>
     </dependencies>
 
