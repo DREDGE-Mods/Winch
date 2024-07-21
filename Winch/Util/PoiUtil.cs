@@ -7,6 +7,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
+using Winch.Components;
 using Winch.Core;
 using Winch.Serialization;
 

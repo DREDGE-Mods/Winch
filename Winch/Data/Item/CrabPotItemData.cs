@@ -1,4 +1,4 @@
-﻿namespace Winch.Serialization.Item
+﻿namespace Winch.Data.Item
 {
     public class CrabPotItemData : GridConfigDeployableItemData
     {

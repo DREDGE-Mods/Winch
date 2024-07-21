@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
-using Winch.Serialization.Item;
+using Winch.Data.Item;
 using Winch.Util;
 
 namespace Winch.Patches.API

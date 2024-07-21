@@ -9,7 +9,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
-using Winch.Serialization.Item;
+using Winch.Data.Item;
 
 public static class WinchExtensions
 {

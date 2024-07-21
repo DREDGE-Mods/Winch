@@ -12,6 +12,7 @@ using Winch.Serialization;
 using Winch.Serialization.Item;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using Winch.Data.Item;
 
 namespace Winch.Util;
 

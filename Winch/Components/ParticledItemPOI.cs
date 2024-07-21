@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Winch.Serialization.POI.Item;
+namespace Winch.Components;
 
 public class ParticledItemPOI : ItemPOI
 {

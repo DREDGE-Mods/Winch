@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
 using Winch.Core;
+using Winch.Data;
 using Winch.Serialization;
 using Winch.Serialization.GridConfig;
 

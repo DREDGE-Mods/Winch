@@ -6,8 +6,8 @@ using Winch.Util;
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
-using Winch.Serialization.Item;
 using Winch.Serialization.HarvestZone;
+using Winch.Data.Item;
 
 namespace Winch.Core
 {

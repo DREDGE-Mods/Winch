@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Winch.Core;
+using Winch.Data;
 using Winch.Serialization.GridConfig;
 using Winch.Util;
 
