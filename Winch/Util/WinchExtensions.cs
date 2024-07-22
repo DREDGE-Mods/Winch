@@ -455,32 +455,28 @@ public static class WinchExtensions
     public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
         => source.Where(new Func<TSource, bool>(predicate));
 
-    public static T KeyByValue<T, W>(IDictionary<T, W> dict, W val, T defaultValue = default)
+    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default) => dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
+
+    public static TKey KeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, TKey defaultValue = default) => KeyByValue(dictionary, value, defaultValue);
+    public static TKey GetKeyOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, TKey defaultValue = default)
     {
-        T key = defaultValue;
-        foreach (KeyValuePair<T, W> pair in dict)
+        foreach (KeyValuePair<TKey, TValue> pair in dictionary)
         {
-            if (EqualityComparer<W>.Default.Equals(pair.Value, val))
-            {
-                key = pair.Key;
-                break;
-            }
+            if (EqualityComparer<TValue>.Default.Equals(pair.Value, value))
+                return pair.Key;
         }
-        return key;
+        return defaultValue;
     }
 
-    public static T KeyByValue<T, W>(IDictionary<T, W> dict, W val, IEqualityComparer<W> comparer, T defaultValue = default)
+    public static TKey KeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, IEqualityComparer<TValue> comparer, TKey defaultValue = default) => KeyByValue(dictionary, value, comparer, defaultValue);
+    public static TKey GetKeyOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, IEqualityComparer<TValue> comparer, TKey defaultValue = default)
     {
-        T key = defaultValue;
-        foreach (KeyValuePair<T, W> pair in dict)
+        foreach (KeyValuePair<TKey, TValue> pair in dictionary)
         {
-            if (comparer.Equals(pair.Value, val))
-            {
-                key = pair.Key;
-                break;
-            }
+            if (comparer.Equals(pair.Value, value))
+                return pair.Key;
         }
-        return key;
+        return defaultValue;
     }
 
     public static bool SafeAdd<T>(this IList<T> list, T value)
@@ -501,6 +497,20 @@ public static class WinchExtensions
             return true;
         }
         return false;
+    }
+
+    public static void AddIfDoesNotContain<T>(this List<T> list, T item)
+    {
+        if (!list.Contains(item))
+            list.Add(item);
+    }
+
+    public static void AddOrChange<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
+    {
+        if (dictionary.ContainsKey(key))
+            dictionary[key] = value;
+        else
+            dictionary.Add(key, value);
     }
 
     public static bool QuickRemove<T>(this IList<T> list, T item)

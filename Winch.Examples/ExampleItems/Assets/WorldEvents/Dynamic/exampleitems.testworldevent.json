@@ -1,3 +1,29 @@
 ﻿{
-	"eventType": "SPAWN_PREFAB"
+	"eventType": "SPAWN_PREFAB",
+	"itemInventoryConditions": [
+		{
+			"type": "AnyOfItem",
+			"id": "exampleitems.diamond"
+		},
+		{
+			"type": "NumOfItem",
+			"minNumber": 2,
+			"id": "exampleitems.mccod"
+		},
+		{
+			"type": "NumItemsOfType",
+			"minNumber": 2,
+			"itemType": "GENERAL",
+			"itemSubtype": "FISH"
+		},
+		{
+			"type": "NumItemsOfSizeAndType",
+			"minNumber": 2,
+			"size": 4,
+			"max": false,
+			"min": true,
+			"itemType": "GENERAL",
+			"itemSubtype": "TRINKET"
+		}
+	]
 }

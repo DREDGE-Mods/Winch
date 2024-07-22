@@ -37,6 +37,7 @@ public class WorldEventDataConverter : DredgeTypeConverter<ModdedWorldEvent>
         { "zoneTestOffset", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "doSafeZoneHitCheck", new(true, o=> bool.Parse(o.ToString())) },
         { "safeZoneHitCheckOffset", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "itemInventoryConditions", new(new List<InventoryCondition>(), o=> DredgeTypeHelpers.ParseInventoryConditions((JArray)o)) },
         { "forbiddenZones", new(ZoneEnum.NONE, o => DredgeTypeHelpers.ParseFlagsEnum<ZoneEnum>(o)) },
     };
 

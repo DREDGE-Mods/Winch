@@ -8,6 +8,7 @@ using UnityEngine;
 using Winch.Core;
 using Winch.Data;
 using Winch.Serialization.GridConfig;
+using Winch.Serialization.WorldEvent.Condition;
 using Winch.Util;
 
 namespace Winch.Serialization;
@@ -173,6 +174,42 @@ public static class DredgeTypeHelpers
             parsed.Add(keyParser(kvp.Key), valueParser(kvp.Value));
         }
 
+        return parsed;
+    }
+
+    internal static InventoryCondition ParseInventoryCondition(JToken condition)
+    {
+        var meta = condition.ToObject<Dictionary<string, object>>();
+        var type = GetEnumValue<InventoryConditionType>(meta.GetValueOrDefault("type"));
+        switch (type)
+        {
+            case InventoryConditionType.AnyOfItem:
+            default:
+                var acondition = new AnyOfItemCondition();
+                UtilHelpers.PopulateObjectFromMeta(acondition, meta, new AnyOfItemConditionConverter());
+                return acondition;
+            case InventoryConditionType.NumOfItem:
+                var ncondition = new NumOfItemCondition();
+                UtilHelpers.PopulateObjectFromMeta(ncondition, meta, new NumOfItemConditionConverter());
+                return ncondition;
+            case InventoryConditionType.NumItemsOfType:
+                var ntcondition = new NumItemsOfTypeCondition();
+                UtilHelpers.PopulateObjectFromMeta(ntcondition, meta, new NumItemsOfTypeConditionConverter());
+                return ntcondition;
+            case InventoryConditionType.NumItemsOfSizeAndType:
+                var nstcondition = new NumItemsOfSizeAndTypeCondition();
+                UtilHelpers.PopulateObjectFromMeta(nstcondition, meta, new NumItemsOfSizeAndTypeConditionConverter());
+                return nstcondition;
+        }
+    }
+
+    internal static List<InventoryCondition> ParseInventoryConditions(JArray conditions)
+    {
+        var parsed = new List<InventoryCondition>();
+        foreach (var condition in conditions)
+        {
+            parsed.Add(ParseInventoryCondition(condition));
+        }
         return parsed;
     }
 }
