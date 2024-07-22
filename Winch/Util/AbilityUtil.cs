@@ -46,6 +46,7 @@ public static class AbilityUtil
 
     public static void RegisterModdedAbilityType<T>(string id) where T : ModdedAbility
     {
+        WinchCore.Log.Debug($"Registering ability type {typeof(T).FullName} for {id}");
         ModdedAbilityTypeDict.SafeAdd(id, typeof(T));
     }
 
@@ -85,6 +86,7 @@ public static class AbilityUtil
         {
             var id = kvp.Key;
             var abilityType = kvp.Value;
+            WinchCore.Log.Debug($"Creating ability type {abilityType.FullName} for {id}");
             var abilityObj = new GameObject(id);
             abilityObj.SetActive(false);
             abilityObj.transform.SetParent(parent, false);
@@ -104,6 +106,7 @@ public static class AbilityUtil
     {
         foreach (var modAbilityData in ModdedAbilityDataDict.Values)
         {
+            WinchCore.Log.Debug($"Adding ability {modAbilityData.id} to radial");
             modAbilityData.Populate();
             var abilityRadialWedgeObj = new GameObject(modAbilityData.id, typeof(RectTransform), typeof(Image));
             abilityRadialWedgeObj.transform.SetParent(abiltiesParent, false);
