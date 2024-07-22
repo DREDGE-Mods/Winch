@@ -24,6 +24,8 @@ namespace Winch.Patches.API
 
         public static void Prefix(ItemManager __instance, AsyncOperationHandle<IList<ItemData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             ChangeDredgeCrane(handle.Result);
             ItemUtil.AddModdedItemData(handle.Result);
             DredgeEvent.AddressableEvents.ItemsLoaded.Trigger(__instance, handle, true);
@@ -31,6 +33,8 @@ namespace Winch.Patches.API
 
         public static void Postfix(ItemManager __instance, AsyncOperationHandle<IList<ItemData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             ItemUtil.PopulateItemData();
             DredgeEvent.AddressableEvents.ItemsLoaded.Trigger(__instance, handle, false);
         }

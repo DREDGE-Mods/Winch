@@ -12,12 +12,16 @@ namespace Winch.Patches.API
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<WorldEventData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             WorldEventUtil.AddModdedWorldEvents(handle.Result);
             DredgeEvent.AddressableEvents.WorldEventsLoaded.Trigger(__instance, handle, true);
         }
 
         public static void Postfix(DataLoader __instance, AsyncOperationHandle<IList<WorldEventData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             DredgeEvent.AddressableEvents.WorldEventsLoaded.Trigger(__instance, handle, false);
         }
     }
