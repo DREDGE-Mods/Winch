@@ -38,6 +38,7 @@ namespace Winch.Core
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
+            string abilityFolderpath = Path.Combine(path, "Abilities");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
@@ -45,6 +46,7 @@ namespace Winch.Core
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
+            if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -199,6 +201,22 @@ namespace Winch.Core
                 catch (Exception ex)
                 {
                     WinchCore.Log.Error($"Failed to load Harvest Zone from {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadAbilityFiles(string abilityFolderPath)
+        {
+            string[] abilityFiles = Directory.GetFiles(abilityFolderPath);
+            foreach (string file in abilityFiles)
+            {
+                try
+                {
+                    AbilityUtil.AddCustomAbilityDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load Ability Data from {file}: {ex}");
                 }
             }
         }

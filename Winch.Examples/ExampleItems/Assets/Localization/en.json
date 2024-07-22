@@ -42,5 +42,8 @@
 	"exampleitems.journal.body": "Journal Body",
 	"exampleitems.book.name": "Book Name",
 	"exampleitems.book.desc": "Book Desc",
-	"exampleitems.book.completedDesc": "Book CompletedDesc"
+	"exampleitems.book.completedDesc": "Book CompletedDesc",
+	"exampleitems.testability.name": "Ability Name",
+	"exampleitems.testability.desc": "Ability Desc",
+	"exampleitems.testability.shortDesc": "Ability ShortDesc"
 }

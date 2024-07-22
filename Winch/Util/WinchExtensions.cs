@@ -2,8 +2,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
@@ -94,7 +97,8 @@ public static class WinchExtensions
     }
     #endregion
 
-    #region Harmony
+    #region Reflection
+    /// <inheritdoc cref="RuntimeReflectionExtensions.GetRuntimeFields" />
     public static FieldInfo[] GetRuntimeFieldsIncludingBase(this Type type)
     {
         Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>();
@@ -109,6 +113,121 @@ public static class WinchExtensions
         return fields.Values.ToArray();
     }
 
+    /// <inheritdoc cref="RuntimeReflectionExtensions.GetRuntimeProperties" />
+    public static PropertyInfo[] GetRuntimePropertiesIncludingBase(this Type type)
+    {
+        Dictionary<string, PropertyInfo> properties = new Dictionary<string, PropertyInfo>();
+        while (type != null)
+        {
+            foreach (var property in type.GetRuntimeProperties())
+            {
+                properties.SafeAdd(property.Name, property);
+            }
+            type = type.BaseType;
+        }
+        return properties.Values.ToArray();
+    }
+
+    /// <inheritdoc cref="RuntimeReflectionExtensions.GetRuntimeMethods" />
+    public static MethodInfo[] GetRuntimeMethodsIncludingBase(this Type type)
+    {
+        Dictionary<string, MethodInfo> methods = new Dictionary<string, MethodInfo>();
+        while (type != null)
+        {
+            foreach (var method in type.GetRuntimeMethods())
+            {
+                methods.SafeAdd(method.Name, method);
+            }
+            type = type.BaseType;
+        }
+        return methods.Values.ToArray();
+    }
+
+    /// <inheritdoc cref="RuntimeReflectionExtensions.GetRuntimeEvents" />
+    public static EventInfo[] GetRuntimeEventsIncludingBase(this Type type)
+    {
+        Dictionary<string, EventInfo> events = new Dictionary<string, EventInfo>();
+        while (type != null)
+        {
+            foreach (var @event in type.GetRuntimeEvents())
+            {
+                events.SafeAdd(@event.Name, @event);
+            }
+            type = type.BaseType;
+        }
+        return events.Values.ToArray();
+    }
+
+    /// <summary>
+    /// Gets the bytes for an embedded resource with the given name (found with endsWith), or null if no matches
+    /// </summary>
+    public static Stream? GetEmbeddedResource(this Assembly assembly, string endsWith)
+    {
+        var resource = Array.Find(assembly.GetManifestResourceNames(), s => s.EndsWith(endsWith));
+        return resource != null ? assembly.GetManifestResourceStream(resource) : null;
+    }
+
+    /// <inheritdoc cref="GetEmbeddedResource" />
+    public static bool TryGetEmbeddedResource(this Assembly assembly, string endsWith, out Stream? stream)
+    {
+        stream = GetEmbeddedResource(assembly, endsWith);
+        return stream != null;
+    }
+    #endregion
+
+    #region Stream
+    /// <summary>
+    /// Synchronously gets the full array of bytes from any stream, disposing with the Stream afterwards
+    /// </summary>
+    public static byte[]? GetByteArray(this Stream? stream)
+    {
+        if (stream == null)
+        {
+            return null;
+        }
+
+        try
+        {
+            using (stream)
+            {
+                if (stream is MemoryStream memoryStream)
+                {
+                    return memoryStream.ToArray();
+                }
+
+                using (memoryStream = new MemoryStream())
+                {
+                    stream.CopyTo(memoryStream);
+                    return memoryStream.ToArray();
+                }
+            }
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+    }
+    #endregion
+
+    #region String
+    /// <summary>
+    /// Puts spaces between capitalized words within a string
+    /// </summary>
+    public static string Spaced(this string s) => Regex.Replace(s, "(\\B[A-Z])", " $1");
+
+    /// <summary>
+    /// Returns null if a string is empty / whitespace, otherwise just returns back the string
+    /// </summary>
+    public static string? NullIfEmpty(this string s) => string.IsNullOrWhiteSpace(s) ? null : s;
+
+    /// <summary>
+    /// <inheritdoc cref="Regex.Replace(string,string,string)" />
+    /// </summary>
+    public static string RegexReplace(this string input, string pattern, string replacement) =>
+        Regex.Replace(input, pattern, replacement);
+    #endregion
+
+    #region Harmony
     public static CodeMatcher LogInstructions(this CodeMatcher matcher, string prefix)
     {
         matcher.InstructionEnumeration().LogInstructions(prefix + " at " + matcher.Pos);
@@ -174,6 +293,15 @@ public static class WinchExtensions
 
     #region Collections
     /// <summary>
+    /// Deconstruct a KeyValuePair
+    /// </summary>
+    public static void Deconstruct<T1, T2>(this KeyValuePair<T1, T2> kvp, out T1 t1, out T2 t2)
+    {
+        t1 = kvp.Key;
+        t2 = kvp.Value;
+    }
+
+    /// <summary>
     /// Add an item to an array
     /// </summary>
     /// <param name="array">The array to add to.</param>
@@ -213,6 +341,15 @@ public static class WinchExtensions
         removed = list.Remove(item);
         return list.ToArray();
     }
+
+    /// <summary>
+    /// Retrieves all the elements that match the conditions defined by the specified predicate.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="array"></param>
+    /// <param name="match"> The Predicate delegate that defines the conditions of the elements to search for.</param>
+    /// <returns></returns>
+    public static T[] FindAll<T>(this T[] array, Predicate<T> match) => Array.FindAll(array, match);
 
     /// <summary>Performs the specified action on each element of the <see cref="T:System.Collections.Generic.IEnumerable`1" />.</summary>
     /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
@@ -375,6 +512,26 @@ public static class WinchExtensions
     #endregion
 
     #region Unity
+    /// <summary>
+    /// Deconstruct a Rect
+    /// </summary>
+    public static void Deconstruct(this Rect rect, out float x, out float y, out float width, out float height)
+    {
+        x = rect.x;
+        y = rect.y;
+        width = rect.width;
+        height = rect.height;
+    }
+
+    /// <summary>
+    /// Deconstruct a Vector2
+    /// </summary>
+    public static void Deconstruct(this Vector2 vector2, out float x, out float y)
+    {
+        x = vector2.x;
+        y = vector2.y;
+    }
+
     public static Texture2D ToTexture2D(this RenderTexture rTex)
     {
         Texture2D texture2D = new Texture2D(rTex.width, rTex.height, TextureFormat.RGB24, false);

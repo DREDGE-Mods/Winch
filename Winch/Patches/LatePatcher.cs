@@ -34,6 +34,10 @@ namespace Winch.Patches
 
             harmony.Patch(AccessTools.Method(typeof(TooltipSectionDurabilityDetails), nameof(TooltipSectionDurabilityDetails.RefreshUI)),
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.TooltipSectionDurabilityDetails_RefreshUI_Prefix))));
+
+            harmony.Patch(AccessTools.Method(typeof(AbilityRadial), nameof(AbilityRadial.Awake)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(AbilityRadialPatcher), nameof(AbilityRadialPatcher.Prefix))),
+                transpiler: new HarmonyMethod(AccessTools.Method(typeof(AbilityRadialPatcher), nameof(AbilityRadialPatcher.Transpiler))));
         }
     }
 }

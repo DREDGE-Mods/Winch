@@ -7,12 +7,14 @@ namespace Winch.Patches.API;
 
 [HarmonyPatch(typeof(Player))]
 [HarmonyPatch("OnEnable")]
+[HarmonyPriority(Priority.First)]
 public class PlayerPatch
 {
     public static void Postfix(Player __instance)
     {
         try
         {
+            AbilityUtil.AddModdedAbilitiesToPlayer(__instance.transform.Find("Abilities"));
             PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
             PoiUtil.CreateModdedPois();
             HarvestZoneUtil.CreateModdedHarvestZones();

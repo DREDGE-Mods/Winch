@@ -1,10 +1,12 @@
-﻿namespace ExampleItems
+﻿using Winch.Util;
+
+namespace ExampleItems
 {
     public class Loader
     {
         public static void Initialize()
         {
-            // TODO: Make items obtainable
+            AbilityUtil.RegisterModdedAbilityType<TestAbility>("exampleitems.testability");
         }
     }
 }
