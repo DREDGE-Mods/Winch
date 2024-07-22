@@ -1,9 +1,28 @@
 ﻿{
 	"eventType": "SPAWN_PREFAB",
+	"weight": 100,
+	"spawnStartTime": 0,
+	"spawnEndTime": 1,
+	"playerSpawnOffset": {
+		"x": 5,
+		"y": 5,
+		"z": 5
+	},
+	"dispelByBanish": true,
+	"dispelByFoghorn": true,
+	"foghornDispelTime": 1.5,
+	"foghornDispelCount": 3,
+	"doSafeZoneHitCheck": true,
+	"allowInPassiveMode": false,
+	"hasMinDepth": true,
+	"minDepth": 0.03,
+	"minSanity": 0,
+	"maxSanity": 1,
+	"forbiddenZones": [ "THE_MARROWS", "STELLAR_BASIN", "TWISTED_STRAND", "DEVILS_SPINE", "OPEN_OCEAN", "PALE_REACH" ],
 	"repeatDelay": {
-		"NORMAL": 1,
-		"PASSIVE": 1,
-		"NIGHTMARE": 1
+		"NORMAL": 0.1,
+		"PASSIVE": 0.1,
+		"NIGHTMARE": 0.05
 	},
 	"itemInventoryConditions": [
 		{

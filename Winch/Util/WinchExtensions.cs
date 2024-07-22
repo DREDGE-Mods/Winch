@@ -759,6 +759,9 @@ public static class WinchExtensions
         return target;
     }
 
+    public static void Destroy<T>(this T target) where T : UnityEngine.Object => UnityEngine.Object.Destroy(target);
+    public static void DestroyImmediate<T>(this T target) where T : UnityEngine.Object => UnityEngine.Object.DestroyImmediate(target);
+
     public static void SmoothLookDir(this GameObject go, Vector3 direction, float dt, float angularVelocity)
     {
         var start = go.transform.rotation;
