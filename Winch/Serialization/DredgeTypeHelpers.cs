@@ -106,13 +106,23 @@ public static class DredgeTypeHelpers
         return new Vector3(x, y, z);
     }
 
+    public static List<Vector3> ParseVector3Array(JArray vector3s)
+    {
+        var parsed = new List<Vector3>();
+        foreach (var vector3 in vector3s)
+        {
+            parsed.Add(ParseVector3(vector3));
+        }
+        return parsed;
+    }
+
     public static List<Vector2Int> ParseDimensions(JArray dimensions)
     {
         var parsed = new List<Vector2Int>();
-        for(int y = 0; y < dimensions.Count; y++)
+        for (int y = 0; y < dimensions.Count; y++)
         {
             string line = dimensions[y].ToString();
-            for(int x = 0; x < line.Length; x++)
+            for (int x = 0; x < line.Length; x++)
             {
                 char pos = line[x];
                 if (pos != ' ')
@@ -148,6 +158,19 @@ public static class DredgeTypeHelpers
         foreach (var cellGroupConfiguration in cellGroupConfigurations)
         {
             parsed.Add(ParseCellGroupConfiguration(cellGroupConfiguration));
+        }
+
+        return parsed;
+    }
+
+    public static Dictionary<TKey,TValue> ParseDictionary<TKey, TValue>(object inVal, Func<object, TKey> keyParser, Func<object, TValue> valueParser)
+    {
+        var parsed = new Dictionary<TKey, TValue>();
+
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<object, object>>(inVal.ToString()) ?? throw new InvalidOperationException("Unable to parse dictionary.");
+        foreach (var kvp in dictionary)
+        {
+            parsed.Add(keyParser(kvp.Key), valueParser(kvp.Value));
         }
 
         return parsed;

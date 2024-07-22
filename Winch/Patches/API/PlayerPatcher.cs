@@ -19,6 +19,7 @@ public class PlayerPatch
             PoiUtil.CreateModdedPois();
             HarvestZoneUtil.CreateModdedHarvestZones();
             ItemUtil.Encyclopedia();
+            WorldEventUtil.CreateModdedStaticWorldEvents();
         }
         catch (Exception ex)
         {

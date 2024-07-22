@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Patches.API
 {
@@ -11,6 +12,7 @@ namespace Winch.Patches.API
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<WorldEventData>> handle)
         {
+            WorldEventUtil.AddModdedWorldEvents(handle.Result);
             DredgeEvent.AddressableEvents.WorldEventsLoaded.Trigger(__instance, handle, true);
         }
 

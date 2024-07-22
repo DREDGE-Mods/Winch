@@ -39,6 +39,7 @@ namespace Winch.Core
             string poiFolderpath = Path.Combine(path, "POI");
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
             string abilityFolderpath = Path.Combine(path, "Abilities");
+            string worldEventFolderpath = Path.Combine(path, "WorldEvents");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
@@ -47,6 +48,7 @@ namespace Winch.Core
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
+            if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -217,6 +219,22 @@ namespace Winch.Core
                 catch (Exception ex)
                 {
                     WinchCore.Log.Error($"Failed to load Ability Data from {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadWorldEventFiles(string worldEventFolderPath)
+        {
+            string[] worldEventFiles = Directory.GetFiles(worldEventFolderPath);
+            foreach (string file in worldEventFiles)
+            {
+                try
+                {
+                    WorldEventUtil.AddCustomWorldEventDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load World Event Data from {file}: {ex}");
                 }
             }
         }
