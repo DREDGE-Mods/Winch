@@ -17,7 +17,7 @@ public abstract class ModdedAbility : Ability
     /// <inheritdoc cref="id"/>
     public string ID => id;
 
-    public ModdedAbilityData ModAbilityData => AbilityUtil.GetModdedAbilityData(ID);
+    public ModdedAbilityData ModdedAbilityData => AbilityUtil.GetModdedAbilityData(ID);
 
     public virtual new void Awake()
     {
@@ -44,13 +44,13 @@ public abstract class ModdedAbility : Ability
     /// </summary>
     public void Register()
     {
-        abilityData = ModAbilityData;
-        GameManager.Instance.PlayerAbilities.RegisterAbility(ModAbilityData, this);
+        abilityData = ModdedAbilityData;
+        GameManager.Instance.PlayerAbilities.RegisterAbility(ModdedAbilityData, this);
     }
 
     internal void AutoUnlock()
     {
-        if (ModAbilityData.autoUnlock) Unlock();
+        if (ModdedAbilityData.autoUnlock) Unlock();
     }
 
     /// <summary>
@@ -58,6 +58,6 @@ public abstract class ModdedAbility : Ability
     /// </summary>
     public void Unlock()
     {
-        GameManager.Instance.PlayerAbilities.UnlockAbility(ModAbilityData.name);
+        GameManager.Instance.PlayerAbilities.UnlockAbility(ModdedAbilityData.name);
     }
 }
