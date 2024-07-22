@@ -4,17 +4,5 @@
     "descriptionKey": "exampleitems.testability.desc",
     "shortDescriptionKey": "exampleitems.testability.shortDesc",
     "icon": "exampleitems.testability",
-    "allowExitAction": false,
-    "canFailCast": false,
-    "castTime": 0,
-    "cooldown": 0,
-    "deactivateOnInputLayerChanged": false,
-    "duration": 0,
-    "exitActionLayer": "NONE",
-    "isContinuous": false,
-    "persistAbilityToggle": true,
-    "linkedItems": [],
-    "linkedItemSubtype": "NONE",
-    "allowDamagedItems": false,
-    "allowExhaustedItems": false
+    "persistAbilityToggle": true
 }
