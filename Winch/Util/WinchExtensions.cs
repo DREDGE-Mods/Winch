@@ -173,6 +173,16 @@ public static class WinchExtensions
         stream = GetEmbeddedResource(assembly, endsWith);
         return stream != null;
     }
+
+    public static IEnumerable<Type> GetFilteredTypeList(this Type baseType) => UnityExtensions.GetFilteredTypeList(baseType);
+
+    public static IEnumerable<Type> GetFilteredTypeList(this Assembly assembly, Type baseType)
+    {
+        return from type in assembly.GetTypes()
+               where !type.IsAbstract
+               where baseType.IsAssignableFrom(type)
+               select type;
+    }
     #endregion
 
     #region Stream
