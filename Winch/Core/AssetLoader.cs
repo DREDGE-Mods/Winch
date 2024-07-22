@@ -225,16 +225,36 @@ namespace Winch.Core
 
         private static void LoadWorldEventFiles(string worldEventFolderPath)
         {
-            string[] worldEventFiles = Directory.GetFiles(worldEventFolderPath);
-            foreach (string file in worldEventFiles)
+            var dynamicPath = Path.Combine(worldEventFolderPath, "Dynamic");
+            if (Directory.Exists(dynamicPath))
             {
-                try
+                string[] worldEventFiles = Directory.GetFiles(dynamicPath);
+                foreach (string file in worldEventFiles)
                 {
-                    WorldEventUtil.AddCustomWorldEventDataFromMeta(file);
+                    try
+                    {
+                        WorldEventUtil.AddCustomWorldEventDataFromMeta(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        WinchCore.Log.Error($"Failed to load dynamic world event data from {file}: {ex}");
+                    }
                 }
-                catch (Exception ex)
+            }
+            var staticPath = Path.Combine(worldEventFolderPath, "Static");
+            if (Directory.Exists(staticPath))
+            {
+                string[] staticWorldEventFiles = Directory.GetFiles(staticPath);
+                foreach (string file in staticWorldEventFiles)
                 {
-                    WinchCore.Log.Error($"Failed to load World Event Data from {file}: {ex}");
+                    try
+                    {
+                        WorldEventUtil.AddCustomStaticWorldEventDataFromMeta(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        WinchCore.Log.Error($"Failed to load static world event data from {file}: {ex}");
+                    }
                 }
             }
         }

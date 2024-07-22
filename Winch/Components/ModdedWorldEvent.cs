@@ -33,21 +33,6 @@ public abstract class ModdedWorldEvent : WorldEvent
 
     public virtual void Awake()
     {
-        Register();
-    }
-
-    /// <summary>
-    /// Registers this world event
-    /// </summary>
-    public void Register()
-    {
-        if (GameManager.Instance != null && GameManager.Instance.WorldEventManager != null)
-        {
-            if (ModdedWorldEventData.isStatic)
-            {
-                GameManager.Instance.WorldEventManager.RegisterStaticWorldEvent(ModdedWorldEventData.eventType, this);
-                gameObject.Deactivate();
-            }
-        }
+        worldEventData = WorldEventUtil.GetModdedWorldEventData(id);
     }
 }

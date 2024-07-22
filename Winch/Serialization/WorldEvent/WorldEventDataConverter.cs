@@ -13,10 +13,7 @@ public class WorldEventDataConverter : DredgeTypeConverter<ModdedWorldEvent>
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new(null, null) },
-        { "isStatic", new(false, o=> bool.Parse(o.ToString())) },
-        { "location", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "eventType", new(WorldEventType.NONE, o=> DredgeTypeHelpers.GetEnumValue<WorldEventType>(o) )},
-        { "prefab", new(null, null) },
         { "allowInPassiveMode", new(false, o=> bool.Parse(o.ToString())) },
         { "dispelByBanish", new(true, o=> bool.Parse(o.ToString())) },
         { "dispelByFoghorn", new(false, o=> bool.Parse(o.ToString())) },

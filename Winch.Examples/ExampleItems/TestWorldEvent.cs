@@ -6,7 +6,6 @@ namespace ExampleItems
     {
 		public override void Activate()
 		{
-			base.gameObject.SetActive(true);
 			base.Activate();
 			this.RequestEventFinish();
 		}

@@ -13,14 +13,22 @@ namespace Winch.Util;
 public static class WorldEventUtil
 {
     private static WorldEventDataConverter Converter = new WorldEventDataConverter();
+    private static StaticWorldEventDataConverter StaticConverter = new StaticWorldEventDataConverter();
 
     internal static bool PopulateWorldEventDataFromMetaWithConverter(ModdedWorldEventData worldEventData, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(worldEventData, meta, Converter);
     }
 
+    internal static bool PopulateStaticWorldEventDataFromMetaWithConverter(StaticWorldEventData worldEventData, Dictionary<string, object> meta)
+    {
+        return UtilHelpers.PopulateObjectFromMeta(worldEventData, meta, StaticConverter);
+    }
+
     internal static Dictionary<string, ModdedWorldEventData> ModdedWorldEventDataDict = new();
+    internal static Dictionary<string, StaticWorldEventData> ModdedStaticWorldEventDataDict = new();
     internal static Dictionary<string, ModdedWorldEvent> ModdedWorldEventDict = new();
+    internal static Dictionary<string, StaticWorldEvent> ModdedStaticWorldEventDict = new();
 
     public static ModdedWorldEventData GetModdedWorldEventData(string id)
     {
@@ -28,6 +36,17 @@ public static class WorldEventUtil
             return null;
 
         if (ModdedWorldEventDataDict.TryGetValue(id, out ModdedWorldEventData worldEventData))
+            return worldEventData;
+        else
+            return null;
+    }
+
+    public static StaticWorldEventData GetModdedStaticWorldEventData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedStaticWorldEventDataDict.TryGetValue(id, out StaticWorldEventData worldEventData))
             return worldEventData;
         else
             return null;
@@ -44,6 +63,17 @@ public static class WorldEventUtil
             return null;
     }
 
+    public static StaticWorldEvent GetModdedStaticWorldEvent(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedStaticWorldEventDict.TryGetValue(id, out StaticWorldEvent worldEvent))
+            return worldEvent;
+        else
+            return null;
+    }
+
     public static T RegisterModdedWorldEventType<T>(string id) where T : ModdedWorldEvent
     {
         T worldEvent = new GameObject(id).Prefabitize().AddComponent<T>();
@@ -53,7 +83,7 @@ public static class WorldEventUtil
 
     public static void RegisterModdedWorldEvent<T>(string id, T worldEvent) where T : ModdedWorldEvent
     {
-        WinchCore.Log.Debug($"Registering world event of type {typeof(T).FullName} for {id}");
+        WinchCore.Log.Debug($"Registering dynamic world event of type {typeof(T).FullName} for {id}");
         worldEvent.id = id;
         worldEvent.gameObject.Prefabitize();
         ModdedWorldEventDict.SafeAdd(id, worldEvent);
@@ -65,7 +95,30 @@ public static class WorldEventUtil
             data.prefab = worldEvent.gameObject;
         }
         else
-            WinchCore.Log.Error($"Couldn't find data for world event \"{id}\"");
+            WinchCore.Log.Error($"Couldn't find data for dynamic world event \"{id}\"");
+    }
+
+    public static T RegisterModdedStaticWorldEventType<T>(string id) where T : StaticWorldEvent
+    {
+        T worldEvent = new GameObject(id).Prefabitize().AddComponent<T>();
+        RegisterModdedStaticWorldEvent<T>(id, worldEvent);
+        return worldEvent;
+    }
+
+    public static void RegisterModdedStaticWorldEvent<T>(string id, T worldEvent) where T : StaticWorldEvent
+    {
+        WinchCore.Log.Debug($"Registering static world event of type {typeof(T).FullName} for {id}");
+        worldEvent.id = id;
+        worldEvent.gameObject.Prefabitize();
+        ModdedStaticWorldEventDict.SafeAdd(id, worldEvent);
+
+        var data = GetModdedStaticWorldEventData(id);
+        if (data != null)
+        {
+            data.prefab = worldEvent.gameObject;
+        }
+        else
+            WinchCore.Log.Error($"Couldn't find data for static world event \"{id}\"");
     }
 
     internal static void AddCustomWorldEventDataFromMeta(string metaPath)
@@ -79,13 +132,13 @@ public static class WorldEventUtil
         var worldEventData = UtilHelpers.GetScriptableObjectFromMeta<ModdedWorldEventData>(meta, metaPath);
         if (worldEventData == null)
         {
-            WinchCore.Log.Error($"Couldn't create world event data");
+            WinchCore.Log.Error($"Couldn't create dynamic world event data");
             return;
         }
         var id = (string)meta["id"];
         if (ModdedWorldEventDataDict.ContainsKey(id))
         {
-            WinchCore.Log.Error($"Duplicate world event data {id} at {metaPath} failed to load");
+            WinchCore.Log.Error($"Duplicate dynamic world event data {id} at {metaPath} failed to load");
             return;
         }
         if (PopulateWorldEventDataFromMetaWithConverter(worldEventData, meta))
@@ -94,7 +147,37 @@ public static class WorldEventUtil
         }
         else
         {
-            WinchCore.Log.Error($"No world event data converter found");
+            WinchCore.Log.Error($"No dynamic world event data converter found");
+        }
+    }
+
+    internal static void AddCustomStaticWorldEventDataFromMeta(string metaPath)
+    {
+        var meta = UtilHelpers.ParseMeta(metaPath);
+        if (meta == null)
+        {
+            WinchCore.Log.Error($"Meta file {metaPath} is empty");
+            return;
+        }
+        var worldEventData = UtilHelpers.GetScriptableObjectFromMeta<StaticWorldEventData>(meta, metaPath);
+        if (worldEventData == null)
+        {
+            WinchCore.Log.Error($"Couldn't create static world event data");
+            return;
+        }
+        var id = (string)meta["id"];
+        if (ModdedStaticWorldEventDataDict.ContainsKey(id))
+        {
+            WinchCore.Log.Error($"Duplicate static world event data {id} at {metaPath} failed to load");
+            return;
+        }
+        if (PopulateStaticWorldEventDataFromMetaWithConverter(worldEventData, meta))
+        {
+            ModdedStaticWorldEventDataDict.Add(id, worldEventData);
+        }
+        else
+        {
+            WinchCore.Log.Error($"No static world event data converter found");
         }
     }
 
@@ -102,18 +185,16 @@ public static class WorldEventUtil
     {
         foreach (var worldEventData in ModdedWorldEventDataDict.Values)
         {
-            if (!worldEventData.isStatic)
-                list.Add(worldEventData);
+            list.Add(worldEventData);
         }
     }
 
     internal static void CreateModdedStaticWorldEvents()
     {
         var staticWorldEvents = new GameObject("StaticWorldEvents").transform;
-        foreach (var worldEventData in ModdedWorldEventDataDict.Values)
+        foreach (var worldEventData in ModdedStaticWorldEventDataDict.Values)
         {
-            if (worldEventData.isStatic)
-                worldEventData.prefab.Instantiate(worldEventData.location, Quaternion.identity, staticWorldEvents);
+            worldEventData.prefab.Instantiate(worldEventData.location, Quaternion.identity, staticWorldEvents);
         }
     }
 }

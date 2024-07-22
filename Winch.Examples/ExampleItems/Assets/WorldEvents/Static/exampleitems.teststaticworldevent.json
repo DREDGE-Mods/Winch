@@ -1,6 +1,5 @@
 ﻿{
 	"eventType": "FOG_GHOST",
-	"isStatic": true,
 	"location": {
 		"x": 414,
 		"y": 1.5,

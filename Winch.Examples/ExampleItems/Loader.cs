@@ -14,8 +14,8 @@ namespace ExampleItems
             var prefab = GameObject.CreatePrimitive(PrimitiveType.Cube).Prefabitize();
             prefab.RemoveComponent<Collider>();
             prefab.GetComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Shader Graphs/Lit_Shader"));
-            var testStaticWorldEvent = prefab.AddComponent<TestWorldEvent>();
-            WorldEventUtil.RegisterModdedWorldEvent<TestWorldEvent>("exampleitems.teststaticworldevent", testStaticWorldEvent);
+            var testStaticWorldEvent = prefab.AddComponent<TestStaticWorldEvent>();
+            WorldEventUtil.RegisterModdedStaticWorldEvent<TestStaticWorldEvent>("exampleitems.teststaticworldevent", testStaticWorldEvent);
         }
     }
 }
