@@ -104,6 +104,7 @@ public static class AbilityUtil
     {
         foreach (var modAbilityData in ModdedAbilityDataDict.Values)
         {
+            modAbilityData.Populate();
             var abilityRadialWedgeObj = new GameObject(modAbilityData.id, typeof(RectTransform), typeof(Image));
             abilityRadialWedgeObj.transform.SetParent(abiltiesParent, false);
             var abilityRadialWedge = abilityRadialWedgeObj.AddComponent<AbilityRadialWedge>();
