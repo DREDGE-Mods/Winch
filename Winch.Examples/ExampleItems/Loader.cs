@@ -1,4 +1,5 @@
-﻿using Winch.Util;
+﻿using UnityEngine;
+using Winch.Util;
 
 namespace ExampleItems
 {
@@ -6,7 +7,7 @@ namespace ExampleItems
     {
         public static void Initialize()
         {
-            AbilityUtil.RegisterModdedAbilityType<TestAbility>("exampleitems.testability");
+            var testAbility = AbilityUtil.RegisterModdedAbilityType<TestAbility>("exampleitems.testability");
         }
     }
 }

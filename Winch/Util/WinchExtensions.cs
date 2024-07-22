@@ -512,6 +512,46 @@ public static class WinchExtensions
     #endregion
 
     #region Unity
+    internal static Transform? prefabParent;
+    internal static Transform PrefabParent
+    {
+        get
+        {
+            if (prefabParent == null)
+            {
+                var prefabParentObj = new GameObject("PrefabParent");
+                prefabParentObj.Deactivate();
+                prefabParentObj.DontDestroyOnLoad();
+                prefabParent = prefabParentObj.transform;
+            }
+            return prefabParent;
+        }
+    }
+
+    /// <summary>
+    /// Parent the given object to an inactive don't destroy on load object.
+    /// </summary>
+    public static GameObject Prefabitize(this GameObject obj)
+    {
+        obj.transform.SetParent(PrefabParent, false);
+        return obj;
+    }
+
+    /// <summary>
+    /// Copies an object and prefabitizes that copy.
+    /// </summary>
+    public static GameObject CopyPrefab(this GameObject original) => original.Instantiate(PrefabParent, false);
+
+    /// <summary>
+    /// Activates the game object.
+    /// </summary>
+    public static void Activate(this GameObject obj) => obj.SetActive(true);
+
+    /// <summary>
+    /// Deactivates the game object.
+    /// </summary>
+    public static void Deactivate(this GameObject obj) => obj.SetActive(false);
+
     /// <summary>
     /// Deconstruct a Rect
     /// </summary>
@@ -625,13 +665,64 @@ public static class WinchExtensions
         if (active) original.SetActive(false);
         var copy = UnityEngine.Object.Instantiate(original);
         copy.Rename(original.name);
-        if (active) original.SetActive(true);;
+        if (active) original.SetActive(true);
+        return copy;
+    }
+
+    public static GameObject InstantiateInactive(this GameObject original, Transform parent, bool worldPositionStays)
+    {
+        var active = original.activeSelf;
+        if (active) original.SetActive(false);
+        var copy = UnityEngine.Object.Instantiate(original, parent, worldPositionStays);
+        copy.Rename(original.name);
+        if (active) original.SetActive(true);
+        return copy;
+    }
+
+    public static GameObject InstantiateInactive(this GameObject original, Vector3 position, Quaternion rotation)
+    {
+        var active = original.activeSelf;
+        if (active) original.SetActive(false);
+        var copy = UnityEngine.Object.Instantiate(original, position, rotation);
+        copy.Rename(original.name);
+        if (active) original.SetActive(true);
+        return copy;
+    }
+
+    public static GameObject InstantiateInactive(this GameObject original, Vector3 position, Quaternion rotation, Transform parent)
+    {
+        var active = original.activeSelf;
+        if (active) original.SetActive(false);
+        var copy = UnityEngine.Object.Instantiate(original, position, rotation, parent);
+        copy.Rename(original.name);
+        if (active) original.SetActive(true);
         return copy;
     }
 
     public static T Instantiate<T>(this T original) where T : UnityEngine.Object
     {
         var copy = UnityEngine.Object.Instantiate(original);
+        copy.Rename(original.name);
+        return copy;
+    }
+
+    public static T Instantiate<T>(this T original, Transform parent, bool worldPositionStays) where T : UnityEngine.Object
+    {
+        var copy = UnityEngine.Object.Instantiate(original, parent, worldPositionStays);
+        copy.Rename(original.name);
+        return copy;
+    }
+
+    public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation) where T : UnityEngine.Object
+    {
+        var copy = UnityEngine.Object.Instantiate(original, position, rotation);
+        copy.Rename(original.name);
+        return copy;
+    }
+
+    public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation, Transform parent) where T : UnityEngine.Object
+    {
+        var copy = UnityEngine.Object.Instantiate(original, position, rotation, parent);
         copy.Rename(original.name);
         return copy;
     }

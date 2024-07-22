@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using UnityEngine;
 using Winch.Data.Abilities;
 using Winch.Util;
 
@@ -9,15 +9,24 @@ namespace Winch.Components;
 /// </summary>
 public abstract class ModdedAbility : Ability
 {
+    [SerializeField]
+    /// <inheritdoc cref="ID"/>
+    internal string id;
+
     /// <summary>
     /// ID of the ability data
     /// </summary>
-    internal string id;
-
-    /// <inheritdoc cref="id"/>
     public string ID => id;
 
-    public ModdedAbilityData ModdedAbilityData => AbilityUtil.GetModdedAbilityData(ID);
+    public ModdedAbilityData ModdedAbilityData
+    {
+        get
+        {
+            var moddedWorldEventData = AbilityUtil.GetModdedAbilityData(id);
+            abilityData = moddedWorldEventData;
+            return moddedWorldEventData;
+        }
+    }
 
     public virtual new void Awake()
     {
@@ -44,8 +53,10 @@ public abstract class ModdedAbility : Ability
     /// </summary>
     public void Register()
     {
-        abilityData = ModdedAbilityData;
-        GameManager.Instance.PlayerAbilities.RegisterAbility(ModdedAbilityData, this);
+        if (GameManager.Instance != null && GameManager.Instance.PlayerAbilities != null)
+        {
+            GameManager.Instance.PlayerAbilities.RegisterAbility(ModdedAbilityData, this);
+        }
     }
 
     internal void AutoUnlock()
@@ -58,6 +69,9 @@ public abstract class ModdedAbility : Ability
     /// </summary>
     public void Unlock()
     {
-        GameManager.Instance.PlayerAbilities.UnlockAbility(ModdedAbilityData.name);
+        if (GameManager.Instance != null && GameManager.Instance.PlayerAbilities != null)
+        {
+            GameManager.Instance.PlayerAbilities.UnlockAbility(ID);
+        }
     }
 }

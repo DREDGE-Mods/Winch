@@ -20,7 +20,7 @@ public static class AbilityUtil
     }
 
     internal static Dictionary<string, ModdedAbilityData> ModdedAbilityDataDict = new();
-    internal static Dictionary<string, Type> ModdedAbilityTypeDict = new();
+    internal static Dictionary<string, ModdedAbility> ModdedAbilityDict = new();
 
     public static ModdedAbilityData GetModdedAbilityData(string id)
     {
@@ -33,21 +33,38 @@ public static class AbilityUtil
             return null;
     }
 
-    public static Type GetModdedAbilityType(string id)
+    public static ModdedAbility GetModdedAbility(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             return null;
 
-        if (ModdedAbilityTypeDict.TryGetValue(id, out Type ability))
+        if (ModdedAbilityDict.TryGetValue(id, out ModdedAbility ability))
             return ability;
         else
             return null;
     }
 
-    public static void RegisterModdedAbilityType<T>(string id) where T : ModdedAbility
+    public static T RegisterModdedAbilityType<T>(string id) where T : ModdedAbility
     {
-        WinchCore.Log.Debug($"Registering ability type {typeof(T).FullName} for {id}");
-        ModdedAbilityTypeDict.SafeAdd(id, typeof(T));
+        T ability = new GameObject(id).Prefabitize().AddComponent<T>();
+        RegisterModdedAbility<T>(id, ability);
+        return ability;
+    }
+
+    public static void RegisterModdedAbility<T>(string id, T ability) where T : ModdedAbility
+    {
+        WinchCore.Log.Debug($"Registering ability of type {typeof(T).FullName} for {id}");
+        ability.id = id;
+        ability.gameObject.Prefabitize();
+        ModdedAbilityDict.SafeAdd(id, ability);
+
+        var data = GetModdedAbilityData(id);
+        if (data != null)
+        {
+            ability.abilityData = data;
+        }
+        else
+            WinchCore.Log.Error($"Couldn't find data for ability \"{id}\"");
     }
 
     internal static void AddCustomAbilityDataFromMeta(string metaPath)
@@ -82,17 +99,12 @@ public static class AbilityUtil
 
     internal static void AddModdedAbilitiesToPlayer(Transform parent)
     {
-        foreach (var kvp in ModdedAbilityTypeDict)
+        foreach (var ability in ModdedAbilityDict.Values)
         {
-            var id = kvp.Key;
-            var abilityType = kvp.Value;
-            WinchCore.Log.Debug($"Creating ability type {abilityType.FullName} for {id}");
-            var abilityObj = new GameObject(id);
-            abilityObj.SetActive(false);
-            abilityObj.transform.SetParent(parent, false);
-            ModdedAbility ability = (ModdedAbility)abilityObj.AddComponent(abilityType);
-            ability.id = id;
-            ability.Register();
+            WinchCore.Log.Debug($"Instantiating ability {ability.GetType().FullName} for {ability.ID}");
+            var abilityObj = ability.gameObject.Instantiate(parent, false);
+            var newAbility = abilityObj.GetComponent<ModdedAbility>();
+            newAbility.Register();
             abilityObj.SetActive(true);
         }
     }
