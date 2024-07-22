@@ -10,6 +10,14 @@ namespace Winch.Serialization.WorldEvent;
 
 public class WorldEventDataConverter : DredgeTypeConverter<ModdedWorldEvent>
 {
+    private readonly static Dictionary<GameMode, float> defaultRepeatDelay = new()
+    {
+        { GameMode.NORMAL, 1 },
+        { GameMode.PASSIVE, 1 },
+        { GameMode.NIGHTMARE, 1 },
+    };
+
+
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new(null, null) },
@@ -23,7 +31,7 @@ public class WorldEventDataConverter : DredgeTypeConverter<ModdedWorldEvent>
         { "minSanity", new(0f, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
         { "maxSanity", new(1f, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
         { "weight", new(0f, o => float.Parse(o.ToString())) },
-        { "repeatDelay", new(new Dictionary<GameMode, float>(), o => DredgeTypeHelpers.ParseDictionary<GameMode, float>(o, k => DredgeTypeHelpers.GetEnumValue<GameMode>(k), v => float.Parse(v.ToString()))) },
+        { "repeatDelay", new(defaultRepeatDelay, o => DredgeTypeHelpers.ParseDictionary<GameMode, float>(o, k => DredgeTypeHelpers.GetEnumValue<GameMode>(k), v => float.Parse(v.ToString()))) },
         { "spawnStartTime", new(0f, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
         { "spawnEndTime", new(1f, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
         { "hasDuration", new(false, o=> bool.Parse(o.ToString())) },

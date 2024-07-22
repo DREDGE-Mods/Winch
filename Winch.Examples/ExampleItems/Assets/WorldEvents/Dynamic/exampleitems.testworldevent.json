@@ -1,5 +1,10 @@
 ﻿{
 	"eventType": "SPAWN_PREFAB",
+	"repeatDelay": {
+		"NORMAL": 1,
+		"PASSIVE": 1,
+		"NIGHTMARE": 1
+	},
 	"itemInventoryConditions": [
 		{
 			"type": "AnyOfItem",
