@@ -1,6 +1,6 @@
 ﻿{
 	"speakerNameKey": "exampleitems.steve.name",
-	"paralinguisticsNameKey": "MAYOR_NAME_KEY",
+	"paralinguisticsNameKey": "MAYOR",
 	"portraitSprite": "Steve",
 	"smallPortraitSprite": "SteveSmall"
 }

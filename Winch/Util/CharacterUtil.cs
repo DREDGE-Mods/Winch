@@ -35,9 +35,9 @@ internal static class CharacterUtil
     {
         foreach (var speaker in ModdedSpeakerDataDict.Values)
         {
-            if (lookupTable.TryGetValue(speaker.paralinguisticsNameKey, out SpeakerData data))
+            if (lookupTable.TryGetParalinguisticsFromNameKey(speaker.paralinguisticsNameKey, out var paralinguistics))
             {
-                speaker.paralinguistics = data.paralinguistics;
+                speaker.paralinguistics = paralinguistics;
             }
             lookupTable.Add(speaker.id, speaker);
         }
@@ -83,7 +83,7 @@ internal static class CharacterUtil
         if (PopulateSpeakerDataFromMetaWithConverter(speaker, meta))
         {
             ModdedSpeakerDataDict.Add(id, speaker);
-            speaker.AddPortraitPrefab();
+            speaker.MakePortraitPrefab();
         }
         else
         {

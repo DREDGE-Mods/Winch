@@ -8,10 +8,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
+using Winch.Data.Character;
 using Winch.Data.Item;
 
 public static class WinchExtensions
@@ -94,6 +96,38 @@ public static class WinchExtensions
                 }) });
             }
         };
+    }
+
+    public static bool TryGetParalinguisticsFromNameKey(this IDictionary<string, SpeakerData> lookupTable, ParalinguisticsNameKey nameKey, out Dictionary<ParalinguisticType, List<AssetReference>> paralinguistics)
+    {
+        var stringNameKey = nameKey.ToString();
+        switch (nameKey)
+        {
+            case ParalinguisticsNameKey.NONE:
+                break;
+            case ParalinguisticsNameKey.COLLECTOR_REVEALED:
+                if (lookupTable.TryGetValue("COLLECTOR_NAME_KEY", out SpeakerData collectorData))
+                {
+                    paralinguistics = collectorData.paralinguisticOverrideConditions.First().config.paralinguistics;
+                    return true;
+                }
+                break;
+            case ParalinguisticsNameKey.HOODED_FIGURE:
+                stringNameKey += "_1";
+                goto default;
+            case ParalinguisticsNameKey.SOUL:
+                stringNameKey += "_MIDDLE";
+                goto default;
+            default:
+                if (lookupTable.TryGetValue(stringNameKey + "_NAME_KEY", out SpeakerData data))
+                {
+                    paralinguistics = data.paralinguistics;
+                    return true;
+                }
+                break;
+        }
+        paralinguistics = null;
+        return false;
     }
     #endregion
 

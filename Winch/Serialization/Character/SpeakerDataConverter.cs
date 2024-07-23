@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Core;
@@ -25,6 +26,7 @@ public class SpeakerDataConverter : DredgeTypeConverter<AdvancedSpeakerData>
         { "speakerNameKeyOverrides", new(new List<NameKeyOverride>(), null) },
         { "portraitOverrideConditions", new(new List<PortraitOverride>(), null) },
         { "highlightConditions", new(new List<HighlightCondition>(), null) },
+        { "paralinguistics", new(new Dictionary<ParalinguisticType, List<AssetReference>>(), null) },
         { "paralinguisticOverrideConditions", new(new List<ParalinguisticOverride>(), null) }
     };
 
