@@ -15,7 +15,7 @@ using UnityEngine.Networking.Types;
 
 namespace Winch.Util;
 
-public class DialogueUtil
+public static class DialogueUtil
 {
     /// <summary>
     /// Unlocalized lines indexed by their IDs, loaded from mod .yarn files. Used as fallbacks. Loaded in LoadDialoguesFiles on startup.
@@ -105,19 +105,31 @@ public class DialogueUtil
     /// <param name="nodeID">The ID of the node.</param>
     /// <param name="index">The index to insert the instruction at.</param>
     /// <param name="opCode">The opcode to insert. See <see href="https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/YarnSpinner/yarn_spinner.proto"/> for a list of opcodes.</param>
-    /// <param name="operands">Supported types: string, bool, float, int</param>
+    /// <param name="operands">Supported types: <see cref="string"/>, <see cref="bool"/>, <see cref="float"/>, <see cref="int"/></param>
     public static void AddInstruction(string nodeID, int index, Yarn.Instruction.Types.OpCode opCode, params object[] operands)
     {
-        instructions.Add(new DredgeInstruction
-        {
-            NodeID = nodeID,
-            Index = index,
-            OpCode = opCode,
-            Operands = operands
-        });
+        AddInstruction(new DredgeInstruction(nodeID, index, opCode, operands));
     }
 
-    internal static void AddInstruction(DredgeInstruction dredgeInstruction)
+    /// <summary>
+    /// Register an instruction to insert later
+    /// </summary>
+    /// <param name="instruction">The instruction to insert.</param>
+    public static void AddInstruction(DredgeInstruction instruction)
+    {
+        instructions.Add(instruction);
+    }
+
+    /// <summary>
+    /// Register instructions to insert later
+    /// </summary>
+    /// <param name="instructions">The instructions to insert.</param>
+    public static void AddInstructions(params DredgeInstruction[] instructions)
+    {
+        DialogueUtil.instructions.AddRange(instructions);
+    }
+
+    internal static void InsertInstruction(DredgeInstruction dredgeInstruction)
     {
         Yarn.Instruction instruction = new Instruction();
         instruction.Opcode = dredgeInstruction.OpCode;
@@ -248,7 +260,7 @@ public class DialogueUtil
 
         foreach (var instruction in instructions)
         {
-            AddInstruction(instruction);
+            InsertInstruction(instruction);
         }
     }
 
@@ -259,11 +271,26 @@ public class DialogueUtil
         public string Id { get; set; }
     }
 
-    internal class DredgeInstruction
+    public class DredgeInstruction
     {
         public string NodeID { get; set; }
         public int Index { get; set; }
         public Yarn.Instruction.Types.OpCode OpCode { get; set; }
         public object[] Operands { get; set; }
+
+        /// <summary>
+        /// Create an instruction
+        /// </summary>
+        /// <param name="nodeID">The ID of the node.</param>
+        /// <param name="index">The index to insert the instruction at.</param>
+        /// <param name="opCode">The opcode to insert. See <see href="https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/YarnSpinner/yarn_spinner.proto"/> for a list of opcodes.</param>
+        /// <param name="operands">Supported types: <see cref="string"/>, <see cref="bool"/>, <see cref="float"/>, <see cref="int"/></param>
+        public DredgeInstruction(string nodeID, int index, Yarn.Instruction.Types.OpCode opCode, params object[] operands)
+        {
+            NodeID = nodeID;
+            Index = index;
+            OpCode = opCode;
+            Operands = operands;
+        }
     }
 }

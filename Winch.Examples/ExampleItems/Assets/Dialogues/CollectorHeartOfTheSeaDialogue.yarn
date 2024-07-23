@@ -1,0 +1,24 @@
+﻿﻿title: Collector_ExampleItemsHeartOfTheSea_Deliver
+---
+<<SetQuestStepCompleted ExampleItemsHeartOfTheSea_Return>>
+<<RemoveItemById exampleitems.heartofthesea>>
+<<RecordRelicHandedIn>>
+<<AdjustIntVariable relics-handed-in 1>>
+<<ShowPortrait COLLECTOR_NAME_KEY>>
+You walk in and place the Heart of the Sea on a table by the Collector. #line:0cz83c6 
+COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #line:0da94d7 
+COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:0986fhd
+COLLECTOR_NAME_KEY: I sense some power eminating from it. #line:05ajy58
+<<jump Collector_ExampleItemsHeartOfTheSea_Award>>
+===
+title: Collector_ExampleItemsHeartOfTheSea_Award
+---
+COLLECTOR_NAME_KEY: I'm not sure what I should give you for this... #line:04636c1 
+<<PlayClip collector-page-turn>>
+COLLECTOR_NAME_KEY: Hmmm... #line:0a1543c
+COLLECTOR_NAME_KEY: Actually, how about this. #line:03ec055 
+<<UnlockAbility exampleitems.testability>>
+<<TogglePortraitVFX true>>
+<<PlayClip collector-ability-unlock>>
+COLLECTOR_NAME_KEY: Ok you can leave now. #exit #line:04fd166
+===
