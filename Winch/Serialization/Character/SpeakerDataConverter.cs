@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Core;
+using Winch.Data.Character;
 using Winch.Util;
 
 namespace Winch.Serialization.Character;

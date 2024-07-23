@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Localization;
 using Winch.Core;
+using Winch.Data.Character;
 using Winch.Serialization;
 using Winch.Serialization.Character;
 

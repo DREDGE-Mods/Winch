@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-namespace Winch.Serialization.Character
+namespace Winch.Components
 {
     public class SpeakerPortraitAnimator : MonoBehaviour
     {
