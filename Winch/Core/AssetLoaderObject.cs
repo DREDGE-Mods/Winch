@@ -12,8 +12,12 @@ namespace Winch.Core
         private void Awake()
         {
             WinchCore.Log.Debug("[AssetLoaderObject] Awake()");
+            ApplicationEvents.Instance.OnTitleClosed += OnTitleClosed;
+            ApplicationEvents.Instance.OnGameLoaded += OnGameLoaded;
+            ApplicationEvents.Instance.OnGameStartable += OnGameStartable;
             GameManager.Instance.OnGameStarted += OnGameStarted;
             GameManager.Instance.OnGameEnded += OnGameEnded;
+            ApplicationEvents.Instance.OnGameUnloaded += OnGameUnloaded;
 
             try
             {
@@ -31,6 +35,12 @@ namespace Winch.Core
             WinchCore.Log.Debug("[AssetLoaderObject] OnDisable()");
             GameManager.Instance.OnGameStarted -= OnGameStarted;
             GameManager.Instance.OnGameEnded -= OnGameEnded;
+            ApplicationEvents.Instance.OnTitleClosed -= OnTitleClosed;
+            ApplicationEvents.Instance.OnGameLoaded -= OnGameLoaded;
+            ApplicationEvents.Instance.OnGameStartable -= OnGameStartable;
+            GameManager.Instance.OnGameStarted -= OnGameStarted;
+            GameManager.Instance.OnGameEnded -= OnGameEnded;
+            ApplicationEvents.Instance.OnGameUnloaded -= OnGameUnloaded;
         }
 
         public void Start()
@@ -40,6 +50,21 @@ namespace Winch.Core
             DredgeEvent.TriggerModAssetsLoaded();
             ModAssemblyLoader.ExecuteModAssemblies();
             Initializer.InitializePostUnityLoad();
+        }
+
+        private void OnTitleClosed()
+        {
+            WinchCore.Log.Debug("[AssetLoaderObject] OnTitleClosed()");
+        }
+
+        private void OnGameLoaded()
+        {
+            WinchCore.Log.Debug("[AssetLoaderObject] OnGameLoaded()");
+        }
+
+        private void OnGameStartable()
+        {
+            WinchCore.Log.Debug("[AssetLoaderObject] OnGameStartable()");
         }
 
         private void OnGameStarted()
@@ -53,6 +78,11 @@ namespace Winch.Core
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
             PoiUtil.ClearHarvestablesAndHarvestParticlePrefabs();
             CharacterUtil.ClearSpeakerData();
+        }
+
+        private void OnGameUnloaded()
+        {
+            WinchCore.Log.Debug("[AssetLoaderObject] OnGameUnloaded()");
         }
     }
 }
