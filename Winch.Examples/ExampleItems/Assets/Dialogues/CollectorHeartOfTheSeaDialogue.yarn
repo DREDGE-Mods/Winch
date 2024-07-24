@@ -1,13 +1,23 @@
 ﻿﻿title: Collector_ExampleItemsHeartOfTheSea_Deliver
 ---
+<<declare $named = false>>
 <<SetQuestStepCompleted ExampleItemsHeartOfTheSea_Return>>
 <<RemoveItemById exampleitems.heartofthesea>>
 <<RecordRelicHandedIn>>
 <<AdjustIntVariable relics-handed-in 1>>
 <<ShowPortrait COLLECTOR_NAME_KEY>>
 You walk in and place the Heart of the Sea on a table by the Collector. #line:0cz83c6 
+<<AutoResolveNextLine>>
 COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #line:0da94d7 
+	-> Heart of the Sea #line:ed1b9afe
+		<<set $named to true>>
+	-> I have absolutely no idea #line:7b2b9d89
 COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:0986fhd
+	<<if $named is true>>
+		COLLECTOR_NAME_KEY: I wonder what "heart" means. #line:0ur729j 
+	<<else>>
+		COLLECTOR_NAME_KEY: You found it, but have no idea what it is? #line:0p21oau 
+	<<endif>>
 COLLECTOR_NAME_KEY: I sense some power eminating from it. #line:05ajy58
 <<jump Collector_ExampleItemsHeartOfTheSea_Award>>
 ===
