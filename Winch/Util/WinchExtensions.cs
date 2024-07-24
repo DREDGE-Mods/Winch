@@ -587,7 +587,7 @@ public static class WinchExtensions
     /// </summary>
     public static GameObject Prefabitize(this GameObject obj)
     {
-        obj.DontDestroyOnLoad().transform.SetParent(PrefabParent, false);
+        obj.transform.SetParent(PrefabParent, false);
         return obj;
     }
 

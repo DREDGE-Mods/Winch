@@ -11,7 +11,6 @@ using System.Linq;
 using Yarn.Compiler;
 using System.Globalization;
 using System.Text;
-using UnityEngine.Networking.Types;
 
 namespace Winch.Util;
 
@@ -112,6 +111,19 @@ public static class DialogueUtil
     }
 
     /// <summary>
+    /// Inserts an instruction into a node at a specified index and with a label/operands.
+    /// </summary>
+    /// <param name="nodeID">The ID of the node.</param>
+    /// <param name="index">The index to insert the instruction at.</param>
+    /// <param name="label">The label ID of this instruction.</param>
+    /// <param name="opCode">The opcode to insert. See <see href="https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/YarnSpinner/yarn_spinner.proto"/> for a list of opcodes.</param>
+    /// <param name="operands">Supported types: <see cref="string"/>, <see cref="bool"/>, <see cref="float"/>, <see cref="int"/></param>
+    public static void AddInstruction(string nodeID, int index, string label, Yarn.Instruction.Types.OpCode opCode, params object[] operands)
+    {
+        AddInstruction(new DredgeInstruction(nodeID, index, label, opCode, operands));
+    }
+
+    /// <summary>
     /// Register an instruction to insert later
     /// </summary>
     /// <param name="instruction">The instruction to insert.</param>
@@ -152,16 +164,19 @@ public static class DialogueUtil
 
         DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
         Program program = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
+        Node node = program.Nodes[dredgeInstruction.NodeID];
 
-        program.Nodes[dredgeInstruction.NodeID].Instructions.Insert(dredgeInstruction.Index, instruction);
+        node.Instructions.Insert(dredgeInstruction.Index, instruction);
 
-        foreach (var label in program.Nodes[dredgeInstruction.NodeID].Labels)
+        foreach (var label in node.Labels)
         {
             if (label.Value >= dredgeInstruction.Index)
             {
-                program.Nodes[dredgeInstruction.NodeID].Labels[label.Key] += 1;
+                node.Labels[label.Key] += 1;
             }
         }
+
+        if (!string.IsNullOrWhiteSpace(dredgeInstruction.Label)) node.Labels[dredgeInstruction.Label] = dredgeInstruction.Index;
     }
 
     private static Dictionary<string, string> GetLinesForLocale(string localeId)
@@ -275,6 +290,7 @@ public static class DialogueUtil
     {
         public string NodeID { get; set; }
         public int Index { get; set; }
+        public string Label { get; set; } = string.Empty;
         public Yarn.Instruction.Types.OpCode OpCode { get; set; }
         public object[] Operands { get; set; }
 
@@ -289,6 +305,23 @@ public static class DialogueUtil
         {
             NodeID = nodeID;
             Index = index;
+            OpCode = opCode;
+            Operands = operands;
+        }
+
+        /// <summary>
+        /// Create an instruction with a label
+        /// </summary>
+        /// <param name="nodeID">The ID of the node.</param>
+        /// <param name="index">The index to insert the instruction at.</param>
+        /// <param name="label">The label ID of this instruction.</param>
+        /// <param name="opCode">The opcode to insert. See <see href="https://github.com/YarnSpinnerTool/YarnSpinner/blob/main/YarnSpinner/yarn_spinner.proto"/> for a list of opcodes.</param>
+        /// <param name="operands">Supported types: <see cref="string"/>, <see cref="bool"/>, <see cref="float"/>, <see cref="int"/></param>
+        public DredgeInstruction(string nodeID, int index, string label, Yarn.Instruction.Types.OpCode opCode, params object[] operands)
+        {
+            NodeID = nodeID;
+            Index = index;
+            Label = label;
             OpCode = opCode;
             Operands = operands;
         }
