@@ -98,11 +98,11 @@ namespace Winch.Util
                 AddLocations(key, locations);
         }
 
-        public static IList<IResourceLocation> GetLocations<T>(IResourceLocator locator, string key) => GetLocations(locator, key, typeof(T));
+        internal static IList<IResourceLocation> GetLocations<T>(IResourceLocator locator, string key) => GetLocations(locator, key, typeof(T));
 
-        public static IList<IResourceLocation> GetLocations(IResourceLocator locator, string key) => GetLocations(locator, key, null);
+        internal static IList<IResourceLocation> GetLocations(IResourceLocator locator, string key) => GetLocations(locator, key, null);
 
-        public static IList<IResourceLocation> GetLocations(IResourceLocator locator, string key, Type type)
+        internal static IList<IResourceLocation> GetLocations(IResourceLocator locator, string key, Type type)
         {
             locator.Locate(key, type, out IList<IResourceLocation> locations);
             return locations;
