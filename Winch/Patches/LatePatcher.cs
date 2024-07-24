@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine.Localization.Settings;
 using Winch.Patches.API;
 using Winch.Patches.API.Localization;
 
@@ -22,6 +23,9 @@ namespace Winch.Patches
         {
             harmony.Patch(AccessTools.Method(typeof(LanguageSelectorDropdown), nameof(LanguageSelectorDropdown.Awake)),
                 postfix: new HarmonyMethod(AccessTools.Method(typeof(LanguageSelectorDropdownPatcher), nameof(LanguageSelectorDropdownPatcher.Awake))));
+
+            harmony.Patch(AccessTools.Method(typeof(LanguageManager), nameof(LanguageManager.Init)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(LanguageManagerPatcher), nameof(LanguageManagerPatcher.Init))));
 
             harmony.Patch(AccessTools.Method(typeof(FreshnessCoroutine), nameof(FreshnessCoroutine.AdjustFreshnessForGrid)),
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.FreshnessCoroutine_AdjustFreshnessForGrid_Prefix))));

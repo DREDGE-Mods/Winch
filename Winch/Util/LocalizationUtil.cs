@@ -11,6 +11,8 @@ namespace Winch.Util
         private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
         public static LocalizedString Empty => new LocalizedString(string.Empty, string.Empty);
 
+        internal static List<Locale> AddedLocales = new List<Locale>();
+
 
         public static void AddLocalizedString(string locale, string key, string value)
         {
