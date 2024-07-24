@@ -27,6 +27,9 @@ namespace Winch.Patches
             harmony.Patch(AccessTools.Method(typeof(LanguageManager), nameof(LanguageManager.Init)),
                 postfix: new HarmonyMethod(AccessTools.Method(typeof(LanguageManagerPatcher), nameof(LanguageManagerPatcher.Init))));
 
+            harmony.Patch(AccessTools.Method(typeof(LocalizedStringDatabase), nameof(LocalizedStringDatabasePatcher.GenerateLocalizedString)),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(LocalizedStringDatabasePatcher), nameof(LocalizedStringDatabasePatcher.GenerateLocalizedString))));
+
             harmony.Patch(AccessTools.Method(typeof(FreshnessCoroutine), nameof(FreshnessCoroutine.AdjustFreshnessForGrid)),
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(DurableThawableItemDataPatcher), nameof(DurableThawableItemDataPatcher.FreshnessCoroutine_AdjustFreshnessForGrid_Prefix))));
 

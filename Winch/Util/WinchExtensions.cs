@@ -11,6 +11,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core;
 using Winch.Data.Character;
@@ -881,6 +882,19 @@ public static class WinchExtensions
     public static Quaternion InverseTransformRotation(this Transform t, Quaternion q)
     {
         return Quaternion.Inverse(t.rotation) * q;
+    }
+
+    public static StringTableEntry GetEntry(
+      this StringTable stringTable,
+      long keyId,
+      string key)
+    {
+        if (keyId != 0L)
+            return stringTable.GetEntry(keyId);
+        else if (!string.IsNullOrWhiteSpace(key))
+            return stringTable.GetEntry(key);
+
+        return null;
     }
 
     #region Coroutines
