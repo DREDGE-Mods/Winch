@@ -12,6 +12,7 @@ using Yarn.Compiler;
 using System.Globalization;
 using System.Text;
 using Winch.Config;
+using CommandTerminal;
 
 namespace Winch.Util;
 
@@ -255,7 +256,7 @@ public static class DialogueUtil
 
         if (exportYarnProgram)
         {
-            File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, "YarnProgramVanilla.txt"), StringifyProgram(oldProgram));
+            WriteYarnProgramToText("YarnProgramVanilla", oldProgram);
         }
 
         foreach (var nodeName in oldProgram.Nodes)
@@ -289,7 +290,7 @@ public static class DialogueUtil
 
         if (exportYarnProgram)
         {
-            File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, "YarnProgramModded.txt"), StringifyProgram(newProgram));
+            WriteYarnProgramToText("YarnProgramModded", newProgram);
         }
     }
 
@@ -341,29 +342,34 @@ public static class DialogueUtil
         }
     }
 
-    internal static string StringifyProgram(Program program)
+    internal static void WriteYarnProgramToText(string fileName, Program program)
+    {
+        File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, $"{fileName}.txt"), YarnProgramToText(program));
+    }
+
+    internal static string YarnProgramToText(Program program)
     {
         var stringified = $"Program {program.Name}:";
         foreach (var nodePair in program.Nodes)
         {
             var node = nodePair.Value;
-            stringified += $"\n\n  Node {nodePair.Key} {node.SourceTextStringID}:\n\n{StringifyInstructions(node)}";
+            stringified += $"\n\n  Node {nodePair.Key} {node.SourceTextStringID}:\n\n{InstructionsToText(node)}";
         }
         return stringified;
     }
 
-    internal static string StringifyInstructions(this Yarn.Node node)
+    internal static string InstructionsToText(this Yarn.Node node)
     {
         return string.Join("\n", node.Instructions.Select((instruction, i) =>
         {
-            var operands = string.Join(" ", instruction.Operands.Select(operand => StringifyOperand(operand)));
+            var operands = string.Join(" ", instruction.Operands.Select(operand => OperandToText(operand)));
             var labels = node.Labels.Where(label => label.Value == i).Select(label => label.Key);
             var stringifiedLabels = labels.Count() > 0 ? $" [{string.Join(", ", labels)}]" : string.Empty;
             return $"   {i} {instruction.Opcode} {operands}{stringifiedLabels}";
         }));
     }
 
-    internal static string StringifyOperand(this Yarn.Operand operand)
+    internal static string OperandToText(this Yarn.Operand operand)
     {
         switch (operand.ValueCase)
         {
@@ -377,5 +383,12 @@ public static class DialogueUtil
             default:
                 return string.Empty;
         }
+    }
+
+    internal static void WriteYarnProgramCommand(CommandArg[] args)
+    {
+        DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
+        Program program = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
+        WriteYarnProgramToText("YarnProgram", program);
     }
 }
