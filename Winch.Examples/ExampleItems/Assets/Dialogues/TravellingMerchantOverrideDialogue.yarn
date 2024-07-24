@@ -3,13 +3,13 @@
 <<SetIntVariable tm-portrait-state 0>>
 <<AutoResolveNextLine>>
 <<ShowUnavailableOptions false>>
-TRAVELLING_MERCHANT_NAME_KEY: Hey, there! You have a question for me? #line:0a344d1 
+TRAVELLING_MERCHANT_NAME_KEY: Hey, there! You have a question for me? #aah #line:0a344d1 
 <<jump TravellingMerchant_ChatOptions>>
 ===
 title: TravellingMerchant_ChatOptions
 ---
 <<ShowUnavailableOptions false>>
 -> Yep. #line:0b16d07 
-	Cool... #line:0e5ab6f 
+	Cool... #sigh #line:0e5ab6f 
 -> Nope. #exit #line:062c02e 
 ===
