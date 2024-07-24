@@ -6,7 +6,10 @@ using Winch.Util;
 
 namespace Winch.Patches.API
 {
-    class SpeakerDataLoadPatcher
+    /// <summary>
+    /// See <see cref="LatePatcher.Initialize"/> for details on why this doesn't have attributes
+    /// </summary>
+    internal static class SpeakerDataLoadPatcher
     {
         public static void Postfix(DredgeDialogueView __instance)
         {
