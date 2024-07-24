@@ -11,6 +11,7 @@ using System.Linq;
 using Yarn.Compiler;
 using System.Globalization;
 using System.Text;
+using Winch.Config;
 
 namespace Winch.Util;
 
@@ -232,6 +233,8 @@ public static class DialogueUtil
     /// </remarks>
     internal static void Inject()
     {
+        var exportYarnProgram = WinchConfig.GetProperty("ExportYarnProgram", false);
+
         DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
         DredgeLocalizedLineProvider lineProvider = runner.lineProvider as DredgeLocalizedLineProvider;
 
@@ -249,6 +252,12 @@ public static class DialogueUtil
         var newProgram = new Program();
 
         Program oldProgram = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
+
+        if (exportYarnProgram)
+        {
+            File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, "YarnProgramVanilla.txt"), StringifyProgram(oldProgram));
+        }
+
         foreach (var nodeName in oldProgram.Nodes)
         {
             newProgram.Nodes[nodeName.Key] = nodeName.Value.Clone();
@@ -276,6 +285,11 @@ public static class DialogueUtil
         foreach (var instruction in instructions)
         {
             InsertInstruction(instruction);
+        }
+
+        if (exportYarnProgram)
+        {
+            File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, "YarnProgramModded.txt"), StringifyProgram(newProgram));
         }
     }
 
@@ -324,6 +338,44 @@ public static class DialogueUtil
             Label = label;
             OpCode = opCode;
             Operands = operands;
+        }
+    }
+
+    internal static string StringifyProgram(Program program)
+    {
+        var stringified = $"Program {program.Name}:";
+        foreach (var nodePair in program.Nodes)
+        {
+            var node = nodePair.Value;
+            stringified += $"\n\n  Node {nodePair.Key} {node.SourceTextStringID}:\n\n{StringifyInstructions(node)}";
+        }
+        return stringified;
+    }
+
+    internal static string StringifyInstructions(this Yarn.Node node)
+    {
+        return string.Join("\n", node.Instructions.Select((instruction, i) =>
+        {
+            var operands = string.Join(" ", instruction.Operands.Select(operand => StringifyOperand(operand)));
+            var labels = node.Labels.Where(label => label.Value == i).Select(label => label.Key);
+            var stringifiedLabels = labels.Count() > 0 ? $" [{string.Join(", ", labels)}]" : string.Empty;
+            return $"   {i} {instruction.Opcode} {operands}{stringifiedLabels}";
+        }));
+    }
+
+    internal static string StringifyOperand(this Yarn.Operand operand)
+    {
+        switch (operand.ValueCase)
+        {
+            case Operand.ValueOneofCase.StringValue:
+                return $"{{\"stringValue\": \"{operand.StringValue}\"}}";
+            case Operand.ValueOneofCase.BoolValue:
+                return $"{{\"boolValue\": {operand.BoolValue}}}";
+            case Operand.ValueOneofCase.FloatValue:
+                return $"{{\"floatValue\": {operand.FloatValue}}}";
+            case Operand.ValueOneofCase.None:
+            default:
+                return string.Empty;
         }
     }
 }

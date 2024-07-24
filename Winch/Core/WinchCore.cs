@@ -9,7 +9,7 @@ using Winch.Util;
 
 namespace Winch.Core
 {
-	public class WinchCore
+    public static class WinchCore
     {
         internal static Harmony Harmony;
 
