@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using UnityEngine.AddressableAssets;
 using Winch.Logging;
 using Winch.Util;
 
@@ -42,6 +43,9 @@ namespace Winch.Core
             Log.Info($"Winch {version} booting up...");
 
             ModAssemblyLoader.LoadModAssemblies();
+
+            Addressables.ResourceManager.ResourceProviders.Add(new ModdedResourceProvider());
+            Addressables.AddResourceLocator(new ModdedResourceLocator());
 
             Harmony = new Harmony("com.dredge.winch");
             Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
