@@ -1,10 +1,13 @@
 ﻿using CommandTerminal;
+using HarmonyLib;
 using System;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Winch.Config;
 using Winch.Core.API;
+using Winch.Patches;
 using Winch.Util;
 using static System.Net.WebRequestMethods;
 
@@ -15,6 +18,17 @@ namespace Winch.Core
         internal static void Initialize()
         {
             WinchCore.Log.Debug("Initializer started.");
+
+			try
+			{
+				LatePatcher.Initialize(WinchCore.Harmony);
+				EnumUtil.RegisterAllEnumHolders(Assembly.GetExecutingAssembly());
+				WinchCore.Log.Debug("Late Harmony Patching complete.");
+			}
+			catch (Exception ex)
+			{
+				WinchCore.Log.Error($"Failed to apply late winch patches: {ex}");
+			}
 
 			try
 			{

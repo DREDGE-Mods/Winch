@@ -20,7 +20,6 @@ public static class EnumUtil
     {
         harmony.Patch(AccessTools.Method(typeof(System.Enum), "GetCachedValuesAndNames"), transpiler: new HarmonyMethod(AccessTools.Method(typeof(EnumInfoPatch), nameof(EnumInfoPatch.Transpiler))));
         WinchCore.Log.Debug("EnumUtil initialized.");
-        EnumUtil.RegisterAllEnumHolders(Assembly.GetExecutingAssembly());
     }
 
     private static class EnumInfoPatch
