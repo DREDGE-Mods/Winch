@@ -60,14 +60,6 @@ public static class ItemUtil
             return null;
     }
 
-    internal static void AddModdedItemData()
-    {
-        foreach (var item in ModdedItemDataDict.Values)
-        {
-            GameManager.Instance.ItemManager.allItems.Add(item);
-        }
-    }
-
     internal static void AddModdedItemData(IList<ItemData> list)
     {
         foreach (var item in ModdedItemDataDict.Values)
@@ -220,6 +212,7 @@ public static class ItemUtil
         if (PopulateObjectFromMetaWithConverters<T>(item, meta))
         {
             ModdedItemDataDict.Add(id, item);
+            AddressablesUtil.AddResourceAtLocation("ItemData", id, id, item);
         }
         else
         {

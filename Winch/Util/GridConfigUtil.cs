@@ -43,19 +43,11 @@ public static class GridConfigUtil
             return null;
     }
 
-    internal static void AddModdedGridConfigurations()
-    {
-        foreach (var gridConfig in ModdedGridConfigDict)
-        {
-            GameManager.Instance.DataLoader.allGridConfigs.Add(gridConfig.Key, gridConfig.Value);
-        }
-    }
-
     internal static void AddModdedGridConfigurations(IList<GridConfiguration> list)
     {
         foreach (var gridConfig in ModdedGridConfigDict.Values)
         {
-            list.Add(gridConfig);
+            list.SafeAdd(gridConfig);
         }
     }
 
@@ -96,6 +88,7 @@ public static class GridConfigUtil
         if (PopulateGridConfigFromMetaWithConverter(gridConfig, meta))
         {
             ModdedGridConfigDict.Add(id, gridConfig);
+            AddressablesUtil.AddResourceAtLocation("GridConfigData", id, id, gridConfig);
         }
         else
         {

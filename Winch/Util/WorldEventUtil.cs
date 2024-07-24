@@ -145,6 +145,7 @@ public static class WorldEventUtil
         if (PopulateWorldEventDataFromMetaWithConverter(worldEventData, meta))
         {
             ModdedWorldEventDataDict.Add(id, worldEventData);
+            AddressablesUtil.AddResourceAtLocation("WorldEventData", id, id, worldEventData);
         }
         else
         {
