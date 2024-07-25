@@ -14,6 +14,26 @@ namespace Winch.Util
     public static class AddressablesUtil
     {
         internal static IList<IResourceLocator> Locators => Addressables.ResourceLocators.ToList();
+        internal static Dictionary<string, IList<IResourceLocation>> AllLocations
+        {
+            get
+            {
+                var locations = new Dictionary<string, IList<IResourceLocation>>();
+                foreach (var kvp in Locations)
+                    locations.Add(kvp.Key, kvp.Value);
+                foreach (var kvp in MapLocations)
+                {
+                    if (locations.ContainsKey(kvp.Key))
+                    {
+                        locations[kvp.Key] = locations[kvp.Key].Concat(kvp.Value).ToList();
+                    }
+                    else
+                        locations.Add(kvp.Key, kvp.Value);
+                }
+                return locations;
+            }
+        }
+        internal static Dictionary<string, IList<IResourceLocation>> MapLocations => (Locators[1] as ResourceLocationMap).Locations.Select(kvp => new KeyValuePair<string, IList<IResourceLocation>>(kvp.Key.ToString(), kvp.Value)).ToDictionary(x => x.Key, x => x.Value);
         internal static Dictionary<string, IList<IResourceLocation>> Locations = new Dictionary<string, IList<IResourceLocation>>();
         internal static Dictionary<IResourceLocation, UnityEngine.Object> Resources = new Dictionary<IResourceLocation, UnityEngine.Object>();
 
