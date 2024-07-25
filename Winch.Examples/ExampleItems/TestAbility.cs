@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using Winch.Components;
 using Winch.Core;
 
@@ -23,6 +24,7 @@ namespace ExampleItems
             {
                 this.isActive = true;
                 WinchCore.Log.Warn("Activating");
+                StabilizeOcean();
                 return base.Activate();
             }
         }
@@ -34,9 +36,26 @@ namespace ExampleItems
             if (isActive)
             {
                 WinchCore.Log.Warn("Deactivating");
+                UnstabilizeOcean();
             }
 
             base.Deactivate();
+        }
+
+        public static void StabilizeOcean()
+        {
+            Shader.SetGlobalFloat("_WaveSteepness", 0);
+            Shader.SetGlobalFloat("_WaveLength", 0);
+            Shader.SetGlobalFloat("_WaveSpeed", 0);
+            Shader.SetGlobalVector("_WaveDirections", Vector4.zero);
+        }
+
+        public static void UnstabilizeOcean()
+        {
+            Shader.SetGlobalFloat("_WaveSteepness", 0.1158f);
+            Shader.SetGlobalFloat("_WaveLength", 6);
+            Shader.SetGlobalFloat("_WaveSpeed", 0.1f);
+            Shader.SetGlobalVector("_WaveDirections", new Vector4(0.1f, 0.4f, 0.2f, 0.3f));
         }
 
         public override void Init()
