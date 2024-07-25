@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<DebugType>none</DebugType>
+		<DebugType>portable</DebugType>
 		<OutputPath>./bin</OutputPath>
 		<AssemblyVersion>1.0.*</AssemblyVersion>
 		<Deterministic>False</Deterministic>
