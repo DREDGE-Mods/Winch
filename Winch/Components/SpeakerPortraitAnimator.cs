@@ -5,10 +5,11 @@ namespace Winch.Components
 {
     public class SpeakerPortraitAnimator : MonoBehaviour
     {
-        private static readonly int animationTime = 45;
-        private static readonly AnimationCurve xAnchorCurve = new AnimationCurve(new Keyframe(0, -75), new Keyframe(20, -7), new Keyframe(animationTime, 0));
-        private static readonly AnimationCurve colorRGBCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(30, 1), new Keyframe(animationTime, 1));
-        private static readonly AnimationCurve colorACurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(15, 1), new Keyframe(animationTime, 1));
+        private static readonly float oneThird = 0.33333334f;
+        private static readonly int animationTime = 60;
+        private static readonly AnimationCurve xAnchorCurve = new AnimationCurve(new Keyframe(0, -75, 0, 0, oneThird, oneThird), new Keyframe(oneThird, 0, 0, 0, oneThird, oneThird), new Keyframe(0.75f, 0, 0, 0, oneThird, oneThird));
+        private static readonly AnimationCurve colorRGBCurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.5f, 1, 0, 0, oneThird, oneThird));
+        private static readonly AnimationCurve colorACurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.25f, 1, 0, 0, oneThird, oneThird));
 
         private RectTransform _rectTransform;
         private Image _image;
@@ -29,7 +30,12 @@ namespace Winch.Components
 
         public void FixedUpdate()
         {
-            Evaluate(_currentFrame);
+            Tick();
+        }
+
+        public void Tick()
+        {
+            Evaluate(_currentFrame / animationTime);
             if (_currentFrame < animationTime)
                 _currentFrame++;
         }
