@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 using Winch.Core;
 using Winch.Util;
@@ -13,7 +14,7 @@ namespace ExampleItems
             #region Dialogue
             try
             {
-                DialogueUtil.AddInstruction("TravellingMerchant_ChatOptions", 1, Instruction.Types.OpCode.AddOption, "line:01f8b99", "L84shortcutoption_TravellingMerchant_ChatOptions_6", 0, false);
+                DialogueUtil.AddInstruction("TravellingMerchant_ChatOptions", 1, Instruction.Types.OpCode.AddOption, "line:01f8b99", "L0", 0, false);
 
                 DialogueUtil.AddInstructions(
                     // insert at 55 which is Stop
@@ -50,13 +51,47 @@ namespace ExampleItems
             #endregion
 
             #region Static
-            var prefab = GameObject.CreatePrimitive(PrimitiveType.Cube).Prefabitize();
-            prefab.RemoveComponent<Collider>();
-            prefab.GetComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Shader Graphs/Lit_Shader"));
-            var testStaticWorldEvent = prefab.AddComponent<TestStaticWorldEvent>();
+            var testStaticWorldEvent = CreateCube().Prefabitize().AddComponent<TestStaticWorldEvent>();
             WorldEventUtil.RegisterModdedStaticWorldEvent<TestStaticWorldEvent>("exampleitems.teststaticworldevent", testStaticWorldEvent);
             #endregion
             #endregion
+
+            GameManager.Instance.OnGameStarted += OnGameStarted;
+        }
+
+        private static GameObject CreateCube()
+        {
+            var prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            prefab.RemoveComponent<Collider>();
+            prefab.GetComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Shader Graphs/Lit_Shader"));
+            var collider = new GameObject("Collider", typeof(BoxCollider));
+            collider.layer = Layer.CollidesWithPlayerAndCamera;
+            collider.transform.SetParent(prefab.transform, false);
+            return prefab;
+        }
+
+        private static void OnGameStarted()
+        {
+            try
+            {
+                var cubeLand = CreateCube();
+                cubeLand.transform.position = new Vector3(1000, 0, -1000);
+                cubeLand.transform.localScale = new Vector3(200, 5, 200);
+
+                var datas = Resources.FindObjectsOfTypeAll<DockData>();
+                foreach (var data in datas)
+                {
+                    WinchCore.Log.Warn(data.name + " | " + data.id);
+                }
+                var pontoon = datas.FirstOrDefault(dockData => dockData.id == "dock.pontoon-gc");
+                var speakers = pontoon.Speakers;
+                speakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));
+                speakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.steve"));
+            }
+            catch (Exception e)
+            {
+                WinchCore.Log.Error(e);
+            }
         }
     }
 }

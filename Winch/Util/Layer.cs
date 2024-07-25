@@ -18,6 +18,7 @@ namespace Winch.Util
         public static int FoamEffects = LayerMask.NameToLayer(nameof(FoamEffects));
         public static int HarvestZone = LayerMask.NameToLayer(nameof(HarvestZone));
         public static int CollidesWithHarvestZone = LayerMask.NameToLayer(nameof(CollidesWithHarvestZone));
+        public static int CollidesWithPlayerAndCamera = LayerMask.NameToLayer(nameof(CollidesWithPlayerAndCamera));
         public static int Monster = LayerMask.NameToLayer(nameof(Monster));
         public static int CollidesWithMonster = LayerMask.NameToLayer(nameof(CollidesWithMonster));
         public static int SanityModifierDetector = LayerMask.NameToLayer(nameof(SanityModifierDetector));

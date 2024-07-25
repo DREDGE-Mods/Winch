@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Analytics;
 using UnityEngine.Localization;
+using Winch.Components;
 using Winch.Core;
 using Winch.Data.Character;
 using Winch.Serialization;
@@ -15,23 +16,34 @@ using Winch.Serialization.Character;
 
 namespace Winch.Util;
 
-internal static class CharacterUtil
+public static class CharacterUtil
 {
     private static AdvancedSpeakerDataConverter AdvancedSpeakerDataConverter = new AdvancedSpeakerDataConverter();
 
-    public static bool PopulateSpeakerDataFromMetaWithConverter(AdvancedSpeakerData config, Dictionary<string, object> meta)
+    internal static bool PopulateSpeakerDataFromMetaWithConverter(AdvancedSpeakerData config, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(config, meta, AdvancedSpeakerDataConverter);
     }
 
-    public static Dictionary<string, AdvancedSpeakerData> ModdedSpeakerDataDict = new();
-    public static Dictionary<string, SpeakerData> AllSpeakerDataDict = new();
+    internal static Dictionary<string, AdvancedSpeakerData> ModdedSpeakerDataDict = new();
+    internal static Dictionary<string, SpeakerData> AllSpeakerDataDict = new();
 
-    public static void AddModdedSpeakerData() => AddModdedSpeakerData((GameManager.Instance.DialogueRunner.dialogueViews[0] as DredgeDialogueView));
+    public static AdvancedSpeakerData GetModdedSpeakerData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
 
-    public static void AddModdedSpeakerData(DredgeDialogueView view) => AddModdedSpeakerData(view.speakerDataLookup.lookupTable);
+        if (ModdedSpeakerDataDict.TryGetValue(id, out AdvancedSpeakerData speakerData))
+            return speakerData;
+        else
+            return null;
+    }
 
-    public static void AddModdedSpeakerData(IDictionary<string, SpeakerData> lookupTable)
+    internal static void AddModdedSpeakerData() => AddModdedSpeakerData((GameManager.Instance.DialogueRunner.dialogueViews[0] as DredgeDialogueView));
+
+    internal static void AddModdedSpeakerData(DredgeDialogueView view) => AddModdedSpeakerData(view.speakerDataLookup.lookupTable);
+
+    internal static void AddModdedSpeakerData(IDictionary<string, SpeakerData> lookupTable)
     {
         foreach (var speaker in ModdedSpeakerDataDict.Values)
         {
@@ -39,11 +51,12 @@ internal static class CharacterUtil
             {
                 speaker.paralinguistics = paralinguistics;
             }
-            lookupTable.Add(speaker.id, speaker);
+            var nameKey = speaker.id.ToUpper(); // must be uppercase because dredge looks for that
+            lookupTable.SafeAdd(nameKey, speaker);
         }
     }
 
-    public static void PopulateSpeakerData(DredgeDialogueView dialogueView)
+    internal static void PopulateSpeakerData(DredgeDialogueView dialogueView)
     {
         foreach (var speaker in dialogueView.speakerDataLookup.lookupTable)
         {
@@ -52,7 +65,7 @@ internal static class CharacterUtil
         }
     }
 
-    public static void ClearSpeakerData()
+    internal static void ClearSpeakerData()
     {
         AllSpeakerDataDict.Clear();
     }

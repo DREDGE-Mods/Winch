@@ -2,5 +2,7 @@
 	"speakerNameKey": "exampleitems.steve.name",
 	"paralinguisticsNameKey": "MAYOR",
 	"portraitSprite": "Steve",
-	"smallPortraitSprite": "SteveSmall"
+	"smallPortraitSprite": "SteveSmall",
+	"alwaysAvailable": true,
+	"yarnRootNode": "ExampleItems_Steve_Root"
 }
