@@ -534,12 +534,6 @@ public static class WinchExtensions
         return false;
     }
 
-    public static void AddIfDoesNotContain<T>(this List<T> list, T item)
-    {
-        if (!list.Contains(item))
-            list.Add(item);
-    }
-
     public static void AddOrChange<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
     {
         if (dictionary.ContainsKey(key))

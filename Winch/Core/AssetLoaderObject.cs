@@ -39,15 +39,6 @@ namespace Winch.Core
             WinchCore.Log.Debug("[AssetLoaderObject] Start()");
             AssetLoader.LoadAssets();
             DredgeEvent.TriggerModAssetsLoaded();
-            try
-            {
-                LocalizationUtil.InstallLocale(UnityEngine.SystemLanguage.Arabic);
-                LocalizationUtil.InstallLocale(UnityEngine.SystemLanguage.Thai);
-            }
-            catch (Exception e)
-            {
-                WinchCore.Log.Error(e);
-            }
             ModAssemblyLoader.ExecuteModAssemblies();
             Initializer.InitializePostUnityLoad();
         }

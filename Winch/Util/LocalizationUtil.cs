@@ -2,29 +2,31 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using UnityAsyncAwaitUtil;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceLocations;
 using Winch.Core;
-using static UnityEngine.Networking.UnityWebRequest;
 
 namespace Winch.Util
 {
     public static class LocalizationUtil
     {
-        private static readonly IReadOnlyList<string> TableCollectionNames = new List<string>()
+        internal static readonly string CharactersTableCollectionName = "Characters";
+        internal static readonly string ItemsTableCollectionName = "Items";
+        internal static readonly string QuestsTableCollectionName = "Quests";
+        internal static readonly string StringsTableCollectionName = "Strings";
+        internal static readonly string YarnTableCollectionName = "Yarn";
+
+        internal static readonly IReadOnlyList<string> TableCollectionNames = new List<string>()
         {
-            "Characters",
-            "Items",
-            "Quests",
-            "Strings",
-            "Yarn"
+            CharactersTableCollectionName,
+            ItemsTableCollectionName,
+            QuestsTableCollectionName,
+            StringsTableCollectionName,
+            YarnTableCollectionName
         };
 
         private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
@@ -42,20 +44,37 @@ namespace Winch.Util
             locale.CustomFormatterCode = "";
             locale.SortOrder = 0;
             AddedLocales.Add(locale);
-            var localeWithCode = "Locale-" + locale.Identifier.Code;
             AddressablesUtil.AddResourceAtLocation("Locale", locale.name, locale.name, locale);
-            var tableByName = new Dictionary<string, StringTable>();
-            StringTableDict.Add(locale.Identifier.Code, tableByName);
+            LocalizationSettings.AvailableLocales.AddLocale(locale);
             foreach (var tableCollectionName in TableCollectionNames)
             {
-                var tableNameWithCode = $"{tableCollectionName}_{locale.Identifier.Code}";
+                GetLocaleTableCollection(locale.Identifier.Code, tableCollectionName);
+            }
+        }
+
+        public static StringTable GetLocaleTableCollection(string locale, string tableCollectionName)
+        {
+            if (!TableCollectionNames.Contains(tableCollectionName))
+                throw new Exception($"'{tableCollectionName}' is not valid table collection name. Valid names are {{{string.Join(", ", TableCollectionNames)}}}");
+
+            if (!StringTableDict.ContainsKey(locale))
+                StringTableDict.Add(locale, new Dictionary<string, StringTable>());
+
+            var tableByName = StringTableDict[locale];
+            if (!tableByName.ContainsKey(tableCollectionName))
+            {
+                var tableNameWithCode = $"{tableCollectionName}_{locale}";
                 var table = ScriptableObject.CreateInstance<StringTable>();
                 table.name = tableNameWithCode;
-                table.SharedData = Addressables.LoadAssetAsync<SharedTableData>($"{tableCollectionName} Shared Data").WaitForCompletion();
                 tableByName.Add(tableCollectionName, table);
-                AddressablesUtil.AddResourceAtLocation(localeWithCode, tableNameWithCode, tableNameWithCode, table);
+                AddressablesUtil.AddResourceAtLocation("Locale-" + locale, tableNameWithCode, tableNameWithCode, table);
+                if (tableCollectionName == QuestsTableCollectionName) // Quests does not have an addressable to grab the shared data directly from
+                    table.SharedData = Addressables.LoadAssetAsync<StringTable>($"{tableCollectionName}_en").WaitForCompletion().SharedData;
+                else
+                    table.SharedData = Addressables.LoadAssetAsync<SharedTableData>($"{tableCollectionName} Shared Data").WaitForCompletion();
             }
-            LocalizationSettings.AvailableLocales.AddLocale(locale);
+
+            return tableByName[tableCollectionName];
         }
 
         public static void AddLocalizedString(string locale, string key, string value)
@@ -80,8 +99,53 @@ namespace Winch.Util
             Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileText) ??
                                               throw new InvalidDataException($"'{path}' is not a valid localization file.");
 
-            foreach(string key in dict.Keys)
+            //var stringTable = GetLocaleTableCollection(locale, StringsTableCollectionName);
+
+            foreach (string key in dict.Keys)
+            {
                 AddLocalizedString(locale, key, dict[key]);
+                //stringTable.AddEntry(key, dict[key]);
+            }
+
+            WinchCore.Log.Debug($"Loaded {dict.Keys.Count.ToString()} localized string(s) from {path}");
+        }
+
+        internal static void LoadLocaleFolder(string folder)
+        {
+            string locale = Path.GetFileNameWithoutExtension(folder);
+            string[] tableCollectionFiles = Directory.GetFiles(folder, "*.*", SearchOption.TopDirectoryOnly);
+            foreach (string tableCollection in tableCollectionFiles)
+            {
+                string tableCollectionName = Path.GetFileNameWithoutExtension(tableCollection);
+                try
+                {
+                    WinchCore.Log.Debug(folder);
+                    WinchCore.Log.Info(locale);
+                    WinchCore.Log.Warn(tableCollectionName);
+                    WinchCore.Log.Error(tableCollection);
+                    LoadTableCollectionFolder(locale, tableCollection);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load table collection {tableCollectionName}: {ex}");
+                }
+            }
+        }
+
+        internal static void LoadTableCollectionFolder(string locale, string path)
+        {
+            string tableCollectionName = Path.GetFileNameWithoutExtension(path);
+            string fileText = File.ReadAllText(path);
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(fileText) ??
+                                              throw new InvalidDataException($"'{path}' is not a valid table collection file.");
+
+            var stringTable = GetLocaleTableCollection(locale, tableCollectionName);
+
+            foreach (string key in dict.Keys)
+            {
+                AddLocalizedString(locale, key, dict[key]);
+                stringTable.AddEntry(key, dict[key]);
+            }
 
             WinchCore.Log.Debug($"Loaded {dict.Keys.Count.ToString()} localized string(s) from {path}");
         }
