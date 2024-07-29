@@ -55,35 +55,6 @@ namespace Winch.Core
                 Log.Error($"Failed to apply winch patches: {ex}");
             }
 
-            foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
-            {
-                try
-                {
-                    if (modAssembly.LoadedAssembly != null)
-                    {
-                        EnumUtil.RegisterAllEnumHolders(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Failed to register enum holders for {modAssembly.BasePath}: {ex}");
-                }
-
-                try
-                {
-                    bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
-                    if (modAssembly.LoadedAssembly != null && hasPatches)
-                    {
-                        Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-                        new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Log.Error($"Failed to apply patches for {modAssembly.BasePath}: {ex}");
-                }
-            }
-
             Log.Debug("Harmony Patching complete.");
         }
     }
