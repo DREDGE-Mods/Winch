@@ -19,6 +19,16 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("Initializer started.");
 
+			// Any unity methods like "Awake" and etc. require patching later (here) or else game explodes for whatever reason. Even just touching the method slightly makes the loading screen go black and spam the error below.
+			// I assume it is because where we originally patch is before unity native dlls load or something.
+			/*
+			System.MissingMethodException:  assembly:<unknown assembly> type:<unknown type> member:(null)
+			 at (wrapper managed-to-native) UnityEngine.Component.get_gameObject()
+			 at UnityEngine.UI.Graphic.CacheCanvas()[0x00006]
+			 at UnityEngine.UI.Graphic.get_canvas() [0x0000e]
+			 at Coffee.UIExtensions.UIParticleUpdater.Refresh(Coffee.UIExtensions.UIParticle particle) [0x00015]
+			 at Coffee.UIExtensions.UIParticleUpdater.Refresh() [0x00027]
+			*/
 			try
 			{
 				WinchCore.Harmony.PatchAll();
