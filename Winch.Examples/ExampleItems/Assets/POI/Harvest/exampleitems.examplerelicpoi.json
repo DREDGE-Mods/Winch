@@ -1,0 +1,13 @@
+{
+    "location": {
+        "x": 400.0,
+        "y": 0.0,
+        "z": -375.0
+    },
+    "harvestableParticlePrefab": "RelicParticles",
+    "items": [ "exampleitems.heartofthesea" ],
+    "startStock": 1,
+    "maxStock": 1,
+    "doesRestock": false,
+    "usesTimeSpecificStock": false
+}

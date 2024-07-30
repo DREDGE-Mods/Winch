@@ -31,7 +31,7 @@ namespace Winch.Patches.API
         /// </summary>
         public static bool Prefix(ItemPOIHandler __instance)
         {
-            Debug.Log("[ItemPOIHandler] OnPressComplete()");
+            WinchCore.Log.Debug("[ItemPOIHandler] OnPressComplete()");
 
             var itemPOI = __instance.itemPOI;
             var harvestable = itemPOI.Harvestable;

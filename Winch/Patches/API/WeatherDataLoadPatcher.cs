@@ -11,11 +11,15 @@ namespace Winch.Patches.API
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<WeatherData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             DredgeEvent.AddressableEvents.WeatherDataLoaded.Trigger(__instance, handle, true);
         }
 
         public static void Postfix(DataLoader __instance, AsyncOperationHandle<IList<WeatherData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             DredgeEvent.AddressableEvents.WeatherDataLoaded.Trigger(__instance, handle, false);
         }
     }

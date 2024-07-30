@@ -12,7 +12,7 @@ public class RelicItemDataConverter : HarvestableItemDataConverter
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.RELIC, null) },
         { "canBeDiscarded", new(true, null) },
-        { "canBeDiscardedByPlayer", new(true, null) },
+        { "canBeDiscardedByPlayer", new(false, null) },
         { "canBeSoldByPlayer", new(false, null) },
         { "canBeSoldInBulkAction", new(true, null) },
         { "harvestPOICategory", new(HarvestPOICategory.RELIC, null) },

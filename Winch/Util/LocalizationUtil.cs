@@ -21,6 +21,7 @@ namespace Winch.Util
 
         public static string? GetLocalizedString(string locale, string key)
         {
+            if (string.IsNullOrEmpty(locale) || string.IsNullOrEmpty(key)) return null;
             if (!StringDatabase.ContainsKey(locale)) return null;
             if (!StringDatabase[locale].ContainsKey(key)) return null;
             return StringDatabase[locale][key];

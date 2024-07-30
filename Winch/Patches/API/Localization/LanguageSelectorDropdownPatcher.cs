@@ -4,11 +4,11 @@ using UnityEngine.UI;
 
 namespace Winch.Patches.API.Localization
 {
+    [HarmonyPatch]
     internal static class LanguageSelectorDropdownPatcher
     {
-        /// <summary>
-        /// See <see cref="LatePatcher.Initialize"/> for details on why this doesn't have attributes
-        /// </summary>
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(LanguageSelectorDropdown), nameof(LanguageSelectorDropdown.Awake))]
         public static void Awake(LanguageSelectorDropdown __instance)
         {
             // Size it to 8 so it doesn't go off screen.

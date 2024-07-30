@@ -6,7 +6,8 @@ using Winch.Util;
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
-using Winch.Serialization.Item;
+using Winch.Serialization.HarvestZone;
+using Winch.Data.Item;
 
 namespace Winch.Core
 {
@@ -20,10 +21,9 @@ namespace Winch.Core
             if (Directory.Exists(winchAssetFolderPath))
                 LoadAssetFolder(winchAssetFolderPath);
 
-            string[] modDirs = Directory.GetDirectories("Mods");
-            foreach (string modDir in modDirs)
+            foreach (var modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
-                string assetFolderPath = Path.Combine(modDir, "Assets");
+                string assetFolderPath = Path.Combine(modAssembly.BasePath, "Assets");
                 if (!Directory.Exists(assetFolderPath))
                     continue;
                 LoadAssetFolder(assetFolderPath);
@@ -37,12 +37,18 @@ namespace Winch.Core
             string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
+            string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
+            string abilityFolderpath = Path.Combine(path, "Abilities");
+            string worldEventFolderpath = Path.Combine(path, "WorldEvents");
 
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
             if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
+            if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
+            if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
+            if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
@@ -89,6 +95,7 @@ namespace Winch.Core
                 { typeof(DredgeItemData), "Dredge"},
                 { typeof(DamageItemData), "Damage"},
                 { typeof(DurableItemData), "Durable"},
+                { typeof(ThawableItemData), "Thawable"},
             };
 
         private static void LoadItemFiles(string itemFolderPath)
@@ -180,6 +187,74 @@ namespace Winch.Core
                 catch(Exception ex)
                 {
                     WinchCore.Log.Error($"Failed to load texture file {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadHarvestZoneFiles(string harvestZoneFolderPath)
+        {
+            string[] harvestZoneFiles = Directory.GetFiles(harvestZoneFolderPath);
+            foreach (string file in harvestZoneFiles)
+            {
+                try
+                {
+                    HarvestZoneUtil.AddCustomHarvestZoneFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load Harvest Zone from {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadAbilityFiles(string abilityFolderPath)
+        {
+            string[] abilityFiles = Directory.GetFiles(abilityFolderPath);
+            foreach (string file in abilityFiles)
+            {
+                try
+                {
+                    AbilityUtil.AddCustomAbilityDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load Ability Data from {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadWorldEventFiles(string worldEventFolderPath)
+        {
+            var dynamicPath = Path.Combine(worldEventFolderPath, "Dynamic");
+            if (Directory.Exists(dynamicPath))
+            {
+                string[] worldEventFiles = Directory.GetFiles(dynamicPath);
+                foreach (string file in worldEventFiles)
+                {
+                    try
+                    {
+                        WorldEventUtil.AddCustomWorldEventDataFromMeta(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        WinchCore.Log.Error($"Failed to load dynamic world event data from {file}: {ex}");
+                    }
+                }
+            }
+            var staticPath = Path.Combine(worldEventFolderPath, "Static");
+            if (Directory.Exists(staticPath))
+            {
+                string[] staticWorldEventFiles = Directory.GetFiles(staticPath);
+                foreach (string file in staticWorldEventFiles)
+                {
+                    try
+                    {
+                        WorldEventUtil.AddCustomStaticWorldEventDataFromMeta(file);
+                    }
+                    catch (Exception ex)
+                    {
+                        WinchCore.Log.Error($"Failed to load static world event data from {file}: {ex}");
+                    }
                 }
             }
         }

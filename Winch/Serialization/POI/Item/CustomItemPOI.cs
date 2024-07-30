@@ -12,7 +12,7 @@ public class CustomItemPOI : CustomPOI
     public List<string> items;
 
     public List<ItemData> Items => ItemUtil.TryGetItems(items);
-    public GameObject HarvestableParticlePrefab => PoiUtil.TryGetHarvestableParticlePrefab(harvestableParticlePrefab);
+    public GameObject HarvestableParticlePrefab => PoiUtil.GetHarvestableParticlePrefab(harvestableParticlePrefab);
 }
 
 

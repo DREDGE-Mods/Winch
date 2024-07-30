@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Serialization.Item
+namespace Winch.Data.Item
 {
-    public class GridConfigDeployableItemData : DeployableItemData
+    public class ThawableItemData : DurableItemData
     {
-        public string gridConfiguration;
     }
 }

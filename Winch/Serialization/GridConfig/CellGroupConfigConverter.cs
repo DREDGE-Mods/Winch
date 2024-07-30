@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Winch.Core;
+using Winch.Data;
 
 namespace Winch.Serialization.GridConfig;
 

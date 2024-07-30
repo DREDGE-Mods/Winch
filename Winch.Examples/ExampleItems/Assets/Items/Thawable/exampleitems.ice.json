@@ -15,7 +15,6 @@
 	"dimensions": [
 		"X"
 	],
-	"damageMode": "DESTROY",
 	"maxDurabilityDays": 1,
 	"displayDurabilityAsPercentage": true
 }

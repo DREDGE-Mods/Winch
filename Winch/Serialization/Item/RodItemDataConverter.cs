@@ -9,6 +9,7 @@ public class RodItemDataConverter : HarvesterItemDataConverter
         { "itemTypeIcon", new( TextureUtil.GetSprite("RodIcon"), null) },
         { "damageMode", new(DamageMode.OPERATION, null) },
         { "moveMode", new(MoveMode.INSTALL, null) },
+        { "canBeDiscardedByPlayer", new(true, null) },
         { "canBeSoldInBulkAction", new(false, null) },
         { "itemSubtype", new(ItemSubtype.ROD, null) },
         { "fishingSpeedModifier", new(1f, o => float.Parse(o.ToString())) },

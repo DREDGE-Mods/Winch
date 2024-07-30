@@ -1,0 +1,8 @@
+﻿{
+    "autoUnlock": true,
+    "nameKey": "exampleitems.testability.name",
+    "descriptionKey": "exampleitems.testability.desc",
+    "shortDescriptionKey": "exampleitems.testability.shortDesc",
+    "icon": "exampleitems.testability",
+    "persistAbilityToggle": true
+}

@@ -1,0 +1,53 @@
+﻿{
+	"eventType": "SPAWN_PREFAB",
+	"weight": 100,
+	"spawnStartTime": 0,
+	"spawnEndTime": 1,
+	"playerSpawnOffset": {
+		"x": 5,
+		"y": 5,
+		"z": 5
+	},
+	"dispelByBanish": true,
+	"dispelByFoghorn": true,
+	"foghornDispelTime": 1.5,
+	"foghornDispelCount": 3,
+	"doSafeZoneHitCheck": true,
+	"allowInPassiveMode": false,
+	"hasMinDepth": true,
+	"minDepth": 0.03,
+	"minSanity": 0,
+	"maxSanity": 1,
+	"forbiddenZones": [ "THE_MARROWS", "STELLAR_BASIN", "TWISTED_STRAND", "DEVILS_SPINE", "OPEN_OCEAN", "PALE_REACH" ],
+	"repeatDelay": {
+		"NORMAL": 0.1,
+		"PASSIVE": 0.1,
+		"NIGHTMARE": 0.05
+	},
+	"itemInventoryConditions": [
+		{
+			"type": "AnyOfItem",
+			"id": "exampleitems.diamond"
+		},
+		{
+			"type": "NumOfItem",
+			"minNumber": 2,
+			"id": "exampleitems.mccod"
+		},
+		{
+			"type": "NumItemsOfType",
+			"minNumber": 2,
+			"itemType": "GENERAL",
+			"itemSubtype": "FISH"
+		},
+		{
+			"type": "NumItemsOfSizeAndType",
+			"minNumber": 2,
+			"size": 4,
+			"max": false,
+			"min": true,
+			"itemType": "GENERAL",
+			"itemSubtype": "TRINKET"
+		}
+	]
+}

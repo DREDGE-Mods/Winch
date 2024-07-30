@@ -6,6 +6,7 @@ public class DeployableItemDataConverter : HarvesterItemDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "canBeDiscardedByPlayer", new(true, null) },
         { "damageMode", new(DamageMode.DURABILITY, null) },
         { "catchRate", new(1f, o => float.Parse(o.ToString()))},
         { "gridConfiguration", new( null, null ) },

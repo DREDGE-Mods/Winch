@@ -11,11 +11,15 @@ namespace Winch.Patches.API
     {
         public static void Prefix(AchievementManager __instance, AsyncOperationHandle<IList<AchievementData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             DredgeEvent.AddressableEvents.AchievementsLoaded.Trigger(__instance, handle, true);
         }
 
         public static void Postfix(AchievementManager __instance, AsyncOperationHandle<IList<AchievementData>> handle)
         {
+            if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
+
             DredgeEvent.AddressableEvents.AchievementsLoaded.Trigger(__instance, handle, false);
         }
     }

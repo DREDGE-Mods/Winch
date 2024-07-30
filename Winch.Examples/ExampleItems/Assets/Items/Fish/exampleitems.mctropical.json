@@ -33,6 +33,8 @@
   "harvestableType": "OCEANIC",
   "harvestDifficulty": "VERY_EASY",
   "isAberration": true,
-  "nonAberrationParent": "exampleitems.mccod"
+  "nonAberrationParent": "exampleitems.mccod",
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
 }
 
