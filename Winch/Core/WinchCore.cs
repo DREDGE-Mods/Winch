@@ -5,21 +5,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Winch.Logging;
+using Winch.Patches;
 using Winch.Util;
 
 namespace Winch.Core
 {
-	public class WinchCore
+    public class WinchCore
     {
         internal static Harmony Harmony;
 
         public static Logger Log = new Logger();
 
-		public static Dictionary<string, object> WinchModConfig = new();
+        public static Dictionary<string, object> WinchModConfig = new();
 
-		public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-		public static void Main()
+        public static void Main()
         {
 			try
 			{
@@ -38,7 +39,7 @@ namespace Winch.Core
 				Log.Error(e);
 			}
 
-			string version = VersionUtil.GetVersion();
+            string version = VersionUtil.GetVersion();
             Log.Info($"Winch {version} booting up...");
 
             ModAssemblyLoader.LoadModAssemblies();
@@ -47,15 +48,13 @@ namespace Winch.Core
             Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
             try
             {
-                Harmony.PatchAll();
-                EnumUtil.Initialize(Harmony);
+                EarlyPatcher.Initialize(WinchCore.Harmony);
+                WinchCore.Log.Debug("Early Harmony Patching complete.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed to apply winch patches: {ex}");
+                WinchCore.Log.Error($"Failed to apply early winch patches: {ex}");
             }
-
-            Log.Debug("Harmony Patching complete.");
         }
     }
 }

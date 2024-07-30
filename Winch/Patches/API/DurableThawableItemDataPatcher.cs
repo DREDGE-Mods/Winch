@@ -63,6 +63,8 @@ namespace Winch.Patches.API
             return false;
         }
 
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(ItemManager), nameof(ItemManager.GetItemValue))]
         public static IEnumerable<CodeInstruction> ItemManager_GetItemValue_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             var matcher = new CodeMatcher(instructions, generator).MatchForward(true,
@@ -96,6 +98,8 @@ namespace Winch.Patches.API
             return itemValue * ((decimal)Mathf.Clamp(instance.durability / durableItemData.MaxDurabilityDays, 0.1f, 1f));
         }
 
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(GridManager), nameof(GridManager.AddDamageToInventory), new System.Type[] { typeof(int), typeof(int), typeof(int) })]
         public static IEnumerable<CodeInstruction> GridManager_AddDamageToInventory_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             var matcher = new CodeMatcher(instructions, generator).Start()
@@ -204,6 +208,8 @@ namespace Winch.Patches.API
             return false;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(TooltipSectionDurabilityDetails), nameof(TooltipSectionDurabilityDetails.RefreshUI))]
         public static bool TooltipSectionDurabilityDetails_RefreshUI_Prefix(TooltipSectionDurabilityDetails __instance)
         {
             __instance.isLayedOut = false;
@@ -253,6 +259,8 @@ namespace Winch.Patches.API
             }
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(FreshnessCoroutine), nameof(FreshnessCoroutine.AdjustFreshnessForGrid))]
         public static bool FreshnessCoroutine_AdjustFreshnessForGrid_Prefix(SerializableGrid grid, float proportionOfDayJustElapsed)
         {
             var instances = grid.spatialItems.Where(WinchExtensions.IsThawable);

@@ -21,7 +21,7 @@ namespace Winch.Core
 
 			try
 			{
-				LatePatcher.Initialize(WinchCore.Harmony);
+				WinchCore.Harmony.PatchAll();
 				EnumUtil.RegisterAllEnumHolders(Assembly.GetExecutingAssembly());
 				WinchCore.Log.Debug("Late Harmony Patching complete.");
 			}
