@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using UnityEngine.AddressableAssets;
 using Winch.Logging;
+using Winch.Patches;
 using Winch.Util;
 
 namespace Winch.Core
@@ -16,11 +17,11 @@ namespace Winch.Core
 
         public static Logger Log = new Logger();
 
-		public static Dictionary<string, object> WinchModConfig = new();
+        public static Dictionary<string, object> WinchModConfig = new();
 
-		public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-		public static void Main()
+        public static void Main()
         {
 			try
 			{
@@ -39,7 +40,7 @@ namespace Winch.Core
 				Log.Error(e);
 			}
 
-			string version = VersionUtil.GetVersion();
+            string version = VersionUtil.GetVersion();
             Log.Info($"Winch {version} booting up...");
 
             ModAssemblyLoader.LoadModAssemblies();
@@ -51,44 +52,13 @@ namespace Winch.Core
             Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
             try
             {
-                Harmony.PatchAll();
-                EnumUtil.Initialize(Harmony);
+                EarlyPatcher.Initialize(WinchCore.Harmony);
+                WinchCore.Log.Debug("Early Harmony Patching complete.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Failed to apply winch patches: {ex}");
+                WinchCore.Log.Error($"Failed to apply early winch patches: {ex}");
             }
-
-            foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
-            {
-                try
-                {
-                    if (modAssembly.LoadedAssembly != null)
-                    {
-                        EnumUtil.RegisterAllEnumHolders(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Failed to register enum holders for {modAssembly.BasePath}: {ex}");
-                }
-
-                try
-                {
-                    bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
-                    if (modAssembly.LoadedAssembly != null && hasPatches)
-                    {
-                        Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-                        new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Log.Error($"Failed to apply patches for {modAssembly.BasePath}: {ex}");
-                }
-            }
-
-            Log.Debug("Harmony Patching complete.");
         }
     }
 }

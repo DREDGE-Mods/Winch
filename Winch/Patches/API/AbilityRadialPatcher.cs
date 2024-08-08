@@ -8,11 +8,10 @@ using Winch.Util;
 
 namespace Winch.Patches.API
 {
-    /// <summary>
-    /// See <see cref="LatePatcher.Initialize"/> for details on why this doesn't have attributes
-    /// </summary>
+    [HarmonyPatch(typeof(AbilityRadial), nameof(AbilityRadial.Awake))]
     internal static class AbilityRadialPatcher
     {
+        [HarmonyPrefix]
         public static void Prefix(AbilityRadial __instance)
         {
             GameObject buttonCenter = __instance.transform.GetChild(0).gameObject;
@@ -22,6 +21,7 @@ namespace Winch.Patches.API
             AbilityUtil.AddModdedAbilitiesToRadial(buttonCenter, abiltiesParent, wedges, lockedSprite);
         }
 
+        [HarmonyTranspiler]
         public static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             foreach (var code in instructions)

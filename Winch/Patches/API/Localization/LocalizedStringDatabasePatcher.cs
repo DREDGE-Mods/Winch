@@ -8,9 +8,12 @@ using Winch.Core;
 
 namespace Winch.Patches.API.Localization
 {
-    public static class LocalizedStringDatabasePatcher
-    {
-        public static void GenerateLocalizedString(ref StringTable table, ref StringTableEntry entry, TableReference tableReference, TableEntryReference tableEntryReference, Locale locale)
+	[HarmonyPatch]
+	public static class LocalizedStringDatabasePatcher
+	{
+		[HarmonyPrefix]
+		[HarmonyPatch(typeof(LocalizedStringDatabase), nameof(LocalizedStringDatabasePatcher.GenerateLocalizedString))]
+		public static void GenerateLocalizedString(ref StringTable table, ref StringTableEntry entry, TableReference tableReference, TableEntryReference tableEntryReference, Locale locale)
         {
             GenerateModdedLocalizedString(ref table, ref entry, tableReference, tableEntryReference, locale);
         }
