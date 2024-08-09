@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -324,11 +325,14 @@ public static class EnumUtil
             patches.Add(enumType, patch);
         }
 
-        patch.AddValue((ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture), name);
+        patch.AddValue(value.ToFriendlyValue(), name);
 
         // Clear enum cache
         ClearEnumCache(enumType);
     }
+
+    internal static ulong ToFriendlyValue<T>(this T value) where T : Enum => (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture);
+    internal static ulong ToFriendlyValue(this object value) => (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture);
 
     /// <summary>
     /// Removes a custom enum value from being associated with a name
@@ -336,6 +340,13 @@ public static class EnumUtil
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <param name="name">Name of the enum value</param>
     public static void Remove<T>(string name) where T : Enum => Remove(typeof(T), name);
+
+    /// <summary>
+    /// Removes a custom enum value from being associated with a name
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The enum value to remove</param>
+    public static void Remove<T>(T value) where T : Enum => Remove(typeof(T), value);
 
     /// <summary>
     /// Removes a custom enum value from being associated with a name
@@ -375,7 +386,7 @@ public static class EnumUtil
     {
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
-        ulong uvalue = (ulong)Convert.ToInt64(value, CultureInfo.InvariantCulture);
+        ulong uvalue = value.ToFriendlyValue();
         if (TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasValue(uvalue))
         {
             patch.RemoveValue(uvalue);
@@ -383,6 +394,119 @@ public static class EnumUtil
             // Clear enum cache
             ClearEnumCache(enumType);
         }
+    }
+
+    /// <summary>
+    /// Check if it is a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="name">Name of the enum value</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsDynamic<T>(string name) where T : Enum => IsDynamic(typeof(T), name);
+
+    /// <summary>
+    /// Check if it is a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The enum value to check</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsDynamic<T>(this T value) where T : Enum => IsDynamic(typeof(T), value);
+
+    /// <summary>
+    /// Check if it is a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The enum value to check</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsDynamic<T>(object value) where T : Enum => IsDynamic(typeof(T), value);
+
+    /// <summary>
+    /// Check if it is a custom enum value
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <param name="name">Name of the enum value</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static bool IsDynamic(Type enumType, string name)
+    {
+        if (enumType == null) throw new ArgumentNullException("enumType");
+        if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+
+        return TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasName(name);
+    }
+
+    /// <summary>
+    /// Check if it is a custom enum value
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <param name="value">Value of the enum</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static bool IsDynamic(Type enumType, object value)
+    {
+        if (enumType == null) throw new ArgumentNullException("enumType");
+        if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+
+        ulong uvalue = value.ToFriendlyValue();
+        return TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasValue(uvalue);
+    }
+
+    /// <summary>
+    /// Check if it is <b>not</b> a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="name">Name of the enum value</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsStatic<T>(string name) where T : Enum => IsStatic(typeof(T), name);
+
+    /// <summary>
+    /// Check if it is <b>not</b> a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The enum value to check</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsStatic<T>(this T value) where T : Enum => IsStatic(typeof(T), value);
+
+    /// <summary>
+    /// Check if it is <b>not</b> a custom enum value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The enum value to check</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    public static bool IsStatic<T>(object value) where T : Enum => IsStatic(typeof(T), value);
+
+    /// <summary>
+    /// Check if it is <b>not</b> a custom enum value
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <param name="name">Name of the enum value</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static bool IsStatic(Type enumType, string name)
+    {
+        if (enumType == null) throw new ArgumentNullException("enumType");
+        if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+
+        return !IsDynamic(enumType, name);
+    }
+
+    /// <summary>
+    /// Check if it is <b>not</b> a custom enum value
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <param name="value">Value of the enum</param>
+    /// <returns><see langword="true"/> if it is, <see langword="false"/> if not.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static bool IsStatic(Type enumType, object value)
+    {
+        if (enumType == null) throw new ArgumentNullException("enumType");
+        if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+
+        return !IsDynamic(enumType, value);
     }
 
     private static bool TryAsNumber(this object value, Type type, out object result)
@@ -419,7 +543,7 @@ public static class EnumUtil
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns><see langword="true"/> if it does, <see langword="false"/> if not.</returns>
-    public static bool IsPowerOfTwoEnum<T>() where T : Enum => typeof(T).IsDefined(typeof(FlagsAttribute), false);
+    public static bool IsPowerOfTwoEnum<T>() where T : Enum => IsFlagsEnum<T>();
 
     /// <summary>
     /// Does this enum use power of twos?
@@ -428,7 +552,23 @@ public static class EnumUtil
     /// <returns><see langword="true"/> if it does, <see langword="false"/> if not.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
     /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
-    public static bool IsPowerOfTwoEnum(Type enumType)
+    public static bool IsPowerOfTwoEnum(Type enumType) => IsFlagsEnum(enumType);
+
+    /// <summary>
+    /// Does this enum have the flags attribute?
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns><see langword="true"/> if it does, <see langword="false"/> if not.</returns>
+    public static bool IsFlagsEnum<T>() where T : Enum => typeof(T).IsDefined(typeof(FlagsAttribute), false);
+
+    /// <summary>
+    /// Does this enum have the flags attribute?
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <returns><see langword="true"/> if it does, <see langword="false"/> if not.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static bool IsFlagsEnum(Type enumType)
     {
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
@@ -1222,11 +1362,55 @@ public static class EnumUtil
     public static string[] GetNames<T>() where T : Enum => Enum.GetNames(typeof(T));
 
     /// <summary>
+    /// Gets all names in an enum, skipping the first (usually default,none) value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>The list of all names (excluding the first value) in the enum</returns>
+    public static string[] GetNamesWithoutFirst<T>() where T : Enum => Enum.GetNames(typeof(T)).Skip(1).ToArray();
+
+    /// <summary>
+    /// Gets all names in an enum with exclusions
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="excluded">Enums to exclude from the randomization</param>
+    /// <returns>The list of names in the enum</returns>
+    public static string[] GetNames<T>(params T[] excluded) where T : Enum => GetValues<T>(excluded).Select(GetName).ToArray();
+
+    /// <summary>
     /// Gets all enum values in an enum
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The list of all values in the enum</returns>
     public static T[] GetValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+
+    /// <summary>
+    /// Gets all enum values in an enum, skipping the first (usually default,none) value
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>The list of all values (excluding the first value) in the enum</returns>
+    public static T[] GetValuesWithoutFirst<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Skip(1).ToArray();
+
+    /// <summary>
+    /// Gets all enum values in an enum with exclusions
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="excluded">Enums to exclude from the randomization</param>
+    /// <returns>The list of all values in the enum</returns>
+    public static T[] GetValues<T>(params T[] excluded) where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(v => !excluded.Contains(v)).ToArray();
+
+    /// <summary>
+    /// Gets all dynamic (custom) enum values in an enum
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>The list of all dynamic values in the enum</returns>
+    public static T[] GetDynamicValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(IsDynamic).ToArray();
+
+    /// <summary>
+    /// Gets all static (non-custom) enum values in an enum
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>The list of all static values in the enum</returns>
+    public static T[] GetStaticValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(IsStatic).ToArray();
 
     /// <summary>
     /// Counts the number of enums values contained in a given enum type.
@@ -1376,9 +1560,60 @@ public static class EnumUtil
     /// <returns>A randomly selected enum value from the given enum type</returns>
     public static T GetRandom<T>(params T[] excluded) where T : Enum
     {
-        var values = Enum.GetValues(typeof(T)).Cast<T>().Where(v => !excluded.Contains(v)).ToArray();
+        var values = GetValues<T>(excluded);
         var item = Rng.Next(0, values.Length);
         return (T)values.GetValue(item);
+    }
+
+    /// <summary>
+    /// Gets a random name from an enum
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>A randomly selected enum name from the given enum type</returns>
+    public static string GetRandomName<T>() where T : Enum
+    {
+        var names = GetNames<T>();
+        var item = Rng.Next(0, names.Length);
+        return (string)names.GetValue(item);
+    }
+
+    /// <summary>
+    /// Gets a random name from an enum with exclusions
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="excluded">Enums to exclude from the randomization</param>
+    /// <returns>A randomly selected enum name from the given enum type</returns>
+    public static string GetRandomName<T>(params T[] excluded) where T : Enum
+    {
+        var names = GetNames<T>(excluded);
+        var item = Rng.Next(0, names.Length);
+        return (string)names.GetValue(item);
+    }
+
+    /// <summary>
+    /// Returns all enums with their descriptions in a dictionary.
+    /// <see cref="DescriptionAttribute"/> needs to be applied on enum values to set a description text.
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <returns>Dictionary of enum-to-description mappings.</returns>
+    public static IDictionary<T, string> GetDescriptions<T>() where T : Enum
+    {
+        var type = typeof(T);
+        var dictionary = new Dictionary<T, string>();
+
+        foreach (var key in GetValues<T>())
+        {
+            var field = type.GetField($"{key}");
+            string description = null;
+            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
+            {
+                description = attribute.Description;
+            }
+
+            dictionary.Add(key, description);
+        }
+
+        return dictionary;
     }
 
     /// <summary>
@@ -1401,6 +1636,118 @@ public static class EnumUtil
     public static void ThrowIfNotEnum<T>()
     {
         if (!typeof(T).IsEnum) throw new NotAnEnumException(typeof(T));
+    }
+
+    /// <summary>
+    /// Casts an Enum to a specific type
+    /// </summary>
+    public static T EnumCast<T>(this Enum value) where T : Enum
+    {
+        if (value.GetType() != typeof(T))
+            throw new InvalidCastException("Enums are not of the same type");
+        return (T)(object)value;
+    }
+
+    /// <summary>
+    /// Casts an Enum to a specific type
+    /// </summary>
+    public static IEnumerable<T> EnumCast<T>(this IEnumerable<Enum> values) where T : Enum => values.Select(e => e.EnumCast<T>());
+
+    /// <inheritdoc cref="Enum.HasFlag(Enum)"/>
+    public static bool HasFlag<T>(T flags, T flag) where T : Enum
+        => flags.HasFlag(flag);
+
+    /// <summary>
+    /// Sets a flag bit to 0 or 1
+    /// </summary>
+    public static T SetFlag<T>(this T flags, T flag, bool setBit) where T : Enum
+        => setBit ? AddFlag(flags, flag) : RemoveFlag(flags, flag);
+
+    /// <summary>
+    /// Adds a flag to an enum
+    /// </summary>
+    public static T AddFlag<T>(this T flags, T flag) where T : Enum
+        => FromObject<T>(flags.ToFriendlyValue() | flag.ToFriendlyValue());
+
+    /// <summary>
+    /// Removes a flag from an enum
+    /// </summary>
+    public static T RemoveFlag<T>(this T flags, T flag) where T : Enum
+        => FromObject<T>(flags.ToFriendlyValue() & ~flag.ToFriendlyValue());
+
+    /// <summary>
+    /// Toggles a flag in an enum
+    /// </summary>
+    public static T ToggleFlag<T>(this T flags, T flag) where T : Enum
+        => FromObject<T>(flags.ToFriendlyValue() ^ flag.ToFriendlyValue());
+
+    /// <summary>
+    /// 1 &lt;&lt; <paramref name="index"/>
+    /// </summary>
+    public static T GetFlagsValue<T>(int index) where T : Enum
+        => FromObject<T>(1 << index);
+
+    /// <summary>
+    /// 0
+    /// </summary>
+    public static T GetNoFlags<T>() where T : Enum
+        => FromObject<T>(0);
+
+    /// <summary>
+    /// ~0
+    /// </summary>
+    public static T GetAllFlags<T>() where T : Enum
+        => FromObject<T>(~0);
+
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="flags">The value to get the flags from.</param>
+    /// <returns>All the flags that the value had.</returns>
+    /// <exception cref="ArgumentException">When the enum doesn't have the flags attribute.</exception>
+    public static T[] GetFlagsValues<T>(this T flags) where T : Enum
+    {
+        if (!IsFlagsEnum<T>())
+            throw new ArgumentException(string.Format("The type '{0}' must have an attribute '{1}'.", typeof(T), typeof(FlagsAttribute)));
+
+        Type underlyingType = GetUnderlyingType<T>();
+
+        ulong num = flags.ToFriendlyValue();
+        var enumNameValues = GetValues<T>().Select(ToFriendlyValue);
+        IList<T> selectedFlagsValues = new List<T>();
+
+        foreach (ulong enumNameValue in enumNameValues)
+        {
+            if ((num & enumNameValue) == enumNameValue && enumNameValue != 0)
+            {
+                selectedFlagsValues.Add((T)Convert.ChangeType(enumNameValue, underlyingType, CultureInfo.CurrentCulture));
+            }
+        }
+
+        if (selectedFlagsValues.Count == 0 && enumNameValues.SingleOrDefault(v => v == 0) != 0)
+        {
+            selectedFlagsValues.Add(default(T));
+        }
+
+        return selectedFlagsValues.ToArray();
+    }
+
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="values"></param>
+    /// <returns>All the flags values combined into one enum value.</returns>
+    /// <exception cref="ArgumentException">When the enum doesn't have the flags attribute.</exception>
+    public static T CombineFlagsValues<T>(this T[] values) where T : Enum
+    {
+        if (!IsFlagsEnum<T>())
+            throw new ArgumentException(string.Format("The type '{0}' must have an attribute '{1}'.", typeof(T), typeof(FlagsAttribute)));
+
+        T combined = default(T);
+        if (values != null && values.Length > 0)
+        {
+            foreach (var value in values)
+            {
+                combined = combined.AddFlag<T>(value);
+            }
+        }
+        return combined;
     }
 }
 
