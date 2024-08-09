@@ -56,11 +56,11 @@ namespace Winch.Core
 
 				try
 				{
-					bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
+					bool hasPatches = modAssembly.ApplyPatches;
 					if (modAssembly.LoadedAssembly != null && hasPatches)
 					{
 						WinchCore.Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-						new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
+						new Harmony(modAssembly.GUID).PatchAll(modAssembly.LoadedAssembly);
 					}
 				}
 				catch(Exception ex)

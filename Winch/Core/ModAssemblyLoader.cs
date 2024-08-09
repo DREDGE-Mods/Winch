@@ -32,7 +32,7 @@ namespace Winch.Core
 			GetEnabledMods();
 
 			EnabledModAssemblies = EnabledMods == null ? _installedAssemblies
-				: _installedAssemblies.Where(x => EnabledMods[(string)x.Value.Metadata["ModGUID"]])
+				: _installedAssemblies.Where(x => EnabledMods[x.Value.GUID])
 				.ToDictionary(x => x.Key, x => x.Value);
 		}
 
@@ -73,11 +73,11 @@ namespace Winch.Core
 
             if(minVersion != null)
             {
-                if (!VersionUtil.IsSameOrNewer(EnabledModAssemblies[modName].Metadata["Version"].ToString(), minVersion))
+                if (!VersionUtil.IsSameOrNewer(EnabledModAssemblies[modName].Version, minVersion))
                     throw new Exception($"Cannot satisfy minimum version constraint {minVersion} for {modName}");
             }
 
-            var modGUID = (string)EnabledModAssemblies[modName].Metadata["ModGUID"];
+            var modGUID = EnabledModAssemblies[modName].GUID;
             if (!EnabledMods[modGUID])
             {
                 WinchCore.Log.Info($"Mod '{modName}' disabled.");
@@ -112,7 +112,7 @@ namespace Winch.Core
 
 				foreach (string mod in _installedAssemblies.Keys)
 				{
-					string modGUID = (string)_installedAssemblies[mod].Metadata["ModGUID"];
+					string modGUID = _installedAssemblies[mod].GUID;
 					if (!EnabledMods.ContainsKey(modGUID))
 					{
 						EnabledMods.Add(modGUID, true);

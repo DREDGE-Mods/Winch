@@ -2,16 +2,16 @@
 
 namespace Winch.Config
 {
-	public class ModConfig : JSONConfig
+    public class ModConfig : JSONConfig
     {
         private static Dictionary<string, string> DefaultConfigs = new Dictionary<string, string>();
         private static Dictionary<string, ModConfig> Instances = new Dictionary<string, ModConfig>();
 
-        private ModConfig(string modName) : base(GetConfigPath(modName), GetDefaultConfig(modName))
+        private ModConfig(string modName) : base(GetConfigPath(modName), GetDefaultConfigPath(modName))
         {
         }
 
-        private static string GetDefaultConfig(string modName)
+        internal static string GetDefaultConfigPath(string modName)
         {
             if(!DefaultConfigs.ContainsKey(modName))
             {
@@ -28,16 +28,46 @@ namespace Winch.Config
 
 
 
-        private static ModConfig GetConfig(string modName)
+
+        internal static ModConfig GetConfig(string modName)
         {
             if (!Instances.ContainsKey(modName))
                 Instances.Add(modName, new ModConfig(modName));
             return Instances[modName];
         }
 
+        internal static bool TryGetConfig(string modName, out ModConfig config)
+        {
+            try
+            {
+                config = GetConfig(modName);
+                return true;
+            }
+            catch
+            {
+                config = null;
+                return false;
+            }
+        }
+
+        internal static Dictionary<string, object> GetProperties(string modName)
+        {
+            return GetConfig(modName).GetProperties();
+        }
+
         public static T? GetProperty<T>(string modName, string key, T? defaultValue)
         {
             return GetConfig(modName).GetProperty(key, defaultValue);
+        }
+
+        internal static Dictionary<string, object> GetDefaultProperties(string modName)
+        {
+            return GetConfig(modName).GetDefaultProperties();
+        }
+
+        public static T? GetDefaultProperty<T>(string modName, string key)
+        {
+            return GetConfig(modName).GetDefaultProperty<T>(key);
         }
 
         public static void RegisterDefaultConfig(string modName, string config)

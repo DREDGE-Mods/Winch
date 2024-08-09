@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Sirenix.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +15,20 @@ namespace Winch.Core
         public readonly string BasePath;
         public Dictionary<string, object> Metadata;
         public Assembly? LoadedAssembly;
+
+        public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
+        public string GUID => Metadata.ContainsKey("ModGUID") ? Metadata["ModGUID"].ToString() : throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
+        public string AssemblyRelativePath => Metadata.ContainsKey("ModAssembly") ? Metadata["ModAssembly"].ToString() : throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
+        public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().Replace("Dredge", "").Replace("DREDGE", "").SplitPascalCase() : string.Empty;
+        public string Author => Metadata.ContainsKey("Author") ? Metadata["Author"].ToString() : string.Empty;
+        public string Version => Metadata.ContainsKey("Version") ? Metadata["Version"].ToString() : throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
+        public string MinWinchVersion => Metadata.ContainsKey("MinWinchVersion") ? Metadata["MinWinchVersion"].ToString() : string.Empty;
+        public string DefaultConfig => Metadata.ContainsKey("DefaultConfig") ? Metadata["DefaultConfig"].ToString() : throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {GUID}!");
+        public string[] Dependencies => Metadata.ContainsKey("Dependencies") ? (((JArray)Metadata["Dependencies"]).ToObject<string[]>() ?? Array.Empty<string>()) : Array.Empty<string>();
+        public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
+        public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
+        public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
+        public ModConfig? Config => ModConfig.TryGetConfig(GUID, out var config) ? config : null;
 
         private ModAssembly(string basePath) {
             BasePath = basePath;
@@ -34,11 +49,8 @@ namespace Winch.Core
         
         internal void LoadAssembly()
         {
-            if (!Metadata.ContainsKey("ModAssembly"))
-                throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
-
-            string assemblyName = Metadata["ModAssembly"].ToString();
-            string assemblyPath = Path.Combine(BasePath, assemblyName);
+            string assemblyRelativePath = AssemblyRelativePath;
+            string assemblyPath = Path.Combine(BasePath, assemblyRelativePath);
             if(!File.Exists(assemblyPath))
                 throw new FileNotFoundException($"Could not find mod assembly '{assemblyPath}'");
 
@@ -73,20 +85,17 @@ namespace Winch.Core
 
         internal void CheckCompatibility()
         {
-
-            if (!Metadata.ContainsKey("Version"))
-                throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
-            else if (!VersionUtil.ValidateVersion(Metadata["Version"].ToString()))
+            if (!VersionUtil.ValidateVersion(Version))
                 throw new FormatException("Mod Version has invalid format.");
 
-            if (!Metadata.ContainsKey("ModGUID"))
+            if (GUID.IsNullOrWhitespace())
                 throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
 
-            if (!Metadata.ContainsKey("MinWinchVersion"))
+            string minVer = MinWinchVersion;
+            if (minVer.IsNullOrWhitespace())
                 WinchCore.Log.Warn($"No MinWinchVersion defined. Mod will load anyway, but version conflicts may occur!");
             else
             {
-                string minVer = Metadata["MinWinchVersion"].ToString();
                 string winchVer = VersionUtil.GetVersion();
 
                 if (!VersionUtil.ValidateVersion(minVer))
@@ -101,7 +110,7 @@ namespace Winch.Core
 
         private void ProcessDependencies()
         {
-            string[] deps = ((JArray)Metadata["Dependencies"]).ToObject<string[]>() ?? Array.Empty<string>();
+            string[] deps = Dependencies;
             foreach (string dep in deps)
             {
                 WinchCore.Log.Debug($"Processing dependency {dep}");
@@ -113,14 +122,13 @@ namespace Winch.Core
 
         private void ProcessDefaultConfig()
         {
-            string defaultConfig = JsonConvert.SerializeObject(Metadata["DefaultConfig"], Formatting.Indented);
             string modName = Path.GetFileName(BasePath);
-            ModConfig.RegisterDefaultConfig(modName, defaultConfig);
+            ModConfig.RegisterDefaultConfig(modName, DefaultConfig);
         }
 
         private void ProcessEntrypoint()
         {
-            string entrypointSetting = Metadata["Entrypoint"].ToString();
+            string entrypointSetting = Entrypoint;
             if (!entrypointSetting.Contains("/"))
                 throw new ArgumentException("Malformed Entrypoint in mod_meta.json");
 
@@ -138,7 +146,7 @@ namespace Winch.Core
 
 		private void ProcessPreload()
 		{
-			string preloadSetting = Metadata["Preload"].ToString();
+			string preloadSetting = Preload;
 			if (!preloadSetting.Contains("/"))
 				throw new ArgumentException("Malformed Preload in mod_meta.json");
 
@@ -154,6 +162,6 @@ namespace Winch.Core
 			preloader.Invoke(null, new object[0]);
 		}
 
-		public override string ToString() => (string)Metadata["ModGUID"];
-    }
+		public override string ToString() => GUID;
+	}
 }
