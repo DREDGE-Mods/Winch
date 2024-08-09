@@ -164,10 +164,9 @@ public static class PoiUtil
 
     internal static GameObject CreateGameObjectFromCustomHarvestPoi(CustomHarvestPOI customHarvestPoi)
     {
-        GameObject customPoi = new GameObject();
+        GameObject customPoi = new GameObject(customHarvestPoi.id);
         customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
         customPoi.transform.position = customHarvestPoi.location;
-        customPoi.name = customHarvestPoi.id;
         var harvestPoi = customPoi.AddComponent<HarvestPOI>();
 
         var harvestPoiDataModel = new HarvestPOIDataModel();
@@ -217,10 +216,9 @@ public static class PoiUtil
 
     internal static GameObject CreateGameObjectFromCustomItemPoi(CustomItemPOI customItemPoi)
     {
-        GameObject customPoi = new GameObject();
+        GameObject customPoi = new GameObject(customItemPoi.id);
         customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
         customPoi.transform.position = customItemPoi.location;
-        customPoi.name = customItemPoi.id;
         var itemPoi = customPoi.AddComponent<ParticledItemPOI>();
 
         var itemPoiDataModel = new ItemPOIDataModel();

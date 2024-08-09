@@ -91,9 +91,7 @@ namespace Winch.Core
 
         private static void InitializeAssetLoader()
         {
-            GameObject assetLoader = new GameObject();
-            assetLoader.AddComponent<AssetLoaderObject>();
-            GameObject.DontDestroyOnLoad(assetLoader);
+            UnityEngine.Object.DontDestroyOnLoad(new GameObject("AssetLoader", typeof(AssetLoaderObject)));
         }
 
         internal static void InitializeVersionLabel()
@@ -111,9 +109,7 @@ namespace Winch.Core
         private static void InitializeDevConsole()
         {
             WinchCore.Log.Debug("Initializing Developer Console...");
-            GameObject term = new GameObject();
-            term.AddComponent<Terminal>();
-            UnityEngine.Object.DontDestroyOnLoad(term);
+            UnityEngine.Object.DontDestroyOnLoad(new GameObject("DeveloperConsole", typeof(Terminal)));
         }
     }
 }

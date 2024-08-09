@@ -6,9 +6,7 @@ namespace DisasterButton
     {
         public static void Initialize()
         {
-            GameObject gameObject = new GameObject();
-            gameObject.AddComponent<DisasterButton>();
-            GameObject.DontDestroyOnLoad(gameObject);
+            UnityEngine.Object.DontDestroyOnLoad(new GameObject("DisasterButton", typeof(DisasterButton)));
         }
     }
 }
