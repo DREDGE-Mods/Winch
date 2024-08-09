@@ -73,8 +73,8 @@ namespace Winch.Core
 			{
 				InitializeAssetLoader();
 
-				if (WinchConfig.GetProperty("EnableDeveloperConsole", false))
-					InitializeDevConsole();
+				/*if (WinchConfig.GetProperty("EnableDeveloperConsole", false))
+					InitializeDevConsole();*/
 
 				DredgeEvent.TriggerManagersLoaded();
 			}

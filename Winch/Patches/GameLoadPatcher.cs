@@ -23,7 +23,7 @@ namespace Winch.Patches
     {
         public static void Postfix()
         {
-            WinchCore.Log.Info("Game Managers completed loading, initializing Winch...");
+            WinchCore.Log.Info("Game loaded, initializing Winch...");
             Initializer.Initialize();
             WinchCore.Log.Info("Winch initialized successfully.");
         }

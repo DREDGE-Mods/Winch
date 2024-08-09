@@ -305,7 +305,6 @@ namespace Winch.Core
             {
                 try
                 {
-                    WinchCore.Log.Debug("Loading character");
                     CharacterUtil.AddCharacterFromMeta(file);
                 }
                 catch (Exception ex)

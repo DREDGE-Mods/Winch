@@ -599,7 +599,7 @@ public static class WinchExtensions
     /// <summary>
     /// Copies an object and prefabitizes that copy.
     /// </summary>
-    public static GameObject CopyPrefab(this GameObject original) => original.Instantiate(PrefabParent, false);
+    public static GameObject CopyPrefab(this GameObject original) => original.Instantiate(PrefabParent, false).Rename(original.name);
 
     /// <summary>
     /// Activates the game object.
