@@ -97,7 +97,7 @@ public static class ItemUtil
         var moddedButton = encyclopedia.dlc1ZoneButton.gameObject.InstantiateInactive();
         moddedButton.transform.SetParent(zones, false);
         var moddedButtonWrapper = moddedButton.GetComponent<BasicButtonWrapper>();
-        moddedButtonWrapper.localizedString.StringReference = new LocalizedString("Strings", "label.unknown");
+        moddedButtonWrapper.localizedString.StringReference = LocalizationUtil.Unknown;
         moddedButton.name = "ModdedEncyclopediaTabButton";
         moddedButton.SetActive(true);
         encyclopedia.zoneButtons.Add(moddedButtonWrapper);
