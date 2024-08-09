@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using Coffee.UIExtensions;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.UI;
 using Winch.Core;
 using Winch.Data.Character;
 using Winch.Data.Item;
@@ -129,6 +131,14 @@ public static class WinchExtensions
         }
         paralinguistics = null;
         return false;
+    }
+
+    public static void DeactivateButtonEffects(this BasicButtonWrapper buttonWrapper)
+    {
+        buttonWrapper.transitionEffect.duration = 0;
+        buttonWrapper.DoTransitionIn();
+        buttonWrapper.GetComponent<UITransitionEffect>().enabled = false;
+        buttonWrapper.GetComponent<Mask>().enabled = false;
     }
     #endregion
 
@@ -818,6 +828,17 @@ public static class WinchExtensions
         return null;
     }
 
+    public static Transform FindChildWithExactName(this Transform parent, string name)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+        {
+            var childTransform = parent.GetChild(i);
+            if (childTransform.name == name)
+                return childTransform;
+        }
+        return null;
+    }
+
     public static void DestroyAllComponents<T>(this GameObject obj) where T : Component
     {
         foreach (var component in obj.GetComponents<T>())
@@ -850,6 +871,24 @@ public static class WinchExtensions
             GameObject.DestroyImmediate(t.GetChild(i).gameObject);
         }
         t.DetachChildren();
+    }
+
+    public static void DestroyAllChildren(this Transform t, int skipIndex)
+    {
+        for (int i = t.childCount - 1; i >= 0; i--)
+        {
+            if (i == skipIndex) continue;
+            GameObject.Destroy(t.GetChild(i).gameObject);
+        }
+    }
+
+    public static void DestroyAllChildrenImmediate(this Transform t, int skipIndex)
+    {
+        for (int i = t.childCount - 1; i >= 0; i--)
+        {
+            if (i == skipIndex) continue;
+            GameObject.DestroyImmediate(t.GetChild(i).gameObject);
+        }
     }
 
     public static void SetLocalPositionX(this Transform trans, float x)
