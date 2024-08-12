@@ -5,7 +5,7 @@ namespace Winch.Config
 {
     public class WinchConfig : JSONConfig
     {
-        private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "WinchConfig.json");
+        private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.WinchConfigFileName);
 
         private WinchConfig() : base(WinchConfigPath, WinchCommon.Properties.Resources.DefaultConfig) { }
 

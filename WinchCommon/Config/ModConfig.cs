@@ -27,14 +27,29 @@ namespace Winch.Config
             return DefaultConfigs[modName];
         }
 
+        private static string GetBasePath(string modName)
+        {
+            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mods", modName);
+        }
+
         private static string GetDefaultConfigPath(string modName)
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mods", modName, "DefaultConfig.json");
+            var basePath = GetBasePath(modName);
+
+            if (File.Exists(Path.Combine(basePath, Constants.OldModDefaultConfigFileName)))
+                return Path.Combine(basePath, Constants.OldModDefaultConfigFileName);
+
+            return Path.Combine(basePath, Constants.ModDefaultConfigFileName);
         }
 
         private static string GetConfigPath(string modName)
         {
-            return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mods", modName, "Config.json");
+            var basePath = GetBasePath(modName);
+
+            if (File.Exists(Path.Combine(basePath, Constants.OldModConfigFileName)))
+                return Path.Combine(basePath, Constants.OldModConfigFileName);
+
+            return Path.Combine(basePath, Constants.ModConfigFileName);
         }
 
         internal static ModConfig GetConfig(string modName)

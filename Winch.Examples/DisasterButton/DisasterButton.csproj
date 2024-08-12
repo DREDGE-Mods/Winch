@@ -39,7 +39,7 @@
 		<None Update="Assets\Localization\en.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
-		<None Update="DefaultConfig.json">
+		<None Update="default_config.json">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="mod_meta.json">
