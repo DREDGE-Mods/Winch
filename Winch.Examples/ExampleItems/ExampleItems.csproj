@@ -44,6 +44,9 @@
 		<None Include="Assets\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="DefaultConfig.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="mod_meta.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

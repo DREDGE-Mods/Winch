@@ -25,6 +25,8 @@ namespace Winch.Config
         private readonly string _defaultConfigString;
         private readonly string _defaultConfigPath;
 
+        public bool hasProperties => _config.Count > 0;
+
         public static Dictionary<string, object?> ParseConfig(string value)
         {
             return JsonConvert.DeserializeObject<Dictionary<string, object?>>(value);

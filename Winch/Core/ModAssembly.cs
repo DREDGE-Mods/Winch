@@ -16,14 +16,16 @@ namespace Winch.Core
         public Dictionary<string, object> Metadata;
         public Assembly? LoadedAssembly;
 
+        public string AssemblyLocation => LoadedAssembly != null ? Path.GetDirectoryName(LoadedAssembly.Location) : string.Empty;
         public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
         public string GUID => Metadata.ContainsKey("ModGUID") ? Metadata["ModGUID"].ToString() : throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
         public string AssemblyRelativePath => Metadata.ContainsKey("ModAssembly") ? Metadata["ModAssembly"].ToString() : throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
-        public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().Replace("Dredge", "").Replace("DREDGE", "").SplitPascalCase() : string.Empty;
+        public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().SplitPascalCase() : string.Empty;
+        public string CleanedUpName => Name.Replace("Dredge ", "").Replace("DREDGE ", "").Trim();
         public string Author => Metadata.ContainsKey("Author") ? Metadata["Author"].ToString() : string.Empty;
         public string Version => Metadata.ContainsKey("Version") ? Metadata["Version"].ToString() : throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
         public string MinWinchVersion => Metadata.ContainsKey("MinWinchVersion") ? Metadata["MinWinchVersion"].ToString() : string.Empty;
-        public string DefaultConfig => Metadata.ContainsKey("DefaultConfig") ? Metadata["DefaultConfig"].ToString() : throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {GUID}!");
+        internal string DefaultConfig => Metadata.ContainsKey("DefaultConfig") ? Metadata["DefaultConfig"].ToString() : throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {GUID}!");
         public string[] Dependencies => Metadata.ContainsKey("Dependencies") ? (((JArray)Metadata["Dependencies"]).ToObject<string[]>() ?? Array.Empty<string>()) : Array.Empty<string>();
         public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
         public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;

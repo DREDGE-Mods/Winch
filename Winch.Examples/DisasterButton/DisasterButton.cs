@@ -7,7 +7,7 @@ namespace DisasterButton
     class DisasterButton : MonoBehaviour
     {
         private static System.Random rnd = new System.Random();
-        private static string DisasterKey = ModConfig.GetProperty("hacktix.disasterbutton", "DisasterButtonKey", "delete");
+        private static string DisasterKey => ModConfig.GetProperty("hacktix.disasterbutton", "DisasterButtonKey", "delete");
 
         private void Update()
         {

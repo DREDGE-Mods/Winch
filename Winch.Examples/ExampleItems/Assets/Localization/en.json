@@ -47,5 +47,21 @@
 	"exampleitems.book.completedDesc": "Book CompletedDesc",
 	"exampleitems.testability.name": "Ability Name",
 	"exampleitems.testability.desc": "Ability Desc",
-	"exampleitems.testability.shortDesc": "Ability ShortDesc"
+	"exampleitems.testability.shortDesc": "Ability ShortDesc",
+
+	"exampleconfig.toggle.title": "Toggle",
+	"exampleconfig.toggle.tooltip": "An on/off dropdown",
+	"exampleconfig.text.title": "Text",
+	"exampleconfig.text.tooltip": "A text box",
+	"exampleconfig.integer.title": "Integer",
+	"exampleconfig.integer.tooltip": "A number without any decimals",
+	"exampleconfig.decimal.title": "Decimal",
+	"exampleconfig.decimal.tooltip": "A number with decimals",
+	"exampleconfig.slider.title": "Slider",
+	"exampleconfig.slider.tooltip": "A slider value between min and max numbers",
+	"exampleconfig.dropdown.title": "Dropdown",
+	"exampleconfig.dropdown.tooltip": "A dropdown menu with options (they need to be localized)",
+	"exampleconfig.dropdown.option.one": "First",
+	"exampleconfig.dropdown.option.two": "Second",
+	"exampleconfig.dropdown.option.three": "Third"
 }
