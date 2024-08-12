@@ -184,6 +184,7 @@ namespace Winch.Components
             footerText.LabelString = footerOptions;
             footerButton.gameObject.Activate();
             AddWinchOptions();
+            ScrollToTop();
         }
 
         public void AddWinchOptions()
@@ -247,6 +248,7 @@ namespace Winch.Components
             footerText.LabelString = footerOptions;
             footerButton.gameObject.Activate();
             AddOptions(mod);
+            ScrollToTop();
         }
 
         public void AddOptions(ModAssembly mod)
