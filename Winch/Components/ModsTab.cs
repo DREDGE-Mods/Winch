@@ -1,22 +1,14 @@
 ﻿using UnityEngine;
-using UnityEngine.Localization.Components;
 using UnityEngine.Localization;
-using Coffee.UIExtensions;
-using UnityEngine.UIElements;
 using Winch.Util;
 using Winch.Core;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using Winch.Config;
-using Galaxy.Api;
-using TMPro;
 using Sirenix.Utilities;
 using Newtonsoft.Json.Linq;
 using System;
-using InControl;
-using static Mono.Security.X509.X520;
-using AeLa.EasyFeedback;
 
 namespace Winch.Components
 {
@@ -36,6 +28,7 @@ namespace Winch.Components
         public ResetAllSettingsButton ResetAllSettingsButton => settingsDialog.GetComponentInChildren<ResetAllSettingsButton>(true);
 
         internal Label labelPrefab;
+        internal LocalizedLabel labelLocalizedPrefab;
         internal BasicButtonWrapper buttonPrefab;
         internal DropdownInput dropdownPrefab;
         internal ColorDropdownInput colorDropdownPrefab;
@@ -44,6 +37,7 @@ namespace Winch.Components
         internal FieldInput inputFieldPrefab;
         internal IntegerFieldInput integerInputFieldPrefab;
         internal DecimalFieldInput decimalInputFieldPrefab;
+        internal SeparatorInput separatorPrefab;
         internal SettingsDialog settingsDialog;
         internal TabbedPanel panel;
         internal TabUI tab;
@@ -61,6 +55,7 @@ namespace Winch.Components
         internal ModAssembly currentMod;
         private List<BasicButtonWrapper> modButtons = new List<BasicButtonWrapper>();
         private List<Label> modLabels = new List<Label>();
+        private List<Transform> modOptions = new List<Transform>();
 
         public void Awake()
         {
@@ -125,6 +120,17 @@ namespace Winch.Components
             modButtons.Clear();
             modLabels.Clear();
             AddWinch();
+            foreach (var mod in ModAssemblyLoader.EnabledModAssemblies.Values)
+            {
+                try
+                {
+                    mod.GetConfig();
+                }
+                catch(Exception ex)
+                {
+                    WinchCore.Log.Error(ex.Message);
+                }
+            }
             foreach (var mod in ModAssemblyLoader.EnabledModAssemblies.Values.Where(mod => mod.Config != null && mod.Config.hasProperties))
             {
                 AddEnabledMod(mod);
@@ -264,6 +270,8 @@ namespace Winch.Components
                 {
                     switch (settingType)
                     {
+                        case "separator":
+                            return AddSeparatorAndLabelInput(modName, key, obj);
                         case "slider":
                             return AddSliderInput(modName, key, obj);
                         case "toggle":
@@ -332,9 +340,49 @@ namespace Winch.Components
             throw new InvalidOperationException("Unrecognized setting type: " + value.GetType());
         }
 
+        private SeparatorInput AddSeparatorAndLabelInput(string modName, string key, JObject obj) => AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
+
+        private SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
+        {
+            var count = modOptions.Count == 0 ? 1 : (3 - ((modOptions.Count - 1) % 3)); //shenanigans to put empty spaces until next middle
+            for (int i = 0; i < count; i++)
+            {
+                AddSeparatorInput(modName, key + i);
+            }
+            var clone = labelLocalizedPrefab.Instantiate(options, false).gameObject.AddComponent<SeparatorInput>();
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
+                clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", key);
+            }
+            else
+            {
+                clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", title);
+            }
+            modOptions.Add(clone.transform);
+            clone.modName = modName;
+            clone.key = key;
+            clone.name = key;
+            AddScrollMagnet(clone);
+            AddSeparatorInput(modName, key + "End");
+            return clone;
+        }
+
+        private SeparatorInput AddSeparatorInput(string modName, string key)
+        {
+            var clone = separatorPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
+            clone.modName = modName;
+            clone.key = key;
+            clone.name = key;
+            AddScrollMagnet(clone);
+            return clone;
+        }
+
         private OnOffDropdownInput AddToggleInput(string modName, string key, bool value)
         {
             var clone = onOffDropdownPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -347,6 +395,7 @@ namespace Winch.Components
         private OnOffDropdownInput AddToggleInput(string modName, string key, JObject obj)
         {
             var clone = onOffDropdownPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -360,6 +409,7 @@ namespace Winch.Components
         private OnOffDropdownInput AddToggleInput(string modName, string key, bool value, string title, string tooltip)
         {
             var clone = onOffDropdownPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -373,6 +423,7 @@ namespace Winch.Components
         private SliderInput AddSliderInput(string modName, string key, JObject obj)
         {
             var clone = sliderPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -386,6 +437,7 @@ namespace Winch.Components
         private SliderInput AddSliderInput(string modName, string key, float value, float min, float max)
         {
             var clone = sliderPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -398,6 +450,7 @@ namespace Winch.Components
         private SliderInput AddSliderInput(string modName, string key, float value, float min, float max, string title, string tooltip)
         {
             var clone = sliderPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -410,12 +463,13 @@ namespace Winch.Components
 
         private DropdownInput AddDropdownInput(string modName, string key, JObject obj)
         {
-            var options = obj["options"].ToObject<string[]>();
-            var optionStrings = obj["optionStrings"]?.ToObject<string[]>();
             var clone = dropdownPrefab.Instantiate(this.options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
+            var options = obj["options"].ToObject<string[]>();
+            var optionStrings = obj["optionStrings"]?.ToObject<string[]>();
             clone.Initialize((string)obj["value"], options, optionStrings);
             SetupTitle(clone, (string)obj["title"], key);
             SetupInputTooltip(clone, (string)obj["tooltip"]);
@@ -426,6 +480,7 @@ namespace Winch.Components
         private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings)
         {
             var clone = dropdownPrefab.Instantiate(this.options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -438,6 +493,7 @@ namespace Winch.Components
         private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings, string title, string tooltip)
         {
             var clone = dropdownPrefab.Instantiate(this.options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -451,6 +507,7 @@ namespace Winch.Components
         private FieldInput AddTextInput(string modName, string key, string value)
         {
             var clone = inputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -463,6 +520,7 @@ namespace Winch.Components
         private FieldInput AddTextInput(string modName, string key, JObject obj)
         {
             var clone = inputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -476,6 +534,7 @@ namespace Winch.Components
         private FieldInput AddTextInput(string modName, string key, string value, string title, string tooltip)
         {
             var clone = inputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -489,6 +548,7 @@ namespace Winch.Components
         private IntegerFieldInput AddIntegerInput(string modName, string key, object value)
         {
             var clone = integerInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -501,6 +561,7 @@ namespace Winch.Components
         private IntegerFieldInput AddIntegerInput(string modName, string key, JObject obj)
         {
             var clone = integerInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -514,6 +575,7 @@ namespace Winch.Components
         private IntegerFieldInput AddIntegerInput(string modName, string key, object value, string title, string tooltip)
         {
             var clone = integerInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -527,6 +589,7 @@ namespace Winch.Components
         private DecimalFieldInput AddDecimalInput(string modName, string key, object value)
         {
             var clone = decimalInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -539,6 +602,7 @@ namespace Winch.Components
         private DecimalFieldInput AddDecimalInput(string modName, string key, JObject obj)
         {
             var clone = decimalInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -552,6 +616,7 @@ namespace Winch.Components
         private DecimalFieldInput AddDecimalInput(string modName, string key, object value, string title, string tooltip)
         {
             var clone = decimalInputFieldPrefab.Instantiate(options, false);
+            modOptions.Add(clone.transform);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
@@ -595,6 +660,7 @@ namespace Winch.Components
             currentMod = null;
             settingsDialog.dialog.AddTabInput();
             optionsScroller.gameObject.Deactivate();
+            modOptions.Clear();
             options.DestroyAllChildrenImmediate();
             listScroller.gameObject.Activate();
             modButtons.ForEach(button => button.SetCanBeClicked(true));

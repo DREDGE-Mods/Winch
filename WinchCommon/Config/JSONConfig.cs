@@ -13,7 +13,7 @@ namespace Winch.Config
         private static JsonSerializer jsonSerializer = new JsonSerializer
         {
             NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
             Formatting = Newtonsoft.Json.Formatting.Indented,
         };
 

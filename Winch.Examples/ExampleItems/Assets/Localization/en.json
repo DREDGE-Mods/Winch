@@ -49,6 +49,7 @@
 	"exampleitems.testability.desc": "Ability Desc",
 	"exampleitems.testability.shortDesc": "Ability ShortDesc",
 
+	"exampleconfig.separator.title": "Separator",
 	"exampleconfig.toggle.title": "Toggle",
 	"exampleconfig.toggle.tooltip": "An on/off dropdown",
 	"exampleconfig.text.title": "Text",
@@ -60,7 +61,7 @@
 	"exampleconfig.slider.title": "Slider",
 	"exampleconfig.slider.tooltip": "A slider value between min and max numbers",
 	"exampleconfig.dropdown.title": "Dropdown",
-	"exampleconfig.dropdown.tooltip": "A dropdown menu with options (they need to be localized)",
+	"exampleconfig.dropdown.tooltip": "A dropdown menu with options",
 	"exampleconfig.dropdown.option.one": "First",
 	"exampleconfig.dropdown.option.two": "Second",
 	"exampleconfig.dropdown.option.three": "Third"

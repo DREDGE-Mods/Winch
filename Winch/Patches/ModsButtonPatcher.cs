@@ -33,7 +33,7 @@ namespace Winch.Patches
                 var prefabs = new GameObject("Prefabs").transform;
                 prefabs.gameObject.Deactivate();
                 prefabs.SetParent(modsPanel.container.transform, false);
-                var button = __instance.dialog.transform.Find("ButtonBar/ButtonContainer/ResumeButton").gameObject.Instantiate(prefabs, true).Rename("Button").GetComponent<BasicButtonWrapper>();
+                var button = __instance.dialog.transform.Find("ButtonBar/ButtonContainer/ResumeButton").gameObject.Instantiate(prefabs, false).Rename("Button").GetComponent<BasicButtonWrapper>();
                 button.gameObject.RemoveComponentImmediate<SettingsButton>();
                 button.gameObject.AddComponent<LocalizedLabel>();
                 button.gameObject.Activate();
@@ -49,9 +49,10 @@ namespace Winch.Patches
                 modsHeader.DestroyAllChildrenImmediate(0);
                 var headerText = modsHeader.Find("ActionLabel").Rename("Label").gameObject;
                 var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).gameObject.AddComponent<LocalizedLabel>();
+                var labelLocalized = headerTextLocalized.Instantiate(prefabs, false);
+                labelLocalized.gameObject.Activate();
                 var headerTextUnlocalized = headerText.AddComponent<Label>();
-                headerTextLocalized.gameObject.RemoveComponentImmediate<Label>();
-                var label = headerTextUnlocalized.gameObject.Instantiate(prefabs, true).GetComponent<Label>();
+                var label = headerTextUnlocalized.Instantiate(prefabs, false);
                 label.gameObject.Activate();
                 controlsTabbedPanel.panel.container.transform.Find("Image").Instantiate(modsListScroller.transform.parent, false).Rename("ScrollerTopImage");
                 controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsListScroller.transform.parent, false);
@@ -65,6 +66,7 @@ namespace Winch.Patches
                 var modsList = modsListScroller.transform.Find("ControlList");
                 modsList.transform.DestroyAllChildrenImmediate();
                 var modOptionsScroller = modsListScroller.Instantiate(modsListScroller.transform.parent, false).Rename("ModOptions");
+                modOptionsScroller.transform.SetSiblingIndex(2);
                 var modOptions = modOptionsScroller.transform.Find("ControlList");
                 var modsListGrid = modsList.GetComponent<GridLayoutGroup>();
                 modsListGrid.constraintCount = 1;
@@ -90,8 +92,9 @@ namespace Winch.Patches
 
                 modsTab.buttonPrefab = button;
                 modsTab.labelPrefab = label;
+                modsTab.labelLocalizedPrefab = labelLocalized;
 
-                var dropdownInput = modsTab.dropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, true).Rename("Dropdown").AddComponent<DropdownInput>();
+                var dropdownInput = modsTab.dropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("Dropdown").AddComponent<DropdownInput>();
                 dropdownInput.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var dropdownOld = dropdownInput.GetComponent<DropdownSettingInput>();
                 dropdownInput.dropdown = dropdownOld.dropdown;
@@ -102,7 +105,7 @@ namespace Winch.Patches
                 dropdownOld.DestroyImmediate();
                 dropdownInput.gameObject.Activate();
 
-                var colorDropdownInput = modsTab.colorDropdownPrefab = generalTabbedPanel.panel.transform.parent.GetComponentInChildren<ColorDropdown>(true).gameObject.Instantiate(prefabs, true).Rename("ColorDropdown").AddComponent<ColorDropdownInput>();
+                var colorDropdownInput = modsTab.colorDropdownPrefab = generalTabbedPanel.panel.transform.parent.GetComponentInChildren<ColorDropdown>(true).gameObject.Instantiate(prefabs, false).Rename("ColorDropdown").AddComponent<ColorDropdownInput>();
                 colorDropdownInput.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var colorDropdownOld = colorDropdownInput.GetComponent<DropdownSettingInput>();
                 var colorOld = colorDropdownInput.GetComponent<ColorDropdown>();
@@ -117,7 +120,7 @@ namespace Winch.Patches
                 colorOld.DestroyImmediate();
                 colorDropdownInput.gameObject.Activate();
 
-                var ooDropdownInput = modsTab.onOffDropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, true).Rename("OnOffDropdown").AddComponent<OnOffDropdownInput>();
+                var ooDropdownInput = modsTab.onOffDropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("OnOffDropdown").AddComponent<OnOffDropdownInput>();
                 ooDropdownInput.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var ooDropdownOld = ooDropdownInput.GetComponent<DropdownSettingInput>();
                 ooDropdownInput.dropdown = ooDropdownOld.dropdown;
@@ -128,7 +131,7 @@ namespace Winch.Patches
                 ooDropdownOld.DestroyImmediate();
                 ooDropdownInput.gameObject.Activate();
 
-                var sliderInput = modsTab.sliderPrefab = generalTabbedPanel.panel.transform.parent.GetComponentInChildren<SliderSettingInput>(true).gameObject.Instantiate(prefabs, true).Rename("Slider").AddComponent<SliderInput>();
+                var sliderInput = modsTab.sliderPrefab = generalTabbedPanel.panel.transform.parent.GetComponentInChildren<SliderSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("Slider").AddComponent<SliderInput>();
                 sliderInput.gameObject.RemoveComponentImmediate<SKUSpecificLocalizedString>();
                 var sliderOld = sliderInput.GetComponent<SliderSettingInput>();
                 sliderInput.slider = sliderOld.slider;
@@ -141,7 +144,7 @@ namespace Winch.Patches
                 sliderOld.DestroyImmediate();
                 sliderInput.gameObject.Activate();
 
-                var inputFieldContainer = modsTab.inputFieldPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, true).Rename("InputField").AddComponent<FieldInput>();
+                var inputFieldContainer = modsTab.inputFieldPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("InputField").AddComponent<FieldInput>();
                 inputFieldContainer.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var inputFieldOld = inputFieldContainer.GetComponent<DropdownSettingInput>();
                 inputFieldContainer.localizedStringField = inputFieldOld.localizedStringField;
@@ -173,7 +176,7 @@ namespace Winch.Patches
                 inputFieldOld.DestroyImmediate();
                 inputFieldContainer.gameObject.Activate();
 
-                var integerInputFieldOld = modsTab.inputFieldPrefab.Instantiate(prefabs, true).Rename("IntegerInputField");
+                var integerInputFieldOld = modsTab.inputFieldPrefab.Instantiate(prefabs, false).Rename("IntegerInputField");
                 var integerInputField = modsTab.integerInputFieldPrefab = integerInputFieldOld.gameObject.AddComponent<IntegerFieldInput>();
                 integerInputField.localizedStringField = integerInputFieldOld.localizedStringField;
                 integerInputField.inputField = integerInputFieldOld.inputField;
@@ -182,7 +185,7 @@ namespace Winch.Patches
                 integerInputField.placeholder.LabelString = "0";
                 integerInputFieldOld.DestroyImmediate();
 
-                var decimalInputFieldOld = modsTab.inputFieldPrefab.Instantiate(prefabs, true).Rename("DecimalInputField");
+                var decimalInputFieldOld = modsTab.inputFieldPrefab.Instantiate(prefabs, false).Rename("DecimalInputField");
                 var decimalInputField = modsTab.decimalInputFieldPrefab = decimalInputFieldOld.gameObject.AddComponent<DecimalFieldInput>();
                 decimalInputField.localizedStringField = decimalInputFieldOld.localizedStringField;
                 decimalInputField.inputField = decimalInputFieldOld.inputField;
@@ -190,6 +193,10 @@ namespace Winch.Patches
                 decimalInputField.placeholder = decimalInputFieldOld.placeholder;
                 decimalInputField.placeholder.LabelString = "0";
                 decimalInputFieldOld.DestroyImmediate();
+
+                var separatorObj = new GameObject("Separator", typeof(RectTransform));
+                separatorObj.transform.SetParent(prefabs, false);
+                var separator = modsTab.separatorPrefab = separatorObj.AddComponent<SeparatorInput>();
 
                 var modsTabbedPanel = new TabConfig
                 {

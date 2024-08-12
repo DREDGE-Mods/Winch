@@ -1,4 +1,8 @@
 {
+	"Separator": {
+		"type": "separator",
+		"title": "exampleconfig.separator.title"
+	},
 	"Toggle": {
 		"type": "toggle",
 		"title": "exampleconfig.toggle.title",

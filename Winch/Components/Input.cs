@@ -76,17 +76,23 @@ namespace Winch.Components
 
         protected virtual void Start()
         {
-            localizedStringField.OnUpdateString.Invoke(string.Empty);
-            localizedStringField.StringReference = localizedString;
-            textTooltipRequester.LocalizedTitleKey = localizedString;
-            if (tooltipDescriptionString.IsEmpty)
+            if (localizedStringField != null)
             {
-                textTooltipRequester.enabled = false;
+                localizedStringField.OnUpdateString.Invoke(string.Empty);
+                localizedStringField.StringReference = localizedString;
             }
-            else
+            if (textTooltipRequester != null)
             {
-                textTooltipRequester.LocalizedDescriptionKey = tooltipDescriptionString;
-                textTooltipRequester.enabled = true;
+                textTooltipRequester.LocalizedTitleKey = localizedString;
+                if (tooltipDescriptionString.IsEmpty)
+                {
+                    textTooltipRequester.enabled = false;
+                }
+                else
+                {
+                    textTooltipRequester.LocalizedDescriptionKey = tooltipDescriptionString;
+                    textTooltipRequester.enabled = true;
+                }
             }
         }
 

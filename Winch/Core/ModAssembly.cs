@@ -30,6 +30,7 @@ namespace Winch.Core
         public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
         public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
         public ModConfig? Config => ModConfig.TryGetConfig(GUID, out var config) ? config : null;
+        public ModConfig GetConfig() => ModConfig.GetConfig(GUID);
 
         private ModAssembly(string basePath) {
             BasePath = basePath;
