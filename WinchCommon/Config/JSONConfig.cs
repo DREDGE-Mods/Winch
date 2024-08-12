@@ -97,7 +97,7 @@ namespace Winch.Config
                         {
                             if (defaultValue is JObject setting)
                             {
-                                setting["value"] = JToken.FromObject(value);
+                                setting["value"] = value != null ? JToken.FromObject(value) : null;
                             }
                             else
                             {
@@ -156,7 +156,7 @@ namespace Winch.Config
         {
             if (config[key] is JObject setting)
             {
-                setting["value"] = JToken.FromObject(value);
+                setting["value"] = value != null ? JToken.FromObject(value) : null;
             }
             else
             {
