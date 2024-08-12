@@ -196,8 +196,12 @@ namespace Winch.Components
                         AddToggleInput(WinchCore.GUID, obj.Key, (bool)obj.Value, title, tooltip);
                         break;
                     case "LogLevel":
-                        EnumUtil.GetNames<Winch.LogLevel>().ForEach(level => LocalizationUtil.AddLocalizedString("en", level, level.ToTitleCase()));
-                        AddDropdownInput(WinchCore.GUID, obj.Key, (string)obj.Value, EnumUtil.GetNames<Winch.LogLevel>(), title, tooltip);
+                        AddDropdownInput(WinchCore.GUID, obj.Key, (string)obj.Value, EnumUtil.GetNames<Winch.LogLevel>(), EnumUtil.GetNames<Winch.LogLevel>().Select(level =>
+                        {
+                            var key = "winch." + level;
+                            LocalizationUtil.AddLocalizedString("en", key, System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(level.ToLowerInvariant()));
+                            return key;
+                        }).ToArray(), title, tooltip);
                         break;
                     case "LogsFolder":
                         AddTextInput(WinchCore.GUID, obj.Key, (string)obj.Value, title, tooltip);
@@ -406,37 +410,38 @@ namespace Winch.Components
 
         private DropdownInput AddDropdownInput(string modName, string key, JObject obj)
         {
-            var optionStrings = obj["options"].ToObject<string[]>();
-            var clone = dropdownPrefab.Instantiate(options, false);
+            var options = obj["options"].ToObject<string[]>();
+            var optionStrings = obj["optionStrings"]?.ToObject<string[]>();
+            var clone = dropdownPrefab.Instantiate(this.options, false);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
-            clone.Initialize((string)obj["value"], optionStrings);
+            clone.Initialize((string)obj["value"], options, optionStrings);
             SetupTitle(clone, (string)obj["title"], key);
             SetupInputTooltip(clone, (string)obj["tooltip"]);
             AddScrollMagnet(clone);
             return clone;
         }
 
-        private DropdownInput AddDropdownInput(string modName, string key, string value, string[] optionStrings)
+        private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings)
         {
-            var clone = dropdownPrefab.Instantiate(options, false);
+            var clone = dropdownPrefab.Instantiate(this.options, false);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
-            clone.Initialize(value, optionStrings);
+            clone.Initialize(value, options, optionStrings);
             SetupTitle(clone, string.Empty, key);
             AddScrollMagnet(clone);
             return clone;
         }
 
-        private DropdownInput AddDropdownInput(string modName, string key, string value, string[] optionStrings, string title, string tooltip)
+        private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings, string title, string tooltip)
         {
-            var clone = dropdownPrefab.Instantiate(options, false);
+            var clone = dropdownPrefab.Instantiate(this.options, false);
             clone.modName = modName;
             clone.key = key;
             clone.name = key;
-            clone.Initialize(value, optionStrings);
+            clone.Initialize(value, options, optionStrings);
             SetupTitle(clone, title, key);
             SetupInputTooltip(clone, tooltip);
             AddScrollMagnet(clone);

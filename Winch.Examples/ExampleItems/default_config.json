@@ -36,10 +36,15 @@
 		"title": "exampleconfig.dropdown.title",
 		"tooltip": "exampleconfig.dropdown.tooltip",
 		"options": [
+			"One",
+			"Two",
+			"Three"
+		],
+		"optionStrings": [
 			"exampleconfig.dropdown.option.one",
 			"exampleconfig.dropdown.option.two",
 			"exampleconfig.dropdown.option.three"
 		],
-		"value": "exampleconfig.dropdown.option.two"
+		"value": "Two"
 	}
 }

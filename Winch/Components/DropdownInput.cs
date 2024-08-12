@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.Localization;
-using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Settings;
 using Winch.Core;
-using Winch.Data.Item;
 using Winch.Util;
 
 namespace Winch.Components
@@ -154,10 +150,17 @@ namespace Winch.Components
             RefreshDropdown();
         }
 
-        protected internal virtual void Initialize(string value, string[] options)
+        protected internal virtual void Initialize(string value, string[] options, string[]? optionStrings)
         {
             this.options = options.ToList();
             var newOptionStrings = new List<LocalizedString>();
+            if (optionStrings != null)
+            {
+                foreach (var optionString in optionStrings)
+                {
+                    newOptionStrings.Add(LocalizationUtil.CreateReference("Strings", optionString));
+                }
+            }
             for (int i = 0; i < options.Length; i++)
             {
                 var option = options[i];
@@ -165,9 +168,14 @@ namespace Winch.Components
                 {
                     SetSelectedIndex(i);
                 }
-                newOptionStrings.Add(LocalizationUtil.CreateReference("Strings", option));
+                if (optionStrings == null)
+                {
+                    var optionKey = modName + "." + key + "." + option;
+                    LocalizationUtil.AddLocalizedString("en", optionKey, option);
+                    newOptionStrings.Add(LocalizationUtil.CreateReference("Strings", optionKey));
+                }
             }
-            optionStrings = newOptionStrings;
+            this.optionStrings = newOptionStrings;
             RefreshDropdown();
             SetSelectedOption(value);
             initialized = true;
