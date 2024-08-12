@@ -20,13 +20,31 @@ namespace Winch.Config
             }
         }
 
+        internal static new void ResetToDefaultConfig()
+        {
+            ((JSONConfig)Instance).ResetToDefaultConfig();
+        }
+
+        public static new T? GetDefaultProperty<T>(string key)
+        {
+            return ((JSONConfig)Instance).GetDefaultProperty<T>(key);
+        }
+
+        internal static new Dictionary<string, object> GetProperties()
+        {
+            return ((JSONConfig)Instance).GetProperties();
+        }
+
+        public static new T? GetProperty<T>(string key)
+        {
+            return ((JSONConfig)Instance).GetProperty<T>(key);
+        }
+
         public static new T GetProperty<T>(string key, T defaultValue)
         {
             try
             {
-                var property = ((JSONConfig)Instance).GetProperty(key, defaultValue);
-                if (property == null) return defaultValue;
-                return property;
+                return GetProperty<T>(key) ?? defaultValue;
             }
             catch
             {
@@ -34,9 +52,14 @@ namespace Winch.Config
             }
         }
 
-		public static new void SetProperty<T>(string key, T value)
-		{
-			((JSONConfig)Instance).SetProperty(key, value);
-		}
+        public static new void SetProperty<T>(string key, T value)
+        {
+            ((JSONConfig)Instance).SetProperty(key, value);
+        }
+
+        internal static new void ResetPropertyToDefault(string key)
+        {
+            ((JSONConfig)Instance).ResetPropertyToDefault(key);
+        }
     }
 }

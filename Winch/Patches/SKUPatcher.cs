@@ -5,6 +5,7 @@ using Winch.Util;
 using CommandTerminal;
 using UnityEngine;
 using Winch.Config;
+using Winch.Components;
 
 namespace Winch.Patches
 {
@@ -17,13 +18,14 @@ namespace Winch.Patches
             __instance.destroyIfUnavailable = false; // Disable destroying
 
             // Enable terminal
-            if (__instance.TryGetComponent<Terminal>(out Terminal terminal) && WinchConfig.GetProperty("EnableDeveloperConsole", false))
+            if (__instance.TryGetComponent<Terminal>(out Terminal terminal))
             {
                 terminal.ConsoleFont = Font.CreateDynamicFontFromOSFont("Courier New", 16);
                 __instance.supportedBuilds = BuildEnvironment.ALL;
                 __instance.supportedPlatforms = Platform.ALL;
                 __instance.unsupportedOnSteamDeck = false;
                 __instance.allowInConventionBuilds = true;
+                terminal.gameObject.AddComponent<WinchTerminal>();
             }
         }
     }

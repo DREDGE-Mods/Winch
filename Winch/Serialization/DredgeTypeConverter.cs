@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
 using Winch.Core;
+using Winch.Util;
 
 // ReSharper disable HeapView.BoxingAllocation
 // ReSharper disable HeapView.PossibleBoxingAllocation
@@ -113,7 +114,7 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
         {
             return cached;
         }
-        var localizedString = new LocalizedString(key, value);
+        var localizedString = LocalizationUtil.CreateReference(key, value);
         StringDefinitionCache.Add(keyValueTuple, localizedString);
         return localizedString;
     }

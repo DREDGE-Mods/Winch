@@ -12,7 +12,7 @@ namespace Winch.Util
 
         internal static string GetVersion()
         {
-            return WinchCore.WinchModConfig["Version"].ToString();
+            return WinchCore.Version;
         }
 
         internal static bool ValidateVersion(string version)

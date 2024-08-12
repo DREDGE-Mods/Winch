@@ -21,24 +21,32 @@ namespace Winch.Core
 
         public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        internal static string Name => WinchCore.WinchModConfig["Name"].ToString();
+
+        internal static string Author => WinchCore.WinchModConfig["Author"].ToString();
+
+        internal static string GUID => WinchCore.WinchModConfig["ModGUID"].ToString();
+
+        internal static string Version => WinchCore.WinchModConfig["Version"].ToString();
+
         public static void Main()
         {
-			try
-			{
-				string metaPath = Path.Combine(WinchInstallLocation, "mod_meta.json");
-				if (!File.Exists(metaPath))
-				{
-					throw new FileNotFoundException($"Missing mod_meta.json file for Winch at {metaPath}. Reinstall the mod.");
-				}
+            try
+            {
+                string metaPath = Path.Combine(WinchInstallLocation, "mod_meta.json");
+                if (!File.Exists(metaPath))
+                {
+                    throw new FileNotFoundException($"Missing mod_meta.json file for Winch at {metaPath}. Reinstall the mod.");
+                }
 
-				string metaText = File.ReadAllText(metaPath);
-				WinchModConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) 
-					?? throw new InvalidOperationException($"Unable to parse mod_meta.json file at {metaPath}. Reinstall the mod.");
-			}
-			catch (Exception e)
-			{
-				Log.Error(e);
-			}
+                string metaText = File.ReadAllText(metaPath);
+                WinchModConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) 
+                    ?? throw new InvalidOperationException($"Unable to parse mod_meta.json file at {metaPath}. Reinstall the mod.");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
 
             string version = VersionUtil.GetVersion();
             Log.Info($"Winch {version} booting up...");
