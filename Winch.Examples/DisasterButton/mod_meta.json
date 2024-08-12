@@ -5,8 +5,5 @@
 	"Version": "1.0",
 	"ModAssembly": "DisasterButton.dll",
 	"Entrypoint": "DisasterButton.Loader/Initialize",
-	"DefaultConfig": {
-		"DisasterButtonKey": "delete"
-	},
 	"MinWinchVersion": "alpha-1.0"
 }
