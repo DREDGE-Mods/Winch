@@ -25,7 +25,6 @@ namespace Winch.Core
         public string Author => Metadata.ContainsKey("Author") ? Metadata["Author"].ToString() : string.Empty;
         public string Version => Metadata.ContainsKey("Version") ? Metadata["Version"].ToString() : throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
         public string MinWinchVersion => Metadata.ContainsKey("MinWinchVersion") ? Metadata["MinWinchVersion"].ToString() : string.Empty;
-        internal string DefaultConfig => Metadata.ContainsKey("DefaultConfig") ? Metadata["DefaultConfig"].ToString() : throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {GUID}!");
         public string[] Dependencies => Metadata.ContainsKey("Dependencies") ? (((JArray)Metadata["Dependencies"]).ToObject<string[]>() ?? Array.Empty<string>()) : Array.Empty<string>();
         public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
         public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
@@ -75,9 +74,6 @@ namespace Winch.Core
 
             WinchCore.Log.Debug($"Initializing ModAssembly {LoadedAssembly.GetName().Name}...");
 
-            if (Metadata.ContainsKey("DefaultConfig"))
-                ProcessDefaultConfig();
-
             if (Metadata.ContainsKey("Dependencies"))
                 ProcessDependencies();
 
@@ -120,12 +116,6 @@ namespace Winch.Core
                 string? depVersion = dep.Contains("@") ? dep.Split('@')[1] : null;
                 ModAssemblyLoader.ExecuteModAssembly(depName, depVersion);
             }
-        }
-
-        private void ProcessDefaultConfig()
-        {
-            string modName = Path.GetFileName(BasePath);
-            ModConfig.RegisterDefaultConfig(modName, DefaultConfig);
         }
 
         private void ProcessEntrypoint()

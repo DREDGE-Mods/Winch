@@ -13,18 +13,17 @@ namespace Winch.Config
 
         internal static string GetDefaultConfig(string modName)
         {
-            if(!DefaultConfigs.ContainsKey(modName))
+            if (DefaultConfigs.ContainsKey(modName))
+                return DefaultConfigs[modName];
+
+            var path = GetDefaultConfigPath(modName);
+            if (File.Exists(path))
+                return path;
+            else
             {
-                var path = GetDefaultConfigPath(modName);
-                if (File.Exists(path))
-                    return path;
-                else
-                {
-                    //WinchCore.Log.Error($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
-                    throw new KeyNotFoundException($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
-                }
+                //WinchCore.Log.Error($"No 'DefaultConfig' attribute found in mod_meta.json for {modName}!");
+                throw new KeyNotFoundException($"No '{Constants.ModDefaultConfigFileName}' file found in folder for {modName}!");
             }
-            return DefaultConfigs[modName];
         }
 
         private static string GetBasePath(string modName)
