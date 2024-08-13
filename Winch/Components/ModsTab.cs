@@ -128,7 +128,8 @@ namespace Winch.Components
                 }
                 catch(Exception ex)
                 {
-                    WinchCore.Log.Error(ex.InnerException != null ? (ex.Message + " " + ex.InnerException.Message) : ex.Message);
+                    if (!(ex.InnerException != null && ex.InnerException.Message.Contains("file found in folder")))
+                        WinchCore.Log.Error(ex.InnerException != null ? (ex.Message + " " + ex.InnerException.Message) : ex.Message);
                 }
             }
             foreach (var mod in ModAssemblyLoader.EnabledModAssemblies.Values.Where(mod => mod.Config != null && mod.Config.hasProperties))
