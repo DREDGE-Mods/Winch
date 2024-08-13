@@ -7,9 +7,16 @@ namespace Winch.Config
         private static Dictionary<string, string> DefaultConfigs = new Dictionary<string, string>();
         private static Dictionary<string, ModConfig> Instances = new Dictionary<string, ModConfig>();
 
-        private ModConfig(string modName) : base(GetConfigPath(modName), GetDefaultConfig(modName))
+        private ModConfig(string path, string defaultPath) : base(path, defaultPath)
         {
         }
+
+        private ModConfig(string modName) : this(GetConfigPath(modName), GetDefaultConfig(modName))
+        {
+            Instances.Add(modName, this);
+        }
+
+        internal static bool HasDefaultConfig(string modName) => DefaultConfigs.ContainsKey(modName) || File.Exists(GetDefaultConfigPath(modName));
 
         internal static string GetDefaultConfig(string modName)
         {
@@ -51,14 +58,24 @@ namespace Winch.Config
             return Path.Combine(basePath, Constants.ModConfigFileName);
         }
 
-        internal static ModConfig GetConfig(string modName)
+        public static ModConfig GetConfig(string modName)
         {
             if (!Instances.ContainsKey(modName))
-                Instances.Add(modName, new ModConfig(modName));
+            {
+                try
+                {
+                    return new ModConfig(modName);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Cannot create config for mod '{modName}'!", ex);
+                }
+            }
+
             return Instances[modName];
         }
 
-        internal static bool TryGetConfig(string modName, out ModConfig config)
+        public static bool TryGetConfig(string modName, out ModConfig config)
         {
             try
             {

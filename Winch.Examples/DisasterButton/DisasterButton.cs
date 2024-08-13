@@ -4,9 +4,10 @@ using Winch.Core;
 
 namespace DisasterButton
 {
-    class DisasterButton : MonoBehaviour
+    public class DisasterButton : MonoBehaviour
     {
         private static System.Random rnd = new System.Random();
+        private static ModConfig Config => ModConfig.GetConfig();
         private static string DisasterKey => ModConfig.GetProperty("hacktix.disasterbutton", "DisasterButtonKey", "delete");
 
         private void Update()
