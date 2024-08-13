@@ -20,6 +20,8 @@ namespace Winch.Config
 
         internal static string GetDefaultConfig(string modName)
         {
+            if (string.IsNullOrWhiteSpace(modName)) throw new ArgumentNullException("modName");
+
             if (DefaultConfigs.ContainsKey(modName))
                 return DefaultConfigs[modName];
 
@@ -35,11 +37,15 @@ namespace Winch.Config
 
         private static string GetBasePath(string modName)
         {
+            if (string.IsNullOrWhiteSpace(modName)) throw new ArgumentNullException("modName");
+
             return Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Mods", modName);
         }
 
         private static string GetDefaultConfigPath(string modName)
         {
+            if (string.IsNullOrWhiteSpace(modName)) throw new ArgumentNullException("modName");
+
             var basePath = GetBasePath(modName);
 
             if (File.Exists(Path.Combine(basePath, Constants.OldModDefaultConfigFileName)))
@@ -50,6 +56,8 @@ namespace Winch.Config
 
         private static string GetConfigPath(string modName)
         {
+            if (string.IsNullOrWhiteSpace(modName)) throw new ArgumentNullException("modName");
+
             var basePath = GetBasePath(modName);
 
             if (File.Exists(Path.Combine(basePath, Constants.OldModConfigFileName)))
@@ -60,6 +68,8 @@ namespace Winch.Config
 
         public static ModConfig GetConfig(string modName)
         {
+            if (string.IsNullOrWhiteSpace(modName)) throw new ArgumentNullException("modName");
+
             if (!Instances.ContainsKey(modName))
             {
                 try
@@ -96,12 +106,14 @@ namespace Winch.Config
 
         public static T? GetProperty<T>(string modName, string key)
         {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
             return GetConfig(modName).GetProperty<T>(key);
         }
 
         [Obsolete]
         public static T? GetProperty<T>(string modName, string key, T? defaultValue)
         {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
             return GetConfig(modName).GetProperty(key, defaultValue);
         }
 
@@ -112,11 +124,13 @@ namespace Winch.Config
 
         public static T? GetDefaultProperty<T>(string modName, string key)
         {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
             return GetConfig(modName).GetDefaultProperty<T>(key);
         }
 
         public static void RegisterDefaultConfig(string modName, string config)
         {
+            if (string.IsNullOrWhiteSpace(config)) throw new ArgumentNullException("config");
             DefaultConfigs.Add(modName, config);
         }
     }

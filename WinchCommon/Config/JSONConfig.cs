@@ -182,6 +182,7 @@ namespace Winch.Config
 
         internal static object? GetProperty(Dictionary<string, object?> config, string key, Dictionary<string, object?> defaultConfig = null)
         {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
             if (!config.TryGetValue(key, out var setting))
             {
                 if (defaultConfig != null && defaultConfig.TryGetValue(key, out var defaultValue))
@@ -206,6 +207,7 @@ namespace Winch.Config
 
         internal static void SetProperty<T>(Dictionary<string, object?> config, string key, T? value)
         {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
             if (config.TryGetValue(key, out var oValue) && oValue is JObject setting)
             {
                 setting["value"] = value != null ? JToken.FromObject(value, jsonSerializer) : null;
