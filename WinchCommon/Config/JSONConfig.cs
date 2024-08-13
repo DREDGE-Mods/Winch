@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Text;
 // ReSharper disable HeapView.PossibleBoxingAllocation
@@ -10,11 +11,22 @@ namespace Winch.Config
 {
     public class JSONConfig
     {
-        private static JsonSerializer jsonSerializer = new JsonSerializer
+        private static DynamicConverter dynamicConverter = new DynamicConverter();
+
+        public static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Newtonsoft.Json.Formatting.Indented,
+            Formatting = Formatting.Indented,
+            Converters = { dynamicConverter }
+        };
+
+        public static JsonSerializer jsonSerializer = new JsonSerializer
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
+            Formatting = Formatting.Indented,
+            Converters = { dynamicConverter }
         };
 
         private static StringBuilder stringBuilder = new StringBuilder();
@@ -27,9 +39,24 @@ namespace Winch.Config
 
         public bool hasProperties => _config.Count > 0;
 
+        public static Dictionary<string, object?> ReadConfig(string path)
+        {
+            return ParseConfig(File.ReadAllText(path));
+        }
+
+        public static T ReadConfig<T>(string path)
+        {
+            return ParseConfig<T>(File.ReadAllText(path));
+        }
+
         public static Dictionary<string, object?> ParseConfig(string value)
         {
-            return JsonConvert.DeserializeObject<Dictionary<string, object?>>(value);
+            return JsonConvert.DeserializeObject<Dictionary<string, object?>>(value, jsonSerializerSettings);
+        }
+
+        public static T ParseConfig<T>(string value)
+        {
+            return JsonConvert.DeserializeObject<T>(value, jsonSerializerSettings);
         }
 
         public static string ToSerializedJson(object? value)
@@ -52,9 +79,34 @@ namespace Winch.Config
             return json;
         }
 
-        public static void WriteConfig(string path, object value)
+        public static string ToSerializedJson(object? value, Type? type)
+        {
+            string json = "{}";
+            using (StringWriter stringWriter = new StringWriter(stringBuilder))
+            {
+                using (JsonTextWriter jsonTextWriter = new JsonTextWriter(stringWriter)
+                {
+                    Formatting = Newtonsoft.Json.Formatting.Indented,
+                    IndentChar = '\t',
+                    Indentation = 1
+                })
+                {
+                    jsonSerializer.Serialize(jsonTextWriter, value, type);
+                    json = stringBuilder.ToString();
+                    stringBuilder.Clear();
+                }
+            }
+            return json;
+        }
+
+        public static void WriteConfig(string path, object? value)
         {
             WriteConfig(path, ToSerializedJson(value));
+        }
+
+        public static void WriteConfig(string path, object? value, Type? type)
+        {
+            WriteConfig(path, ToSerializedJson(value, type));
         }
 
         public static void WriteConfig(string path, string value)
@@ -97,7 +149,7 @@ namespace Winch.Config
                         {
                             if (defaultValue is JObject setting)
                             {
-                                setting["value"] = value != null ? JToken.FromObject(value) : null;
+                                setting["value"] = value != null ? JToken.FromObject(value, jsonSerializer) : null;
                             }
                             else
                             {
@@ -156,7 +208,7 @@ namespace Winch.Config
         {
             if (config.TryGetValue(key, out var oValue) && oValue is JObject setting)
             {
-                setting["value"] = value != null ? JToken.FromObject(value) : null;
+                setting["value"] = value != null ? JToken.FromObject(value, jsonSerializer) : null;
             }
             else
             {
@@ -225,6 +277,11 @@ namespace Winch.Config
             {
                 throw new InvalidOperationException($"Can't convert {valueString} to enum {typeof(T)}", ex);
             }
+        }
+
+        internal static void AddDynamicConverter(JsonConverter converter)
+        {
+            dynamicConverter.AddConverter(converter);
         }
     }
 }

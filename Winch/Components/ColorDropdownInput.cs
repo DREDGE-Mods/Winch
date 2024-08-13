@@ -103,7 +103,7 @@ namespace Winch.Components
         protected override void ChangeValue(int index)
         {
             if (!initialized) return;
-            SetConfigValue(GetColorType(index).GetName());
+            SetConfigValue(GetColorType(index));
         }
 
         protected internal virtual void Initialize(string value)

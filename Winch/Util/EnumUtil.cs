@@ -1,4 +1,6 @@
 ﻿using HarmonyLib;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using Winch.Config;
 using Winch.Core;
 
 namespace Winch.Util;
@@ -20,6 +23,7 @@ public static class EnumUtil
     internal static void Initialize(Harmony harmony)
     {
         harmony.Patch(AccessTools.Method(typeof(System.Enum), "GetCachedValuesAndNames"), transpiler: new HarmonyMethod(AccessTools.Method(typeof(EnumInfoPatch), nameof(EnumInfoPatch.Transpiler))));
+        JSONConfig.AddDynamicConverter(new CustomStringEnumConverter());
         WinchCore.Log.Debug("EnumUtil initialized.");
     }
 
@@ -1785,5 +1789,140 @@ public class NotAnEnumException : Exception
     public NotAnEnumException(Type type, Exception innerException) : base($"The given type isn't an enum ({type.FullName} isn't an Enum)", innerException)
     {
         _type = type;
+    }
+}
+
+public class CustomStringEnumConverter : StringEnumConverter
+{
+    public CustomStringEnumConverter()
+    {
+        AllowIntegerValues = true;
+    }
+
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    {
+        if (value == null)
+        {
+            writer.WriteNull();
+            return;
+        }
+        Enum @enum = (Enum)value;
+        string name = EnumUtil.GetName(@enum.GetType(), @enum);
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            writer.WriteValue(name);
+            return;
+        }
+        if (!AllowIntegerValues)
+        {
+            throw Create(null, writer.Path, string.Format(CultureInfo.InvariantCulture, "Integer value {0} is not allowed.", @enum.ToString("D")));
+        }
+        writer.WriteValue(value);
+    }
+
+    public static bool IsNullable(Type t)
+    {
+        if (t == null) throw new ArgumentNullException("t");
+        return !t.IsValueType || IsNullableType(t);
+    }
+    public static bool IsNullableType(Type t)
+    {
+        if (t == null) throw new ArgumentNullException("t");
+        return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Nullable<>);
+    }
+    public static Type GetObjectType(object? v)
+    {
+        if (v == null) throw new ArgumentNullException("v");
+        return v.GetType();
+    }
+
+    private static string FormatWith(string format, IFormatProvider provider, params object[] args)
+    {
+        if (format == null) throw new ArgumentNullException("format");
+        return string.Format(provider, format, args);
+    }
+
+    public static string ToString(object? value)
+    {
+        if (value == null)
+        {
+            return "{null}";
+        }
+        string text = value as string;
+        if (text == null)
+        {
+            return value.ToString();
+        }
+        return "\"" + text + "\"";
+    }
+
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    {
+        if (reader.TokenType != JsonToken.Null)
+        {
+            bool nullable = IsNullableType(objectType);
+            Type type = (nullable ? Nullable.GetUnderlyingType(objectType) : objectType);
+            try
+            {
+                object value = reader.Value;
+                string svalue = value.ToString();
+                if ((value == null || string.IsNullOrWhiteSpace(svalue)) && nullable) return null;
+                if (EnumUtil.TryParse(type, svalue, out object result)) return result;
+            }
+            catch (Exception ex)
+            {
+                throw Create(reader, string.Format(CultureInfo.InvariantCulture, "Error converting value {0} to type '{1}'.", ToString(reader.Value), objectType), ex);
+            }
+            throw Create(reader, string.Format(CultureInfo.InvariantCulture, "Unexpected token {0} when parsing enum.", reader.TokenType));
+        }
+        if (!IsNullableType(objectType))
+        {
+            throw Create(reader, string.Format(CultureInfo.InvariantCulture, "Cannot convert null value to {0}.", objectType));
+        }
+        return null;
+    }
+
+    internal static string FormatMessage(IJsonLineInfo lineInfo, string path, string message)
+    {
+        if (!message.EndsWith(Environment.NewLine, StringComparison.Ordinal))
+        {
+            message = message.Trim();
+            if (!message.EndsWith("."))
+            {
+                message += ".";
+            }
+            message += " ";
+        }
+        message += string.Format(CultureInfo.InvariantCulture, "Path '{0}'", path);
+        if (lineInfo != null && lineInfo.HasLineInfo())
+        {
+            message += string.Format(CultureInfo.InvariantCulture, ", line {0}, position {1}", lineInfo.LineNumber, lineInfo.LinePosition);
+        }
+        message += ".";
+        return message;
+    }
+
+    internal static JsonSerializationException Create(JsonReader reader, string message) => Create(reader as IJsonLineInfo, reader.Path, message);
+
+    internal static JsonSerializationException Create(JsonReader reader, string message, Exception ex) => Create(reader as IJsonLineInfo, reader.Path, message, ex);
+
+    internal static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message) => Create(lineInfo, path, message, null);
+
+    internal static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex)
+    {
+        message = FormatMessage(lineInfo, path, message);
+        int lineNumber;
+        int linePosition;
+        if (lineInfo != null && lineInfo.HasLineInfo())
+        {
+            lineNumber = lineInfo.LineNumber;
+            linePosition = lineInfo.LinePosition;
+        }
+        else
+        {
+            lineNumber = 0;
+            linePosition = 0;
+        }
+        return new JsonSerializationException(message, path, lineNumber, linePosition, ex);
     }
 }
