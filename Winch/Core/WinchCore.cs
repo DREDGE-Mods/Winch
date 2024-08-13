@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine.AddressableAssets;
 using Winch.Logging;
@@ -50,24 +51,45 @@ namespace Winch.Core
                 Log.Error(e);
             }
 
-            string version = VersionUtil.GetVersion();
-            Log.Info($"Winch {version} booting up...");
-
-            ModAssemblyLoader.LoadModAssemblies();
-
-            Addressables.ResourceManager.ResourceProviders.Add(new ModdedResourceProvider());
-            Addressables.AddResourceLocator(new ModdedResourceLocator());
-
-            Harmony = new Harmony("com.dredge.winch");
-            Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
             try
             {
+                string version = VersionUtil.GetVersion();
+                Log.Info($"Winch {version} booting up...");
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+
+            try
+            {
+                ModAssemblyLoader.LoadModAssemblies();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+
+            try
+            {
+                Addressables.ResourceManager.ResourceProviders.Add(new ModdedResourceProvider());
+                Addressables.AddResourceLocator(new ModdedResourceLocator());
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+
+            try
+            {
+                Harmony = new Harmony("com.dredge.winch");
+                Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
                 EarlyPatcher.Initialize(WinchCore.Harmony);
-                WinchCore.Log.Debug("Early Harmony Patching complete.");
+                Log.Debug("Early Harmony Patching complete.");
             }
             catch (Exception ex)
             {
-                WinchCore.Log.Error($"Failed to apply early winch patches: {ex}");
+                Log.Error($"Failed to apply early winch patches: {ex}");
             }
         }
     }
