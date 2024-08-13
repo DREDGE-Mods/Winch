@@ -99,6 +99,27 @@ namespace Winch.Config
             }
         }
 
+        internal static Func<string>? GetRelevantModName;
+        public static ModConfig GetConfig() => GetConfig(GetRelevantModName != null ? GetRelevantModName.Invoke() : string.Empty);
+
+        public static bool TryGetConfig(out ModConfig config)
+        {
+            try
+            {
+                if (GetRelevantModName != null)
+                {
+                    config = GetConfig(GetRelevantModName.Invoke());
+                    return true;
+                }
+            }
+            catch
+            {
+            }
+
+            config = null;
+            return false;
+        }
+
         internal static Dictionary<string, object> GetProperties(string modName)
         {
             return GetConfig(modName).GetProperties();

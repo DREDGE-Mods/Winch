@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Winch.Config;
 using Winch.Util;
 
 namespace Winch.Core
@@ -16,6 +17,11 @@ namespace Winch.Core
         public static List<string> LoadedMods = new();
         public static List<string> ErrorMods = new();
         private static ModAssembly? forcedContext;
+
+        static ModAssemblyLoader()
+        {
+            ModConfig.GetRelevantModName = GetCurrentModAssemblyFolderName;
+        }
 
         internal static void LoadModAssemblies()
         {
