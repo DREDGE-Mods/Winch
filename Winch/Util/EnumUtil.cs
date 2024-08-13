@@ -1604,8 +1604,8 @@ public static class EnumUtil
         foreach (var key in GetValues<T>())
         {
             var field = type.GetField($"{key}");
-            string description = null;
-            if (Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
+            string description = string.Empty;
+            if (field != null && Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
             {
                 description = attribute.Description;
             }

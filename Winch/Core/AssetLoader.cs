@@ -23,10 +23,18 @@ namespace Winch.Core
 
             foreach (var modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
-                string assetFolderPath = Path.Combine(modAssembly.BasePath, "Assets");
-                if (!Directory.Exists(assetFolderPath))
-                    continue;
-                LoadAssetFolder(assetFolderPath);
+                ModAssemblyLoader.ForceModContext(modAssembly);
+                try
+                {
+                    string assetFolderPath = Path.Combine(modAssembly.BasePath, "Assets");
+                    if (Directory.Exists(assetFolderPath))
+                        LoadAssetFolder(assetFolderPath);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Error loading assets for {modAssembly.GUID}: {ex}");
+                }
+                ModAssemblyLoader.ClearModContext();
             }
         }
 

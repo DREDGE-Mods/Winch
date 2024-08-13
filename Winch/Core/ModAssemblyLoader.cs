@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Winch.Util;
 
 namespace Winch.Core
@@ -14,6 +15,7 @@ namespace Winch.Core
         public static Dictionary<string, bool> EnabledMods = new();
         public static List<string> LoadedMods = new();
         public static List<string> ErrorMods = new();
+        private static ModAssembly? forcedContext;
 
         internal static void LoadModAssemblies()
         {
@@ -84,6 +86,7 @@ namespace Winch.Core
                 return;
             }
 
+            ModAssemblyLoader.ForceModContext(EnabledModAssemblies[modName]);
             try
             {
                 EnabledModAssemblies[modName].ExecuteAssembly();
@@ -95,6 +98,7 @@ namespace Winch.Core
                 ErrorMods.Add(modName);
                 WinchCore.Log.Error($"Error initializing {modName}: {ex}");
             }
+            ModAssemblyLoader.ClearModContext();
         }
 
         internal static void GetEnabledMods()
@@ -127,6 +131,58 @@ namespace Winch.Core
                 WinchCore.Log.Error($"Unable to parse mod_list.json file: {ex}");
                 EnabledMods = null;
             }
+        }
+
+        /// <summary>
+        /// Get an <see cref="ModAssembly"/> instance from a Mod GUID
+        /// </summary>
+        /// <param name="id">The ModGUID</param>
+        /// <returns>The corresponding <see cref="ModAssembly"/>, or null</returns>
+        internal static ModAssembly? GetMod(string id)
+        {
+            return _installedAssemblies.TryGetValue(id, out var mod) ? mod : null;
+        }
+
+        internal static Assembly[] GetAssemblies()
+        {
+            return _installedAssemblies.Values.Select(x => x.LoadedAssembly).WhereNotNull().ToArray();
+        }
+
+        internal static ModAssembly GetModForAssembly(Assembly a)
+        {
+            return _installedAssemblies.Values.FirstOrDefault((x) => x.LoadedAssembly != null && x.LoadedAssembly == a);
+        }
+
+        /// <summary>
+        /// Gets the current executing mod as an <see cref="ModAssembly"/> instance 
+        /// </summary>
+        /// <returns>The current executing mod</returns>
+        public static ModAssembly GetCurrentMod()
+        {
+            if (forcedContext != null) return forcedContext;
+            return ReflectionUtil.GetRelevantModAssembly();
+        }
+
+        internal static string GetCurrentModAssemblyFolderName()
+        {
+            return GetCurrentMod()?.AssemblyFolderName ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Forces a certain mod to be returned from <see cref="ModAssemblyLoader.GetCurrentMod"/> 
+        /// </summary>
+        /// <param name="mod">The mod to be forced</param>
+        internal static void ForceModContext(ModAssembly mod)
+        {
+            forcedContext = mod;
+        }
+
+        /// <summary>
+        /// Clears the current mod context
+        /// </summary>
+        internal static void ClearModContext()
+        {
+            forcedContext = null;
         }
     }
 }

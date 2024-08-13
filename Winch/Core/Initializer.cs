@@ -42,6 +42,8 @@ namespace Winch.Core
 
 			foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
 			{
+				ModAssemblyLoader.ForceModContext(modAssembly);
+
 				try
 				{
 					if (modAssembly.LoadedAssembly != null)
@@ -67,6 +69,8 @@ namespace Winch.Core
 				{
 					WinchCore.Log.Error($"Failed to apply patches for {modAssembly.BasePath}: {ex}");
 				}
+
+				ModAssemblyLoader.ClearModContext();
 			}
 
 			try

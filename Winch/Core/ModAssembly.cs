@@ -16,7 +16,8 @@ namespace Winch.Core
         public Dictionary<string, object> Metadata;
         public Assembly? LoadedAssembly;
 
-        public string AssemblyLocation => LoadedAssembly != null ? Path.GetDirectoryName(LoadedAssembly.Location) : string.Empty;
+        public string AssemblyLocation => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryPath(LoadedAssembly) : string.Empty;
+        public string AssemblyFolderName => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryName(LoadedAssembly) : string.Empty;
         public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
         public string GUID => Metadata.ContainsKey("ModGUID") ? Metadata["ModGUID"].ToString() : throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
         public string AssemblyRelativePath => Metadata.ContainsKey("ModAssembly") ? Metadata["ModAssembly"].ToString() : throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
@@ -29,8 +30,8 @@ namespace Winch.Core
         public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
         public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
         public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
-        public ModConfig? Config => ModConfig.TryGetConfig(GUID, out var config) ? config : null;
-        public ModConfig GetConfig() => ModConfig.GetConfig(GUID);
+        public ModConfig? Config => ModConfig.TryGetConfig(AssemblyFolderName, out var config) ? config : null;
+        public ModConfig GetConfig() => ModConfig.GetConfig(AssemblyFolderName);
 
         private ModAssembly(string basePath) {
             BasePath = basePath;

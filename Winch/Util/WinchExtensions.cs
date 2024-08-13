@@ -542,6 +542,17 @@ public static class WinchExtensions
     public static IEnumerable<TResult> WhereType<TSource, TResult>(this IEnumerable<TSource> source)
         => source.Where(item => item is TResult).Cast<TResult>();
 
+    public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
+    {
+        foreach (var item in source)
+        {
+            if (item is object)
+            {
+                yield return item;
+            }
+        }
+    }
+
     /// <summary>Applies an accumulator function over a sequence.</summary>
     /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to aggregate over.</param>
     /// <param name="func">An accumulator function to be invoked on each element.</param>
