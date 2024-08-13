@@ -31,6 +31,10 @@ namespace Winch.Config
 
         private static StringBuilder stringBuilder = new StringBuilder();
 
+        public event ConfigChangedEvent OnConfigChanged;
+
+        public event ConfigValueChangedEvent OnConfigValueChanged;
+
         private Dictionary<string, object?> _config;
         private readonly Dictionary<string, object?> _defaultConfig;
         private readonly string _configPath;
@@ -172,12 +176,19 @@ namespace Winch.Config
         {
             _config = ParseConfig(_defaultConfigString);
             WriteConfig(_configPath, _defaultConfigString);
+            OnConfigChanged?.Invoke();
+            foreach (var key in _config.Keys)
+            {
+                OnConfigValueChanged?.Invoke(key);
+            }
         }
 
         internal void ResetPropertyToDefault(string key)
         {
             var defaultValue = GetProperty(_defaultConfig, key);
             SetProperty(_config, key, defaultValue);
+            OnConfigChanged?.Invoke();
+            OnConfigValueChanged?.Invoke(key);
         }
 
         internal static object? GetProperty(Dictionary<string, object?> config, string key, Dictionary<string, object?> defaultConfig = null)
@@ -233,6 +244,11 @@ namespace Winch.Config
             return _config;
         }
 
+        public T ToObject<T>()
+        {
+            return JsonConvert.DeserializeObject<T>(ToSerializedJson(GetProperties().ToDictionary(kvp => kvp.Key, kvp => GetProperty(_config, kvp.Key, _defaultConfig))));
+        }
+
         public T? GetProperty<T>(string key)
         {
             return GetProperty<T>(_config, key, _defaultConfig);
@@ -245,6 +261,8 @@ namespace Winch.Config
         {
             SetProperty(_config, key, value);
             SaveSettings();
+            OnConfigChanged?.Invoke();
+            OnConfigValueChanged?.Invoke(key);
         }
 
         private void SaveSettings()
@@ -286,4 +304,7 @@ namespace Winch.Config
             dynamicConverter.AddConverter(converter);
         }
     }
+
+    public delegate void ConfigChangedEvent();
+    public delegate void ConfigValueChangedEvent(string key);
 }
