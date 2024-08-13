@@ -22,15 +22,56 @@ using Winch.Data.Item;
 public static class WinchExtensions
 {
     #region DREDGE
-    public static IEnumerable<SpatialItemData> ToItemData(this IEnumerable<SpatialItemInstance> instances) => instances.Select(instance => instance.GetItemData<SpatialItemData>());
-    public static int GetNumberOfCells(this IEnumerable<SpatialItemData> itemDatas) => itemDatas.Aggregate(0, (int acc, SpatialItemData itemData) => acc + itemData.dimensions.Count);
-    public static int GetNumberOfCells(this IEnumerable<SpatialItemInstance> instances) => instances.ToItemData().GetNumberOfCells();
-    public static bool IsBroken(this SpatialItemInstance instance) => instance.durability <= 0f;
-    public static bool IsDurable(this SpatialItemData itemData) => itemData is DurableItemData && !itemData.IsThawable();
-    public static bool IsDurable(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>().IsDurable();
-    public static bool IsThawable(this SpatialItemData itemData) => (itemData is DurableItemData && itemData.id.StartsWith("ice-block")) || itemData is ThawableItemData;
-    public static bool IsThawable(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>().IsThawable();
+    /// <summary>
+    /// Converts a spatial item instances to a spatial item data.
+    /// </summary>
+    public static SpatialItemData ToItemData(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>();
+    /// <summary>
+    /// Converts a collection of spatial item instances to a collection of their spatial item datas.
+    /// </summary>
+    public static IEnumerable<SpatialItemData> ToItemData(this IEnumerable<SpatialItemInstance> instances) => instances.Select(ToItemData);
 
+    /// <summary>
+    /// Gets the number of cells this item data takes up.
+    /// </summary>
+    public static int GetNumberOfCells(this SpatialItemData itemData) => itemData.dimensions.Count;
+    /// <summary>
+    /// Gets the number of cells this item data takes up.
+    /// </summary>
+    public static int GetNumberOfCells(this SpatialItemInstance instance) => instance.ToItemData().GetNumberOfCells();
+    /// <summary>
+    /// Gets the number of cells these item datas take up.
+    /// </summary>
+    public static int GetNumberOfCells(this IEnumerable<SpatialItemData> itemDatas) => itemDatas.Aggregate(0, (int acc, SpatialItemData itemData) => acc + itemData.GetNumberOfCells());
+    /// <summary>
+    /// Gets the number of cells these item instances take up.
+    /// </summary>
+    public static int GetNumberOfCells(this IEnumerable<SpatialItemInstance> instances) => instances.ToItemData().GetNumberOfCells();
+
+    /// <summary>
+    /// Check whether this item's durability is 0
+    /// </summary>
+    public static bool IsBroken(this SpatialItemInstance instance) => instance.durability <= 0f;
+    /// <summary>
+    /// Check whether this is a <see cref="DurableItemData"/> and not thawable
+    /// </summary>
+    public static bool IsDurable(this SpatialItemData itemData) => itemData is DurableItemData && !itemData.IsThawable();
+    /// <summary>
+    /// Check whether this item data is a <see cref="DurableItemData"/> and not thawable
+    /// </summary>
+    public static bool IsDurable(this SpatialItemInstance instance) => instance.ToItemData().IsDurable();
+    /// <summary>
+    /// Check whether this item thawable (slows down rotting of fish in your inventory)
+    /// </summary>
+    public static bool IsThawable(this SpatialItemData itemData) => (itemData is DurableItemData && itemData.id.StartsWith("ice-block")) || itemData is ThawableItemData;
+    /// <summary>
+    /// Check whether this item thawable (slows down rotting of fish in your inventory)
+    /// </summary>
+    public static bool IsThawable(this SpatialItemInstance instance) => instance.ToItemData().IsThawable();
+
+    /// <summary>
+    /// Restocks the item point of interest to 1 (cannot go any higher)
+    /// </summary>
     public static void AddStock(this ItemPOI itemPoi)
     {
         if (itemPoi.Stock == 0)
