@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Winch.Config;
+using Winch.Core;
 
 namespace Winch.Logging
 {
@@ -18,7 +19,7 @@ namespace Winch.Logging
 
         public LogFile(string filename)
         {
-            string logBasePath = WinchConfig.GetProperty("LogsFolder", "Logs");
+            string logBasePath = Path.Combine(Paths.WinchRootPath, WinchConfig.GetProperty("LogsFolder", "Logs"));
             string logPath = Path.Combine(logBasePath, filename);
 
             if(!Directory.Exists(logBasePath))

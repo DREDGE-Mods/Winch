@@ -17,7 +17,7 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("Loading assets...");
 
-            string winchAssetFolderPath = Path.Combine("Assets");
+            string winchAssetFolderPath = Path.Combine(Paths.WinchRootPath, "Assets");
             if (Directory.Exists(winchAssetFolderPath))
                 LoadAssetFolder(winchAssetFolderPath);
 

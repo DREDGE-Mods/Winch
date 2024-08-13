@@ -21,6 +21,8 @@ namespace Winch.Core
 
         public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
+        internal static Assembly WinchAssembly => Assembly.GetExecutingAssembly();
+
         internal static string Name => WinchCore.WinchModConfig["Name"].ToString();
 
         internal static string Author => WinchCore.WinchModConfig["Author"].ToString();
@@ -29,7 +31,7 @@ namespace Winch.Core
 
         internal static string Version => WinchCore.WinchModConfig["Version"].ToString();
 
-        public static void Main()
+        public static void Initialize()
         {
             try
             {

@@ -10,31 +10,31 @@ namespace Winch.Core
     class ModAssemblyLoader
     {
         public static Dictionary<string, ModAssembly> EnabledModAssemblies = new();
-		private static Dictionary<string, ModAssembly> _installedAssemblies = new();
+        private static Dictionary<string, ModAssembly> _installedAssemblies = new();
         public static Dictionary<string, bool> EnabledMods = new();
         public static List<string> LoadedMods = new();
         public static List<string> ErrorMods = new();
 
         internal static void LoadModAssemblies()
         {
-            if (!Directory.Exists("Mods"))
-			{
-				Directory.CreateDirectory("Mods");
-			}
+            if (!Directory.Exists(Paths.ModsPath))
+            {
+                Directory.CreateDirectory(Paths.ModsPath);
+            }
 
-            string[] modDirs = Directory.GetDirectories("Mods");
+            string[] modDirs = Directory.GetDirectories(Paths.ModsPath);
             WinchCore.Log.Info($"Loading {modDirs.Length} mod assemblies...");
             foreach (string modDir in modDirs)
-			{
-				RegisterModAssembly(modDir);
-			}
+            {
+                RegisterModAssembly(modDir);
+            }
 
-			GetEnabledMods();
+            GetEnabledMods();
 
-			EnabledModAssemblies = EnabledMods == null ? _installedAssemblies
-				: _installedAssemblies.Where(x => EnabledMods[x.Value.GUID])
-				.ToDictionary(x => x.Key, x => x.Value);
-		}
+            EnabledModAssemblies = EnabledMods == null ? _installedAssemblies
+                : _installedAssemblies.Where(x => EnabledMods[x.Value.GUID])
+                .ToDictionary(x => x.Key, x => x.Value);
+        }
 
         private static void RegisterModAssembly(string path)
         {
@@ -44,7 +44,7 @@ namespace Winch.Core
             {
                 ModAssembly mod = ModAssembly.FromPath(path);
                 mod.LoadAssembly();
-				_installedAssemblies.Add(modName, mod);
+                _installedAssemblies.Add(modName, mod);
             }
             catch(Exception ex)
             {
@@ -99,34 +99,34 @@ namespace Winch.Core
 
         internal static void GetEnabledMods()
         {
-			try
-			{
-				string modListPath = Path.Combine(Directory.GetCurrentDirectory(), "mod_list.json");
+            try
+            {
+                string modListPath = Path.Combine(Paths.WinchRootPath, "mod_list.json");
 
-				if (File.Exists(modListPath))
-				{
-					string modList = File.ReadAllText(modListPath);
-					EnabledMods = JsonConvert.DeserializeObject<Dictionary<string, bool>>(modList)
-						?? throw new InvalidOperationException("Unable to parse mod_list.json file.");
-				}
+                if (File.Exists(modListPath))
+                {
+                    string modList = File.ReadAllText(modListPath);
+                    EnabledMods = JsonConvert.DeserializeObject<Dictionary<string, bool>>(modList)
+                        ?? throw new InvalidOperationException("Unable to parse mod_list.json file.");
+                }
 
-				foreach (string mod in _installedAssemblies.Keys)
-				{
-					string modGUID = _installedAssemblies[mod].GUID;
-					if (!EnabledMods.ContainsKey(modGUID))
-					{
-						EnabledMods.Add(modGUID, true);
-					}
-				}
+                foreach (string mod in _installedAssemblies.Keys)
+                {
+                    string modGUID = _installedAssemblies[mod].GUID;
+                    if (!EnabledMods.ContainsKey(modGUID))
+                    {
+                        EnabledMods.Add(modGUID, true);
+                    }
+                }
 
-				string serializedEnabledMods = JsonConvert.SerializeObject(EnabledMods, Formatting.Indented);
-				File.WriteAllText(modListPath, serializedEnabledMods);
-			}
-			catch (Exception ex)
-			{
-				WinchCore.Log.Error($"Unable to parse mod_list.json file: {ex}");
-				EnabledMods = null;
-			}
+                string serializedEnabledMods = JsonConvert.SerializeObject(EnabledMods, Formatting.Indented);
+                File.WriteAllText(modListPath, serializedEnabledMods);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Unable to parse mod_list.json file: {ex}");
+                EnabledMods = null;
+            }
         }
     }
 }
