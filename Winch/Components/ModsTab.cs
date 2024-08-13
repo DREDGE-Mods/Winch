@@ -22,7 +22,6 @@ namespace Winch.Components
         private static ModsTab instance;
         internal static ModsTab Instance => instance;
 
-        public bool inOptions => currentWinch || currentMod != null;
         public bool isCurrentTab => Instance.settingsDialog.dialog.CurrentIndex == ModsButton.modsTabIndex;
         public static bool isActive => Instance.isCurrentTab;
         public ResetAllSettingsButton ResetAllSettingsButton => settingsDialog.GetComponentInChildren<ResetAllSettingsButton>(true);
@@ -51,6 +50,7 @@ namespace Winch.Components
         internal Transform options;
         internal ScrollRect listScroller;
         internal ScrollRect optionsScroller;
+        internal bool inOptions;
         internal bool currentWinch;
         internal ModAssembly currentMod;
         private List<BasicButtonWrapper> modButtons = new List<BasicButtonWrapper>();
@@ -74,11 +74,19 @@ namespace Winch.Components
         {
             UpdateResetButton();
             Refresh();
+            ApplicationEvents.Instance.OnSliderFocusToggled += OnSliderFocusToggled;
         }
 
         public void OnDisable()
         {
             ResetAllSettingsButton.gameObject.Activate();
+            ApplicationEvents.Instance.OnSliderFocusToggled -= OnSliderFocusToggled;
+        }
+
+        private void OnSliderFocusToggled(bool hasFocus)
+        {
+            if (inOptions)
+                settingsDialog.dialog.RemoveTabInput();
         }
 
         public void Update()
@@ -174,7 +182,9 @@ namespace Winch.Components
         public void OnWinchClicked()
         {
             WinchCore.Log.Debug($"[ModsTab] OnWinchClicked");
+            inOptions = true;
             currentWinch = true;
+            currentMod = null;
             settingsDialog.dialog.RemoveTabInput();
             listScroller.gameObject.Deactivate();
             options.DestroyAllChildrenImmediate();
@@ -238,6 +248,8 @@ namespace Winch.Components
         public void OnModClicked(ModAssembly mod)
         {
             WinchCore.Log.Debug($"[ModsTab] OnModClicked({mod.GUID})");
+            inOptions = true;
+            currentWinch = false;
             currentMod = mod;
             settingsDialog.dialog.RemoveTabInput();
             listScroller.gameObject.Deactivate();
@@ -675,6 +687,7 @@ namespace Winch.Components
         public void ExitOptions()
         {
             WinchCore.Log.Debug($"[ModsTab] ExitOptions");
+            inOptions = false;
             currentWinch = false;
             currentMod = null;
             settingsDialog.dialog.AddTabInput();
