@@ -55,6 +55,12 @@ namespace Winch.Core
             {
                 string version = VersionUtil.GetVersion();
                 Log.Info($"Winch {version} booting up...");
+                Log.Info($"Running under Unity {UnityInfo.Version}");
+                Log.Info($"CLR runtime version: {Environment.Version}");
+
+                Log.Debug($"Game executable path: {Paths.ExecutablePath}");
+                Log.Debug($"Unity Managed directory: {Paths.ManagedPath}");
+                Log.Debug($"Winch path: {Paths.WinchPath}");
             }
             catch (Exception e)
             {

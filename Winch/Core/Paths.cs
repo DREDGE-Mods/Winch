@@ -87,6 +87,8 @@ namespace Winch.Core
             ModsPath = Path.Combine(WinchRootPath, "Mods");
 
             DllSearchPaths = (dllSearchPath ?? new string[0]).Concat(new[] { ManagedPath }).Distinct().ToArray();
+
+            UnityInfo.Initialize(ExecutablePath, GameDataPath);
         }
     }
 }
