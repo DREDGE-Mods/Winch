@@ -106,6 +106,12 @@ public static class WinchExtensions
     /// <returns>The original color code</returns>
     public static string GetDefaultColorCode(this DredgeColorTypeEnum colorType) => ColorUtility.ToHtmlStringRGB(GetDefaultColor(colorType));
 
+    public static void AddColorType(this LanguageManager languageManager, DredgeColorTypeEnum colorType)
+    {
+        languageManager.colors.SafeAdd(colorType.GetDefaultColor());
+        languageManager.colorCodes.SafeAdd(colorType.GetDefaultColorCode());
+    }
+
     public static void ShowNotificationWithColor(this UIController UI, NotificationType notificationType, string key, string colorCode, object[] arguments)
     {
         LocalizationSettings.StringDatabase.GetLocalizedStringAsync(LanguageManager.STRING_TABLE, key, null, FallbackBehavior.UseProjectSettings, arguments).Completed += delegate (AsyncOperationHandle<string> op)

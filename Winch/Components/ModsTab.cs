@@ -280,6 +280,8 @@ namespace Winch.Components
                             return AddToggleInput(modName, key, obj);
                         case "dropdown":
                             return AddDropdownInput(modName, key, obj);
+                        case "color":
+                            return AddColorDropdownInput(modName, key, obj);
                         case "text":
                             return AddTextInput(modName, key, obj);
                         case "integer":
@@ -473,6 +475,20 @@ namespace Winch.Components
             var options = obj["options"].ToObject<string[]>();
             var optionStrings = obj["optionStrings"]?.ToObject<string[]>();
             clone.Initialize((string)obj["value"], options, optionStrings);
+            SetupTitle(clone, (string)obj["title"], key);
+            SetupInputTooltip(clone, (string)obj["tooltip"]);
+            AddScrollMagnet(clone);
+            return clone;
+        }
+
+        private ColorDropdownInput AddColorDropdownInput(string modName, string key, JObject obj)
+        {
+            var clone = colorDropdownPrefab.Instantiate(this.options, false);
+            modOptions.Add(clone.transform);
+            clone.modName = modName;
+            clone.key = key;
+            clone.name = key;
+            clone.Initialize((string)obj["value"]);
             SetupTitle(clone, (string)obj["title"], key);
             SetupInputTooltip(clone, (string)obj["tooltip"]);
             AddScrollMagnet(clone);

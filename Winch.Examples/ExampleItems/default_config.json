@@ -50,5 +50,25 @@
 			"exampleconfig.dropdown.option.three"
 		],
 		"value": "Two"
+	},
+	"Color": {
+		"type": "color",
+		"title": "exampleconfig.color.title",
+		"tooltip": "exampleconfig.color.tooltip",
+		"options": [
+			"NEUTRAL",
+			"EMPHASIS",
+			"POSITIVE",
+			"NEGATIVE",
+			"CRITICAL",
+			"WARNING",
+			"VALUABLE",
+			"DISABLED",
+			"ATTENTION",
+			"INFO",
+			"PRIORITY",
+			"ALERT"
+		],
+		"value": "NEUTRAL"
 	}
 }

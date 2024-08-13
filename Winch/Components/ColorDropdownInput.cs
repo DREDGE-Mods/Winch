@@ -21,14 +21,31 @@ namespace Winch.Components
         [SerializeField]
         internal int columns;
 
+        private DredgeColorTypeEnum GetColorType(int index) => EnumUtil.FromObject<DredgeColorTypeEnum>(index);
+        private int GetIndex(DredgeColorTypeEnum value) => (int)value;
+
+        public DredgeColorTypeEnum CurrentColorType
+        {
+            get => GetColorType(CurrentIndex);
+            set => CurrentIndex = GetIndex(value);
+        }
+
+        public Color CurrentColor
+        {
+            get => CurrentColorType.GetDefaultColor();
+        }
+
+        public string CurrentColorCode
+        {
+            get => CurrentColorType.GetDefaultColorCode();
+        }
+
         protected override void Awake()
         {
             populateOptions = true;
             retrieveSelectedIndex = true;
             scrollToSelectedItem = false;
-            optionStrings = GameManager.Instance.GameConfigData.Colors.Select(color => labelLocalizedString).ToList();
             base.Awake();
-            initialized = true;
         }
 
         protected override void OnLocaleChanged(Locale l)
@@ -47,14 +64,15 @@ namespace Winch.Components
             textField.color = GameManager.Instance.GameConfigData.Colors[CurrentIndex];
         }
 
-        protected override void RetrieveSelectedIndex()
-        {
-            base.RetrieveSelectedIndex();
-        }
-
         protected override void OnValueChanged(int value)
         {
             base.OnValueChanged(value);
+            RefreshLabelsColor();
+        }
+
+        protected internal override void SetSelectedIndex(int index)
+        {
+            base.SetSelectedIndex(index);
             RefreshLabelsColor();
         }
 
@@ -84,7 +102,17 @@ namespace Winch.Components
 
         protected override void ChangeValue(int index)
         {
-            SetConfigValue<Color>(GameManager.Instance.GameConfigData.Colors[index]);
+            if (!initialized) return;
+            SetConfigValue(GetColorType(index).GetName());
+        }
+
+        protected internal virtual void Initialize(string value)
+        {
+            options = EnumUtil.GetNames<DredgeColorTypeEnum>().ToList();
+            optionStrings = GameManager.Instance.GameConfigData.Colors.Select(color => labelLocalizedString).ToList();
+            RefreshDropdown();
+            SetSelectedOption(value);
+            initialized = true;
         }
     }
 }

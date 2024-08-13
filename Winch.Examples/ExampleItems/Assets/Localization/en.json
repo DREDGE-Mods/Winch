@@ -64,5 +64,7 @@
 	"exampleconfig.dropdown.tooltip": "A dropdown menu with options",
 	"exampleconfig.dropdown.option.one": "First",
 	"exampleconfig.dropdown.option.two": "Second",
-	"exampleconfig.dropdown.option.three": "Third"
+	"exampleconfig.dropdown.option.three": "Third",
+	"exampleconfig.color.title": "Color",
+	"exampleconfig.color.tooltip": "A dropdown menu with stock colors"
 }
