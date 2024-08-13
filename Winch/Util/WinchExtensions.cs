@@ -40,6 +40,31 @@ public static class WinchExtensions
         }
     }
 
+    /// <summary>
+    /// Retrieves the color currently selected for this enum by the player in their settings.
+    /// </summary>
+    /// <param name="colorType">The color type</param>
+    /// <returns>The player set color</returns>
+    public static Color GetColor(this DredgeColorTypeEnum colorType) => GameManager.Instance.LanguageManager.GetColor(colorType);
+    /// <summary>
+    /// Retrieves the html color code currently selected for this enum by the player in their settings.
+    /// </summary>
+    /// <param name="colorType">The color type</param>
+    /// <returns>The player set color code</returns>
+    public static string GetColorCode(this DredgeColorTypeEnum colorType) => GameManager.Instance.LanguageManager.GetColorCode(colorType);
+    /// <summary>
+    /// Returns the original default color for this enum from before any player customization.
+    /// </summary>
+    /// <param name="colorType">The color type</param>
+    /// <returns>The original color</returns>
+    public static Color GetDefaultColor(this DredgeColorTypeEnum colorType) => GameManager.Instance.GameConfigData.Colors[(int)colorType];
+    /// <summary>
+    /// Returns the original default html color code for this enum from before any player customization.
+    /// </summary>
+    /// <param name="colorType">The color type</param>
+    /// <returns>The original color code</returns>
+    public static string GetDefaultColorCode(this DredgeColorTypeEnum colorType) => ColorUtility.ToHtmlStringRGB(GetDefaultColor(colorType));
+
     public static void ShowNotificationWithColor(this UIController UI, NotificationType notificationType, string key, string colorCode, object[] arguments)
     {
         LocalizationSettings.StringDatabase.GetLocalizedStringAsync(LanguageManager.STRING_TABLE, key, null, FallbackBehavior.UseProjectSettings, arguments).Completed += delegate (AsyncOperationHandle<string> op)
