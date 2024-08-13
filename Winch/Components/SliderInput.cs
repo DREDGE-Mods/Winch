@@ -157,7 +157,7 @@ namespace Winch.Components
         protected virtual void ChangeValue(float value)
         {
             if (!initialized) return;
-            SetConfigValue<float>(value);
+            SetConfigValue(value);
         }
 
         public virtual void OnSubmit(BaseEventData eventData)

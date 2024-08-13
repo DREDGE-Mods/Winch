@@ -96,7 +96,7 @@ namespace Winch.Components
                 return;
             }
 
-            SetConfigValue<string>(value);
+            SetConfigValue(value);
         }
 
         protected virtual void OnValueChanged(string value)

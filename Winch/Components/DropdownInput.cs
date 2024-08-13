@@ -142,7 +142,7 @@ namespace Winch.Components
         protected virtual void ChangeValue(int index)
         {
             if (!initialized) return;
-            SetConfigValue<string>(options[index]);
+            SetConfigValue(options[index]);
         }
 
         public override void OnForceRefresh()

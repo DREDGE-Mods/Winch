@@ -147,6 +147,7 @@ namespace Winch.Components
             return default(T);
         }
 
+        protected internal virtual void SetConfigValue(string value) => SetConfigValue<string>(value ?? string.Empty);
         protected internal virtual void SetConfigValue<T>(T value)
         {
             if (isWinch)

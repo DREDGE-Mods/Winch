@@ -41,7 +41,7 @@ namespace Winch.Components
 
         protected override void ChangeValue(int index)
         {
-            SetConfigValue<bool>(index == 1);
+            SetConfigValue(index == 1);
         }
     }
 }
