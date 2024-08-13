@@ -154,7 +154,7 @@ namespace Winch.Config
 
         internal static void SetProperty<T>(Dictionary<string, object?> config, string key, T? value)
         {
-            if (config[key] is JObject setting)
+            if (config.TryGetValue(key, out var oValue) && oValue is JObject setting)
             {
                 setting["value"] = value != null ? JToken.FromObject(value) : null;
             }

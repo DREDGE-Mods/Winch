@@ -6,5 +6,6 @@
 	"DetailedLogSources": false,
 	"EnableDeveloperConsole": true,
 	"MaxLogFiles": 10,
-	"ExportYarnProgram": false
+	"ExportYarnProgram": false,
+	"LogPort": ""
 }
