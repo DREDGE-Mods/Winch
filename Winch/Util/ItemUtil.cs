@@ -160,9 +160,9 @@ public static class ItemUtil
         return fishes;
     }
 
-    internal static void PopulateItemData()
+    internal static void PopulateItemData(IList<ItemData> result)
     {
-        foreach (var item in GameManager.Instance.ItemManager.allItems)
+        foreach (var item in result)
         {
             AllItemDataDict.Add(item.id, item);
             WinchCore.Log.Debug($"Added item {item.id} to AllItemDataDict");

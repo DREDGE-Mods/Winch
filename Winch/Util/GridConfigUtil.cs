@@ -51,12 +51,12 @@ public static class GridConfigUtil
         }
     }
 
-    internal static void PopulateGridConfigurations()
+    internal static void PopulateGridConfigurations(IList<GridConfiguration> result)
     {
-        foreach (var gridConfig in GameManager.Instance.DataLoader.allGridConfigs)
+        foreach (var gridConfig in result)
         {
-            AllGridConfigDict.Add(gridConfig.Key, gridConfig.Value);
-            WinchCore.Log.Debug($"Added grid configuration {gridConfig.Key} to AllGridConfigDict");
+            AllGridConfigDict.Add(gridConfig.name, gridConfig);
+            WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
         }
     }
 

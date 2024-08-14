@@ -35,7 +35,7 @@ namespace Winch.Patches.API
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
-            ItemUtil.PopulateItemData();
+            ItemUtil.PopulateItemData(handle.Result);
             DredgeEvent.AddressableEvents.ItemsLoaded.Trigger(__instance, handle, false);
         }
     }

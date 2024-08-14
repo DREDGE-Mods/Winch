@@ -22,7 +22,7 @@ namespace Winch.Patches.API
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
-            GridConfigUtil.PopulateGridConfigurations();
+            GridConfigUtil.PopulateGridConfigurations(handle.Result);
             DredgeEvent.AddressableEvents.GridConfigsLoaded.Trigger(__instance, handle, false);
         }
     }
