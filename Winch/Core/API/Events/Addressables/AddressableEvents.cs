@@ -1,4 +1,6 @@
-﻿namespace Winch.Core.API.Events.Addressables
+﻿using Winch.Core.API.Events.LookupTable;
+
+namespace Winch.Core.API.Events.Addressables
 {
     public class AddressableEvents
     {
@@ -13,6 +15,8 @@
         public AddressablesLoadedHook<QuestData> QuestsLoaded = new AddressablesLoadedHook<QuestData>();
 
         public AddressablesLoadedHook<QuestGridConfig> QuestGridConfigsLoaded = new AddressablesLoadedHook<QuestGridConfig>();
+
+        public LookupTableLoadedHook<SpeakerData> SpeakersLoaded = new LookupTableLoadedHook<SpeakerData>();
 
         public AddressablesLoadedHook<UpgradeData> UpgradesLoaded = new AddressablesLoadedHook<UpgradeData>();
 

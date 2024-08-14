@@ -181,7 +181,7 @@ namespace Winch.Components
 
         public void OnWinchClicked()
         {
-            WinchCore.Log.Debug($"[ModsTab] OnWinchClicked");
+            WinchCore.Log.Debug($"[ModsTab] OnWinchClicked()");
             inOptions = true;
             currentWinch = true;
             currentMod = null;
@@ -686,7 +686,7 @@ namespace Winch.Components
 
         public void ExitOptions()
         {
-            WinchCore.Log.Debug($"[ModsTab] ExitOptions");
+            WinchCore.Log.Debug($"[ModsTab] ExitOptions()");
             inOptions = false;
             currentWinch = false;
             currentMod = null;

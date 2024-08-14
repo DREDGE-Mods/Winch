@@ -39,10 +39,6 @@ public static class CharacterUtil
             return null;
     }
 
-    internal static void AddModdedSpeakerData() => AddModdedSpeakerData((GameManager.Instance.DialogueRunner.dialogueViews[0] as DredgeDialogueView));
-
-    internal static void AddModdedSpeakerData(DredgeDialogueView view) => AddModdedSpeakerData(view.speakerDataLookup.lookupTable);
-
     internal static void AddModdedSpeakerData(IDictionary<string, SpeakerData> lookupTable)
     {
         foreach (var speaker in ModdedSpeakerDataDict.Values)
@@ -56,9 +52,9 @@ public static class CharacterUtil
         }
     }
 
-    internal static void PopulateSpeakerData(DredgeDialogueView dialogueView)
+    internal static void PopulateSpeakerData(IDictionary<string, SpeakerData> lookupTable)
     {
-        foreach (var speaker in dialogueView.speakerDataLookup.lookupTable)
+        foreach (var speaker in lookupTable)
         {
             AllSpeakerDataDict.Add(speaker.Key, speaker.Value);
             WinchCore.Log.Debug($"Added speaker {speaker.Key} to AllSpeakerDataDict");

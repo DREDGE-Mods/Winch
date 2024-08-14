@@ -11,7 +11,7 @@ namespace Winch.Core.API.Events.Addressables
 
         public void Trigger(object sender, AsyncOperationHandle<IList<T>> handle, bool prefix)
         {
-            WinchCore.Log.Debug($"Triggered {typeof(T)} type event: {handle.Result.Count.ToString()} elements (Prefix: {prefix.ToString()})");
+            WinchCore.Log.Debug($"Triggered {typeof(T)} type event: {handle.Result.Count} elements (Prefix: {prefix})");
             try
             {
                 var args = new AddressablesLoadedEventArgs<T>(handle);
