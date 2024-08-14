@@ -18,6 +18,8 @@ namespace Winch.Core.API.Events.Addressables
 
         public LookupTableLoadedHook<SpeakerData> SpeakersLoaded = new LookupTableLoadedHook<SpeakerData>();
 
+        public AddressableLoadedHook<SupportedLocaleData> SupportedLocalesLoaded = new AddressableLoadedHook<SupportedLocaleData>();
+
         public AddressablesLoadedHook<UpgradeData> UpgradesLoaded = new AddressablesLoadedHook<UpgradeData>();
 
         public AddressablesLoadedHook<WeatherData> WeatherDataLoaded = new AddressablesLoadedHook<WeatherData>();
