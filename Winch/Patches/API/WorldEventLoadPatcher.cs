@@ -22,6 +22,7 @@ namespace Winch.Patches.API
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+            WorldEventUtil.PopulateWorldEvents(handle.Result);
             DredgeEvent.AddressableEvents.WorldEventsLoaded.Trigger(__instance, handle, false);
         }
     }

@@ -26,6 +26,7 @@ public static class WorldEventUtil
         return UtilHelpers.PopulateObjectFromMeta(worldEventData, meta, StaticConverter);
     }
 
+    internal static Dictionary<string, WorldEventData> AllWorldEventDataDict = new();
     internal static Dictionary<string, ModdedWorldEventData> ModdedWorldEventDataDict = new();
     internal static Dictionary<string, StaticWorldEventData> ModdedStaticWorldEventDataDict = new();
     internal static Dictionary<string, ModdedWorldEvent> ModdedWorldEventDict = new();
@@ -198,5 +199,19 @@ public static class WorldEventUtil
         {
             worldEventData.prefab.Instantiate(worldEventData.location, Quaternion.identity, staticWorldEvents);
         }
+    }
+
+    internal static void PopulateWorldEvents(IList<WorldEventData> result)
+    {
+        foreach (var worldEvent in result)
+        {
+            AllWorldEventDataDict.Add(worldEvent.name, worldEvent);
+            WinchCore.Log.Debug($"Added world event {worldEvent.name} to AllWorldEventDataDict");
+        }
+    }
+
+    internal static void ClearWorldEventData()
+    {
+        throw new NotImplementedException();
     }
 }
