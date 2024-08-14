@@ -162,6 +162,7 @@ internal static class AssetLoader
         { typeof(ThawableItemData), "Thawable"},
         { typeof(GadgetItemData), "Gadgets"},
         { typeof(BaitItemData), "Baits"},
+        { typeof(FlagItemData), "Flags"},
     };
 
     private static void LoadItemFiles(string itemFolderPath)

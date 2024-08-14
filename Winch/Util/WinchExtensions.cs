@@ -214,6 +214,14 @@ public static class WinchExtensions
     /// Check whether this item thawable (slows down rotting of fish in your inventory)
     /// </summary>
     public static bool IsThawable(this SpatialItemInstance instance) => instance.ToItemData().IsThawable();
+    /// <summary>
+    /// Check whether this item is a bait
+    /// </summary>
+    public static bool IsBait(this SpatialItemData itemData) => itemData.id.StartsWith("bait") || itemData is BaitItemData;
+    /// <summary>
+    /// Check whether this item is a flag
+    /// </summary>
+    public static bool IsFlag(this HarvestableItemData itemData) => itemData.id.StartsWith("flag") || itemData is FlagItemData;
 
     /// <summary>
     /// Trigger the fish caught event for both DREDGE and Winch

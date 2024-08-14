@@ -34,6 +34,7 @@ public static class ItemUtil
         { typeof(ThawableItemData), new ThawableItemDataConverter() },
         { typeof(GadgetItemData), new GadgetItemDataConverter() },
         { typeof(BaitItemData), new BaitItemDataConverter() },
+        { typeof(FlagItemData), new FlagItemDataConverter() },
     };
 
     internal static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData
@@ -71,6 +72,7 @@ public static class ItemUtil
     internal static Dictionary<string, EngineItemData> EngineItemDataDict = new();
     internal static Dictionary<string, LightItemData> LightItemDataDict = new();
     internal static Dictionary<string, SpatialItemData> BaitItemDataDict = new();
+    internal static Dictionary<string, HarvestableItemData> FlagItemDataDict = new();
     internal static Dictionary<string, NonSpatialItemData> NonSpatialItemDataDict = new();
     internal static Dictionary<string, MessageItemData> MessageItemDataDict = new();
     internal static Dictionary<string, ResearchableItemData> ResearchableItemDataDict = new();
@@ -277,6 +279,17 @@ public static class ItemUtil
         return null;
     }
 
+    public static HarvestableItemData GetFlagItemData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (FlagItemDataDict.TryGetValue(id, out HarvestableItemData itemData))
+            return itemData;
+
+        return null;
+    }
+
     public static NonSpatialItemData GetNonSpatialItemData(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -452,6 +465,11 @@ public static class ItemUtil
                         RelicItemDataDict.Add(item.id, rcitem);
                         WinchCore.Log.Debug($"Added item {item.id} to RelicItemDataDict");
                     }
+                    else if (hitem.IsFlag())
+                    {
+                        FlagItemDataDict.Add(item.id, hitem);
+                        WinchCore.Log.Debug($"Added item {item.id} to FlagItemDataDict");
+                    }
                 }
                 else if (item is HarvesterItemData hritem)
                 {
@@ -513,7 +531,7 @@ public static class ItemUtil
                     LightItemDataDict.Add(item.id, litem);
                     WinchCore.Log.Debug($"Added item {item.id} to LightItemDataDict");
                 }
-                else if (item.id.StartsWith("bait") || item is BaitItemData)
+                else if (sitem.IsBait())
                 {
                     BaitItemDataDict.Add(item.id, sitem);
                     WinchCore.Log.Debug($"Added item {item.id} to BaitItemDataDict");
@@ -567,6 +585,8 @@ public static class ItemUtil
         WinchCore.Log.Debug($"LightItemDataDict cleared");
         BaitItemDataDict.Clear();
         WinchCore.Log.Debug($"BaitItemDataDict cleared");
+        FlagItemDataDict.Clear();
+        WinchCore.Log.Debug($"FlagItemDataDict cleared");
         HarvestableItemDataDict.Clear();
         WinchCore.Log.Debug($"HarvestableItemDataDict cleared");
         FishItemDataDict.Clear();
@@ -700,6 +720,11 @@ public static class ItemUtil
     public static SpatialItemData[] GetAllBaitItemData()
     {
         return BaitItemDataDict.Values.ToArray();
+    }
+
+    public static HarvestableItemData[] GetAllFlagItemData()
+    {
+        return FlagItemDataDict.Values.ToArray();
     }
 
     public static NonSpatialItemData[] GetAllNonSpatialItemData()

@@ -53,7 +53,7 @@ public static class AssetBundleUtil
     private static readonly string DEFAULT_FLOAT_WET_EDGE_DARKNESS_PROP = "_WetEdgeDarkness";
     private static readonly string KEYWORD_ON = "_ON";
 
-    private static Material CreateLitMaterial(string shaderName, string name, Texture? albedo = null, Texture? emission = null, float emitStrength = 4, bool turnOffEmitDuringDay = true, Texture? lightFlickerGradient = null, bool recieveShadows = false, bool wetEdges = false, float wetEdgeHeight = 0.3f, float wetEdgeDarkness = 0.7f)
+    private static Material CreateLitMaterial(string shaderName, string name, Texture? albedo = null, Texture? emission = null, float emitStrength = 4, bool turnOffEmitDuringDay = false, Texture? lightFlickerGradient = null, bool recieveShadows = false, bool wetEdges = false, float wetEdgeHeight = 0.3f, float wetEdgeDarkness = 0.7f)
     {
         Material newMaterial = new Material(AssetBundleUtil.GetReplacementShader(shaderName));
         newMaterial.name = name;
