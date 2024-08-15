@@ -1,7 +1,6 @@
 ﻿﻿title: Collector_ExampleItemsHeartOfTheSea_Deliver
 ---
 <<declare $named = false>>
-<<SetQuestStepCompleted ExampleItemsHeartOfTheSea_Return>>
 <<RemoveItemById exampleitems.heartofthesea>>
 <<RecordRelicHandedIn>>
 <<AdjustIntVariable relics-handed-in 1>>
