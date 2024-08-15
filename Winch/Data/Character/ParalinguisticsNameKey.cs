@@ -33,6 +33,11 @@ namespace Winch.Data.Character
         PLAYER,
         PHOTOGRAPHER,
         PAINTER,
-        SOUL
+        SOUL,
+        FOUNDER,
+        FOREMAN,
+        EXECUTIVE,
+        ENGINEER,
+        SCIENTIST
     }
 }
