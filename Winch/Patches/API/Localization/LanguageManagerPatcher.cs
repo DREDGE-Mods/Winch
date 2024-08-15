@@ -44,7 +44,6 @@ namespace Winch.Patches.API.Localization
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
-            LocalizationUtil.AddedLocales.ForEach(handle.Result.locales.Add);
             DredgeEvent.AddressableEvents.SupportedLocalesLoaded.Trigger(languageManager, handle, true);
 
             WinchCore.Log.Debug("[LanguageManager] OnSupportedLocaleDataAddressableLoaded()");

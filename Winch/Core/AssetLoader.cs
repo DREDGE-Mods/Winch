@@ -174,19 +174,6 @@ namespace Winch.Core
 
         private static void LoadLocalizationFiles(string localizationFolderPath)
         {
-            string[] localeFolders = Directory.GetDirectories(localizationFolderPath, "*", SearchOption.TopDirectoryOnly);
-            foreach (string folder in localeFolders)
-            {
-                try
-                {
-                    LocalizationUtil.LoadLocaleFolder(folder);
-                }
-                catch (Exception ex)
-                {
-                    WinchCore.Log.Error($"Failed to load locale folder {folder}: {ex}");
-                }
-            }
-
             string[] localizationFiles = Directory.GetFiles(localizationFolderPath, "*.*", SearchOption.TopDirectoryOnly);
             foreach (string file in localizationFiles)
             {
