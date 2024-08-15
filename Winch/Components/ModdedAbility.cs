@@ -55,6 +55,7 @@ public abstract class ModdedAbility : Ability
     {
         if (GameManager.Instance != null && GameManager.Instance.PlayerAbilities != null)
         {
+            GameManager.Instance.PlayerAbilities.abilityDatas.SafeAdd(ModdedAbilityData);
             GameManager.Instance.PlayerAbilities.RegisterAbility(ModdedAbilityData, this);
         }
     }
