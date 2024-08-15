@@ -10,6 +10,7 @@ public class DeployableItemDataConverter : HarvesterItemDataConverter
         { "damageMode", new(DamageMode.DURABILITY, null) },
         { "catchRate", new(1f, o => float.Parse(o.ToString()))},
         { "gridConfiguration", new( null, null ) },
+        { "gridKey", new( GridKey.NONE, o=>DredgeTypeHelpers.GetEnumValue<GridKey>(o) ) },
         { "maxDurabilityDays", new(1f, o => float.Parse(o.ToString())) },
         { "timeBetweenCatchRolls", new(1f, o => float.Parse(o.ToString()))}
     };

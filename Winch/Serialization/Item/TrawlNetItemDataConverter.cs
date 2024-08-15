@@ -9,6 +9,7 @@ public class TrawlNetItemDataConverter : DeployableItemDataConverter
     {
         { "itemTypeIcon", new(TextureUtil.GetSprite("TrawlIcon"), null) },
         { "itemSubtype", new(ItemSubtype.NET, null) },
+        { "gridKey", new( GridKey.TRAWL_NET, null ) },
         { "moveMode", new(MoveMode.INSTALL, null) },
     };
 
