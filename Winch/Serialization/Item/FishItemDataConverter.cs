@@ -14,6 +14,7 @@ public class FishItemDataConverter : HarvestableItemDataConverter
         { "harvestMinigameType", new( HarvestMinigameType.FISHING_RADIAL, null) },
         { "itemType", new(ItemType.GENERAL, null) },
         { "itemSubtype", new(ItemSubtype.FISH, null) },
+        { "squishFactor", new(1, null) },
         { "canBeDiscardedByPlayer", new(true, null) },
         { "minSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
         { "maxSizeCentimeters", new( 0f, o => float.Parse(o.ToString())) },
