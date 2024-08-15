@@ -11,6 +11,7 @@
 		<NuspecFile>Winch.nuspec</NuspecFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
+		<VersionPrefix>$(Version)</VersionPrefix>
 	</PropertyGroup>
 
 	<ItemGroup>
