@@ -23,6 +23,21 @@ public static class DredgeTypeHelpers
             throw new InvalidOperationException($"{value} is not a valid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
     }
 
+    public static List<TEnum> GetEnumValues<TEnum>(object value) where TEnum : Enum
+    {
+        if (value is JArray values)
+        {
+            List<TEnum> types = new();
+            foreach (object type in values)
+            {
+                types.Add(GetEnumValue<TEnum>(type));
+            };
+            return types;
+        }
+        else
+            return new List<TEnum> { GetEnumValue<TEnum>(value) };
+    }
+
     public static TEnum ParseFlagsEnum<TEnum>(object value) where TEnum : Enum
     {
         if (value is JArray values)
