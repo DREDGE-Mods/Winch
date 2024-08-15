@@ -31,6 +31,8 @@
 	"exampleitems.durable.desc": "???",
 	"exampleitems.ice.name": "Ice Block",
 	"exampleitems.ice.desc": "A block of ice.",
+	"exampleitems.milk.name": "Milk Bucket",
+	"exampleitems.milk.desc": "An iron bucket full of milk.",
 	"exampleitems.nonspatial.name": "Non Spatial",
 	"exampleitems.nonspatial.desc": "???",
 	"exampleitems.message.name": "Message Name",

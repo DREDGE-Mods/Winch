@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Winch.Core;
@@ -7,10 +8,19 @@ using Yarn;
 
 namespace ExampleItems
 {
-    public class Loader
+    public static class Loader
     {
+        public static ItemData MilkBucket => ItemUtil.GetModdedItemData("exampleitems.milk");
+        public static VibrationData MilkBucketVibrationData;
+
         public static void Initialize()
         {
+            MilkBucketVibrationData = ScriptableObject.CreateInstance<VibrationData>().DontDestroyOnLoad().Rename("MilkBucket");
+            MilkBucketVibrationData.vibrationParamsList = new List<VibrationParams>
+            {
+                new VibrationParams(0.03f,0,0.1f,0.3f,0.75f)
+            };
+
             #region Dialogue
             try
             {
@@ -57,6 +67,7 @@ namespace ExampleItems
             #endregion
 
             GameManager.Instance.OnGameStarted += OnGameStarted;
+            GameManager.Instance.OnGameEnded += OnGameEnded;
         }
 
         private static GameObject CreateCube()
@@ -72,6 +83,8 @@ namespace ExampleItems
 
         private static void OnGameStarted()
         {
+            GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
+
             try
             {
                 var cubeLand = CreateCube();
@@ -91,6 +104,25 @@ namespace ExampleItems
             catch (Exception e)
             {
                 WinchCore.Log.Error(e);
+            }
+        }
+
+        private static void OnGameEnded()
+        {
+            GameEvents.Instance.OnSpecialItemHandlerRequested -= OnSpecialItemHandlerRequested;
+        }
+
+        private static void OnSpecialItemHandlerRequested(SpatialItemData itemData)
+        {
+            if (itemData.id == MilkBucket.id)
+            {
+                GameManager.Instance.ItemManager.UseRepairKit();
+                GameManager.Instance.ItemManager.RepairAllItemDurability();
+                GameManager.Instance.UI.OccasionalGridPanel.TryRepairCurrentCrabPot();
+                GameManager.Instance.UI.ShowNotification(NotificationType.ANY_REPAIR_KIT_USED, "notification.durability-repaired");
+                GameManager.Instance.Player.Sanity.ChangeSanity(1f);
+                GameManager.Instance.UI.ShowNotification(NotificationType.ANY_REPAIR_KIT_USED, "notification.panic-repaired");
+                GameManager.Instance.VibrationManager.Vibrate(MilkBucketVibrationData, VibrationRegion.WholeBody, overrideExistingVibrations: true);
             }
         }
     }
