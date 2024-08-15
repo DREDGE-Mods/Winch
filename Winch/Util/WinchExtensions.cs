@@ -587,6 +587,15 @@ public static class WinchExtensions
     public static IEnumerable<TResult> WhereType<TSource, TResult>(this IEnumerable<TSource> source)
         => source.Where(item => item is TResult).Cast<TResult>();
 
+    /// <summary>Filters a sequence of values by testing if they don't match a specified type.</summary>
+    /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to filter.</param>
+    /// <typeparam name="TSource">The type of the elements of <paramref name="source" />.</typeparam>
+    /// <typeparam name="TNot">The type to filter out.</typeparam>
+    /// <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains elements from the input sequence without any of the type <typeparamref name="TNot"/>.</returns>
+    /// <exception cref="T:System.ArgumentNullException"><paramref name="source" /> is <see langword="null" />.</exception>
+    public static IEnumerable<TSource> WhereNotType<TSource, TNot>(this IEnumerable<TSource> source)
+        => source.Where(item => item is not TNot);
+
     public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> source)
     {
         foreach (var item in source)
