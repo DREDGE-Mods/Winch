@@ -173,6 +173,37 @@ public static class WinchExtensions
         };
     }
 
+    public static Vector2 GetCurrentMapPivot(this MapWindow mapWindow)
+    {
+        return mapWindow.mapContents.pivot;
+    }
+
+    public static Vector2 GetMapPivotFromWorldPosition(this MapWindow mapWindow, Vector2 position)
+    {
+        Vector2 worldPositionAsMapPosition = mapWindow.GetMapPositionFromWorldPosition(position.x, position.y);
+        Vector2 mapPivotFromMapPosition = mapWindow.GetMapPivotFromMapPosition(worldPositionAsMapPosition.x, worldPositionAsMapPosition.y);
+        return mapPivotFromMapPosition;
+    }
+
+    public static Vector2 GetMapPivotFromWorldPosition(this MapWindow mapWindow, Vector3 position)
+    {
+        Vector2 worldPositionAsMapPosition = mapWindow.GetMapPositionFromWorldPosition(position.x, position.z);
+        Vector2 mapPivotFromMapPosition = mapWindow.GetMapPivotFromMapPosition(worldPositionAsMapPosition.x, worldPositionAsMapPosition.y);
+        return mapPivotFromMapPosition;
+    }
+
+    public static void CenterMapOnWorldPosition(this MapWindow mapWindow, Vector2 position)
+    {
+        Vector2 mapPivotFromMapPosition = mapWindow.GetMapPivotFromWorldPosition(position);
+        mapWindow.MoveMapTo(mapPivotFromMapPosition.x, mapPivotFromMapPosition.y);
+    }
+
+    public static void CenterMapOnWorldPosition(this MapWindow mapWindow, Vector3 position)
+    {
+        Vector2 mapPivotFromMapPosition = mapWindow.GetMapPivotFromWorldPosition(position);
+        mapWindow.MoveMapTo(mapPivotFromMapPosition.x, mapPivotFromMapPosition.y);
+    }
+
     public static bool TryGetParalinguisticsFromNameKey(this IDictionary<string, SpeakerData> lookupTable, ParalinguisticsNameKey nameKey, out Dictionary<ParalinguisticType, List<AssetReference>> paralinguistics)
     {
         var stringNameKey = nameKey.ToString();
