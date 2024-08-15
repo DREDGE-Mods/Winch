@@ -17,7 +17,7 @@ namespace Winch.Core
         public bool Locate(object key, Type type, out IList<IResourceLocation> locations)
         {
             var skey = key.ToString();
-            WinchCore.Log.Info(type != null ? $"{skey} [{type.FullName}]" : skey);
+            //WinchCore.Log.Debug(type != null ? $"{skey} [{type.FullName}]" : skey);
 
             if (!AddressablesUtil.Locations.ContainsKey(skey))
                 goto failed;
