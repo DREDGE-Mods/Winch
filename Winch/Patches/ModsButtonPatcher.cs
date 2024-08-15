@@ -94,10 +94,16 @@ namespace Winch.Patches
                 modsTab.labelPrefab = label;
                 modsTab.labelLocalizedPrefab = labelLocalized;
 
-                var dropdownInput = modsTab.dropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("Dropdown").AddComponent<DropdownInput>();
+                var dropdownInput = modsTab.dropdownPrefab = generalTabbedPanel.panel.container.GetComponentsInChildren<DropdownSettingInput>(true).Where(dsi => dsi.HasComponent<LanguageSelectorDropdown>()).FirstOrDefault().gameObject.Instantiate(prefabs, false).Rename("Dropdown").AddComponent<DropdownInput>();
                 dropdownInput.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var dropdownOld = dropdownInput.GetComponent<DropdownSettingInput>();
                 dropdownInput.dropdown = dropdownOld.dropdown;
+                var dropdownTextField = dropdownInput.dropdown.template.GetComponentInChildren<Toggle>(true).GetComponentInChildren<TextMeshProUGUI>(true);
+                dropdownTextField.enabled = true;
+                var fontBypass = dropdownTextField.gameObject.GetOrAddComponent<LocalizeFontBypass>();
+                fontBypass.textField = dropdownTextField;
+                fontBypass.tableString = "Fonts";
+                fontBypass.tableEntryString = "DefaultFont";
                 dropdownInput.dropdownEventNotifier = dropdownOld.dropdownEventNotifier;
                 dropdownInput.localizedStringField = dropdownOld.localizedStringField;
                 dropdownInput.textTooltipRequester = dropdownOld.textTooltipRequester;
@@ -110,6 +116,12 @@ namespace Winch.Patches
                 var colorDropdownOld = colorDropdownInput.GetComponent<DropdownSettingInput>();
                 var colorOld = colorDropdownInput.GetComponent<ColorDropdown>();
                 colorDropdownInput.dropdown = colorDropdownOld.dropdown;
+                var colorDropdownTextField = colorDropdownInput.dropdown.template.GetComponentInChildren<Toggle>(true).GetComponentInChildren<TextMeshProUGUI>(true);
+                colorDropdownTextField.enabled = false;
+                var colorFontBypass = colorDropdownTextField.gameObject.GetOrAddComponent<LocalizeFontBypass>();
+                fontBypass.textField = colorDropdownTextField;
+                fontBypass.tableString = "Fonts";
+                fontBypass.tableEntryString = "DefaultFont";
                 colorDropdownInput.dropdownEventNotifier = colorDropdownOld.dropdownEventNotifier;
                 colorDropdownInput.localizedStringField = colorDropdownOld.localizedStringField;
                 colorDropdownInput.textTooltipRequester = colorDropdownOld.textTooltipRequester;
@@ -120,10 +132,16 @@ namespace Winch.Patches
                 colorOld.DestroyImmediate();
                 colorDropdownInput.gameObject.Activate();
 
-                var ooDropdownInput = modsTab.onOffDropdownPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("OnOffDropdown").AddComponent<OnOffDropdownInput>();
+                var ooDropdownInput = modsTab.onOffDropdownPrefab = generalTabbedPanel.panel.container.GetComponentsInChildren<DropdownSettingInput>(true).Where(dsi => dsi.HasComponent<LanguageSelectorDropdown>()).FirstOrDefault().gameObject.Instantiate(prefabs, false).Rename("OnOffDropdown").AddComponent<OnOffDropdownInput>();
                 ooDropdownInput.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var ooDropdownOld = ooDropdownInput.GetComponent<DropdownSettingInput>();
                 ooDropdownInput.dropdown = ooDropdownOld.dropdown;
+                var ooDropdownTextField = ooDropdownInput.dropdown.template.GetComponentInChildren<Toggle>(true).GetComponentInChildren<TextMeshProUGUI>(true);
+                ooDropdownTextField.enabled = true;
+                var ooFontBypass = ooDropdownTextField.gameObject.GetOrAddComponent<LocalizeFontBypass>();
+                ooFontBypass.textField = ooDropdownTextField;
+                ooFontBypass.tableString = "Fonts";
+                ooFontBypass.tableEntryString = "DefaultFont";
                 ooDropdownInput.dropdownEventNotifier = ooDropdownOld.dropdownEventNotifier;
                 ooDropdownInput.localizedStringField = ooDropdownOld.localizedStringField;
                 ooDropdownInput.textTooltipRequester = ooDropdownOld.textTooltipRequester;

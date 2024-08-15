@@ -22,6 +22,11 @@ namespace Winch.Components
                 LocalizationUtil.CreateReference("Strings", "settings.dropdown.disabled"),
                 LocalizationUtil.CreateReference("Strings", "settings.dropdown.enabled")
             };
+            options = new List<string>
+            {
+                "Off",
+                "On"
+            };
             base.Awake();
             initialized = true;
         }
