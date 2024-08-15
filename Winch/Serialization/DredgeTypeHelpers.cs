@@ -195,24 +195,25 @@ public static class DredgeTypeHelpers
     internal static InventoryCondition ParseInventoryCondition(JToken condition)
     {
         var meta = condition.ToObject<Dictionary<string, object>>();
+        var net = bool.Parse(meta.GetValueOrDefault("net", "false").ToString());
         var type = GetEnumValue<InventoryConditionType>(meta.GetValueOrDefault("type"));
         switch (type)
         {
             case InventoryConditionType.AnyOfItem:
             default:
-                var acondition = new AnyOfItemCondition();
+                InventoryCondition acondition = net ? new AnyOfItemNetCondition() : new AnyOfItemCondition();
                 UtilHelpers.PopulateObjectFromMeta(acondition, meta, new AnyOfItemConditionConverter());
                 return acondition;
             case InventoryConditionType.NumOfItem:
-                var ncondition = new NumOfItemCondition();
+                InventoryCondition ncondition = net ? new NumOfItemNetCondition() : new NumOfItemCondition();
                 UtilHelpers.PopulateObjectFromMeta(ncondition, meta, new NumOfItemConditionConverter());
                 return ncondition;
             case InventoryConditionType.NumItemsOfType:
-                var ntcondition = new NumItemsOfTypeCondition();
+                InventoryCondition ntcondition = net ? new NumItemsOfTypeNetCondition() : new NumItemsOfTypeCondition();
                 UtilHelpers.PopulateObjectFromMeta(ntcondition, meta, new NumItemsOfTypeConditionConverter());
                 return ntcondition;
             case InventoryConditionType.NumItemsOfSizeAndType:
-                var nstcondition = new NumItemsOfSizeAndTypeCondition();
+                InventoryCondition nstcondition = net ? new NumItemsOfSizeAndTypeNetCondition() : new NumItemsOfSizeAndTypeCondition();
                 UtilHelpers.PopulateObjectFromMeta(nstcondition, meta, new NumItemsOfSizeAndTypeConditionConverter());
                 return nstcondition;
         }

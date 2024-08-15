@@ -25,6 +25,7 @@ public class ParticledItemPOI : ItemPOI
         }
         if (harvestParticles != null)
         {
+            harvestParticles.Init(useOozeParticles: false);
             ItemData firstItem = harvestable.GetFirstItem();
             if (firstItem && firstItem.overrideHarvestParticleDepth)
             {

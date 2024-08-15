@@ -286,7 +286,8 @@ namespace Winch.Patches.API
             instances.Where(WinchExtensions.IsBroken).ForEach(i => grid.RemoveObjectFromGridData(i, true));
             grid.GetAllItemsOfType<FishItemInstance>(ItemType.GENERAL, ItemSubtype.FISH).ForEach((FishItemInstance fi) =>
             {
-                fi.freshness = Mathf.Max(fi.freshness - fishChange, 0);
+                FishItemData fid = fi.GetItemData<FishItemData>();
+                fi.freshness = Mathf.Max(fi.freshness - fishChange * fid.RotCoefficient, 0);
                 if (fi.freshness <= 0) GameManager.Instance.ItemManager.ReplaceFishWithRot(fi, grid, false);
             });
             return false;

@@ -37,6 +37,8 @@ namespace Winch.Patches.API.Localization
             }
             Addressables.LoadAssetAsync<SupportedLocaleData>(__instance.supportedLocaleDataRef).Completed += __instance.OnSupportedLocaleDataAddressableLoaded;
             __instance.RefreshColors();
+            __instance.IsInit = true;
+            __instance.OnInit?.Invoke();
             return false;
         }
 
