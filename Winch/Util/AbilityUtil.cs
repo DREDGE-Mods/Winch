@@ -116,6 +116,7 @@ public static class AbilityUtil
 
     internal static void AddModdedAbilitiesToRadial(GameObject buttonCenter, Transform abiltiesParent, List<AbilityRadialWedge> wedges, Sprite lockedSprite)
     {
+        var attentionCalloutPrefab = wedges.FirstOrDefault().attentionCallout;
         foreach (var modAbilityData in ModdedAbilityDataDict.Values)
         {
             WinchCore.Log.Debug($"Adding ability {modAbilityData.id} to radial");
@@ -132,6 +133,7 @@ public static class AbilityUtil
             abilityRadialWedge.radius = 200;
             abilityRadialWedge.lockedSprite = lockedSprite;
             abilityRadialWedge.buttonCenter = buttonCenter;
+            abilityRadialWedge.attentionCallout = attentionCalloutPrefab.Instantiate(abilityRadialWedgeObj.transform, false);
         }
     }
 }
