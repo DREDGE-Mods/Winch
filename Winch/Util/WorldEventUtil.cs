@@ -212,6 +212,6 @@ public static class WorldEventUtil
 
     internal static void ClearWorldEventData()
     {
-        throw new NotImplementedException();
+        AllWorldEventDataDict.Clear();
     }
 }
