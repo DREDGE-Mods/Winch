@@ -188,7 +188,7 @@ public static class WorldEventUtil
     {
         foreach (var worldEventData in ModdedWorldEventDataDict.Values)
         {
-            list.Add(worldEventData);
+            list.SafeAdd(worldEventData);
         }
     }
 
@@ -205,7 +205,7 @@ public static class WorldEventUtil
     {
         foreach (var worldEvent in result)
         {
-            AllWorldEventDataDict.Add(worldEvent.name, worldEvent);
+            AllWorldEventDataDict.SafeAdd(worldEvent.name, worldEvent);
             WinchCore.Log.Debug($"Added world event {worldEvent.name} to AllWorldEventDataDict");
         }
     }
