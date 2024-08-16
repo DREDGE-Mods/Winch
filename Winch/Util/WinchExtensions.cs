@@ -17,15 +17,54 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
+using Winch.Components;
 using Winch.Core;
+using Winch.Data.Abilities;
 using Winch.Data.Character;
 using Winch.Data.Item;
+using Winch.Data.WorldEvent;
 using Winch.Util;
 using static ActiveAbilityInfoPanel;
 
 public static class WinchExtensions
 {
     #region DREDGE
+    /// <summary>
+    /// Check if the object is modded
+    /// </summary>
+    /// <returns>Whether this object is modded or not</returns>
+    public static bool IsModded(this ItemData item) => ItemUtil.ModdedItemDataDict.ContainsKey(item.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this GridConfiguration gridConfiguration) => GridConfigUtil.ModdedGridConfigDict.ContainsKey(gridConfiguration.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this SpeakerData speakerData) => speakerData is AdvancedSpeakerData;
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this Ability ability) => ability is ModdedAbility || ability.AbilityData.IsModded();
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this AbilityData ability) => ability is ModdedAbilityData;
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this WorldEvent worldEvent) => worldEvent is ModdedWorldEvent || worldEvent.worldEventData.IsModded();
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this WorldEventData worldEvent) => worldEvent is ModdedWorldEventData;
+
+    /// <summary>
+    /// Check if the object is vanilla
+    /// </summary>
+    /// <returns>Whether this object is vanilla or not</returns>
+    public static bool IsVanilla(this ItemData item) => !item.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this GridConfiguration gridConfiguration) => !gridConfiguration.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this SpeakerData speakerData) => !speakerData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this Ability ability) => !ability.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this AbilityData ability) => !ability.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this WorldEvent worldEvent) => !worldEvent.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this WorldEventData worldEvent) => !worldEvent.IsModded();
+
     /// <summary>
     /// Converts a spatial item instances to a spatial item data.
     /// </summary>
