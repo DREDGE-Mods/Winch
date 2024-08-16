@@ -11,7 +11,7 @@ using Winch.Data.Item;
 
 namespace Winch.Core
 {
-    internal class AssetLoader
+    internal static class AssetLoader
     {
         internal static void LoadAssets()
         {

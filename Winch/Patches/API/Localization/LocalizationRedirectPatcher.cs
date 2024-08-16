@@ -8,7 +8,7 @@ namespace Winch.Patches.API.Localization
 {
     [HarmonyPatch(typeof(LocalizedStringDatabase))]
     [HarmonyPatch("ProcessUntranslatedText")]
-    internal class LocalizationRedirectPatcher
+    internal static class LocalizationRedirectPatcher
     {
         public static bool Prefix(ref string __result, string key, long keyId, TableReference tableReference, StringTable table, Locale locale)
         {

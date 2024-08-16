@@ -5,7 +5,7 @@ using Winch.Core;
 
 namespace Winch.Util
 {
-	internal class VersionUtil
+	internal static class VersionUtil
     {
         private static readonly string[] ValidPrefixes = new string[] { "alpha", "" };
         private static Regex VersionRegex = new Regex(@"(?:([a-z]+)-)?(\d+)\.(\d+)(?:\.(\d+))?", RegexOptions.Compiled);
