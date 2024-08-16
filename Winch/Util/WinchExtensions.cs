@@ -1,5 +1,6 @@
 ﻿using Coffee.UIExtensions;
 using HarmonyLib;
+using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ using UnityEngine.UI;
 using Winch.Core;
 using Winch.Data.Character;
 using Winch.Data.Item;
+using Winch.Util;
+using static ActiveAbilityInfoPanel;
 
 public static class WinchExtensions
 {
@@ -202,6 +205,60 @@ public static class WinchExtensions
     {
         Vector2 mapPivotFromMapPosition = mapWindow.GetMapPivotFromWorldPosition(position);
         mapWindow.MoveMapTo(mapPivotFromMapPosition.x, mapPivotFromMapPosition.y);
+    }
+
+    public static PotType GetPotTypeFromItemData(this DeployableItemData data)
+    {
+        if (data is CrabPotItemData potData)
+            return potData.potType;
+        else if (Resources.FindObjectsOfTypeAll<GameSceneInitializer>().FirstOrDefault().placedMaterialHHarvesterData.id == data.id)
+            return PotType.MATERIAL;
+        else
+            return PotType.CRAB;
+    }
+
+    public static GameObject GetPlacedHarvestPOIPrefabFromPotType(this GameSceneInitializer gameSceneInitializer, PotType type)
+    {
+        switch (type)
+        {
+            case PotType.MATERIAL:
+                return gameSceneInitializer.placedMaterialPOIPrefab;
+            case PotType.CRAB:
+            default:
+                return gameSceneInitializer.placedPOIPrefab;
+        }
+    }
+
+    public static GameObject GetPlacedHarvestPOIPrefabFromPotItemData(this GameSceneInitializer gameSceneInitializer, DeployableItemData data)
+    {
+        return gameSceneInitializer.GetPlacedHarvestPOIPrefabFromPotType(data.GetPotTypeFromItemData());
+    }
+
+    public static Sprite GetSpriteForAbilityMode(this ActiveAbilityInfoPanel activeAbilityInfoPanel, AbilityMode mode)
+    {
+        switch (mode)
+        {
+            case AbilityMode.POT:
+                return activeAbilityInfoPanel.potQualityIcon;
+            case AbilityMode.POT_MATERIAL:
+                return activeAbilityInfoPanel.materialQualityIcon;
+            case AbilityMode.BAIT:
+                return activeAbilityInfoPanel.baitRegularQualityIcon;
+            case AbilityMode.BAIT_ABERRATED:
+                return activeAbilityInfoPanel.baitAberratedQualityIcon;
+            case AbilityMode.BAIT_EXOTIC:
+                return activeAbilityInfoPanel.baitExoticQualityIcon;
+            case AbilityMode.BAIT_CRAB:
+                return activeAbilityInfoPanel.baitCrabQualityIcon;
+            case AbilityMode.TRAWL:
+                return activeAbilityInfoPanel.trawlQualityIcon;
+            case AbilityMode.TRAWL_OOZE:
+                return activeAbilityInfoPanel.oozeQualityIcon;
+            case AbilityMode.TRAWL_MATERIAL:
+                return activeAbilityInfoPanel.materialQualityIcon;
+            default:
+                return TextureUtil.GetSprite(string.Join(string.Empty, mode.GetName().Split('_').Select(word => word.ToLowerInvariant().ToTitleCase())) + "QualityIcon");
+        }
     }
 
     public static bool TryGetParalinguisticsFromNameKey(this IDictionary<string, SpeakerData> lookupTable, ParalinguisticsNameKey nameKey, out Dictionary<ParalinguisticType, List<AssetReference>> paralinguistics)

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using Winch.Util;
+using static ActiveAbilityInfoPanel;
+using static TrawlNetAbility;
 
 namespace Winch.Serialization.Item;
 
@@ -11,6 +13,9 @@ public class TrawlNetItemDataConverter : DeployableItemDataConverter
         { "itemSubtype", new(ItemSubtype.NET, null) },
         { "gridKey", new( GridKey.TRAWL_NET, null ) },
         { "moveMode", new(MoveMode.INSTALL, null) },
+        { "abilityMode", new(AbilityMode.TRAWL, o => DredgeTypeHelpers.GetEnumValue<AbilityMode>(o)) },
+        { "trawlMode", new(TrawlMode.TRAWL, o => DredgeTypeHelpers.GetEnumValue<TrawlMode>(o)) },
+        { "qualityIcon", new(null, o => TextureUtil.GetSprite(o.ToString())) },
     };
 
     public TrawlNetItemDataConverter()
