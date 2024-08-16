@@ -47,7 +47,7 @@ public static class CharacterUtil
             {
                 speaker.paralinguistics = paralinguistics;
             }
-            var nameKey = speaker.id.ToUpper(); // must be uppercase because dredge looks for that
+            var nameKey = speaker.id.ToUpperInvariant(); // must be uppercase because dredge looks for that
             lookupTable.SafeAdd(nameKey, speaker);
         }
     }

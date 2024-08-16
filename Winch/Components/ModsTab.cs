@@ -202,7 +202,7 @@ namespace Winch.Components
         {
             foreach (var obj in WinchConfig.GetProperties())
             {
-                var localizedBase = "winch." + obj.Key.ToLower();
+                var localizedBase = "winch." + obj.Key.ToLowerInvariant();
                 var title = localizedBase + ".title";
                 var tooltip = localizedBase + ".tooltip";
                 switch (obj.Key)
