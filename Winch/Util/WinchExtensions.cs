@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using UnityAsyncAwaitUtil;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
@@ -260,6 +261,35 @@ public static class WinchExtensions
                 return TextureUtil.GetSprite(string.Join(string.Empty, mode.GetName().Split('_').Select(word => word.ToLowerInvariant().ToTitleCase())) + "QualityIcon");
         }
     }
+
+    public static void PlaceTrawlItemAtGridPos(this TrawlNetAbility trawlNetAbility, HarvestableItemData harvestableItemData, Vector3Int gridPos)
+    {
+        if (harvestableItemData is FishItemData fishItemData)
+        {
+            FishSizeGenerationMode sizeGenerationMode = FishSizeGenerationMode.NO_BIG_TROPHY;
+            float aberrationBonusMultiplier = 1f;
+            if (!fishItemData.canBeCaughtByPot && !fishItemData.canBeCaughtByRod)
+            {
+                sizeGenerationMode = FishSizeGenerationMode.ANY;
+                aberrationBonusMultiplier = 2f;
+            }
+            FishItemInstance fishItemInstance = GameManager.Instance.ItemManager.CreateFishItem(fishItemData.id, FishAberrationGenerationMode.RANDOM_CHANCE, false, sizeGenerationMode, aberrationBonusMultiplier);
+            GameManager.Instance.SaveData.TrawlNet.AddObjectToGridData(fishItemInstance, gridPos, true, null);
+            GameManager.Instance.ItemManager.SetItemSeen(fishItemInstance);
+            GameEvents.Instance.TriggerFishCaught();
+            GameManager.Instance.VibrationManager.Vibrate(trawlNetAbility.fishAddedVibrationData, VibrationRegion.WholeBody, true).Run();
+        }
+        else
+        {
+            SpatialItemInstance spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(harvestableItemData);
+            GameManager.Instance.SaveData.TrawlNet.AddObjectToGridData(spatialItemInstance, gridPos, true, null);
+            GameManager.Instance.ItemManager.SetItemSeen(spatialItemInstance);
+            GameManager.Instance.VibrationManager.Vibrate(trawlNetAbility.materialAddedVibrationData, VibrationRegion.WholeBody, true).Run();
+        }
+    }
+
+    public static int GetFilledCells(this SerializableGrid serializableGrid) => serializableGrid.GetFilledCells(ItemSubtype.ALL);
+    public static float GetFillProportional(this SerializableGrid serializableGrid) => (float)serializableGrid.GetFilledCells() / (float)serializableGrid.GetCountNonHiddenCells();
 
     public static bool TryGetParalinguisticsFromNameKey(this IDictionary<string, SpeakerData> lookupTable, ParalinguisticsNameKey nameKey, out Dictionary<ParalinguisticType, List<AssetReference>> paralinguistics)
     {
