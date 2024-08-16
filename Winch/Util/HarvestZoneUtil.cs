@@ -45,10 +45,20 @@ public static class HarvestZoneUtil
         harvestZoneObj.transform.SetParent(GameObject.Find("HarvestZones/FullZones").transform);
         harvestZoneObj.transform.position = customHarvestZone.location;
 
-        var sphereCollider = harvestZoneObj.AddComponent<SphereCollider>();
-        sphereCollider.radius = customHarvestZone.radius;
-        sphereCollider.enabled = true;
-        sphereCollider.contactOffset = 0.01f;
+        if (customHarvestZone.colliderType == CustomHarvestZone.ColliderType.SPHERE)
+        {
+            var sphereCollider = harvestZoneObj.AddComponent<SphereCollider>();
+            sphereCollider.radius = customHarvestZone.radius;
+            sphereCollider.enabled = true;
+            sphereCollider.contactOffset = 0.01f;
+        }
+        else if (customHarvestZone.colliderType == CustomHarvestZone.ColliderType.BOX)
+        {
+            var boxCollider = harvestZoneObj.AddComponent<BoxCollider>();
+            boxCollider.size = customHarvestZone.size;
+            boxCollider.enabled = true;
+            boxCollider.contactOffset = 0.01f;
+        }
 
         var harvestZone = harvestZoneObj.AddComponent<HarvestZone>();
         harvestZone.harvestableItems = customHarvestZone.HarvestableItems.ToArray();

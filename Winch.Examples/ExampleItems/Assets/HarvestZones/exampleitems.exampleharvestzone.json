@@ -4,6 +4,7 @@
         "y": 0.0,
         "z": -354.0
     },
+    "colliderType": "SPHERE",
     "radius": 50,
     "harvestableItems": [ "exampleitems.mccod" ],
     "day": true,
