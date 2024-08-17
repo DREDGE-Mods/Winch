@@ -286,6 +286,11 @@ public static class WinchExtensions
         return gameSceneInitializer.GetPlacedHarvestPOIPrefabFromPotType(data.GetPotTypeFromItemData());
     }
 
+    public static GameObject GetPlacedHarvestPOIPrefabFromPotItemData(this GameSceneInitializer gameSceneInitializer, string id)
+    {
+        return gameSceneInitializer.GetPlacedHarvestPOIPrefabFromPotItemData(GameManager.Instance.ItemManager.GetItemDataById<DeployableItemData>(id));
+    }
+
     public static Sprite GetSpriteForAbilityMode(this ActiveAbilityInfoPanel activeAbilityInfoPanel, AbilityMode mode)
     {
         switch (mode)
