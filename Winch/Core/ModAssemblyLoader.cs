@@ -67,16 +67,19 @@ namespace Winch.Core
                 ExecuteModAssembly(modName);
         }
 
-        internal static void ExecuteModAssembly(string modName, string? minVersion = null)
+        internal static bool ExecuteModAssembly(string modName, string? minVersion = null)
         {
-            if (LoadedMods.Contains(modName) || ErrorMods.Contains(modName))
-                return;
+            if (ErrorMods.Contains(modName))
+                return false;
+
+            if (LoadedMods.Contains(modName))
+                return true;
 
             if (!EnabledModAssemblies.ContainsKey(modName))
             {
                 ErrorMods.Add(modName);
                 WinchCore.Log.Error($"Mod not loaded: {modName}");
-                return;
+                return false;
             }
 
             if(minVersion != null)
@@ -89,15 +92,17 @@ namespace Winch.Core
             if (!EnabledMods[modGUID])
             {
                 WinchCore.Log.Info($"Mod '{modName}' disabled.");
-                return;
+                return false;
             }
 
             ModAssemblyLoader.ForceModContext(EnabledModAssemblies[modName]);
+            var worked = false;
             try
             {
                 EnabledModAssemblies[modName].ExecuteAssembly();
                 LoadedMods.Add(modName);
                 WinchCore.Log.Info($"Successfully initialized {modName}.");
+                worked = true;
             }
             catch(Exception ex)
             {
@@ -105,6 +110,7 @@ namespace Winch.Core
                 WinchCore.Log.Error($"Error initializing {modName}: {ex}");
             }
             ModAssemblyLoader.ClearModContext();
+            return worked;
         }
 
         internal static void GetEnabledMods()

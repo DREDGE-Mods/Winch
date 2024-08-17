@@ -27,6 +27,7 @@ namespace Winch.Core
         public string Version => Metadata.ContainsKey("Version") ? Metadata["Version"].ToString() : throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
         public string MinWinchVersion => Metadata.ContainsKey("MinWinchVersion") ? Metadata["MinWinchVersion"].ToString() : string.Empty;
         public string[] Dependencies => Metadata.ContainsKey("Dependencies") ? (((JArray)Metadata["Dependencies"]).ToObject<string[]>() ?? Array.Empty<string>()) : Array.Empty<string>();
+        public string[] Conflicts => Metadata.ContainsKey("Conflicts") ? (((JArray)Metadata["Conflicts"]).ToObject<string[]>() ?? Array.Empty<string>()) : Array.Empty<string>();
         public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
         public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
         public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
@@ -64,10 +65,10 @@ namespace Winch.Core
 
             WinchCore.Log.Debug($"Loaded Assembly '{LoadedAssembly.GetName().Name}'.");
 
-			if (Metadata.ContainsKey("Preload"))
-			{
-				ProcessPreload();
-			}
+            if (Metadata.ContainsKey("Preload"))
+            {
+                ProcessPreload();
+            }
         }
 
         internal void ExecuteAssembly()
@@ -79,6 +80,9 @@ namespace Winch.Core
 
             if (Metadata.ContainsKey("Dependencies"))
                 ProcessDependencies();
+
+            if (Metadata.ContainsKey("Conflicts"))
+                ProcessConflicts();
 
             if (Metadata.ContainsKey("Entrypoint"))
                 ProcessEntrypoint();
@@ -117,7 +121,22 @@ namespace Winch.Core
                 WinchCore.Log.Debug($"Processing dependency {dep}");
                 string depName = dep.Contains("@") ? dep.Split('@')[0] : dep;
                 string? depVersion = dep.Contains("@") ? dep.Split('@')[1] : null;
-                ModAssemblyLoader.ExecuteModAssembly(depName, depVersion);
+                if (!ModAssemblyLoader.ExecuteModAssembly(depName, depVersion))
+                    ModAssemblyLoader.ErrorMods.Add(GUID);
+            }
+        }
+
+        private void ProcessConflicts()
+        {
+            string[] conflicts = Conflicts;
+            foreach (string conflict in conflicts)
+            {
+                WinchCore.Log.Debug($"Processing conflict {conflict}");
+                if (ModAssemblyLoader.EnabledMods.TryGetValue(conflict, out bool enabled) && enabled)
+                {
+                    WinchCore.Log.Error($"Mod {GUID} conflicts with {conflict}");
+                    ModAssemblyLoader.ErrorMods.Add(GUID);
+                }
             }
         }
 
