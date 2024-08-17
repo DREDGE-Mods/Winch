@@ -15,6 +15,7 @@ public class TrawlNetItemDataConverter : DeployableItemDataConverter
         { "moveMode", new(MoveMode.INSTALL, null) },
         { "abilityMode", new(AbilityMode.TRAWL, o => DredgeTypeHelpers.GetEnumValue<AbilityMode>(o)) },
         { "trawlMode", new(TrawlMode.TRAWL, o => DredgeTypeHelpers.GetEnumValue<TrawlMode>(o)) },
+        { "netType", new(NetType.REGULAR, o => DredgeTypeHelpers.GetEnumValue<NetType>(o)) },
         { "qualityIcon", new(null, o => TextureUtil.GetSprite(o.ToString())) },
     };
 

@@ -35,6 +35,30 @@ namespace Winch.Patches.API
             return false;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(BoatSubModelToggler), nameof(BoatSubModelToggler.OnNetEquipChanged))]
+        public static bool BoatSubModelToggler_OnNetEquipChanged_Prefix(BoatSubModelToggler __instance)
+        {
+            SpatialItemInstance spatialItemInstance = GameManager.Instance.SaveData.EquippedTrawlNetInstance();
+            List<Net> nets = __instance.GetComponentsInChildren<Net>(includeInactive: true).ToList();
+            if (spatialItemInstance != null)
+            {
+                var netType = spatialItemInstance.GetItemData<DeployableItemData>().GetNetTypeFromItemData();
+                nets.ForEach(delegate (Net n)
+                {
+                    n.gameObject.SetActive(n.NetType == netType);
+                });
+            }
+            else
+            {
+                nets.ForEach(delegate (Net n)
+                {
+                    n.gameObject.SetActive(value: false);
+                });
+            }
+            return false;
+        }
+
         /// <summary>
         /// Fix net relying on trawl mode. lead to some weird image problems because it would make any net item with the <see cref="TrawlNetAbility.TrawlMode.TRAWL"/> into <see cref="FishItemInstance"/> even if they weren't fish.
         /// </summary>

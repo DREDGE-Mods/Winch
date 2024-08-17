@@ -247,11 +247,23 @@ public static class WinchExtensions
         mapWindow.MoveMapTo(mapPivotFromMapPosition.x, mapPivotFromMapPosition.y);
     }
 
+    public static NetType GetNetTypeFromItemData(this DeployableItemData data)
+    {
+        if (data is TrawlNetItemData netData)
+            return netData.netType;
+        else if(data.id == "tir-net1")
+            return NetType.SIPHON;
+        else if (data.id == "tir-net2")
+            return NetType.MATERIAL;
+        else
+            return NetType.REGULAR;
+    }
+
     public static PotType GetPotTypeFromItemData(this DeployableItemData data)
     {
         if (data is CrabPotItemData potData)
             return potData.potType;
-        else if (Resources.FindObjectsOfTypeAll<GameSceneInitializer>().FirstOrDefault().placedMaterialHHarvesterData.id == data.id)
+        else if (data.id == "tir-pot1")
             return PotType.MATERIAL;
         else
             return PotType.CRAB;
