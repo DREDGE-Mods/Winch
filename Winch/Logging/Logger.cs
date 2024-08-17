@@ -137,7 +137,7 @@ namespace Winch.Logging
                 callingMethod = frames[i].GetMethod().Name;
                 callingClass = frames[i].GetMethod().ReflectedType?.Name;
                 callingAssembly = frames[i].GetMethod().ReflectedType?.Assembly.GetName().Name;
-                if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)))
+                if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)) && callingMethod != "Log" && callingMethod != "LogInfo" && callingMethod != "LogWarning" && callingMethod != "LogError" && callingMethod != "LogDebug")
                     break;
             }
 
