@@ -1,4 +1,8 @@
 ﻿using HarmonyLib;
+using InControl.UnityDeviceProfiles;
+using System.Collections.Generic;
+using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Winch.Core;
 
@@ -7,27 +11,33 @@ namespace Winch.Patches.API
     [HarmonyPatch]
     internal static class CrabPotPatcher
     {
-        //[HarmonyPrefix]
-        //[HarmonyPatch(typeof(GameSceneInitializer), nameof(GameSceneInitializer.CreatePlacedHarvestPOI))]
-        public static bool GameSceneInitializer_CreatePlacedHarvestPOI_Prefix(this GameSceneInitializer __instance, SerializedCrabPotPOIData data)
+        [HarmonyTranspiler]
+        [HarmonyPatch(typeof(GameSceneInitializer), nameof(GameSceneInitializer.CreatePlacedHarvestPOI))]
+        public static IEnumerable<CodeInstruction> GameSceneInitializer_CreatePlacedHarvestPOI_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            WinchCore.Log.Debug($"[GameSceneInitializer] CreatePlacedHarvestPOI() instantiating from data {data}");
-            float yRotation = data.yRotation;
-            GameObject obj = Object.Instantiate(position: new Vector3(data.x, 0f, data.z), original: __instance.GetPlacedHarvestPOIPrefabFromPotItemData(data.deployableItemData), rotation: Quaternion.identity, parent: __instance.harvestPoiContainer.transform);
-            obj.transform.eulerAngles = new Vector3(0f, yRotation, 0f);
-            obj.name = "PlacedHarvestPOI";
-            HarvestPOI component = obj.GetComponent<HarvestPOI>();
-            if ((bool)component)
-            {
-                component.Harvestable = data;
-                Cullable component2 = component.GetComponent<Cullable>();
-                if ((bool)component2)
-                {
-                    GameManager.Instance.CullingBrain.AddCullable(component2);
-                }
-            }
-            data?.Init();
-            return false;
+            var matcher = new CodeMatcher(instructions, generator).MatchEndForward(new CodeMatch(OpCodes.Ldstr, "[GameSceneInitializer] CreatePlacedHarvestPOI() instantiating from data {0}"), new CodeMatch(OpCodes.Ldarg_1))
+                .Advance(1).Insert(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(SerializedCrabPotPOIData), nameof(SerializedCrabPotPOIData.deployableItemId))));
+            
+            matcher.Start().MatchStartForward(
+                new CodeMatch(OpCodes.Ldarg_0),
+                new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameSceneInitializer), nameof(GameSceneInitializer.placedMaterialHHarvesterData))),
+                new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(ItemData), nameof(ItemData.id)))
+            );
+            var start = matcher.Pos;
+            var label = matcher.Start().MatchStartForward(
+                new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(GameSceneInitializer), nameof(GameSceneInitializer.placedMaterialPOIPrefab))),
+                new CodeMatch(OpCodes.Ldloc_1),
+                new CodeMatch(OpCodes.Call, AccessTools.PropertyGetter(typeof(Quaternion), nameof(Quaternion.identity)))
+            );
+            var end = label.Pos;
+            matcher.Start().RemoveInstructionsWithOffsets(start, end);
+            matcher.Advance(start).Insert(
+                new CodeInstruction(OpCodes.Ldarg_0),
+                new CodeInstruction(OpCodes.Ldarg_1),
+                new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(SerializedCrabPotPOIData), nameof(SerializedCrabPotPOIData.deployableItemId))),
+                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WinchExtensions), nameof(WinchExtensions.GetPlacedHarvestPOIPrefabFromPotItemData), new System.Type[2] { typeof(GameSceneInitializer), typeof(string) }))
+            );
+            return matcher.LogInstructions("SerializedCrabPotPOIData").InstructionEnumeration();
         }
     }
 }

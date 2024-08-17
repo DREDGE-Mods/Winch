@@ -65,7 +65,7 @@ namespace Winch.Patches.API
         /// </summary>
         [HarmonyTranspiler]
         [HarmonyPatch(typeof(TrawlNetAbility), nameof(TrawlNetAbility.AddTrawlItem), new Type[0])]
-        public static IEnumerable<CodeInstruction> TrawlNetAbility_AddTrawlItem_Prefix(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+        public static IEnumerable<CodeInstruction> TrawlNetAbility_AddTrawlItem_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
             var matcher = new CodeMatcher(instructions, generator).MatchStartForward(
                 new CodeMatch(OpCodes.Ldarg_0),
