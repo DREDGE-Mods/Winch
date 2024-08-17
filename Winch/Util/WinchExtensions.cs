@@ -511,19 +511,20 @@ public static class WinchExtensions
     #endregion
 
     #region String
+    public static string SplitCamelCase(this string s) => Regex.Replace(s, @"(\P{Ll})(\P{Ll}\p{Ll})", "$1 $2").Spaced();
+
     /// <summary>
-    /// Puts spaces between capitalized words within a string
+    /// Puts spaces between capitalized words within a string. Accounts for acronyms like VR.
     /// </summary>
-    public static string Spaced(this string s) => Regex.Replace(s, "(\\B[A-Z])", " $1");
+    /// <param name="s">The string to search for a match.</param>
+    public static string Spaced(this string s) => Regex.Replace(s, @"(\p{Ll})(\P{Ll})", "$1 $2");
 
     /// <summary>
     /// Returns null if a string is empty / whitespace, otherwise just returns back the string
     /// </summary>
     public static string? NullIfEmpty(this string s) => string.IsNullOrWhiteSpace(s) ? null : s;
 
-    /// <summary>
     /// <inheritdoc cref="Regex.Replace(string,string,string)" />
-    /// </summary>
     public static string RegexReplace(this string input, string pattern, string replacement) =>
         Regex.Replace(input, pattern, replacement);
 

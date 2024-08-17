@@ -21,8 +21,8 @@ namespace Winch.Core
         public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
         public string GUID => Metadata.ContainsKey("ModGUID") ? Metadata["ModGUID"].ToString() : throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
         public string AssemblyRelativePath => Metadata.ContainsKey("ModAssembly") ? Metadata["ModAssembly"].ToString() : throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
-        public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().SplitPascalCase() : string.Empty;
-        public string CleanedUpName => Name.Replace("Dredge ", "").Replace("DREDGE ", "").Trim();
+        public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().Spaced() : string.Empty;
+        public string CleanedUpName => Name.Replace("Dredge ", "").Replace("DREDGE ", "").Replace("D R E D G E ", "").Trim();
         public string Author => Metadata.ContainsKey("Author") ? Metadata["Author"].ToString() : string.Empty;
         public string Version => Metadata.ContainsKey("Version") ? Metadata["Version"].ToString() : throw new MissingFieldException("No 'Version' field found in Mod Metadata.");
         public string MinWinchVersion => Metadata.ContainsKey("MinWinchVersion") ? Metadata["MinWinchVersion"].ToString() : string.Empty;
