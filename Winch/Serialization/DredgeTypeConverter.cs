@@ -57,8 +57,7 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
             catch(Exception ex)
             {
                 string configuredValue = data.TryGetValue(field.Name, out var value) ? value.ToString() : "UNDEFINED";
-                WinchCore.Log.Error($"Exception occurred while processing field '{field.Name}' (Configured: '{configuredValue}'): {ex}");
-                throw;
+                throw new Exception($"Couldn't process field '{field.Name}' (Configured: '{configuredValue}')", ex);
             }
         }
     }
