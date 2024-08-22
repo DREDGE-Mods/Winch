@@ -9,13 +9,13 @@ using Winch.Util;
 
 namespace Winch.Core
 {
-    class ModAssemblyLoader
+    public static class ModAssemblyLoader
     {
-        public static Dictionary<string, ModAssembly> EnabledModAssemblies = new();
+        internal static Dictionary<string, ModAssembly> EnabledModAssemblies = new();
         private static Dictionary<string, ModAssembly> _installedAssemblies = new();
-        public static Dictionary<string, bool> EnabledMods = new();
-        public static List<string> LoadedMods = new();
-        public static List<string> ErrorMods = new();
+        internal static Dictionary<string, bool> EnabledMods = new();
+        internal static List<string> LoadedMods = new();
+        internal static List<string> ErrorMods = new();
         private static ModAssembly? forcedContext;
 
         static ModAssemblyLoader()
@@ -37,7 +37,7 @@ namespace Winch.Core
                 RegisterModAssembly(modDir);
             }
 
-            GetEnabledMods();
+            PopulateEnabledMods();
 
             EnabledModAssemblies = EnabledMods == null ? _installedAssemblies
                 : _installedAssemblies.Where(x => EnabledMods[x.Value.GUID])
@@ -113,7 +113,7 @@ namespace Winch.Core
             return worked;
         }
 
-        internal static void GetEnabledMods()
+        internal static void PopulateEnabledMods()
         {
             try
             {
@@ -163,6 +163,16 @@ namespace Winch.Core
         internal static ModAssembly GetModForAssembly(Assembly a)
         {
             return _installedAssemblies.Values.FirstOrDefault((x) => x.LoadedAssembly != null && x.LoadedAssembly == a);
+        }
+
+        /// <summary>
+        /// Check if a mod is enabled.
+        /// </summary>
+        /// <param name="modGUID">The GUID of the mod you are checking for.</param>
+        /// <returns>Whether any enabled mod matches the given <paramref name="modGUID"/></returns>
+        public static bool IsModEnabled(string modGUID)
+        {
+            return EnabledModAssemblies.ContainsKey(modGUID);
         }
 
         /// <summary>

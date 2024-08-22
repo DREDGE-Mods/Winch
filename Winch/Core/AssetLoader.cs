@@ -26,7 +26,7 @@ namespace Winch.Core
                 ModAssemblyLoader.ForceModContext(modAssembly);
                 try
                 {
-                    string assetFolderPath = Path.Combine(modAssembly.BasePath, "Assets");
+                    string assetFolderPath = modAssembly.AssetsPath;
                     if (Directory.Exists(assetFolderPath))
                         LoadAssetFolder(assetFolderPath);
                 }

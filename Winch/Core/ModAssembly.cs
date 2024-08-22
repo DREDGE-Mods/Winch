@@ -10,12 +10,13 @@ using Winch.Util;
 
 namespace Winch.Core
 {
-    class ModAssembly
+    public class ModAssembly
     {
         public readonly string BasePath;
-        public Dictionary<string, object> Metadata;
-        public Assembly? LoadedAssembly;
+        public Dictionary<string, object> Metadata { get; private set; }
+        public Assembly? LoadedAssembly { get; private set; }
 
+        public string AssetsPath => Path.Combine(BasePath, "Assets");
         public string AssemblyLocation => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryPath(LoadedAssembly) : string.Empty;
         public string AssemblyFolderName => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryName(LoadedAssembly) : string.Empty;
         public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
