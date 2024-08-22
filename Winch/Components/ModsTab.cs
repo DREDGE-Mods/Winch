@@ -330,7 +330,7 @@ namespace Winch.Components
                         return AddDecimalInput(modName, key, obj);
                     }
 
-                    throw new InvalidOperationException("Unrecognized setting type: " + value.GetType());
+                    throw new InvalidOperationException("Unrecognized obj setting type: " + value.GetType());
                 }
             }
 
@@ -352,6 +352,11 @@ namespace Winch.Components
             if (new[] { typeof(decimal), typeof(float), typeof(double) }.Contains(value.GetType()))
             {
                 return AddDecimalInput(modName, key, value);
+            }
+
+            if (value is JValue jvalue)
+            {
+                return AddConfigInput(modName, key, jvalue.ToObject<object?>());
             }
 
             throw new InvalidOperationException("Unrecognized setting type: " + value.GetType());
