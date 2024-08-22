@@ -33,5 +33,6 @@ namespace Winch.Util
         public static int InteractPointUI = LayerMask.NameToLayer(nameof(InteractPointUI));
         public static int Ice = LayerMask.NameToLayer(nameof(Ice));
         public static int Icebreaker = LayerMask.NameToLayer(nameof(Icebreaker));
+        public static int Ooze = LayerMask.NameToLayer(nameof(Ooze));
     }
 }
