@@ -1,4 +1,5 @@
 ﻿using Coffee.UIExtensions;
+using CommandTerminal;
 using HarmonyLib;
 using Sirenix.Utilities;
 using System;
@@ -385,6 +386,53 @@ public static class WinchExtensions
         buttonWrapper.DoTransitionIn();
         buttonWrapper.GetComponent<UITransitionEffect>().enabled = false;
         buttonWrapper.GetComponent<Mask>().enabled = false;
+    }
+
+    private static readonly BindingFlags bindingAttr = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+    public static void RegisterCommands(this CommandShell shell, Assembly assembly)
+    {
+        Dictionary<string, CommandInfo> rejectedCommands = new Dictionary<string, CommandInfo>();
+        Type[] types = assembly.GetTypes();
+        foreach (var type in types)
+        {
+            MethodInfo[] methods = type.GetMethods(bindingAttr);
+            foreach (var method in methods)
+            {
+                RegisterCommandAttribute registerCommandAttribute = method.GetCustomAttribute<RegisterCommandAttribute>();
+                if (registerCommandAttribute != null)
+                {
+                    goto add;
+                }
+                if (method.Name.StartsWith("FRONTCOMMAND", StringComparison.CurrentCultureIgnoreCase))
+                {
+                    registerCommandAttribute = new RegisterCommandAttribute(null);
+                    goto add;
+                }
+            increment:
+                continue;
+            add:
+                ParameterInfo[] parameters = method.GetParameters();
+                string text = shell.InferFrontCommandName(method.Name);
+                if (registerCommandAttribute.Name == null)
+                {
+                    text = shell.InferCommandName((text == null) ? method.Name : text);
+                }
+                else
+                {
+                    text = registerCommandAttribute.Name;
+                }
+                if (parameters.Length != 1 || parameters[0].ParameterType != typeof(CommandArg[]))
+                {
+                    rejectedCommands.Add(text.ToUpper(), shell.CommandFromParamInfo(parameters, registerCommandAttribute.Help));
+                    goto increment;
+                }
+                Action<CommandArg[]> proc = (Action<CommandArg[]>)Delegate.CreateDelegate(typeof(Action<CommandArg[]>), method);
+                shell.AddCommand(text, proc, registerCommandAttribute.MinArgCount, registerCommandAttribute.MaxArgCount, registerCommandAttribute.Help);
+                goto increment;
+            }
+        }
+        shell.HandleRejectedCommands(rejectedCommands);
     }
     #endregion
 

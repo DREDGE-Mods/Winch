@@ -151,9 +151,13 @@ namespace Winch.Logging
 
 
         internal void Unity(object message, string source) { Log(LogLevel.UNITY, message.ToString(), source); }
+        internal void Debug(object message, string source) { Log(LogLevel.DEBUG, message.ToString(), source); }
         public void Debug(object message) { Log(LogLevel.DEBUG, message.ToString()); }
+        internal void Info(object message, string source) { Log(LogLevel.INFO, message.ToString(), source); }
         public void Info(object message) { Log(LogLevel.INFO, message.ToString()); }
+        internal void Warn(object message, string source) { Log(LogLevel.WARN, message.ToString(), source); }
         public void Warn(object message) { Log(LogLevel.WARN, message.ToString()); }
+        internal void Error(object message, string source) { Log(LogLevel.ERROR, message.ToString(), source); }
         public void Error(object message) { Log(LogLevel.ERROR, message.ToString()); }
     }
 }
