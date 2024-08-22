@@ -13,6 +13,7 @@ namespace Winch.Components
 {
     public class LocalizedLabel : MonoBehaviour
     {
+        [SerializeField]
         private LocalizedString labelString = LocalizationUtil.Unknown;
         public LocalizedString LabelString
         {

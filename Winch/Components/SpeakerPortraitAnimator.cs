@@ -6,10 +6,14 @@ namespace Winch.Components
     public class SpeakerPortraitAnimator : MonoBehaviour
     {
         private static readonly float oneThird = 0.33333334f;
-        private static readonly int animationTime = 60;
-        private static readonly AnimationCurve xAnchorCurve = new AnimationCurve(new Keyframe(0, -75, 0, 0, oneThird, oneThird), new Keyframe(oneThird, 0, 0, 0, oneThird, oneThird), new Keyframe(0.75f, 0, 0, 0, oneThird, oneThird));
-        private static readonly AnimationCurve colorRGBCurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.5f, 1, 0, 0, oneThird, oneThird));
-        private static readonly AnimationCurve colorACurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.25f, 1, 0, 0, oneThird, oneThird));
+        [SerializeField]
+        private int animationTime = 60;
+        [SerializeField]
+        private AnimationCurve xAnchorCurve = new AnimationCurve(new Keyframe(0, -75, 0, 0, oneThird, oneThird), new Keyframe(oneThird, 0, 0, 0, oneThird, oneThird), new Keyframe(0.75f, 0, 0, 0, oneThird, oneThird));
+        [SerializeField]
+        private AnimationCurve colorRGBCurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.5f, 1, 0, 0, oneThird, oneThird));
+        [SerializeField]
+        private AnimationCurve colorACurve = new AnimationCurve(new Keyframe(0, 0, 0, 0, oneThird, oneThird), new Keyframe(0.25f, 1, 0, 0, oneThird, oneThird));
 
         private RectTransform _rectTransform;
         private Image _image;
