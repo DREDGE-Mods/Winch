@@ -149,6 +149,18 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
+    public static List<Vector2Int> ParseItemDimensions(JArray dimensions)
+    {
+        var parsed = ParseDimensions(dimensions);
+
+        if (!parsed.Contains(new Vector2Int(0, 0)))
+        {
+            throw new InvalidOperationException("Failed to create item. Dimensions require the upper-left cell to be filled.");
+        }
+        
+        return parsed;
+    }
+
     public static HarvestableType[] ParseHarvestableTypes(JArray values)
     {
         List<HarvestableType> types = new();
