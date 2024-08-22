@@ -40,6 +40,7 @@ namespace Winch.Core
 
         private static void LoadAssetFolder(string path)
         {
+            string bundlesFolderpath = Path.Combine(path, "Bundles");
             string localizationFolderPath = Path.Combine(path, "Localization");
             string textureFolderPath = Path.Combine(path, "Textures");
             string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
@@ -51,6 +52,7 @@ namespace Winch.Core
             string dialogueFolderpath = Path.Combine(path, "Dialogues");
             string characterFolderpath = Path.Combine(path, "Characters");
 
+            if(Directory.Exists(bundlesFolderpath)) LoadAssetBundleFiles(bundlesFolderpath);
             if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
             if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
@@ -61,6 +63,23 @@ namespace Winch.Core
             if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
             if(Directory.Exists(dialogueFolderpath)) LoadDialogueFiles(dialogueFolderpath);
             if(Directory.Exists(characterFolderpath)) LoadCharacterFiles(characterFolderpath);
+        }
+
+        private static void LoadAssetBundleFiles(string bundlesFolderpath)
+        {
+            string[] bundleFiles = Directory.GetFiles(bundlesFolderpath);
+            foreach (string file in bundleFiles)
+            {
+                try
+                {
+                    if (file.EndsWith("manifest")) continue;
+                    AssetBundleUtil.LoadBundle(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load asset bundle from {file}: {ex}");
+                }
+            }
         }
 
         private static Dictionary<Type, string> _poiPathData = new Dictionary<Type, string>()
