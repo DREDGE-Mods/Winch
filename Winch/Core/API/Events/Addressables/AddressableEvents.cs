@@ -4,6 +4,8 @@ namespace Winch.Core.API.Events.Addressables
 {
     public class AddressableEvents
     {
+        public LookupTableLoadedHook<AbilityData> AbilitiesLoaded = new LookupTableLoadedHook<AbilityData>();
+
         public AddressablesLoadedHook<AchievementData> AchievementsLoaded = new AddressablesLoadedHook<AchievementData>();
 
         public AddressablesLoadedHook<GridConfiguration> GridConfigsLoaded = new AddressablesLoadedHook<GridConfiguration>();

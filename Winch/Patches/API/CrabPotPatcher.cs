@@ -37,7 +37,7 @@ namespace Winch.Patches.API
                 new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(SerializedCrabPotPOIData), nameof(SerializedCrabPotPOIData.deployableItemId))),
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WinchExtensions), nameof(WinchExtensions.GetPlacedHarvestPOIPrefabFromPotItemData), new System.Type[2] { typeof(GameSceneInitializer), typeof(string) }))
             );
-            return matcher.LogInstructions("SerializedCrabPotPOIData").InstructionEnumeration();
+            return matcher.InstructionEnumeration();
         }
     }
 }

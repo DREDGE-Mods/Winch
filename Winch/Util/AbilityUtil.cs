@@ -114,13 +114,22 @@ public static class AbilityUtil
         return existing + ModdedAbilityDataDict.Count;
     }
 
+    internal static void AddModdedAbilitiesToManager(IDictionary<string, AbilityData> abilityDatas)
+    {
+        foreach (var modAbilityData in ModdedAbilityDataDict.Values)
+        {
+            WinchCore.Log.Debug($"Adding ability {modAbilityData.id} to manager");
+            modAbilityData.Populate();
+            abilityDatas.Add(modAbilityData.id, modAbilityData);
+        }
+    }
+
     internal static void AddModdedAbilitiesToRadial(GameObject buttonCenter, Transform abiltiesParent, List<AbilityRadialWedge> wedges, Sprite lockedSprite)
     {
         var attentionCalloutPrefab = wedges.FirstOrDefault().attentionCallout;
         foreach (var modAbilityData in ModdedAbilityDataDict.Values)
         {
             WinchCore.Log.Debug($"Adding ability {modAbilityData.id} to radial");
-            modAbilityData.Populate();
             var abilityRadialWedgeObj = new GameObject(modAbilityData.id, typeof(RectTransform), typeof(Image));
             abilityRadialWedgeObj.transform.SetParent(abiltiesParent, false);
             var abilityRadialWedge = abilityRadialWedgeObj.AddComponent<AbilityRadialWedge>();
