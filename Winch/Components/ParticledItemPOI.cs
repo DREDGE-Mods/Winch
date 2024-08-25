@@ -13,6 +13,7 @@ public class ParticledItemPOI : ItemPOI
         if (particlePrefab == null)
         {
             particlePrefab = Harvestable.GetParticlePrefab();
+            harvestParticlePrefab = particlePrefab;
         }
         if (particlePrefab != null)
         {
