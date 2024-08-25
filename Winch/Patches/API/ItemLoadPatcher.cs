@@ -22,6 +22,15 @@ namespace Winch.Patches.API
             }
         }
 
+        public static void ChangeBaits(IList<ItemData> items)
+        {
+            var baits = items.WhereType<ItemData, SpatialItemData>().Where(item => item.id.StartsWith("bait"));
+            foreach (var bait in baits)
+            {
+                bait.itemTypeIcon = TextureUtil.GetSprite("BaitIcon");
+            }
+        }
+
         public static void ChangeHarvestables(IList<ItemData> items)
         {
             var harvestables = items.WhereType<ItemData, HarvestableItemData>();
@@ -116,6 +125,7 @@ namespace Winch.Patches.API
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
             ChangeDredgeCrane(handle.Result);
+            ChangeBaits(handle.Result);
             ChangeHarvestables(handle.Result);
             ItemUtil.AddModdedItemData(handle.Result);
             DredgeEvent.AddressableEvents.ItemsLoaded.Trigger(__instance, handle, true);
