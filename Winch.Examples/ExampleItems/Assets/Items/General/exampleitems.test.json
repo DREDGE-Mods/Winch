@@ -1,9 +1,0 @@
-﻿{
-	"itemNameKey": "exampleitems.test.name",
-	"itemDescriptionKey": "exampleitems.test.desc",
-	"dimensions": [
-		"X"
-	],
-	"damageMode": "DESTROY"
-}
-
