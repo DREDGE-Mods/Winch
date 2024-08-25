@@ -1,0 +1,58 @@
+ManifestFileVersion: 0
+CRC: 3610426480
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 828ab1f57d39aefa5065a2ec434b006a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3c05c613dfdb2de30a164b7230ae92a4
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 97253d23e24c6bd832deaea3e911d90a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1ba89d84c864fa8745bd682cfc321cbb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 77abd2422559db535631f032f97865ad, type: 3}
+- Class: 114
+  Script: {fileID: -1866638701, guid: f270df68dea28cc47a43caf5b7b11785, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f99ee83b9582a9c923eccce9b0359d8f, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 136
+  Script: {instanceID: 0}
+- Class: 198
+  Script: {instanceID: 0}
+- Class: 199
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Sirenix.Serialization
+  ClassName: Sirenix.Serialization.SerializationData
+Assets:
+- Assets/DREDGE/Mods/MaterialBaitPOI.prefab
+- Assets/DREDGE/Mods/MaterialBaitParticles.prefab
+Dependencies: []

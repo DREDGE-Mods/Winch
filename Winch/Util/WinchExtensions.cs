@@ -28,6 +28,7 @@ using Winch.Data.Abilities;
 using Winch.Data.Character;
 using Winch.Data.Item;
 using Winch.Data.WorldEvent;
+using Winch.Patches.API;
 using Winch.Util;
 using static ActiveAbilityInfoPanel;
 using static TrawlNetAbility;
@@ -314,6 +315,35 @@ public static class WinchExtensions
             return PotType.CRAB;
     }
 
+    public static BaitType GetBaitTypeFromItemData(this SpatialItemData data)
+    {
+        if (data is BaitItemData baitData)
+            return baitData.baitType;
+        else if (data.id == "bait-crab")
+            return BaitType.CRAB;
+        else if (data.id == "bait-exotic")
+            return BaitType.EXOTIC;
+        else if (data.id == "bait-ab")
+            return BaitType.ABERRATED;
+        else
+            return BaitType.FISH;
+    }
+
+    public static bool IsFish(this BaitType baitType)
+    {
+        switch (baitType)
+        {
+            case BaitType.FISH:
+            case BaitType.ABERRATED:
+            case BaitType.EXOTIC:
+            case BaitType.CRAB:
+            default:
+                return true;
+            case BaitType.MATERIAL:
+                return false;
+        }
+    }
+
     public static bool IsFishInCurrentWorldPhases(this SaveData saveData, FishItemData fish)
     {
         return saveData.WorldPhase >= fish.MinWorldPhaseRequired && saveData.TIRWorldPhase >= fish.TIRPhase;
@@ -348,6 +378,129 @@ public static class WinchExtensions
     public static List<DredgeItemData> GetDredgeItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.DREDGE).OfType<DredgeItemData>().FilterWithEntitlements().ToList();
     public static List<GadgetItemData> GetGadgetItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.GADGET).OfType<GadgetItemData>().FilterWithEntitlements().ToList();
 
+    public static List<FishItemData> GetBaitRegularFish(this ItemManager itemManager)
+    {
+        return itemManager.GetFishItems().Where(fish => !fish.IsAberration && !fish.LocationHiddenUntilCaught && fish.CanAppearInBaitBalls && fish.canBeCaughtByRod && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish)).Shuffle().ToList();
+    }
+
+    public static List<FishItemData> GetBaitExoticFish(this ItemManager itemManager)
+    {
+        return itemManager.GetFishItems().Where(fish => fish.LocationHiddenUntilCaught && fish.CanAppearInBaitBalls && fish.canBeCaughtByRod && !fish.IsAberration && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish)).Shuffle().ToList();
+    }
+
+    public static List<FishItemData> GetBaitAberratedFish(this ItemManager itemManager)
+    {
+        if (!GameManager.Instance.SaveData.CanCatchAberrations) return new List<FishItemData>();
+
+        return itemManager.GetFishItems().Where(fish => fish.IsAberration && !fish.LocationHiddenUntilCaught && fish.NonAberrationParent != null && fish.NonAberrationParent.CanAppearInBaitBalls && fish.canBeCaughtByRod && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish) && GameManager.Instance.SaveData.HasCaughtNonAberrationParent(fish)).Shuffle().ToList();
+    }
+
+    public static List<FishItemData> GetBaitCrabs(this ItemManager itemManager)
+    {
+        return itemManager.GetFishItems().Where(fish => fish.canBeCaughtByPot && !fish.IsAberration && fish.CanAppearInBaitBalls && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish)).Shuffle().ToList();
+    }
+
+    public static List<HarvestableItemData> GetBaitMaterials(this ItemManager itemManager)
+    {
+        return itemManager.GetMaterialItems().Concat(itemManager.GetTrinketItems()).Where(harvestable => (harvestable.canBeCaughtByNet || harvestable.canBeCaughtByPot) && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(harvestable) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(harvestable)).Shuffle().ToList();
+    }
+
+    public static List<HarvestableItemData> GetBaitRange<T>(this List<T> items) where T : HarvestableItemData => items.GetRange(0, Mathf.Min(items.Count, GameManager.Instance.GameConfigData.NumFishSpeciesInBaitBall)).CastToList<HarvestableItemData>();
+
+    public static List<HarvestableItemData> GetRangedBaitRegularFish(this ItemManager itemManager)
+    {
+        return itemManager.GetBaitRegularFish().GetBaitRange();
+    }
+
+    public static List<HarvestableItemData> GetRangedBaitExoticFish(this ItemManager itemManager)
+    {
+        return itemManager.GetBaitExoticFish().GetBaitRange();
+    }
+
+    public static List<HarvestableItemData> GetRangedBaitAberratedFish(this ItemManager itemManager)
+    {
+        return itemManager.GetBaitAberratedFish().GetBaitRange();
+    }
+
+    public static List<HarvestableItemData> GetRangedBaitCrabs(this ItemManager itemManager)
+    {
+        return itemManager.GetBaitCrabs().GetBaitRange();
+    }
+
+    public static List<HarvestableItemData> GetRangedBaitMaterials(this ItemManager itemManager)
+    {
+        return itemManager.GetBaitMaterials().GetBaitRange();
+    }
+
+    public static bool DeployBaitModified(this BaitAbility baitAbility, SpatialItemInstance baitInstance)
+    {
+        BaitPOIDataModel baitPOIDataModel = new BaitPOIDataModel();
+        SpatialItemData spatialItemData = baitInstance.GetItemData<SpatialItemData>();
+        BaitType baitType = spatialItemData.GetBaitTypeFromItemData();
+        baitPOIDataModel.doesRestock = false;
+        bool deepForm = baitType == BaitType.ABERRATED && GameManager.Instance.QuestManager.IsQuestCompleted(baitAbility.deepFormItemData.QuestCompleteRequired.name) && baitAbility.deepFormItemData.zonesFoundIn.HasFlag(GameManager.Instance.Player.PlayerZoneDetector.GetCurrentZone()) && UnityEngine.Random.value <= baitAbility.deepFormItemData.BaitChanceOverride;
+        List<HarvestableItemData> items = deepForm ? new List<HarvestableItemData> { baitAbility.deepFormItemData } : spatialItemData.GetBaitItemsFromItemData();
+        if (items.Count == 0)
+        {
+            GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.bait-failed");
+            return false;
+        }
+        int num = (baitType == BaitType.EXOTIC || deepForm) ? 1 : UnityEngine.Random.Range(GameManager.Instance.GameConfigData.NumFishInBaitBallMin, GameManager.Instance.GameConfigData.NumFishInBaitBallMax);
+        if (deepForm) items = new List<HarvestableItemData> { baitAbility.deepFormItemData };
+        Stack<HarvestableItemData> stack = new Stack<HarvestableItemData>();
+        for (int i = 0; i < num; i++)
+        {
+            stack.Push(items[i % items.Count]);
+        }
+        baitPOIDataModel.itemStock = stack;
+        baitPOIDataModel.startStock = stack.Count;
+        baitPOIDataModel.maxStock = baitPOIDataModel.startStock;
+        baitPOIDataModel.usesTimeSpecificStock = false;
+        GameObject obj = GameObject.Instantiate(position: new Vector3(GameManager.Instance.Player.BoatModelProxy.DeployPosition.position.x, 0f, GameManager.Instance.Player.BoatModelProxy.DeployPosition.position.z), original: baitAbility.GetPlacedHarvestPOIPrefabFromBaitType(baitType), rotation: Quaternion.identity, parent: GameSceneInitializer.Instance.HarvestPoiContainer.transform);
+        obj.transform.eulerAngles = new Vector3(0f, GameManager.Instance.Player.BoatModelProxy.DeployPosition.eulerAngles.y, 0f);
+        if (obj.TryGetComponent<HarvestPOI>(out HarvestPOI harvestPOI))
+        {
+            harvestPOI.Harvestable = baitPOIDataModel;
+            harvestPOI.HarvestPOIData = baitPOIDataModel;
+            if (harvestPOI.TryGetComponent<Cullable>(out Cullable cullable))
+            {
+                GameManager.Instance.CullingBrain.AddCullable(cullable);
+            }
+        }
+        if (items.Count >= 3 && stack.Count >= 3)
+        {
+            GameManager.Instance.AchievementManager.SetAchievementState(DredgeAchievementId.ABILITY_BAIT, newState: true);
+        }
+        if (baitType == BaitType.CRAB)
+        {
+            GameManager.Instance.Player.Harvester.CurrentHarvestPOI = harvestPOI;
+            GameManager.Instance.Player.Harvester.IsCrabBaitMode = true;
+            GameManager.Instance.Player.Harvester.enabled = true;
+            GameEvents.Instance.OnHarvestModeToggled += baitAbility.OnHarvestModeToggled;
+        }
+        GameManager.Instance.SaveData.Inventory.RemoveObjectFromGridData(baitInstance, notify: true);
+        GameEvents.Instance.TriggerItemInventoryChanged(baitAbility.currentlySelectedItem);
+        return true;
+    }
+
+    public static List<HarvestableItemData> GetBaitItemsFromItemData(this SpatialItemData baitData)
+    {
+        if (baitData == null) return new List<HarvestableItemData>();
+        var baitType = baitData.GetBaitTypeFromItemData();
+        if (baitType == BaitType.FISH)
+            return GameManager.Instance.ItemManager.GetRangedBaitRegularFish();
+        else if (baitType == BaitType.EXOTIC)
+            return GameManager.Instance.ItemManager.GetRangedBaitExoticFish();
+        else if (baitType == BaitType.ABERRATED && GameManager.Instance.SaveData.CanCatchAberrations)
+            return GameManager.Instance.ItemManager.GetRangedBaitAberratedFish();
+        else if (baitType == BaitType.CRAB)
+            return GameManager.Instance.ItemManager.GetRangedBaitCrabs();
+        else if (baitType == BaitType.MATERIAL)
+            return GameManager.Instance.ItemManager.GetRangedBaitMaterials();
+        else
+            return new List<HarvestableItemData>();
+    }
+
     public static AbilityMode GetAbilityModeFromItemData(this SpatialItemData data)
     {
         if (data is IAbilityItemData abilityItemData)
@@ -374,6 +527,104 @@ public static class WinchExtensions
             return AbilityMode.NONE;
     }
 
+    public static void UpdateCatchableSpecies(this ActiveAbilityInfoPanel activeAbilityInfoPanel, AbilityMode abilityMode)
+    {
+        if (abilityMode == AbilityMode.TRAWL_OOZE)
+        {
+            activeAbilityInfoPanel.oozeCanisterAnimator.SetBool("IsActive", GameManager.Instance.OozePatchManager.GetIsCurrentlyGatheringOoze());
+            if (GameManager.Instance.OozePatchManager.isOozeNearToPlayer)
+            {
+                activeAbilityInfoPanel.localizedQualityString.StringReference = activeAbilityInfoPanel.oozeQualityStringKey;
+                activeAbilityInfoPanel.qualityTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.CRITICAL);
+            }
+            else
+            {
+                activeAbilityInfoPanel.localizedQualityString.StringReference = activeAbilityInfoPanel.poorQualityStringKey;
+                activeAbilityInfoPanel.qualityTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEUTRAL);
+            }
+            return;
+        }
+        List<string> itemIds = new List<string>();
+        int possibleItems = 0;
+        if (activeAbilityInfoPanel.enableLogs)
+        {
+            activeAbilityInfoPanel.debugStr = "Depth: " + activeAbilityInfoPanel.depthTextField.text + " | ";
+        }
+        if (abilityMode == AbilityMode.POT_MATERIAL || abilityMode == AbilityMode.TRAWL_MATERIAL || abilityMode == AbilityModeExtra.BAIT_MATERIAL)
+        {
+            possibleItems = 2;
+        }
+        else if (abilityMode == AbilityMode.POT)
+        {
+            itemIds = GameManager.Instance.Player.HarvestZoneDetector.GetHarvestableItemIds(activeAbilityInfoPanel.CheckCanBeCaughtByThisPot, GameManager.Instance.Player.PlayerDepthMonitor.CurrentDepth, isDay: true);
+            possibleItems = itemIds.Count;
+            if (activeAbilityInfoPanel.enableLogs)
+            {
+                if (activeAbilityInfoPanel.currentlySelectedItemData != null)
+                {
+                    activeAbilityInfoPanel.debugStr += "pot: " + activeAbilityInfoPanel.currentlySelectedItemData.id + " | ";
+                }
+                else
+                {
+                    activeAbilityInfoPanel.debugStr += "pot: NONE | ";
+                }
+            }
+        }
+        else if (abilityMode == AbilityMode.TRAWL)
+        {
+            itemIds = GameManager.Instance.Player.HarvestZoneDetector.GetHarvestableItemIds(activeAbilityInfoPanel.CheckCanBeCaughtByThisNet, GameManager.Instance.Player.PlayerDepthMonitor.CurrentDepth, GameManager.Instance.Time.IsDaytime);
+            possibleItems = itemIds.Count;
+            if (activeAbilityInfoPanel.enableLogs)
+            {
+                if (activeAbilityInfoPanel.currentlySelectedItemData != null)
+                {
+                    activeAbilityInfoPanel.debugStr += "net: " + activeAbilityInfoPanel.currentlySelectedItemData.id + " | ";
+                }
+                else
+                {
+                    activeAbilityInfoPanel.debugStr += "net: NONE | ";
+                }
+            }
+        }
+        else if (abilityMode == AbilityMode.BAIT || abilityMode == AbilityMode.BAIT_ABERRATED || abilityMode == AbilityMode.BAIT_EXOTIC || abilityMode == AbilityMode.BAIT_CRAB)
+        {
+            itemIds = (from s in activeAbilityInfoPanel.currentlySelectedItemData.GetBaitItemsFromItemData()
+                    select s.id).ToList();
+            possibleItems = itemIds.Count;
+            if (activeAbilityInfoPanel.enableLogs)
+            {
+                if (activeAbilityInfoPanel.currentlySelectedItemData != null)
+                {
+                    activeAbilityInfoPanel.debugStr += "bait: " + activeAbilityInfoPanel.currentlySelectedItemData.id + " | ";
+                }
+                else
+                {
+                    activeAbilityInfoPanel.debugStr += "bait: NONE | ";
+                }
+            }
+        }
+        if (activeAbilityInfoPanel.enableLogs)
+        {
+            activeAbilityInfoPanel.debugStr += string.Join(", ", itemIds);
+            Debug.Log(activeAbilityInfoPanel.debugStr);
+        }
+        if (possibleItems > 1)
+        {
+            activeAbilityInfoPanel.localizedQualityString.StringReference = activeAbilityInfoPanel.goodQualityStringKey;
+            activeAbilityInfoPanel.qualityTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.POSITIVE);
+        }
+        else if (possibleItems == 1)
+        {
+            activeAbilityInfoPanel.localizedQualityString.StringReference = activeAbilityInfoPanel.okQualityStringKey;
+            activeAbilityInfoPanel.qualityTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEUTRAL);
+        }
+        else
+        {
+            activeAbilityInfoPanel.localizedQualityString.StringReference = activeAbilityInfoPanel.poorQualityStringKey;
+            activeAbilityInfoPanel.qualityTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEGATIVE);
+        }
+    }
+
     public static GameObject GetPlacedHarvestPOIPrefabFromPotType(this GameSceneInitializer gameSceneInitializer, PotType type)
     {
         switch (type)
@@ -396,6 +647,31 @@ public static class WinchExtensions
         return gameSceneInitializer.GetPlacedHarvestPOIPrefabFromPotItemData(GameManager.Instance.ItemManager.GetItemDataById<DeployableItemData>(id));
     }
 
+    public static GameObject GetPlacedHarvestPOIPrefabFromBaitType(this BaitAbility baitAbility, BaitType type)
+    {
+        switch (type)
+        {
+            case BaitType.FISH:
+            case BaitType.ABERRATED:
+            case BaitType.EXOTIC:
+            case BaitType.CRAB:
+            default:
+                return baitAbility.baitPOIPrefab;
+            case BaitType.MATERIAL:
+                return BaitPatcher.MaterialHarvestPOI;
+        }
+    }
+
+    public static GameObject GetPlacedHarvestPOIPrefabFromBaitItemData(this BaitAbility baitAbility, SpatialItemData data)
+    {
+        return baitAbility.GetPlacedHarvestPOIPrefabFromBaitType(data.GetBaitTypeFromItemData());
+    }
+
+    public static GameObject GetPlacedHarvestPOIPrefabFromBaitItemData(this BaitAbility baitAbility, string id)
+    {
+        return baitAbility.GetPlacedHarvestPOIPrefabFromBaitItemData(GameManager.Instance.ItemManager.GetItemDataById<SpatialItemData>(id));
+    }
+
     public static Sprite GetSpriteForAbilityMode(this ActiveAbilityInfoPanel activeAbilityInfoPanel, AbilityMode mode)
     {
         switch (mode)
@@ -412,6 +688,8 @@ public static class WinchExtensions
                 return activeAbilityInfoPanel.baitExoticQualityIcon;
             case AbilityMode.BAIT_CRAB:
                 return activeAbilityInfoPanel.baitCrabQualityIcon;
+            case AbilityModeExtra.BAIT_MATERIAL:
+                return TextureUtil.GetSprite("BaitMaterialIcon");
             case AbilityMode.TRAWL:
                 return activeAbilityInfoPanel.trawlQualityIcon;
             case AbilityMode.TRAWL_OOZE:

@@ -39,5 +39,12 @@ namespace Winch.Patches.API
             return true;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(ActiveAbilityInfoPanel.UpdateCatchableSpecies))]
+        public static bool ActiveAbilityInfoPanel_UpdateCatchableSpecies_Prefix(ActiveAbilityInfoPanel __instance)
+        {
+            __instance.UpdateCatchableSpecies(__instance.abilityMode);
+            return false;
+        }
     }
 }

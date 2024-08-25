@@ -139,6 +139,7 @@ namespace Winch.Core
                 { typeof(DurableItemData), "Durable"},
                 { typeof(ThawableItemData), "Thawable"},
                 { typeof(GadgetItemData), "Gadgets"},
+                { typeof(BaitItemData), "Baits"},
             };
 
         private static void LoadItemFiles(string itemFolderPath)
