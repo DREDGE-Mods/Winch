@@ -9,7 +9,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(DeployableItemData))]
     [HarmonyPatch(nameof(DeployableItemData.GridConfig), MethodType.Getter)]
-    class DeployableItemDataGridConfigPatcher
+    internal static class DeployableItemDataGridConfigPatcher
     {
         public static void Prefix(DeployableItemData __instance)
         {

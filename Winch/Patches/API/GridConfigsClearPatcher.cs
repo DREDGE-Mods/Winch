@@ -5,7 +5,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(DataLoader))]
     [HarmonyPatch(nameof(DataLoader.OnGameEnded))]
-    class GridConfigsClearPatcher
+    internal static class GridConfigsClearPatcher
     {
         public static void Postfix(DataLoader __instance)
         {

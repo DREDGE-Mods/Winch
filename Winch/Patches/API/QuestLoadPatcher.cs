@@ -7,7 +7,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(DataLoader))]
     [HarmonyPatch("OnQuestDataAddressablesLoaded")]
-    class QuestLoadPatcher
+    internal static class QuestLoadPatcher
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<QuestData>> handle)
         {

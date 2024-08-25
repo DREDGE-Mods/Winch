@@ -9,7 +9,7 @@ using Winch.Util;
 namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(FishItemData))]
-    class FishItemDataAberrationPatcher
+    internal static class FishItemDataAberrationPatcher
     {
         [HarmonyPrefix]
         [HarmonyPatch(nameof(FishItemData.Aberrations), MethodType.Getter)]

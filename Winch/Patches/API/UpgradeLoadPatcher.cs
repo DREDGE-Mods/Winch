@@ -7,7 +7,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(UpgradeManager))]
     [HarmonyPatch(nameof(UpgradeManager.OnUpgradeDataAddressablesLoaded))]
-    class UpgradeLoadPatcher
+    internal static class UpgradeLoadPatcher
     {
         public static void Prefix(UpgradeManager __instance, AsyncOperationHandle<IList<UpgradeData>> handle)
         {

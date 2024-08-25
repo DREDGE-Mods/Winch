@@ -8,7 +8,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(DataLoader))]
     [HarmonyPatch(nameof(DataLoader.OnWorldEventDataAddressablesLoaded))]
-    class WorldEventLoadPatcher
+    internal static class WorldEventLoadPatcher
     {
         public static void Prefix(DataLoader __instance, AsyncOperationHandle<IList<WorldEventData>> handle)
         {

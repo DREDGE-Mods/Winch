@@ -11,7 +11,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(ItemManager))]
     [HarmonyPatch(nameof(ItemManager.OnItemDataAddressablesLoaded))]
-    class ItemLoadPatcher
+    internal static class ItemLoadPatcher
     {
         public static void ChangeDredgeCrane(IList<ItemData> items)
         {

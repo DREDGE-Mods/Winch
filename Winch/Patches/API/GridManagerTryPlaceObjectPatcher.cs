@@ -12,7 +12,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(GridManager))]
     [HarmonyPatch(nameof(GridManager.TryPlaceObject))]
-    class GridManagerTryPlaceObjectPatcher
+    internal static class GridManagerTryPlaceObjectPatcher
     {
         /// <summary>
         /// Fix nets ignoring slots that only accept certain types.

@@ -8,7 +8,7 @@ namespace Winch.Patches.API
 {
     [HarmonyPatch(typeof(ItemManager))]
     [HarmonyPatch(nameof(ItemManager.OnGameEnded))]
-    class ItemClearPatcher
+    internal static class ItemClearPatcher
     {
         public static void Postfix(ItemManager __instance)
         {
