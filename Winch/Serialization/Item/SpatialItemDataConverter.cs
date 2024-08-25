@@ -15,6 +15,7 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "canBeSoldByPlayer", new(true, o => bool.Parse(o.ToString())) },
         { "canBeSoldInBulkAction", new(true, o => bool.Parse(o.ToString())) },
         { "value", new(decimal.Zero, o => decimal.Parse(o.ToString())) },
+        { "hasSellOverride", new(false, o => bool.Parse(o.ToString())) },
         { "sellOverrideValue", new(decimal.Zero, o => decimal.Parse(o.ToString())) },
         { "sprite", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "platformSpecificSpriteOverrides", new(null, null) },
