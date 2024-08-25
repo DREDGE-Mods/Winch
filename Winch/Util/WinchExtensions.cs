@@ -270,6 +270,68 @@ public static class WinchExtensions
             return PotType.CRAB;
     }
 
+    public static bool IsFishInCurrentWorldPhases(this SaveData saveData, FishItemData fish)
+    {
+        return saveData.WorldPhase >= fish.MinWorldPhaseRequired && saveData.TIRWorldPhase >= fish.TIRPhase;
+    }
+
+    public static bool HasCaughtNonAberrationParent(this SaveData saveData, FishItemData aberrationFish)
+    {
+        return saveData.GetCaughtCountById(aberrationFish.NonAberrationParent.id) > 0;
+    }
+
+    public static bool GetHasEquipmentForHarvestableItem(this PlayerStats playerStats, HarvestableItemData harvestableItemData)
+    {
+        return playerStats.GetHasEquipmentForHarvestType(harvestableItemData.harvestableType, harvestableItemData.requiresAdvancedEquipment);
+    }
+
+    public static bool IsItemHarvestable(this PlayerZoneDetector playerZoneDetector, HarvestableItemData harvestableItemData)
+    {
+        return harvestableItemData.zonesFoundIn == ZoneEnum.ALL || harvestableItemData.zonesFoundIn.HasFlag(playerZoneDetector.GetCurrentZone());
+    }
+
+    public static IEnumerable<T> FilterWithEntitlements<T>(this IEnumerable<T> items) where T : ItemData => items.Where(item => item.entitlementsRequired == null || item.entitlementsRequired.Count == 0 || (item.entitlementsRequired.Count == 1 && item.entitlementsRequired.FirstOrDefault() == Entitlement.NONE) || item.entitlementsRequired.All(GameManager.Instance.EntitlementManager.GetHasEntitlement));
+    public static List<FishItemData> GetFishItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.FISH).OfType<FishItemData>().FilterWithEntitlements().ToList();
+    public static List<EngineItemData> GetEngineItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.ENGINE).OfType<EngineItemData>().FilterWithEntitlements().ToList();
+    public static List<RodItemData> GetRodItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.ROD).OfType<RodItemData>().FilterWithEntitlements().ToList();
+    public static List<SpatialItemData> GetGeneralItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.GENERAL).FilterWithEntitlements().ToList();
+    public static List<RelicItemData> GetRelicItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.ENGINE).OfType<RelicItemData>().FilterWithEntitlements().ToList();
+    public static List<HarvestableItemData> GetTrinketItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.TRINKET).OfType<HarvestableItemData>().FilterWithEntitlements().ToList();
+    public static List<HarvestableItemData> GetMaterialItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.MATERIAL).OfType<HarvestableItemData>().FilterWithEntitlements().ToList();
+    public static List<LightItemData> GetLightItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.LIGHT).OfType<LightItemData>().FilterWithEntitlements().ToList();
+    public static List<DeployableItemData> GetPotItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.POT).OfType<DeployableItemData>().FilterWithEntitlements().ToList();
+    public static List<DeployableItemData> GetNetItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.NET).OfType<DeployableItemData>().FilterWithEntitlements().ToList();
+    public static List<DredgeItemData> GetDredgeItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.DREDGE).OfType<DredgeItemData>().FilterWithEntitlements().ToList();
+    public static List<GadgetItemData> GetGadgetItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.GADGET).OfType<GadgetItemData>().FilterWithEntitlements().ToList();
+
+    public static AbilityMode GetAbilityModeFromItemData(this SpatialItemData data)
+    {
+        if (data is TrawlNetItemData netData)
+            return netData.abilityMode;
+        else if (data is CrabPotItemData potData)
+            return potData.abilityMode;
+        else if (data.id == "tir-pot1")
+            return AbilityMode.POT_MATERIAL;
+        else if (data.itemSubtype == ItemSubtype.POT)
+            return AbilityMode.POT;
+        else if (data.id == "tir-net1")
+            return AbilityMode.TRAWL_OOZE;
+        else if (data.id == "tir-net2")
+            return AbilityMode.TRAWL_MATERIAL;
+        else if (data.itemSubtype == ItemSubtype.NET)
+            return AbilityMode.TRAWL;
+        else if (data.id == "bait-crab")
+            return AbilityMode.BAIT_CRAB;
+        else if (data.id == "bait-exotic")
+            return AbilityMode.BAIT_EXOTIC;
+        else if (data.id == "bait-ab")
+            return AbilityMode.BAIT_ABERRATED;
+        else if (data.id == "bait")
+            return AbilityMode.BAIT;
+        else
+            return AbilityMode.NONE;
+    }
+
     public static GameObject GetPlacedHarvestPOIPrefabFromPotType(this GameSceneInitializer gameSceneInitializer, PotType type)
     {
         switch (type)
@@ -343,6 +405,60 @@ public static class WinchExtensions
             GameManager.Instance.ItemManager.SetItemSeen(spatialItemInstance);
             GameManager.Instance.VibrationManager.Vibrate(trawlNetAbility.materialAddedVibrationData, VibrationRegion.WholeBody, true).Run();
         }
+    }
+
+    public static int GetNumItemById(this ItemManager itemManager, string id)
+    {
+        ItemData itemDataById = itemManager.GetItemDataById<ItemData>(id);
+        if (GameManager.Instance.SaveData.Inventory == null)
+        {
+            return 0;
+        }
+        if (itemDataById == null)
+        {
+            Debug.LogError("[ItemManager] GetNumItemInInventoryById(" + id + ") could not find ItemData with that id.");
+            return 0;
+        }
+        if (itemDataById is SpatialItemData)
+        {
+            return GameManager.Instance.SaveData.Inventory.spatialItems.FindAll((SpatialItemInstance i) => i.id == id).Count;
+        }
+        if (itemDataById is NonSpatialItemData)
+        {
+            return GameManager.Instance.SaveData.ownedNonSpatialItems.FindAll((NonSpatialItemInstance i) => i.id == id).Count;
+        }
+        return 0;
+    }
+
+    public static void RemoveItemById(this ItemManager itemManager, string id, int removeCount = 1)
+    {
+        ItemData itemDataById = itemManager.GetItemDataById<ItemData>(id);
+        if (itemDataById == null)
+        {
+            Debug.LogError("[ItemManager] RemoveItemById(" + id + ") could not find ItemData with that id.");
+            return;
+        }
+        if (removeCount == -1)
+        {
+            removeCount = itemManager.GetNumItemById(id);
+        }
+        if (itemDataById is SpatialItemData)
+        {
+            GameManager.Instance.SaveData.Inventory.spatialItems.Where((SpatialItemInstance i) => i.id == id).Take(removeCount).ToList()
+                .ForEach(delegate (SpatialItemInstance i)
+                {
+                    GameManager.Instance.SaveData.Inventory.RemoveObjectFromGridData(i, notify: true);
+                });
+        }
+        else if (itemDataById is NonSpatialItemData)
+        {
+            GameManager.Instance.SaveData.ownedNonSpatialItems.Where((NonSpatialItemInstance i) => i.id == id).Take(removeCount).ToList()
+                .ForEach(delegate (NonSpatialItemInstance i)
+                {
+                    GameManager.Instance.SaveData.ownedNonSpatialItems.Remove(i);
+                });
+        }
+        GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ITEM_HANDED_IN, "notification.item-removed", itemDataById.itemNameKey, GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEUTRAL));
     }
 
     public static int GetFilledCells(this SerializableGrid serializableGrid) => serializableGrid.GetFilledCells(ItemSubtype.ALL);
@@ -798,6 +914,30 @@ public static class WinchExtensions
             }
         }
     }
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static TResult[] CastToArray<TResult>(this IEnumerable source)
+        => source.Cast<TResult>().ToArray();
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static TResult[] Cast<TSource, TResult>(this TSource[] source)
+        => source.Cast<TResult>().ToArray();
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static List<TResult> CastToList<TResult>(this IEnumerable source)
+        => source.Cast<TResult>().ToList();
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static List<TResult> Cast<TSource, TResult>(this List<TSource> source)
+        => source.Cast<TResult>().ToList();
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static HashSet<TResult> CastToHashSet<TResult>(this IEnumerable source)
+        => Enumerable.ToHashSet(source.Cast<TResult>());
+
+    /// <inheritdoc cref="Enumerable.Cast{TResult}(IEnumerable)"/>
+    public static HashSet<TResult> Cast<TSource, TResult>(this HashSet<TSource> source)
+        => Enumerable.ToHashSet(source.Cast<TResult>());
 
     /// <summary>Applies an accumulator function over a sequence.</summary>
     /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to aggregate over.</param>
