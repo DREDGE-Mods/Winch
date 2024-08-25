@@ -15,7 +15,6 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "canBeSoldByPlayer", new(true, o => bool.Parse(o.ToString())) },
         { "canBeSoldInBulkAction", new(true, o => bool.Parse(o.ToString())) },
         { "value", new(decimal.Zero, o => decimal.Parse(o.ToString())) },
-        { "hasSellOverride", new(false, o => bool.Parse(o.ToString())) },
         { "sellOverrideValue", new(decimal.Zero, o => decimal.Parse(o.ToString())) },
         { "sprite", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "platformSpecificSpriteOverrides", new(null, null) },
@@ -37,7 +36,9 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "itemOwnPrerequisites", new(null, null) },
         { "researchPrerequisites", new(null, null) },
         { "researchPointsRequired", new(0, o => int.Parse(o.ToString())) },
-        { "buyableWithoutResearch", new(false, o => bool.Parse(o.ToString())) }
+        { "buyableWithoutResearch", new(false, o => bool.Parse(o.ToString())) },
+        { "researchIsForRecipe", new(false, o => bool.Parse(o.ToString())) },
+        { "useIntenseAberratedUIShader", new(false, o => bool.Parse(o.ToString())) }
     };
 
     public SpatialItemDataConverter()

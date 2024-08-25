@@ -30,6 +30,7 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         { "harvestParticleDepthOffset", new(-3f, o=> float.Parse(o.ToString())) },
         { "flattenParticleShape", new(false, o=> bool.Parse(o.ToString())) },
         { "availableInDemo", new(false, null) },
+        { "linkedDialogueNode", new("", null) },
         { "entitlementsRequired ", new(new List<Entitlement>(), o=>DredgeTypeHelpers.GetEnumValues<Entitlement>(o)) },
     };
 

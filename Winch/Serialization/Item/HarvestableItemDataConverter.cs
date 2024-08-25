@@ -28,7 +28,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
         { "minDepth", new(DepthEnum.SHALLOW, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
         { "hasMaxDepth", new(false, o => bool.Parse(o.ToString())) },
         { "maxDepth", new(DepthEnum.VERY_DEEP, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
-        { "zonesFoundIn", new(ZoneEnum.OPEN_OCEAN, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
+        { "zonesFoundIn", new(ZoneEnum.ALL, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
     };
     
     public HarvestableItemDataConverter()

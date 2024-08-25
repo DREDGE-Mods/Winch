@@ -27,7 +27,12 @@ public class FishItemDataConverter : HarvestableItemDataConverter
         { "night", new( true, o => bool.Parse(o.ToString())) },
         { "canAppearInBaitBalls", new( true, o => bool.Parse(o.ToString())) },
         { "canBeInfected", new( true, o => bool.Parse(o.ToString())) },
-        { "cellsExcludedFromDisplayingInfection", new( new List<Vector2Int>(){new(0,0)}, o => DredgeTypeHelpers.ParseDimensions((JArray)o)) }
+        { "questCompleteRequired", new(null, null) },
+        { "baitChanceOverride", new( -1f, o => float.Parse(o.ToString())) },
+        { "rotCoefficient", new( 1f, o => float.Parse(o.ToString())) },
+        { "tirPhase", new( 0, o => int.Parse(o.ToString())) },
+        { "cellsExcludedFromDisplayingInfection", new( new List<Vector2Int>(){new(0,0)}, o => DredgeTypeHelpers.ParseDimensions((JArray)o)) },
+        { "zonesFoundIn", new(ZoneEnum.OPEN_OCEAN, null) },
     };
     
     public FishItemDataConverter()
