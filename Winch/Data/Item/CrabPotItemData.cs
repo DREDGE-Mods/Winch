@@ -3,7 +3,7 @@ using static ActiveAbilityInfoPanel;
 
 namespace Winch.Data.Item
 {
-    public class CrabPotItemData : GridConfigDeployableItemData
+    public class CrabPotItemData : GridConfigDeployableItemData, IAbilityItemData
     {
         [SerializeField]
         public AbilityMode abilityMode = AbilityMode.POT;
@@ -13,6 +13,10 @@ namespace Winch.Data.Item
 
         [SerializeField]
         public Sprite qualityIcon;
+
+        public AbilityMode AbilityMode => abilityMode;
+
+        public Sprite QualityIcon => qualityIcon;
     }
 
     public enum PotType

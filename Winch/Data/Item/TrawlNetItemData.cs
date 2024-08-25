@@ -4,7 +4,7 @@ using static TrawlNetAbility;
 
 namespace Winch.Data.Item
 {
-    public class TrawlNetItemData : GridConfigDeployableItemData
+    public class TrawlNetItemData : GridConfigDeployableItemData, IAbilityItemData
     {
         [SerializeField]
         public AbilityMode abilityMode = AbilityMode.TRAWL;
@@ -17,5 +17,9 @@ namespace Winch.Data.Item
 
         [SerializeField]
         public Sprite qualityIcon;
+
+        public AbilityMode AbilityMode => abilityMode;
+
+        public Sprite QualityIcon => qualityIcon;
     }
 }

@@ -306,10 +306,8 @@ public static class WinchExtensions
 
     public static AbilityMode GetAbilityModeFromItemData(this SpatialItemData data)
     {
-        if (data is TrawlNetItemData netData)
-            return netData.abilityMode;
-        else if (data is CrabPotItemData potData)
-            return potData.abilityMode;
+        if (data is IAbilityItemData abilityItemData)
+            return abilityItemData.AbilityMode;
         else if (data.id == "tir-pot1")
             return AbilityMode.POT_MATERIAL;
         else if (data.itemSubtype == ItemSubtype.POT)
