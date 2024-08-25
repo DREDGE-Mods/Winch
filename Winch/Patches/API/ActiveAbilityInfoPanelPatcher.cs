@@ -18,15 +18,19 @@ namespace Winch.Patches.API
         {
             if (spatialItemData != null && spatialItemData is IAbilityItemData abilityItemData)
             {
-                __instance.abilityMode = abilityItemData.AbilityMode;
-                if (abilityItemData.QualityIcon != null)
+                var abilityMode = abilityItemData.AbilityMode;
+                __instance.abilityMode = abilityMode;
+
+                var qualityIcon = abilityItemData.QualityIcon;
+                if (qualityIcon != null)
                 {
-                    __instance.qualityIcon.sprite = abilityItemData.QualityIcon;
+                    __instance.qualityIcon.sprite = qualityIcon;
                 }
                 else
                 {
-                    __instance.qualityIcon.sprite = __instance.GetSpriteForAbilityMode(abilityItemData.AbilityMode);
+                    __instance.qualityIcon.sprite = __instance.GetSpriteForAbilityMode(abilityMode);
                 }
+
                 __instance.Show();
                 __instance.RefreshItemNameField(spatialItemData);
                 __instance.UpdateCatchableSpecies();
