@@ -43,6 +43,11 @@ namespace Winch.Util
             return null;
         }
 
+        public static GameObject? GetPrefab(string assetBundleName, string prefabName)
+        {
+            return GetBundle(assetBundleName)?.LoadAsset<GameObject>(prefabName);
+        }
+
         public static AssetBundle? LoadBundle(string assetBundlePath)
         {
             string key = Path.GetFileName(assetBundlePath);
@@ -50,7 +55,6 @@ namespace Winch.Util
 
             try
             {
-
                 if (AssetBundles.ContainsKey(key))
                 {
                     bundle = AssetBundles[key];
