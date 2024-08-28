@@ -5,6 +5,9 @@ using System.IO;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using System.Text;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
+using Winch.Serialization;
 // ReSharper disable HeapView.PossibleBoxingAllocation
 
 namespace Winch.Config
@@ -12,22 +15,42 @@ namespace Winch.Config
     public class JSONConfig
     {
         private static DynamicConverter dynamicConverter = new DynamicConverter();
+        private static DredgeContractResolver contractResolver = new DredgeContractResolver();
 
-        public static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        public static JsonSerializerSettings CreateSerializerSettings()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Formatting.Indented,
-            Converters = { dynamicConverter }
-        };
+            return new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                ContractResolver = contractResolver,
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include,
+                Formatting = Formatting.Indented,
+                Converters = { dynamicConverter }
+            };
+        }
 
-        public static JsonSerializer jsonSerializer = new JsonSerializer
+        public static JsonSerializer CreateSerializer()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Formatting.Indented,
-            Converters = { dynamicConverter }
-        };
+            return new JsonSerializer
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                ContractResolver = contractResolver,
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include,
+                Formatting = Formatting.Indented,
+                Converters = { dynamicConverter }
+            };
+        }
+
+        public static JsonSerializerSettings jsonSerializerSettings = CreateSerializerSettings();
+
+        public static JsonSerializer jsonSerializer = CreateSerializer();
+
+        static JSONConfig()
+        {
+            JsonConvert.DefaultSettings = CreateSerializerSettings;
+        }
 
         private static StringBuilder stringBuilder = new StringBuilder();
 
@@ -45,11 +68,13 @@ namespace Winch.Config
 
         public static Dictionary<string, object?> ReadConfig(string path)
         {
+            if (!File.Exists(path)) return new Dictionary<string, object?>();
             return ParseConfig(File.ReadAllText(path));
         }
 
         public static T ReadConfig<T>(string path)
         {
+            if (!File.Exists(path)) return default(T);
             return ParseConfig<T>(File.ReadAllText(path));
         }
 
