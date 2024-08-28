@@ -19,5 +19,6 @@ public class ModdedWorldEventData : WorldEventData
     /// <summary>
     /// ID of this world event
     /// </summary>
+    [SerializeField]
     public string id = string.Empty;
 }

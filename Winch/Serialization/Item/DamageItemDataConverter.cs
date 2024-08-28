@@ -9,7 +9,9 @@ public class DamageItemDataConverter : SpatialItemDataConverter
     {
         { "id", new("dmg", null) },
         { "canBeDiscardedByPlayer", new(false, null) },
-        { "itemType", new(ItemType.DAMAGE , null) }
+        { "forbidStorageTray", new(true, null) },
+        { "itemType", new(ItemType.DAMAGE , null) },
+        { "itemSubtype", new(ItemSubtype.NONE, null) }
     };
 
     public DamageItemDataConverter()

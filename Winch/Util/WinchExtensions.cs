@@ -1,6 +1,7 @@
 ﻿using Coffee.UIExtensions;
 using CommandTerminal;
 using HarmonyLib;
+using Newtonsoft.Json.Linq;
 using Sirenix.Utilities;
 using System;
 using System.Collections;
@@ -19,6 +20,7 @@ using UnityEngine.Localization.Tables;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 using Winch.Components;
+using Winch.Config;
 using Winch.Core;
 using Winch.Data.Abilities;
 using Winch.Data.Character;
@@ -35,6 +37,10 @@ public static class WinchExtensions
     /// </summary>
     /// <returns>Whether this object is modded or not</returns>
     public static bool IsModded(this ItemData item) => ItemUtil.ModdedItemDataDict.ContainsKey(item.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this ItemInstance item) => ItemUtil.ModdedItemDataDict.ContainsKey(item.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this SerializedCrabPotPOIData crabPotPOI) => ItemUtil.ModdedItemDataDict.ContainsKey(crabPotPOI.deployableItemId);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this GridConfiguration gridConfiguration) => GridConfigUtil.ModdedGridConfigDict.ContainsKey(gridConfiguration.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
@@ -53,6 +59,10 @@ public static class WinchExtensions
     /// </summary>
     /// <returns>Whether this object is vanilla or not</returns>
     public static bool IsVanilla(this ItemData item) => !item.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this ItemInstance item) => !item.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this SerializedCrabPotPOIData crabPotPOI) => !crabPotPOI.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this GridConfiguration gridConfiguration) => !gridConfiguration.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
@@ -379,6 +389,12 @@ public static class WinchExtensions
         }
     }
 
+    public static List<HarvestableItemData> GetHarvestableItems(this TrawlNetAbility trawlNetAbility)
+    {
+        float currentDepth = GameManager.Instance.WaveController.SampleWaterDepthAtPlayerPosition();
+        return GameManager.Instance.Player.HarvestZoneDetector.GetHarvestableItemIds(trawlNetAbility.CheckCanBeCaughtByThisNet, currentDepth, GameManager.Instance.Time.IsDaytime).Select(id => GameManager.Instance.ItemManager.GetItemDataById<HarvestableItemData>(id)).ToList();
+    }
+
     public static void PlaceTrawlItemAtGridPos(this TrawlNetAbility trawlNetAbility, HarvestableItemData harvestableItemData, Vector3Int gridPos)
     {
         if (harvestableItemData is FishItemData fishItemData)
@@ -548,6 +564,29 @@ public static class WinchExtensions
         }
         shell.HandleRejectedCommands(rejectedCommands);
     }
+
+
+    public static JToken ToJToken(this object? value) => value != null ? JToken.FromObject(value, JSONConfig.jsonSerializer) : JValue.CreateNull();
+
+    public static bool IsNullOrEmpty(this JToken token)
+    {
+        return (token == null) ||
+               (token.Type == JTokenType.Array && !token.HasValues) ||
+               (token.Type == JTokenType.Object && !token.HasValues) ||
+               (token.Type == JTokenType.String && string.IsNullOrEmpty(token.ToString())) ||
+               (token.Type == JTokenType.Null) ||
+               (token.Type == JTokenType.Undefined);
+    }
+
+    public static bool IsNullOrWhiteSpace(this JToken token)
+    {
+        return (token == null) ||
+               (token.Type == JTokenType.Array && !token.HasValues) ||
+               (token.Type == JTokenType.Object && !token.HasValues) ||
+               (token.Type == JTokenType.String && string.IsNullOrWhiteSpace(token.ToString())) ||
+               (token.Type == JTokenType.Null) ||
+               (token.Type == JTokenType.Undefined);
+    }
     #endregion
 
     #region Reflection
@@ -703,6 +742,8 @@ public static class WinchExtensions
             return false;
         }
     }
+
+    public static string FixBackslashes(this string s) => s.Replace("\\\\", "/").Replace("\\", "/");
     #endregion
 
     #region Harmony
