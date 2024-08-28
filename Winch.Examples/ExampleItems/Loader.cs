@@ -10,11 +10,16 @@ namespace ExampleItems
 {
     public static class Loader
     {
+        public static ExampleSaveParticipant Participant = new ExampleSaveParticipant();
+
         public static ItemData MilkBucket => ItemUtil.GetModdedItemData("exampleitems.milk");
         public static VibrationData MilkBucketVibrationData;
 
         public static void Initialize()
         {
+            SaveUtil.RegisterDataParticipant(Participant);
+            new GameObject(nameof(ExampleSaveBehaviour), typeof(ExampleSaveBehaviour)).DontDestroyOnLoad();
+
             MilkBucketVibrationData = ScriptableObject.CreateInstance<VibrationData>().DontDestroyOnLoad().Rename("MilkBucket");
             MilkBucketVibrationData.vibrationParamsList = new List<VibrationParams>
             {
