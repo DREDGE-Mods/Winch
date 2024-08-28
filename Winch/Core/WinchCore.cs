@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using UnityEngine.AddressableAssets;
+using Winch.Config;
 using Winch.Logging;
 using Winch.Patches;
+using Winch.Serialization;
 using Winch.Util;
 
 namespace Winch.Core
@@ -45,6 +47,8 @@ namespace Winch.Core
                 string metaText = File.ReadAllText(metaPath);
                 WinchModConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) 
                     ?? throw new InvalidOperationException($"Unable to parse mod_meta.json file at {metaPath}. Reinstall the mod.");
+
+                JSONConfig.AddDynamicConverter(new SerializedCrabPotPOIConverter());
             }
             catch (Exception e)
             {
