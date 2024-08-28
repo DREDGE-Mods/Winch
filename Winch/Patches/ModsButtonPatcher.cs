@@ -169,7 +169,7 @@ namespace Winch.Patches
                 sliderOld.DestroyImmediate();
                 sliderInput.gameObject.Activate();
 
-                var inputFieldContainer = modsTab.inputFieldPrefab = modsTab.sliderPrefab.gameObject.Instantiate(prefabs, false).Rename("InputField").AddComponent<FieldInput>();
+                var inputFieldContainer = modsTab.inputFieldPrefab = modsTab.sliderPrefab.gameObject.Instantiate(prefabs, false).Rename("InputField").AddComponent<FieldInput>(); // TODO: Make these input fields a little better on controller
                 inputFieldContainer.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var inputFieldOld = inputFieldContainer.GetComponent<SliderInput>();
                 inputFieldContainer.localizedStringField = inputFieldOld.localizedStringField;
