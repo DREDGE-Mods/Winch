@@ -45,9 +45,11 @@ public static class ItemUtil
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }
 
+    internal static Dictionary<string, ItemData> AllItemDataDict = new();
+    internal static Dictionary<string, NonSpatialItemData> NonSpatialItemDataDict = new();
+    internal static Dictionary<string, SpatialItemData> SpatialItemDataDict = new();
     internal static Dictionary<string, HarvestableItemData> HarvestableItemDataDict = new();
     internal static Dictionary<string, FishItemData> FishItemDataDict = new();
-    internal static Dictionary<string, ItemData> AllItemDataDict = new();
     internal static Dictionary<string, ItemData> ModdedItemDataDict = new();
 
     public static ItemData GetModdedItemData(string id)
@@ -167,15 +169,25 @@ public static class ItemUtil
         {
             AllItemDataDict.Add(item.id, item);
             WinchCore.Log.Debug($"Added item {item.id} to AllItemDataDict");
-            if (item is HarvestableItemData hitem) // Fish and Relics
+            if (item is SpatialItemData sitem)
             {
-                HarvestableItemDataDict.Add(item.id, hitem);
-                WinchCore.Log.Debug($"Added item {item.id} to HarvestableItemDataDict");
-                if (hitem is FishItemData fitem)
+                SpatialItemDataDict.Add(item.id, sitem);
+                WinchCore.Log.Debug($"Added item {item.id} to SpatialItemDataDict");
+                if (item is HarvestableItemData hitem) // Fish and Relics
                 {
-                    FishItemDataDict.Add(item.id, fitem);
-                    WinchCore.Log.Debug($"Added item {item.id} to FishItemDataDict");
+                    HarvestableItemDataDict.Add(item.id, hitem);
+                    WinchCore.Log.Debug($"Added item {item.id} to HarvestableItemDataDict");
+                    if (hitem is FishItemData fitem)
+                    {
+                        FishItemDataDict.Add(item.id, fitem);
+                        WinchCore.Log.Debug($"Added item {item.id} to FishItemDataDict");
+                    }
                 }
+            }
+            if (item is NonSpatialItemData nsitem)
+            {
+                NonSpatialItemDataDict.Add(item.id, nsitem);
+                WinchCore.Log.Debug($"Added item {item.id} to NonSpatialItemDataDict");
             }
         }
     }
@@ -184,10 +196,14 @@ public static class ItemUtil
     {
         AllItemDataDict.Clear();
         WinchCore.Log.Debug($"AllItemDataDict cleared");
+        SpatialItemDataDict.Clear();
+        WinchCore.Log.Debug($"SpatialItemDataDict cleared");
         HarvestableItemDataDict.Clear();
         WinchCore.Log.Debug($"HarvestableItemDataDict cleared");
         FishItemDataDict.Clear();
         WinchCore.Log.Debug($"FishItemDataDict cleared");
+        NonSpatialItemDataDict.Clear();
+        WinchCore.Log.Debug($"NonSpatialItemDataDict cleared");
     }
 
     internal static void AddItemFromMeta<T>(string metaPath) where T : ItemData

@@ -17,6 +17,8 @@
 	"maxDurabilityDays": 7,
 	"timeBetweenCatchRolls": 0.01,
 	"aberrationBonus": 0.1,
-	"gridConfiguration": "exampleitems.pot"
+	"gridConfiguration": "exampleitems.pot",
+	"itemOwnPrerequisites": [ "exampleitems.mccod" ],
+	"researchPrerequisites": [ "pot7" ]
 }
 

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Winch.Core;
 using Winch.Data;
+using Winch.Data.Item.Prerequisites;
 using Winch.Serialization.GridConfig;
 using Winch.Serialization.WorldEvent.Condition;
 using Winch.Util;
@@ -207,7 +208,7 @@ public static class DredgeTypeHelpers
     internal static InventoryCondition ParseInventoryCondition(JToken condition)
     {
         var meta = condition.ToObject<Dictionary<string, object>>();
-        var net = bool.Parse(meta.GetValueOrDefault("net", "false").ToString());
+        var net = bool.Parse(meta?.GetValueOrDefault("net", "false").ToString());
         var type = GetEnumValue<InventoryConditionType>(meta.GetValueOrDefault("type"));
         switch (type)
         {
@@ -239,5 +240,41 @@ public static class DredgeTypeHelpers
             parsed.Add(ParseInventoryCondition(condition));
         }
         return parsed;
+    }
+
+    internal static List<OwnedItemResearchablePrerequisite> ParseOwnedItemResearchablePrerequisites(JArray prerequisites)
+    {
+        var parsed = new List<OwnedItemResearchablePrerequisite>();
+        foreach (var prerequisite in ParseStringList(prerequisites))
+        {
+            parsed.Add(ParseOwnedPrerequisite(prerequisite));
+        }
+        return parsed;
+    }
+
+    private static OwnedItemResearchablePrerequisite ParseOwnedPrerequisite(string prerequisite)
+    {
+        return new ModdedOwnedItemResearchablePrerequisite
+        {
+            itemId = prerequisite
+        };
+    }
+
+    internal static List<ResearchedItemResearchablePrerequisite> ParseResearchedItemResearchablePrerequisites(JArray prerequisites)
+    {
+        var parsed = new List<ResearchedItemResearchablePrerequisite>();
+        foreach (var prerequisite in ParseStringList(prerequisites))
+        {
+            parsed.Add(ParseResearchedPrerequisite(prerequisite));
+        }
+        return parsed;
+    }
+
+    private static ResearchedItemResearchablePrerequisite ParseResearchedPrerequisite(string prerequisite)
+    {
+        return new ModdedResearchedItemResearchablePrerequisite
+        {
+            itemId = prerequisite
+        };
     }
 }
