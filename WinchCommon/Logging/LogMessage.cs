@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using WinchCommon;
 
 namespace Winch.Logging
 {
+	[JsonObject]
 	public class LogMessage
 	{
 		[JsonProperty("source")]

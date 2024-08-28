@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <DebugType>portable</DebugType>
@@ -8,6 +8,7 @@
     <LangVersion>11</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
+    <RootNamespace>Winch</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

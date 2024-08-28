@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WinchCommon.Properties {
+namespace Winch.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace WinchCommon.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("WinchCommon.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Winch.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -68,7 +68,9 @@ namespace WinchCommon.Properties {
         ///	&quot;LogsFolder&quot;: &quot;Logs&quot;,
         ///	&quot;DetailedLogSources&quot;: false,
         ///	&quot;EnableDeveloperConsole&quot;: true,
-        ///	&quot;MaxLogFiles&quot;: 10
+        ///	&quot;MaxLogFiles&quot;: 10,
+        ///	&quot;ExportYarnProgram&quot;: false,
+        ///	&quot;LogPort&quot;: &quot;&quot;
         ///}.
         /// </summary>
         internal static string DefaultConfig {

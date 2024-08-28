@@ -7,7 +7,7 @@ namespace Winch.Config
     {
         private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.WinchConfigFileName);
 
-        private WinchConfig() : base(WinchConfigPath, WinchCommon.Properties.Resources.DefaultConfig) { }
+        private WinchConfig() : base(WinchConfigPath, Winch.Properties.Resources.DefaultConfig) { }
 
         private static WinchConfig? _instance;
         public static WinchConfig Instance
