@@ -1,24 +1,36 @@
-﻿using Google.Protobuf.WellKnownTypes;
+﻿using InControl;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 using Winch.Core;
+using Winch.Patches;
 using Winch.Util;
-using static UnityEngine.Rendering.DebugUI;
 
 namespace Winch.Components
 {
-    public class FieldInput : Input
+    public class FieldInput : Input, ISubmitHandler, IEventSystemHandler
     {
         [SerializeField]
         protected internal TMP_InputField inputField;
+
+        [SerializeField]
+        protected internal UISelectable uiSelectable;
+
+        [SerializeField]
+        protected internal Button focusButton;
+
+        [SerializeField]
+        protected internal SelectableDisabler selectableDisabler;
+
+        [SerializeField]
+        protected internal SettingsDialog dialog;
+
         [SerializeField]
         protected internal Label placeholder;
 
@@ -146,6 +158,88 @@ namespace Winch.Components
             InitializePlaceholder();
             SetInputFieldTextWithNoNotify(value);
             initialized = true;
+        }
+
+        protected virtual void OnEnable()
+        {
+            RefreshInteractionState();
+            GameManager.Instance.Input.OnInputChanged += OnInputChanged;
+            selectableDisabler.OnDeselected += OnDeselected;
+            selectableDisabler.OnSubmitted += OnSubmitted;
+        }
+
+        protected virtual void OnDisable()
+        {
+            GameManager.Instance.Input.OnInputChanged -= OnInputChanged;
+            selectableDisabler.OnDeselected -= OnDeselected;
+            selectableDisabler.OnSubmitted -= OnSubmitted;
+        }
+
+        protected virtual void OnInputChanged(BindingSourceType bindingSourceType, InputDeviceStyle inputDeviceStyle)
+        {
+            RefreshInteractionState();
+        }
+
+        protected virtual void OnFocusChanged(bool hasInnerFocus)
+        {
+            DredgePlayerActionBase[] actions = new DredgePlayerActionPress[] { dialog.forceExitSliderFocusAction };
+            if (hasInnerFocus)
+            {
+                ModsButtonPatcher.activeSlider = null;
+                ModsButtonPatcher.activeField = this;
+                dialog.activeSlider = null;
+                GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
+                GameManager.Instance.Input.AddActionListener(actions, ActionLayer.SYSTEM);
+            }
+            else
+            {
+                ModsButtonPatcher.activeSlider = null;
+                ModsButtonPatcher.activeField = null;
+                dialog.activeSlider = null;
+                GameManager.Instance.Input.RemoveActionListener(actions, ActionLayer.SYSTEM);
+                GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
+            }
+        }
+
+        protected virtual void OnDeselected()
+        {
+            focusButton.interactable = true;
+            OnFocusChanged(false);
+        }
+
+        public virtual void ForceSliderDeselect()
+        {
+            inputField.interactable = false;
+            EventSystem.current.SetSelectedGameObject(gameObject);
+            focusButton.Select();
+        }
+
+        protected virtual void OnSubmitted()
+        {
+            inputField.interactable = false;
+            EventSystem.current.SetSelectedGameObject(gameObject);
+            focusButton.Select();
+            OnFocusChanged(false);
+        }
+
+        protected virtual void RefreshInteractionState()
+        {
+            bool flag = !GameManager.Instance.Input.IsUsingController;
+            inputField.interactable = flag;
+            focusButton.interactable = !flag;
+            uiSelectable.enabled = !flag;
+        }
+
+        public virtual void OnSubmit(BaseEventData eventData)
+        {
+            inputField.interactable = !inputField.interactable;
+            focusButton.interactable = !inputField.interactable;
+            if (inputField.interactable)
+            {
+                EventSystem.current.SetSelectedGameObject(inputField.gameObject);
+                inputField.Select();
+                OnFocusChanged(true);
+            }
         }
     }
 }

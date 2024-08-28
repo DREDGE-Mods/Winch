@@ -73,9 +73,9 @@ namespace Winch.Components
         }
 
         public override void OnForceRefresh()
-		{
-			RefreshSlider();
-		}
+        {
+            RefreshSlider();
+        }
 
         protected virtual void OnInputChanged(BindingSourceType bindingSourceType, InputDeviceStyle inputDeviceStyle)
         {
@@ -88,6 +88,7 @@ namespace Winch.Components
             if (sliderHasInnerFocus)
             {
                 ModsButtonPatcher.activeSlider = this;
+                ModsButtonPatcher.activeField = null;
                 dialog.activeSlider = null;
                 GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
                 GameManager.Instance.Input.AddActionListener(actions, ActionLayer.SYSTEM);
@@ -95,6 +96,7 @@ namespace Winch.Components
             else
             {
                 ModsButtonPatcher.activeSlider = null;
+                ModsButtonPatcher.activeField = null;
                 dialog.activeSlider = null;
                 GameManager.Instance.Input.RemoveActionListener(actions, ActionLayer.SYSTEM);
                 GameManager.Instance.PauseListener.CanShowUnpauseAction(true);

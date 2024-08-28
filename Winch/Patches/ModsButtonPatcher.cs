@@ -18,6 +18,7 @@ namespace Winch.Patches
     internal static class ModsButtonPatcher
     {
         public static SliderInput activeSlider;
+        public static FieldInput activeField;
 
         [HarmonyPrefix]
         [HarmonyPriority(Priority.First)]
@@ -27,6 +28,7 @@ namespace Winch.Patches
             try
             {
                 activeSlider = null;
+                activeField = null;
                 var generalTabbedPanel = __instance.dialog.tabbedPanels.First();
                 var controlsTabbedPanel = __instance.dialog.tabbedPanels.Last();
                 var modsPanel = generalTabbedPanel.panel.Instantiate(generalTabbedPanel.panel.transform.parent, false).Rename("ModsPanel");
@@ -36,7 +38,10 @@ namespace Winch.Patches
                 var button = __instance.dialog.transform.Find("ButtonBar/ButtonContainer/ResumeButton").gameObject.Instantiate(prefabs, false).Rename("Button").GetComponent<BasicButtonWrapper>();
                 button.gameObject.RemoveComponentImmediate<SettingsButton>();
                 button.gameObject.AddComponent<LocalizedLabel>();
+                button.GetComponent<UISelectable>().doesSelectableMove = true;
+                button.GetComponent<UISelectable>().delayForOneFrame = true;
                 button.gameObject.Activate();
+                modsPanel.container.RemoveComponentImmediate<ControllerFocusGrabber>();
                 var modsListScroller = modsPanel.container.transform.Find("ControlScroller").GetComponent<ScrollRect>().Rename("ModsList");
                 var modsScrollerRect = modsListScroller.GetComponent<RectTransform>();
                 var otherScroller = controlsTabbedPanel.panel.container.transform.Find("ControlScroller").GetComponent<RectTransform>();
@@ -45,7 +50,7 @@ namespace Winch.Patches
                 var scrollbarRect = modsListScroller.verticalScrollbar.GetComponent<RectTransform>();
                 scrollbarRect.offsetMin = new Vector2(scrollbarRect.offsetMin.x, otherScroller.offsetMin.y);
                 scrollbarRect.offsetMax = new Vector2(scrollbarRect.offsetMax.x, otherScroller.offsetMax.y);
-                var modsHeader = controlsTabbedPanel.panel.container.transform.Find("ControlEntriesHeader").Instantiate(modsListScroller.transform.parent, false).Rename("Header");
+                var modsHeader = controlsTabbedPanel.panel.container.transform.Find("ControlEntriesHeader").Instantiate(modsPanel.container.transform, false).Rename("Header");
                 modsHeader.DestroyAllChildrenImmediate(0);
                 var headerText = modsHeader.Find("ActionLabel").Rename("Label").gameObject;
                 var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).gameObject.AddComponent<LocalizedLabel>();
@@ -54,18 +59,18 @@ namespace Winch.Patches
                 var headerTextUnlocalized = headerText.AddComponent<Label>();
                 var label = headerTextUnlocalized.Instantiate(prefabs, false);
                 label.gameObject.Activate();
-                controlsTabbedPanel.panel.container.transform.Find("Image").Instantiate(modsListScroller.transform.parent, false).Rename("ScrollerTopImage");
-                controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsListScroller.transform.parent, false);
-                var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsListScroller.transform.parent, false).Rename("Footer");
+                controlsTabbedPanel.panel.container.transform.Find("Image").Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
+                controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsPanel.container.transform, false);
+                var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsPanel.container.transform, false).Rename("Footer");
                 modsFooter.gameObject.FindChildWithExactName("ListeningFooter").DestroyImmediate();
                 var footerRoot = modsFooter.Find("IdleFooter").Rename("Root");
                 var footerText = footerRoot.Find("Text").gameObject.AddComponent<LocalizedLabel>();
-                var footerButton = footerRoot.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>();
+                var footerButton = footerRoot.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>(); // TODO: Make it so you can go back to mod options from this button with a controller
                 footerButton.GetComponent<RectTransform>().sizeDelta = new Vector2(225, 50);
                 footerButton.gameObject.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", "prompt.leave");
                 var modsList = modsListScroller.transform.Find("ControlList");
                 modsList.transform.DestroyAllChildrenImmediate();
-                var modOptionsScroller = modsListScroller.Instantiate(modsListScroller.transform.parent, false).Rename("ModOptions");
+                var modOptionsScroller = modsListScroller.Instantiate(modsPanel.container.transform, false).Rename("ModOptions");
                 modOptionsScroller.transform.SetSiblingIndex(2);
                 var modOptions = modOptionsScroller.transform.Find("ControlList");
                 var modsListGrid = modsList.GetComponent<GridLayoutGroup>();
@@ -89,6 +94,8 @@ namespace Winch.Patches
                 modsTab.options = modOptions;
                 modsTab.listScroller = modsListScroller;
                 modsTab.optionsScroller = modOptionsScroller;
+                modsTab.listControllerFocusGrabber = modsListScroller.gameObject.AddComponent<ControllerFocusGrabber>();
+                modsTab.optionsControllerFocusGrabber = modOptionsScroller.gameObject.AddComponent<ControllerFocusGrabber>();
 
                 modsTab.buttonPrefab = button;
                 modsTab.labelPrefab = label;
@@ -162,35 +169,39 @@ namespace Winch.Patches
                 sliderOld.DestroyImmediate();
                 sliderInput.gameObject.Activate();
 
-                var inputFieldContainer = modsTab.inputFieldPrefab = generalTabbedPanel.panel.container.GetComponentInChildren<DropdownSettingInput>(true).gameObject.Instantiate(prefabs, false).Rename("InputField").AddComponent<FieldInput>();
+                var inputFieldContainer = modsTab.inputFieldPrefab = modsTab.sliderPrefab.gameObject.Instantiate(prefabs, false).Rename("InputField").AddComponent<FieldInput>();
                 inputFieldContainer.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
-                var inputFieldOld = inputFieldContainer.GetComponent<DropdownSettingInput>();
+                var inputFieldOld = inputFieldContainer.GetComponent<SliderInput>();
                 inputFieldContainer.localizedStringField = inputFieldOld.localizedStringField;
                 var inputField = Resources.FindObjectsOfTypeAll<TMPro.TMP_InputField>().Skip(1).First().Instantiate(inputFieldContainer.transform, true).Rename("InputField");
-                inputField.image.sprite = inputFieldOld.dropdown.image.sprite;
-                inputField.image.color = inputFieldOld.dropdown.image.color;
-                inputField.placeholder.color = inputFieldOld.dropdown.itemText.color/2;
-                ((TMP_Text)inputField.placeholder).enableAutoSizing = inputFieldOld.dropdown.itemText.enableAutoSizing;
-                inputField.textComponent.color = inputFieldOld.dropdown.itemText.color;
-                inputField.textComponent.enableAutoSizing = inputFieldOld.dropdown.itemText.enableAutoSizing;
+                inputField.image.sprite = dropdownInput.dropdown.image.sprite;
+                inputField.image.color = dropdownInput.dropdown.image.color;
+                inputField.placeholder.color = dropdownInput.dropdown.itemText.color/2;
+                ((TMP_Text)inputField.placeholder).enableAutoSizing = dropdownInput.dropdown.itemText.enableAutoSizing;
+                inputField.textComponent.color = dropdownInput.dropdown.itemText.color;
+                inputField.textComponent.enableAutoSizing = dropdownInput.dropdown.itemText.enableAutoSizing;
                 inputField.onFocusSelectAll = false;
                 inputFieldContainer.inputField = inputField;
                 inputField.gameObject.RemoveComponentImmediate<AeLa.EasyFeedback.Utility.TabNext>();
                 inputField.gameObject.AddComponent<UISelectable>();
+                inputFieldContainer.uiSelectable = inputFieldOld.uiSelectable;
+                inputFieldContainer.focusButton = inputFieldOld.sliderFocusButton;
                 inputFieldContainer.textTooltipRequester = inputField.gameObject.AddComponent<TextTooltipRequester>();
                 inputField.gameObject.AddComponent<SettingsUIComponentEventNotifier>();
+                inputFieldContainer.selectableDisabler = inputField.gameObject.AddComponent<SelectableDisabler>();
+                inputFieldContainer.dialog = __instance;
                 UnityEngine.Object.DestroyImmediate(inputField.gameObject.GetComponent(AccessTools.TypeByName("AeLa.EasyFeedback.FormFields.TextField")));
                 inputField.placeholder.gameObject.RemoveComponentImmediate<LocalizeStringEvent>();
                 inputFieldContainer.placeholder = inputField.placeholder.gameObject.AddComponent<Label>();
                 var ifRect = inputField.GetComponent<RectTransform>();
-                var dropdownRect = inputFieldOld.dropdown.GetComponent<RectTransform>();
+                var dropdownRect = dropdownInput.dropdown.GetComponent<RectTransform>();
                 ifRect.anchorMin = dropdownRect.anchorMin;
                 ifRect.anchorMax = dropdownRect.anchorMax;
                 ifRect.pivot = dropdownRect.pivot;
                 ifRect.offsetMin = dropdownRect.offsetMin;
                 ifRect.offsetMax = dropdownRect.offsetMax;
                 ifRect.anchoredPosition = dropdownRect.anchoredPosition;
-                inputFieldOld.dropdown.gameObject.DestroyImmediate();
+                inputFieldOld.slider.gameObject.DestroyImmediate();
                 inputFieldOld.DestroyImmediate();
                 inputFieldContainer.gameObject.Activate();
 
@@ -238,6 +249,7 @@ namespace Winch.Patches
         public static void SettingsDialog_OnSliderFocusChanged_Prefix(SettingsDialog __instance)
         {
             activeSlider = null;
+            activeField = null;
         }
 
         [HarmonyPrefix]
@@ -246,6 +258,7 @@ namespace Winch.Patches
         public static void SettingsDialog_ForceSliderFocusExit_Prefix(SettingsDialog __instance)
         {
             if (activeSlider != null) activeSlider.ForceSliderDeselect();
+            if (activeField != null) activeField.ForceSliderDeselect();
         }
 
         [HarmonyPrefix]

@@ -50,6 +50,8 @@ namespace Winch.Components
         internal Transform options;
         internal ScrollRect listScroller;
         internal ScrollRect optionsScroller;
+        internal ControllerFocusGrabber listControllerFocusGrabber;
+        internal ControllerFocusGrabber optionsControllerFocusGrabber;
         internal bool inOptions;
         internal bool currentWinch;
         internal ModAssembly currentMod;
@@ -113,7 +115,7 @@ namespace Winch.Components
         {
             ExitOptions();
             PopulateList();
-            ScrollToTop();
+            this.FireOnNextUpdate(ScrollToTop);
         }
 
         public void ScrollToTop()
@@ -157,6 +159,8 @@ namespace Winch.Components
             button.GetComponent<LocalizedLabel>().LabelString = winchHeader;
             button.GetComponent<BasicButtonWrapper>().OnClick += () => OnWinchClicked();
             button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = listScroller;
+            listControllerFocusGrabber.SetSelectable(button.GetComponent<BasicButton>());
+            listControllerFocusGrabber.SelectSelectable();
             modButtons.Add(button);
         }
 
@@ -195,6 +199,8 @@ namespace Winch.Components
             footerText.LabelString = footerOptions;
             footerButton.gameObject.Activate();
             AddWinchOptions();
+            optionsControllerFocusGrabber.SetSelectable(options.GetComponentInChildren<Selectable>());
+            optionsControllerFocusGrabber.SelectSelectable();
             ScrollToTop();
         }
 
@@ -261,6 +267,8 @@ namespace Winch.Components
             footerText.LabelString = footerOptions;
             footerButton.gameObject.Activate();
             AddOptions(mod);
+            optionsControllerFocusGrabber.SetSelectable(options.GetComponentInChildren<Selectable>());
+            optionsControllerFocusGrabber.SelectSelectable();
             ScrollToTop();
         }
 
@@ -700,6 +708,7 @@ namespace Winch.Components
             modOptions.Clear();
             options.DestroyAllChildrenImmediate();
             listScroller.gameObject.Activate();
+            listControllerFocusGrabber.SelectSelectable();
             modButtons.ForEach(button => button.SetCanBeClicked(true));
             headerText.gameObject.Deactivate();
             headerTextLocalized.gameObject.Activate();
