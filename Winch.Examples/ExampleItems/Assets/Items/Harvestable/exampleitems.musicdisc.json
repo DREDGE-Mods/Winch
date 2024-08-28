@@ -19,7 +19,9 @@
 	"perSpotMin": 1,
 	"perSpotMax": 1,
 	"harvestPOICategory": "TRINKET",
-	"harvestableType": "SHALLOW",
+	"harvestableType": "DREDGE",
 	"harvestDifficulty": "VERY_EASY",
-	"canBeCaughtByNet": true
+	"canBeCaughtByRod": true,
+	"canBeCaughtByNet": true,
+	"canBeCaughtByPot": true
 }

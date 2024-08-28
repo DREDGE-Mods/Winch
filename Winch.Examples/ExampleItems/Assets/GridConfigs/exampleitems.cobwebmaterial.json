@@ -1,0 +1,41 @@
+{
+	"columns": 7,
+	"rows": 7,
+	"cellGroupConfigs": [
+		{
+			"cells": [
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXX XXX",
+				"XXXXXXX",
+				"XXXXXXX",
+				"XXXXXXX"
+			],
+			"itemType": "GENERAL",
+			"itemSubtype": [ "MATERIAL", "TRINKET" ],
+			"isHidden": false,
+			"damageImmune": false
+		},
+		{
+			"cells": [
+				"       ",
+				"       ",
+				"       ",
+				"   X   ",
+				"       ",
+				"       ",
+				"       "
+			],
+			"itemType": "NONE",
+			"itemSubtype": "NONE",
+			"isHidden": true,
+			"damageImmune": true
+		}
+	],
+	"mainItemType": "GENERAL",
+	"mainItemSubtype": [ "MATERIAL", "TRINKET" ],
+	"itemsInThisBelongToPlayer": true,
+	"canAddItemsInQuestMode": false,
+	"hasUnderlay": false
+}

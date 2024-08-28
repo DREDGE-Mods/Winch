@@ -1,0 +1,9 @@
+{
+	"columns": 6,
+	"rows": 6,
+	"mainItemType": "GENERAL",
+	"mainItemSubtype": "GENERAL",
+	"itemsInThisBelongToPlayer": true,
+	"canAddItemsInQuestMode": false,
+	"hasUnderlay": false
+}

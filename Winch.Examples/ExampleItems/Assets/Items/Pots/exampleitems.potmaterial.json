@@ -1,0 +1,26 @@
+﻿{
+	"itemNameKey": "exampleitems.potmaterial.name",
+	"itemDescriptionKey": "exampleitems.potmaterial.desc",
+	"sprite": "exampleitems.pot",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [ "DREDGE" ],
+	"abilityMode": "POT_MATERIAL",
+	"potType": "MATERIAL",
+	"catchRate": 1,
+	"maxDurabilityDays": 7,
+	"timeBetweenCatchRolls": 0.01,
+	"aberrationBonus": 0.1,
+	"gridConfiguration": "exampleitems.potmaterial",
+	"itemOwnPrerequisites": [ "exampleitems.diamond" ],
+	"researchPrerequisites": [ "tir-pot1" ]
+}
+

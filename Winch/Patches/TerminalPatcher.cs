@@ -26,38 +26,29 @@ namespace Winch.Patches
             return false;
         }
 
-        public static List<string> startsWith = new List<string>
-        {
-            "Failed to find expected binary shader data",
-            "Failed to create agent because there is no valid NavMesh"
-        };
         public static List<string> previouslyLogged = new List<string>();
 
         public static void CustomHandleUnityLog(this Terminal terminal, string message, string stack_trace, LogType type)
         {
-            if (startsWith.Any(message.StartsWith))
+            if (!previouslyLogged.Contains(message))
             {
-                if (!previouslyLogged.Contains(message))
+                previouslyLogged.Add(message);
+                switch (type)
                 {
-                    previouslyLogged.Add(message);
-                    switch (type)
-                    {
-                        case LogType.Log:
-                            WinchCore.Log.Info(message, "Unity");
-                            break;
-                        case LogType.Warning:
-                            WinchCore.Log.Warn(message, "Unity");
-                            break;
-                        case LogType.Assert:
-                        case LogType.Error:
-                        case LogType.Exception:
-                            WinchCore.Log.Error(message, "Unity");
-                            break;
-                    }
+                    case LogType.Log:
+                        WinchCore.Log.Info(message, "Unity");
+                        break;
+                    case LogType.Warning:
+                        WinchCore.Log.Warn(message, "Unity");
+                        break;
+                    case LogType.Assert:
+                    case LogType.Error:
+                    case LogType.Exception:
+                        WinchCore.Log.Error(message, "Unity");
+                        break;
                 }
             }
-            else
-                terminal.HandleUnityLog(message, stack_trace, type);
+            //terminal.HandleUnityLog(message, stack_trace, type);
         }
     }
 }

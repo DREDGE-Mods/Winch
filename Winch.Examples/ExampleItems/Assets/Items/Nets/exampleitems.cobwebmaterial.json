@@ -1,0 +1,28 @@
+﻿{
+	"itemNameKey": "exampleitems.cobwebmaterial.name",
+	"itemDescriptionKey": "exampleitems.cobwebmaterial.desc",
+	"sprite": "exampleitems.cobweb",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [ "DREDGE" ],
+	"abilityMode": "TRAWL_MATERIAL",
+	"trawlMode": "TRAWL_MATERIAL",
+	"netType": "MATERIAL",
+	"catchRate": 1,
+	"maxDurabilityDays": 7,
+	"timeBetweenCatchRolls": 0.01,
+	"aberrationBonus": 0.1,
+	"gridKey": "TIR_NET_2",
+	"gridConfiguration": "exampleitems.cobwebmaterial",
+	"itemOwnPrerequisites": [ "exampleitems.diamond" ],
+	"researchPrerequisites": [ "tir-net2" ]
+}
+
