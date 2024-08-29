@@ -13,13 +13,18 @@ namespace Winch.Data.Item
         public TrawlMode trawlMode = TrawlMode.TRAWL;
 
         [SerializeField]
-        internal NetType netType = NetType.REGULAR;
+        public NetType netType = NetType.REGULAR;
 
         [SerializeField]
         public Sprite qualityIcon;
 
+        [SerializeField]
+        public Sprite counterIcon;
+
         public AbilityMode AbilityMode => abilityMode;
 
         public Sprite QualityIcon => qualityIcon;
+
+        public Sprite CounterIcon => counterIcon;
     }
 }

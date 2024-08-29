@@ -86,24 +86,19 @@ namespace Winch.Patches.API
                 new CodeInstruction(OpCodes.Ldloc_S, 6),
                 new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WinchExtensions), nameof(WinchExtensions.PlaceTrawlItemAtGridPos)))
             );
-            matcher.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldstr, "[TrawlNetAbility] AddTrawlItem() chosen item data could not be found")
-            ).Advance(1).Insert(
-                new CodeInstruction(OpCodes.Ldloc_S, 5),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TrawlNetPatcher), nameof(TrawlNetPatcher.AppendItemDataID)))
-            );
-            matcher.Start().MatchStartForward(
-                new CodeMatch(OpCodes.Ldstr, "[TrawlNetAbility] AddTrawlItem() failed to find space for item")
-            ).Advance(1).Insert(
-                new CodeInstruction(OpCodes.Ldloc_S, 5),
-                new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(TrawlNetPatcher), nameof(TrawlNetPatcher.AppendItemDataID)))
-            );
             return matcher.InstructionEnumeration();
         }
 
-        public static string AppendItemDataID(string original, HarvestableItemData harvestableItemData)
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(ItemCounterUI), nameof(ItemCounterUI.RefreshSprites))]
+        public static bool ItemCounterUI_RefreshSprites_Prefix(ItemCounterUI __instance)
         {
-            return original + " \"" + harvestableItemData.id + "\"";
+            SpatialItemInstance trawlNetInstance = GameManager.Instance.SaveData.EquippedTrawlNetInstance();
+            if (trawlNetInstance != null)
+                __instance.animatedObjectImage.sprite = __instance.GetSpriteForNetItem(trawlNetInstance.GetItemData<DeployableItemData>());
+            else
+                __instance.animatedObjectImage.sprite = __instance.fishIcon;
+            return false;
         }
     }
 }

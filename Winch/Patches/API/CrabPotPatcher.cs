@@ -15,8 +15,7 @@ namespace Winch.Patches.API
         [HarmonyPatch(typeof(GameSceneInitializer), nameof(GameSceneInitializer.CreatePlacedHarvestPOI))]
         public static IEnumerable<CodeInstruction> GameSceneInitializer_CreatePlacedHarvestPOI_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
         {
-            var matcher = new CodeMatcher(instructions, generator).MatchEndForward(new CodeMatch(OpCodes.Ldstr, "[GameSceneInitializer] CreatePlacedHarvestPOI() instantiating from data {0}"), new CodeMatch(OpCodes.Ldarg_1))
-                .Advance(1).Insert(new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(SerializedCrabPotPOIData), nameof(SerializedCrabPotPOIData.deployableItemId))));
+            var matcher = new CodeMatcher(instructions, generator);
             
             matcher.Start().MatchStartForward(
                 new CodeMatch(OpCodes.Ldarg_0),

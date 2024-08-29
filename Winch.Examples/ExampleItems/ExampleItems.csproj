@@ -36,10 +36,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DredgeGameLibs" Version="1.5.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="ExampleItems.csproj.user" />
 		<None Include="Assets\**\*.*">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>

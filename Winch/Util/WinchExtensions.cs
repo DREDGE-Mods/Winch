@@ -28,6 +28,7 @@ using Winch.Data.Item;
 using Winch.Data.WorldEvent;
 using Winch.Util;
 using static ActiveAbilityInfoPanel;
+using static TrawlNetAbility;
 
 public static class WinchExtensions
 {
@@ -258,11 +259,25 @@ public static class WinchExtensions
         mapWindow.MoveMapTo(mapPivotFromMapPosition.x, mapPivotFromMapPosition.y);
     }
 
+    public static TrawlMode GetTrawlModeFromItemData(this DeployableItemData data)
+    {
+        if (data is TrawlNetItemData netData)
+            return netData.trawlMode;
+        else if (data.id == "tir-net1")
+            return TrawlMode.TRAWL_OOZE;
+        else if (data.id == "tir-net2")
+            return TrawlMode.TRAWL_MATERIAL;
+        else if (data.itemSubtype == ItemSubtype.NET)
+            return TrawlMode.TRAWL;
+        else
+            return TrawlMode.NONE;
+    }
+
     public static NetType GetNetTypeFromItemData(this DeployableItemData data)
     {
         if (data is TrawlNetItemData netData)
             return netData.netType;
-        else if(data.id == "tir-net1")
+        else if (data.id == "tir-net1")
             return NetType.SIPHON;
         else if (data.id == "tir-net2")
             return NetType.MATERIAL;
@@ -387,6 +402,30 @@ public static class WinchExtensions
             default:
                 return TextureUtil.GetSprite(string.Join(string.Empty, mode.GetName().Split('_').Select(word => word.ToLowerInvariant().ToTitleCase())) + "QualityIcon");
         }
+    }
+
+    public static Sprite GetSpriteForTrawlMode(this ItemCounterUI itemCounter, TrawlMode mode)
+    {
+        switch (mode)
+        {
+            case TrawlMode.NONE:
+            case TrawlMode.TRAWL:
+                return itemCounter.fishIcon;
+            case TrawlMode.TRAWL_MATERIAL:
+                return itemCounter.materialIcon;
+            case TrawlMode.TRAWL_OOZE:
+                return itemCounter.oozeIcon;
+            default:
+                return TextureUtil.GetSprite(string.Join(string.Empty, mode.GetName().Split('_').Select(word => word.ToLowerInvariant().ToTitleCase())) + "CounterIcon");
+        }
+    }
+
+    public static Sprite GetSpriteForNetItem(this ItemCounterUI itemCounter, DeployableItemData data)
+    {
+        if (data is TrawlNetItemData trawlData && trawlData.CounterIcon != null)
+            return trawlData.CounterIcon;
+
+        return itemCounter.GetSpriteForTrawlMode(data.GetTrawlModeFromItemData());
     }
 
     public static List<HarvestableItemData> GetHarvestableItems(this TrawlNetAbility trawlNetAbility)

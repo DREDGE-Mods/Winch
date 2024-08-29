@@ -28,10 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DredgeGameLibs" Version="1.5.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Include="IntroSkipper.csproj.user" />
 		<None Update="mod_meta.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
