@@ -19,7 +19,7 @@ public static class GridConfigUtil
     private static CellGroupConfigConverter CellGroupConfigConverter = new CellGroupConfigConverter();
     private static GridConfigConverter GridConfigConverter = new GridConfigConverter();
 
-    internal static bool PopulateGridConfigFromMetaWithConverter(GridConfiguration config, Dictionary<string, object> meta)
+    internal static bool PopulateGridConfigFromMetaWithConverter(DeferredGridConfiguration config, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(config, meta, GridConfigConverter);
     }
@@ -29,7 +29,7 @@ public static class GridConfigUtil
         return UtilHelpers.PopulateObjectFromMeta(config, meta, CellGroupConfigConverter);
     }
 
-    internal static Dictionary<string, GridConfiguration> ModdedGridConfigDict = new();
+    internal static Dictionary<string, DeferredGridConfiguration> ModdedGridConfigDict = new();
     internal static Dictionary<string, GridConfiguration> AllGridConfigDict = new();
 
     public static GridConfiguration GetModdedGridConfiguration(string id)
@@ -37,7 +37,7 @@ public static class GridConfigUtil
         if (string.IsNullOrWhiteSpace(id))
             return null;
 
-        if (ModdedGridConfigDict.TryGetValue(id, out GridConfiguration gridConfig))
+        if (ModdedGridConfigDict.TryGetValue(id, out DeferredGridConfiguration gridConfig))
             return gridConfig;
         else
             return null;
@@ -73,7 +73,7 @@ public static class GridConfigUtil
             WinchCore.Log.Error($"Meta file {metaPath} is empty");
             return;
         }
-        var gridConfig = UtilHelpers.GetScriptableObjectFromMeta<GridConfiguration>(meta, metaPath);
+        var gridConfig = UtilHelpers.GetScriptableObjectFromMeta<DeferredGridConfiguration>(meta, metaPath);
         if (gridConfig == null)
         {
             WinchCore.Log.Error($"Couldn't create GridConfiguration");

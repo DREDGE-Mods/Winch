@@ -1,6 +1,7 @@
 {
 	"columns": 6,
 	"rows": 6,
+	"mainItemData": "canister",
 	"mainItemType": "GENERAL",
 	"mainItemSubtype": "GENERAL",
 	"itemsInThisBelongToPlayer": true,
