@@ -626,6 +626,23 @@ public static class WinchExtensions
                (token.Type == JTokenType.Null) ||
                (token.Type == JTokenType.Undefined);
     }
+
+    public static string ToPrintedString(this AchievementData achievement)
+    {
+        string printStr = $"{achievement.id}: ";
+        if (achievement.evaluationConditions.Count > 0)
+        {
+            achievement.evaluationConditions.ForEach(delegate (AchievementCondition c)
+            {
+                printStr = printStr + c.Print() + " ";
+            });
+        }
+        else
+        {
+            printStr += "This achievement is triggered manually.";
+        }
+        return printStr;
+    }
     #endregion
 
     #region Reflection
