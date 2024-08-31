@@ -112,15 +112,7 @@ namespace Winch.Data
                     var moddedUnderlayItems = crabPotPOI.grid.spatialUnderlayItems.Where(WinchExtensions.IsModded).ToList();
                     crabPotPOI.grid.spatialItems.RemoveAll(WinchExtensions.IsModded);
                     crabPotPOI.grid.spatialUnderlayItems.RemoveAll(WinchExtensions.IsModded);
-                    var partialCrabPot = (SerializedCrabPotPOIData)FormatterServices.GetUninitializedObject(typeof(SerializedCrabPotPOIData));
-                    partialCrabPot.deployableItemId = crabPotPOI.deployableItemId;
-                    partialCrabPot.x = crabPotPOI.x;
-                    partialCrabPot.z = crabPotPOI.z;
-                    partialCrabPot.lastUpdate = crabPotPOI.lastUpdate;
-                    partialCrabPot.timeUntilNextCatchRoll = crabPotPOI.timeUntilNextCatchRoll;
-                    partialCrabPot.durability = crabPotPOI.durability;
-                    partialCrabPot.hadDurabilityRemaining = crabPotPOI.hadDurabilityRemaining;
-                    partialCrabPot.grid = new SerializableGrid();
+                    var partialCrabPot = crabPotPOI.MakeIdentical();
                     partialCrabPot.grid.spatialItems = moddedItems;
                     partialCrabPot.grid.spatialUnderlayItems = moddedUnderlayItems;
                     saveData.serializedCrabPotPOIs.Add(partialCrabPot);
@@ -164,13 +156,7 @@ namespace Winch.Data
             foreach (var crabPotPOI in potsToRemove)
             {
                 saveData.serializedCrabPotPOIs.Remove(crabPotPOI);
-                if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot =>
-                {
-                    return pot.deployableItemId == crabPotPOI.deployableItemId
-                    && pot.x == crabPotPOI.x && pot.z == crabPotPOI.z
-                    && pot.lastUpdate == crabPotPOI.lastUpdate && pot.timeUntilNextCatchRoll == crabPotPOI.timeUntilNextCatchRoll
-                    && pot.durability == crabPotPOI.durability && pot.hadDurabilityRemaining == crabPotPOI.hadDurabilityRemaining;
-                }, out var baseCrabPotPOI))
+                if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot => pot.Identical(crabPotPOI), out var baseCrabPotPOI))
                 {
                     baseCrabPotPOI.grid.spatialItems.AddRange(crabPotPOI.grid.spatialItems);
                     baseCrabPotPOI.grid.spatialUnderlayItems.AddRange(crabPotPOI.grid.spatialUnderlayItems);

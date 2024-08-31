@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using UnityAsyncAwaitUtil;
 using UnityEngine;
@@ -646,6 +647,27 @@ public static class WinchExtensions
             printStr += "This achievement is triggered manually.";
         }
         return printStr;
+    }
+
+    public static bool Identical(this SerializedCrabPotPOIData a, SerializedCrabPotPOIData b)
+    {
+        return a.deployableItemId == b.deployableItemId && a.x == b.x && a.z == b.z
+                    && a.lastUpdate == b.lastUpdate && a.timeUntilNextCatchRoll == b.timeUntilNextCatchRoll
+                    && a.durability == b.durability && a.hadDurabilityRemaining == b.hadDurabilityRemaining;
+    }
+
+    public static SerializedCrabPotPOIData MakeIdentical(this SerializedCrabPotPOIData crabPotPOI)
+    {
+        var partialCrabPot = (SerializedCrabPotPOIData)FormatterServices.GetUninitializedObject(typeof(SerializedCrabPotPOIData));
+        partialCrabPot.deployableItemId = crabPotPOI.deployableItemId;
+        partialCrabPot.x = crabPotPOI.x;
+        partialCrabPot.z = crabPotPOI.z;
+        partialCrabPot.lastUpdate = crabPotPOI.lastUpdate;
+        partialCrabPot.timeUntilNextCatchRoll = crabPotPOI.timeUntilNextCatchRoll;
+        partialCrabPot.durability = crabPotPOI.durability;
+        partialCrabPot.hadDurabilityRemaining = crabPotPOI.hadDurabilityRemaining;
+        partialCrabPot.grid = new SerializableGrid();
+        return partialCrabPot;
     }
     #endregion
 
