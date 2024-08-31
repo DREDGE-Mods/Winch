@@ -36,7 +36,7 @@ namespace Winch.Data
 
         internal class ModdedSaveData
         {
-            public Dictionary<GridKey, SerializableGrid> grids = new Dictionary<GridKey, SerializableGrid>();
+            public Dictionary<string, SerializableGrid> grids = new Dictionary<string, SerializableGrid>();
             public List<SerializedCrabPotPOIData> serializedCrabPotPOIs = new List<SerializedCrabPotPOIData>();
             public Dictionary<string, Dictionary<string, JToken>> mods = new Dictionary<string, Dictionary<string, JToken>>();
         }
@@ -83,7 +83,7 @@ namespace Winch.Data
                     var moddedUnderlayItems = grid.spatialUnderlayItems.Where(WinchExtensions.IsModded).ToList();
                     grid.spatialItems.RemoveAll(WinchExtensions.IsModded);
                     grid.spatialUnderlayItems.RemoveAll(WinchExtensions.IsModded);
-                    saveData.grids.Add(key, new SerializableGrid
+                    saveData.grids.Add(key.GetName(), new SerializableGrid
                     {
                         spatialItems = moddedItems,
                         spatialUnderlayItems = moddedUnderlayItems
@@ -95,7 +95,7 @@ namespace Winch.Data
                 if (baseSaveData.grids.TryGetValue(key, out var grid))
                 {
                     baseSaveData.grids.Remove(key);
-                    saveData.grids.Add(key, grid);
+                    saveData.grids.Add(key.GetName(), grid);
                 }
             }
 
@@ -127,7 +127,7 @@ namespace Winch.Data
 
         internal void InsertModdedData()
         {
-            var gridsToRemove = new List<GridKey>();
+            var gridsToRemove = new List<string>();
             foreach (var gridByKey in saveData.grids)
             {
                 var key = gridByKey.Key;
@@ -137,14 +137,17 @@ namespace Winch.Data
             {
                 if (saveData.grids.TryGetValue(key, out var grid))
                 {
-                    saveData.grids.Remove(key);
-                    if (baseSaveData.grids.TryGetValue(key, out var baseGrid))
+                    if (EnumUtil.TryParse<GridKey>(key, out GridKey gridKey))
                     {
-                        baseGrid.spatialItems.AddRange(grid.spatialItems);
-                        baseGrid.spatialUnderlayItems.AddRange(grid.spatialUnderlayItems);
+                        saveData.grids.Remove(key);
+                        if (baseSaveData.grids.TryGetValue(gridKey, out var baseGrid))
+                        {
+                            baseGrid.spatialItems.AddRange(grid.spatialItems);
+                            baseGrid.spatialUnderlayItems.AddRange(grid.spatialUnderlayItems);
+                        }
+                        else
+                            baseSaveData.grids.Add(gridKey, grid);
                     }
-                    else
-                        baseSaveData.grids.Add(key, grid);
                 }
             }
 
