@@ -79,6 +79,23 @@ public static class WinchExtensions
     public static bool IsVanilla(this WorldEventData worldEvent) => !worldEvent.IsModded();
 
     /// <summary>
+    /// Check if the associated item data exists
+    /// </summary>
+    /// <returns>Whether the associated item data exists or not</returns>
+    public static bool DoesItemDataExist(this ItemInstance item) => ItemUtil.ModdedItemDataDict.ContainsKey(item.id) || ItemUtil.VanillaItemIDList.Contains(item.id);
+    /// <inheritdoc cref="DoesItemDataExist(ItemInstance)"/>
+    public static bool DoesItemDataExist(this SerializedCrabPotPOIData crabPotPOI) => ItemUtil.ModdedItemDataDict.ContainsKey(crabPotPOI.deployableItemId) || ItemUtil.VanillaItemIDList.Contains(crabPotPOI.deployableItemId);
+
+    /// <summary>
+    /// Opposite of <see cref="DoesItemDataExist(ItemInstance)"/>
+    /// </summary>
+    public static bool DoesItemDataNotExist(this ItemInstance item) => !item.DoesItemDataExist();
+    /// <summary>
+    /// Opposite of <see cref="DoesItemDataExist(SerializedCrabPotPOIData)"/>
+    /// </summary>
+    public static bool DoesItemDataNotExist(this SerializedCrabPotPOIData crabPotPOI) => !crabPotPOI.DoesItemDataExist();
+
+    /// <summary>
     /// Converts a spatial item instances to a spatial item data.
     /// </summary>
     public static SpatialItemData ToItemData(this SpatialItemInstance instance) => instance.GetItemData<SpatialItemData>();

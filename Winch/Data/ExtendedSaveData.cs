@@ -139,11 +139,27 @@ namespace Winch.Data
                 {
                     if (EnumUtil.TryParse<GridKey>(key, out GridKey gridKey))
                     {
+                        var existingItems = grid.spatialItems.Where(WinchExtensions.DoesItemDataExist).ToList();
+                        var existingUnderlayItems = grid.spatialUnderlayItems.Where(WinchExtensions.DoesItemDataExist).ToList();
+                        var nonExistingItems = grid.spatialItems.Where(WinchExtensions.DoesItemDataNotExist).ToList();
+                        var nonExistingUnderlayItems = grid.spatialUnderlayItems.Where(WinchExtensions.DoesItemDataNotExist).ToList();
+
+                        foreach (var item in nonExistingItems.Concat(nonExistingUnderlayItems))
+                        {
+                            WinchCore.Log.Error($"Failed to find item data with id \"{item.id}\". Removing from grid {key}.");
+                        }
+
                         saveData.grids.Remove(key);
+                        if (nonExistingItems.Any() || nonExistingUnderlayItems.Any())
+                        {
+                            grid.spatialItems = existingItems;
+                            grid.spatialUnderlayItems = existingUnderlayItems;
+                        }
+
                         if (baseSaveData.grids.TryGetValue(gridKey, out var baseGrid))
                         {
-                            baseGrid.spatialItems.AddRange(grid.spatialItems);
-                            baseGrid.spatialUnderlayItems.AddRange(grid.spatialUnderlayItems);
+                            baseGrid.spatialItems.AddRange(existingItems);
+                            baseGrid.spatialUnderlayItems.AddRange(existingUnderlayItems);
                         }
                         else
                             baseSaveData.grids.Add(gridKey, grid);
@@ -154,15 +170,35 @@ namespace Winch.Data
             var potsToRemove = new List<SerializedCrabPotPOIData>();
             foreach (var crabPotPOI in saveData.serializedCrabPotPOIs)
             {
-                potsToRemove.Add(crabPotPOI);
+                if (crabPotPOI.DoesItemDataExist())
+                    potsToRemove.Add(crabPotPOI);
+                else
+                    WinchCore.Log.Error($"Failed to find item data with id \"{crabPotPOI.deployableItemId}\". Unable to place crab pot.");
+
             }
             foreach (var crabPotPOI in potsToRemove)
             {
+                var existingItems = crabPotPOI.grid.spatialItems.Where(WinchExtensions.DoesItemDataExist).ToList();
+                var existingUnderlayItems = crabPotPOI.grid.spatialUnderlayItems.Where(WinchExtensions.DoesItemDataExist).ToList();
+                var nonExistingItems = crabPotPOI.grid.spatialItems.Where(WinchExtensions.DoesItemDataNotExist).ToList();
+                var nonExistingUnderlayItems = crabPotPOI.grid.spatialUnderlayItems.Where(WinchExtensions.DoesItemDataNotExist).ToList();
+
+                foreach (var item in nonExistingItems.Concat(nonExistingUnderlayItems))
+                {
+                    WinchCore.Log.Error($"Failed to find item data with id \"{item.id}\". Removing from crab pot grid.");
+                }
+
                 saveData.serializedCrabPotPOIs.Remove(crabPotPOI);
+                if (nonExistingItems.Any() || nonExistingUnderlayItems.Any())
+                {
+                    crabPotPOI.grid.spatialItems = existingItems;
+                    crabPotPOI.grid.spatialUnderlayItems = existingUnderlayItems;
+                }
+
                 if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot => pot.Identical(crabPotPOI), out var baseCrabPotPOI))
                 {
-                    baseCrabPotPOI.grid.spatialItems.AddRange(crabPotPOI.grid.spatialItems);
-                    baseCrabPotPOI.grid.spatialUnderlayItems.AddRange(crabPotPOI.grid.spatialUnderlayItems);
+                    baseCrabPotPOI.grid.spatialItems.AddRange(existingItems);
+                    baseCrabPotPOI.grid.spatialUnderlayItems.AddRange(existingUnderlayItems);
                 }
                 else
                     baseSaveData.serializedCrabPotPOIs.Add(crabPotPOI);
