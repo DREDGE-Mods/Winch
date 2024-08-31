@@ -21,6 +21,17 @@ namespace Winch.Core
             if (Directory.Exists(winchAssetFolderPath))
                 LoadAssetFolder(winchAssetFolderPath);
 
+            try
+            {
+                ItemUtil.Initialize();
+                GridConfigUtil.Initialize();
+                WorldEventUtil.Initialize();
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to initialize winch utils: {ex}");
+            }
+
             foreach (var modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
             {
                 ModAssemblyLoader.ForceModContext(modAssembly);

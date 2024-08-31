@@ -19,17 +19,6 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("Initializer started.");
 
-			try
-			{
-				ItemUtil.Initialize();
-				GridConfigUtil.Initialize();
-				WorldEventUtil.Initialize();
-			}
-			catch (Exception ex)
-			{
-				WinchCore.Log.Error($"Failed to initialize winch utils: {ex}");
-			}
-
 			// Any unity methods like "Awake" and etc. require patching later (here) or else game explodes for whatever reason. Even just touching the method slightly makes the loading screen go black and spam the error below.
 			// I assume it is because where we originally patch is before unity native dlls load or something.
 			/*
