@@ -3,6 +3,7 @@ using Winch.Util;
 
 namespace Winch.Components
 {
+    [UsedInUnityProject]
     public class ShaderReplacer : MonoBehaviour
     {
         private void Awake() => ReplaceShaders();
