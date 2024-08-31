@@ -342,9 +342,13 @@ public static class DialogueUtil
         }
     }
 
+    internal static string GetProgramFileLocation(string fileName) => Path.Combine(WinchCore.WinchInstallLocation, $"{fileName}.txt");
+
     internal static void WriteYarnProgramToText(string fileName, Program program)
     {
-        File.WriteAllText(Path.Combine(WinchCore.WinchInstallLocation, $"{fileName}.txt"), YarnProgramToText(program));
+        var path = GetProgramFileLocation(fileName);
+        File.WriteAllText(path, YarnProgramToText(program));
+        WinchCore.Log.Debug("Yarn program written to " + path);
     }
 
     internal static string YarnProgramToText(Program program)
@@ -390,5 +394,6 @@ public static class DialogueUtil
         DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
         Program program = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
         WriteYarnProgramToText("YarnProgram", program);
+        Terminal.Buffer.HandleLog("Yarn program written to " + GetProgramFileLocation("YarnProgram"), TerminalLogType.Message);
     }
 }
