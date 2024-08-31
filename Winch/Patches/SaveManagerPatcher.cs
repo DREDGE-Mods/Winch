@@ -83,13 +83,16 @@ namespace Winch.Patches
         public static void Load(SaveManager __instance, int slot, ref bool __result)
         {
             WinchCore.Log.Debug($"Load({slot}) => {__result}");
-            try
+            if (__result)
             {
-                SaveUtil.ActiveSaveData.Load();
-            }
-            catch (System.Exception ex)
-            {
-                WinchCore.Log.Error(ex);
+                try
+                {
+                    SaveUtil.ActiveSaveData.Load();
+                }
+                catch (System.Exception ex)
+                {
+                    WinchCore.Log.Error(ex);
+                }
             }
         }
 

@@ -66,6 +66,7 @@ namespace Winch.Data
         {
             Reset();
             Write();
+            SaveUtil.LoadParticipants(this);
         }
 
         internal void ExtractModdedData()
