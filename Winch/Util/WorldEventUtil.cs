@@ -28,7 +28,8 @@ public static class WorldEventUtil
     }
 
     internal static List<string> VanillaWorldEventIDList = new();
-    static WorldEventUtil()
+
+    internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<WorldEventData>(AddressablesUtil.GetLocations<WorldEventData>("WorldEventData"), worldEventData => VanillaWorldEventIDList.SafeAdd(worldEventData.name));
     }

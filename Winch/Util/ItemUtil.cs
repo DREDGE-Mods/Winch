@@ -47,7 +47,8 @@ public static class ItemUtil
     }
 
     internal static List<string> VanillaItemIDList = new();
-    static ItemUtil()
+
+    internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<ItemData>(AddressablesUtil.GetLocations<ItemData>("ItemData"), itemData => VanillaItemIDList.SafeAdd(itemData.id));
     }

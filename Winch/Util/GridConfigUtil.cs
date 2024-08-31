@@ -30,7 +30,8 @@ public static class GridConfigUtil
     }
 
     internal static List<string> VanillaGridConfigIDList = new();
-    static GridConfigUtil()
+
+    internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"), gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
     }
