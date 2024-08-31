@@ -108,7 +108,7 @@ namespace Winch.Core
                     throw new FormatException("MinWinchVersion not in correct format.");
 
                 if (!VersionUtil.IsSameOrNewer(winchVer, minVer))
-                    throw new Exception("Mod requires a version of Winch higher than the one installed.");
+                    throw new Exception($"Mod requires a version ({minVer}) of Winch higher than the one installed  ({winchVer}).");
             }
         }
 
