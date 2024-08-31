@@ -1164,7 +1164,7 @@ public static class WinchExtensions
     /// Puts spaces between capitalized words within a string. Accounts for acronyms like VR.
     /// </summary>
     /// <param name="s">The string to search for a match.</param>
-    public static string Spaced(this string s) => Regex.Replace(s, @"(\p{Ll})(\P{Ll})", "$1 $2");
+    public static string Spaced(this string s) => Regex.Replace(s, @"(\p{Ll})(\P{Ll})", "$1 $2").Replace("  ", " ");
 
     /// <summary>
     /// Returns null if a string is empty / whitespace, otherwise just returns back the string
