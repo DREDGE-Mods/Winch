@@ -604,6 +604,10 @@ public static class WinchExtensions
         shell.HandleRejectedCommands(rejectedCommands);
     }
 
+    public static bool Unregister(this CommandAutocomplete autocomplete, string word)
+    {
+        return autocomplete.known_words.Remove(word.ToLower());
+    }
 
     public static JToken ToJToken(this object? value) => value != null ? JToken.FromObject(value, JSONConfig.jsonSerializer) : JValue.CreateNull();
 

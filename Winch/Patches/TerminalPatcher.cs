@@ -29,6 +29,28 @@ namespace Winch.Patches
             return false;
         }
 
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(CommandAutocomplete), nameof(CommandAutocomplete.Register))]
+        public static bool CommandAutocomplete_Register_Postfix(this CommandAutocomplete __instance, string word)
+        {
+            __instance.known_words.SafeAdd(word.ToLower());
+            return false;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CommandShell), nameof(CommandShell.AddCommand), new Type[2] { typeof(string), typeof(CommandInfo) })]
+        public static void CommandShell_AddCommand_Postfix(string name)
+        {
+            Terminal.Autocomplete.Register(name.ToUpper());
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(CommandShell), nameof(CommandShell.RemoveCommand), new Type[1] { typeof(string) })]
+        public static void CommandShell_RemoveCommand_Postfix(string name)
+        {
+            Terminal.Autocomplete.Unregister(name.ToUpper());
+        }
+
         public static List<string> previouslyLogged = new List<string>();
 
         public static void CustomHandleUnityLog(this Terminal terminal, string message, string stack_trace, LogType type)
