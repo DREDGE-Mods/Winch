@@ -632,6 +632,9 @@ public static class WinchExtensions
                (token.Type == JTokenType.Undefined);
     }
 
+    /// <summary>
+    /// Copy of <see cref="AchievementData.Print"/> except it actually returns the string instead of logging it.
+    /// </summary>
     public static string ToPrintedString(this AchievementData achievement)
     {
         string printStr = $"{achievement.id}: ";
@@ -649,6 +652,9 @@ public static class WinchExtensions
         return printStr;
     }
 
+    /// <summary>
+    /// Checks if both crab pot POI datas have identical serializable data excluding <see cref="SerializedCrabPotPOIData.grid"/>
+    /// </summary>
     public static bool Identical(this SerializedCrabPotPOIData a, SerializedCrabPotPOIData b)
     {
         return a.deployableItemId == b.deployableItemId && a.x == b.x && a.z == b.z
@@ -656,6 +662,9 @@ public static class WinchExtensions
                     && a.durability == b.durability && a.hadDurabilityRemaining == b.hadDurabilityRemaining;
     }
 
+    /// <summary>
+    /// Makes an uninitialized crab pot POI data with identical serializable data excluding <see cref="SerializedCrabPotPOIData.grid"/>
+    /// </summary>
     public static SerializedCrabPotPOIData MakeIdentical(this SerializedCrabPotPOIData crabPotPOI)
     {
         var partialCrabPot = (SerializedCrabPotPOIData)FormatterServices.GetUninitializedObject(typeof(SerializedCrabPotPOIData));
