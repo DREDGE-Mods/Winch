@@ -61,10 +61,8 @@ namespace Winch.Patches
                 switch (type)
                 {
                     case LogType.Log:
-                        WinchCore.Log.Info(message, "Unity");
-                        break;
                     case LogType.Warning:
-                        WinchCore.Log.Warn(message, "Unity");
+                        WinchCore.Log.Unity(message, "Unity");
                         break;
                     case LogType.Assert:
                     case LogType.Error:
