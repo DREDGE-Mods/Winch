@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 using Winch.Config;
 using Winch.Core;
 using Winch.Util;
@@ -313,6 +315,73 @@ namespace Winch.Data
         public bool GetSaveUsesMod(ModAssembly mod) => GetSaveUsesMod(mod.GUID);
 
         public void SetSaveUsesMod(ModAssembly mod, bool value) => SetSaveUsesMod(mod.GUID, value);
+
+        public static IEnumerator ShowLoadFailedWithIssueDialog(TitleController titleController, UnityEngine.UI.Selectable selectable, Action<bool> callback)
+        {
+            string localizationKey = "prompt.incompatible-mods";
+            yield return ShowLoadFailedWithIssueDialog(titleController, selectable, localizationKey, callback);
+        }
+
+        public static IEnumerator ShowLoadFailedWithIssueDialog(TitleController titleController, Selectable s, string localizationKey, Action<bool> callback)
+        {
+            WinchCore.Log.Debug($"[ExtendedSaveData] ShowLoadFailedWithIssueDialog({localizationKey})");
+            titleController.DisableMenuCanvas();
+            titleController.controllerFocusGrabber.enabled = false;
+            DialogButtonOptions cancel = new DialogButtonOptions
+            {
+                buttonString = "prompt.cancel",
+                id = 0,
+                hideOnButtonPress = true,
+                isBackOption = true
+            };
+            DialogButtonOptions confirm = new DialogButtonOptions
+            {
+                buttonString = "prompt.confirm",
+                id = 1,
+                hideOnButtonPress = true
+            };
+            DialogButtonOptions[] buttonOptions = new DialogButtonOptions[2] { cancel, confirm };
+            DialogOptions dialogOptions = new DialogOptions
+            {
+                text = localizationKey,
+                buttonOptions = buttonOptions
+            };
+            bool responded = false;
+            bool result = false;
+            GameManager.Instance.DialogManager.ShowDialog(dialogOptions, (DialogButtonOptions options) =>
+            {
+                result = options.id == confirm.id;
+                WinchCore.Log.Debug($"[ExtendedSaveData] ShowLoadFailedWithIssueDialog({localizationKey}) closed: {options.id}");
+                titleController.controllerFocusGrabber.enabled = true;
+                titleController.controllerFocusGrabber.selectThis = s;
+                titleController.EnableMenuCanvas();
+                titleController.controllerFocusGrabber.SelectSelectable();
+                responded = true;
+                callback(result);
+            });
+            yield return new WaitUntil(() => responded);
+        }
+
+        public bool IsSaveNotAllowedToBeLoaded()
+        {
+            foreach (var gridByKey in saveData.grids)
+            {
+                var key = gridByKey.Key;
+                var grid = gridByKey.Value;
+                if (EnumUtil.IsDefined<GridKey>(key) && grid.spatialItems.Concat(grid.spatialUnderlayItems).Any(WinchExtensions.DoesItemDataNotExist))
+                {
+                    return true;
+                }
+            }
+            foreach (var crabPotPOI in saveData.serializedCrabPotPOIs)
+            {
+                if (crabPotPOI.DoesItemDataExist() && crabPotPOI.grid.spatialItems.Concat(crabPotPOI.grid.spatialUnderlayItems).Any(WinchExtensions.DoesItemDataNotExist))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// A participant of the saveData system.

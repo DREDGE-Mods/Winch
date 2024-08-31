@@ -1,7 +1,11 @@
 ﻿using HarmonyLib;
+using System;
+using System.Collections;
+using UnityEngine.UI;
 using Winch.Core;
 using Winch.Data;
 using Winch.Util;
+using static ContinueOrNewButton;
 
 namespace Winch.Patches
 {
@@ -124,6 +128,47 @@ namespace Winch.Patches
             {
                 WinchCore.Log.Error(ex);
             }
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(ContinueOrNewButton), nameof(ContinueOrNewButton.OnClick))]
+        public static bool OnContinueOrNewButtonClicked(ContinueOrNewButton __instance)
+        {
+            if (__instance.hasBeenClicked)
+            {
+                return false;
+            }
+            __instance.hasBeenClicked = true;
+            if (__instance.currentMode == StartButtonMode.CONTINUE)
+            {
+                __instance.CheckIsSaveAllowedToBeLoaded();
+            }
+            else if (__instance.currentMode == StartButtonMode.NEW)
+            {
+                GameManager.Instance.Loader.LoadGameFromTitle();
+            }
+            return false;
+        }
+
+        [HarmonyPrefix]
+        [HarmonyPatch(typeof(SaveSlotUI), nameof(SaveSlotUI.OnClicked))]
+        public static bool OnSaveSlotLoadButtonClicked(SaveSlotUI __instance)
+        {
+            if (__instance.hasBeenClicked || __instance.hasDeleteBeenClicked)
+            {
+                return false;
+            }
+            __instance.hasBeenClicked = true;
+            __instance.saveData = GameManager.Instance.SaveManager.LoadIntoMemory(__instance.slotNum);
+            if (__instance.hasSaveFile)
+            {
+                __instance.CheckIsSaveAllowedToBeLoaded();
+            }
+            else
+            {
+                __instance.DoContinueOrNew(canCreateNew: true);
+            }
+            return false;
         }
     }
 }

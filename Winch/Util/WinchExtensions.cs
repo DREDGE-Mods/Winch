@@ -23,6 +23,7 @@ using UnityEngine.UI;
 using Winch.Components;
 using Winch.Config;
 using Winch.Core;
+using Winch.Data;
 using Winch.Data.Abilities;
 using Winch.Data.Character;
 using Winch.Data.Item;
@@ -694,6 +695,65 @@ public static class WinchExtensions
         partialCrabPot.hadDurabilityRemaining = crabPotPOI.hadDurabilityRemaining;
         partialCrabPot.grid = new SerializableGrid();
         return partialCrabPot;
+    }
+
+    public static IEnumerator CheckIsSaveAllowedToBeLoaded(this TitleController titleController, int slotNum, SaveData s, Selectable selectable, Action<bool> callback)
+    {
+        WinchCore.Log.Debug("[TitleController] CheckIsSaveAllowedToBeLoaded()");
+        bool result = true;
+        if (s == null)
+        {
+            result = false;
+            string localizationKey = "popup.corrupt-save-identified";
+            yield return titleController.ShowLoadFailedWithIssueDialog(selectable, localizationKey);
+        }
+        else if (((s.GetSaveUsesEntitlement(Entitlement.DLC_1) && !GameManager.Instance.EntitlementManager.GetHasEntitlement(Entitlement.DLC_1)) || (s.GetSaveUsesEntitlement(Entitlement.DLC_2) && !GameManager.Instance.EntitlementManager.GetHasEntitlement(Entitlement.DLC_2))))
+        {
+            result = false;
+            string localizationKey = "popup.incompatible-dlc";
+            yield return titleController.ShowLoadFailedWithIssueDialog(selectable, localizationKey);
+        }
+        else if (SaveUtil.GetInMemorySaveDataForSlot(slotNum).IsSaveNotAllowedToBeLoaded())
+        {
+            result = false;
+            yield return ExtendedSaveData.ShowLoadFailedWithIssueDialog(titleController, selectable, callback);
+            yield break;
+        }
+        callback(result);
+    }
+
+    public static void CheckIsSaveAllowedToBeLoaded(this ContinueOrNewButton continueOrNewButton)
+    {
+        var slotNum = GameManager.Instance.SaveManager.ActiveSettingsData.lastSaveSlot;
+        SaveData s = GameManager.Instance.SaveManager.LoadIntoMemory(slotNum);
+        continueOrNewButton.StartCoroutine(continueOrNewButton.titleController.CheckIsSaveAllowedToBeLoaded(slotNum, s, continueOrNewButton.selectable, (bool result) =>
+        {
+            if (result)
+            {
+                GameManager.Instance.Loader.LoadGameFromTitle(canCreateNew: false);
+            }
+            else
+            {
+                continueOrNewButton.hasBeenClicked = false;
+                GameManager.Instance.Input.SetActiveActionLayer(ActionLayer.POPUP_WINDOW);
+            }
+        }));
+    }
+
+    public static void CheckIsSaveAllowedToBeLoaded(this SaveSlotUI saveSlotUI)
+    {
+        saveSlotUI.StartCoroutine(saveSlotUI.titleController.CheckIsSaveAllowedToBeLoaded(saveSlotUI.slotNum, saveSlotUI.saveData, saveSlotUI.selectable, (bool result) =>
+        {
+            if (result)
+            {
+                saveSlotUI.DoContinueOrNew(canCreateNew: false);
+            }
+            else
+            {
+                saveSlotUI.hasBeenClicked = false;
+                GameManager.Instance.Input.SetActiveActionLayer(ActionLayer.POPUP_WINDOW);
+            }
+        }));
     }
     #endregion
 
