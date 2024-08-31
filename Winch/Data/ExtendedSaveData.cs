@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -97,12 +98,32 @@ namespace Winch.Data
                     saveData.grids.Add(key, grid);
                 }
             }
+
             var potsToRemove = new List<SerializedCrabPotPOIData>();
             foreach (var crabPotPOI in baseSaveData.serializedCrabPotPOIs)
             {
-                if (crabPotPOI.IsModded() || crabPotPOI.grid.spatialItems.Any(WinchExtensions.IsModded))
+                if (crabPotPOI.IsModded())
                 {
                     potsToRemove.Add(crabPotPOI);
+                }
+                else if (crabPotPOI.grid.spatialItems.Any(WinchExtensions.IsModded) || crabPotPOI.grid.spatialUnderlayItems.Any(WinchExtensions.IsModded))
+                {
+                    var moddedItems = crabPotPOI.grid.spatialItems.Where(WinchExtensions.IsModded).ToList();
+                    var moddedUnderlayItems = crabPotPOI.grid.spatialUnderlayItems.Where(WinchExtensions.IsModded).ToList();
+                    crabPotPOI.grid.spatialItems.RemoveAll(WinchExtensions.IsModded);
+                    crabPotPOI.grid.spatialUnderlayItems.RemoveAll(WinchExtensions.IsModded);
+                    var partialCrabPot = (SerializedCrabPotPOIData)FormatterServices.GetUninitializedObject(typeof(SerializedCrabPotPOIData));
+                    partialCrabPot.deployableItemId = crabPotPOI.deployableItemId;
+                    partialCrabPot.x = crabPotPOI.x;
+                    partialCrabPot.z = crabPotPOI.z;
+                    partialCrabPot.lastUpdate = crabPotPOI.lastUpdate;
+                    partialCrabPot.timeUntilNextCatchRoll = crabPotPOI.timeUntilNextCatchRoll;
+                    partialCrabPot.durability = crabPotPOI.durability;
+                    partialCrabPot.hadDurabilityRemaining = crabPotPOI.hadDurabilityRemaining;
+                    partialCrabPot.grid = new SerializableGrid();
+                    partialCrabPot.grid.spatialItems = moddedItems;
+                    partialCrabPot.grid.spatialUnderlayItems = moddedUnderlayItems;
+                    saveData.serializedCrabPotPOIs.Add(partialCrabPot);
                 }
             }
             foreach (var crabPotPOI in potsToRemove)
@@ -134,6 +155,7 @@ namespace Winch.Data
                         baseSaveData.grids.Add(key, grid);
                 }
             }
+
             var potsToRemove = new List<SerializedCrabPotPOIData>();
             foreach (var crabPotPOI in saveData.serializedCrabPotPOIs)
             {
@@ -142,7 +164,19 @@ namespace Winch.Data
             foreach (var crabPotPOI in potsToRemove)
             {
                 saveData.serializedCrabPotPOIs.Remove(crabPotPOI);
-                baseSaveData.serializedCrabPotPOIs.Add(crabPotPOI);
+                if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot =>
+                {
+                    return pot.deployableItemId == crabPotPOI.deployableItemId
+                    && pot.x == crabPotPOI.x && pot.z == crabPotPOI.z
+                    && pot.lastUpdate == crabPotPOI.lastUpdate && pot.timeUntilNextCatchRoll == crabPotPOI.timeUntilNextCatchRoll
+                    && pot.durability == crabPotPOI.durability && pot.hadDurabilityRemaining == crabPotPOI.hadDurabilityRemaining;
+                }, out var baseCrabPotPOI))
+                {
+                    baseCrabPotPOI.grid.spatialItems.AddRange(crabPotPOI.grid.spatialItems);
+                    baseCrabPotPOI.grid.spatialUnderlayItems.AddRange(crabPotPOI.grid.spatialUnderlayItems);
+                }
+                else
+                    baseSaveData.serializedCrabPotPOIs.Add(crabPotPOI);
             }
         }
 

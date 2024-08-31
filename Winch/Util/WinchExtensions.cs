@@ -1153,6 +1153,20 @@ public static class WinchExtensions
         list[index] = list[list.Count - 1];
         list.RemoveAt(list.Count - 1);
     }
+
+    public static bool TryGetValue<T>(this IEnumerable<T> source, Predicate<T> predicate, out T value)
+    {
+        foreach (var item in source)
+        {
+            if (predicate(item))
+            {
+                value = item;
+                return true;
+            }
+        }
+        value = default(T);
+        return false;
+    }
     #endregion
 
     #region Unity
