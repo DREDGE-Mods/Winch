@@ -29,6 +29,12 @@ public static class GridConfigUtil
         return UtilHelpers.PopulateObjectFromMeta(config, meta, CellGroupConfigConverter);
     }
 
+    internal static List<string> VanillaGridConfigIDList = new();
+    static GridConfigUtil()
+    {
+        Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"), gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
+    }
+
     internal static Dictionary<string, DeferredGridConfiguration> ModdedGridConfigDict = new();
     internal static Dictionary<string, GridConfiguration> AllGridConfigDict = new();
 
@@ -80,9 +86,14 @@ public static class GridConfigUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaGridConfigIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Grid configuration {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedGridConfigDict.ContainsKey(id))
         {
-            WinchCore.Log.Error($"Duplicate poi {id} at {metaPath} failed to load");
+            WinchCore.Log.Error($"Duplicate grid configuration {id} at {metaPath} failed to load");
             return;
         }
         if (PopulateGridConfigFromMetaWithConverter(gridConfig, meta))

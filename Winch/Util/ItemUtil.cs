@@ -13,6 +13,7 @@ using Winch.Serialization.Item;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
 using Winch.Data.Item;
+using UnityEngine.AddressableAssets;
 
 namespace Winch.Util;
 
@@ -43,6 +44,12 @@ public static class ItemUtil
     internal static bool PopulateObjectFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : ItemData
     {
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
+    }
+
+    internal static List<string> VanillaItemIDList = new();
+    static ItemUtil()
+    {
+        Addressables.LoadAssetsAsync<ItemData>(AddressablesUtil.GetLocations<ItemData>("ItemData"), itemData => VanillaItemIDList.SafeAdd(itemData.id));
     }
 
     internal static Dictionary<string, ItemData> AllItemDataDict = new();
@@ -221,6 +228,11 @@ public static class ItemUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaItemIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Item {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedItemDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate item {id} at {metaPath} failed to load");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 using Winch.Components;
 using Winch.Core;
@@ -24,6 +25,12 @@ public static class WorldEventUtil
     internal static bool PopulateStaticWorldEventDataFromMetaWithConverter(StaticWorldEventData worldEventData, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(worldEventData, meta, StaticConverter);
+    }
+
+    internal static List<string> VanillaWorldEventIDList = new();
+    static WorldEventUtil()
+    {
+        Addressables.LoadAssetsAsync<WorldEventData>(AddressablesUtil.GetLocations<WorldEventData>("WorldEventData"), worldEventData => VanillaWorldEventIDList.SafeAdd(worldEventData.name));
     }
 
     internal static Dictionary<string, WorldEventData> AllWorldEventDataDict = new();
@@ -138,6 +145,11 @@ public static class WorldEventUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaWorldEventIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Dynamic world event data {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedWorldEventDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate dynamic world event data {id} at {metaPath} failed to load");
