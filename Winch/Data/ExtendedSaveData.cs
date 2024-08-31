@@ -36,9 +36,10 @@ namespace Winch.Data
 
         internal class ModdedSaveData
         {
+            public List<string> mods = new List<string>();
             public Dictionary<string, SerializableGrid> grids = new Dictionary<string, SerializableGrid>();
             public List<SerializedCrabPotPOIData> serializedCrabPotPOIs = new List<SerializedCrabPotPOIData>();
-            public Dictionary<string, Dictionary<string, JToken>> mods = new Dictionary<string, Dictionary<string, JToken>>();
+            public Dictionary<string, Dictionary<string, JToken>> modData = new Dictionary<string, Dictionary<string, JToken>>();
         }
 
         [JsonIgnore]
@@ -59,6 +60,7 @@ namespace Winch.Data
 
         internal void Write()
         {
+            saveData.mods = ModAssemblyLoader.EnabledModAssemblies.Keys.ToList();
             JSONConfig.WriteConfig(Path, saveData);
         }
 
@@ -231,11 +233,12 @@ namespace Winch.Data
             if (File.Exists(Path)) File.Delete(Path);
         }
 
-        internal Dictionary<string, Dictionary<string, JToken>> GetMods() => saveData.mods;
+        internal List<string> GetMods() => saveData.mods;
+        internal Dictionary<string, Dictionary<string, JToken>> GetDataForMods() => saveData.modData;
 
         public Dictionary<string, JToken> GetData(string modGUID)
         {
-            var mods = GetMods();
+            var mods = GetDataForMods();
             if (!mods.ContainsKey(modGUID)) mods.Add(modGUID, new Dictionary<string, JToken>());
 
             var data = mods[modGUID];
