@@ -31,15 +31,21 @@ namespace Winch.Util
         {
             foreach (var modParticipants in participants)
             {
-                foreach (var participant in modParticipants.Value)
+                var modGUID = modParticipants.Key;
+                foreach (var participantByKey in modParticipants.Value)
                 {
+                    var key = participantByKey.Key;
+                    var participant = participantByKey.Value;
                     try
                     {
-                        participant.Value.Load(extendedSaveData.GetData(modParticipants.Key, participant.Key));
+                        if (!extendedSaveData.HasData(modGUID, key))
+                            extendedSaveData.SetData(modGUID, key, participant.Create());
+
+                        participant.Load(extendedSaveData.GetData(modGUID, key));
                     }
                     catch (System.Exception ex)
                     {
-                        WinchCore.Log.Error($"Failed to load participant {participant.Key} of {modParticipants.Key}\n{ex}");
+                        WinchCore.Log.Error($"Failed to load participant {key} of {modGUID}\n{ex}");
                     }
                 }
             }
@@ -49,15 +55,18 @@ namespace Winch.Util
         {
             foreach (var modParticipants in participants)
             {
-                foreach (var participant in modParticipants.Value)
+                var modGUID = modParticipants.Key;
+                foreach (var participantByKey in modParticipants.Value)
                 {
+                    var key = participantByKey.Key;
+                    var participant = participantByKey.Value;
                     try
                     {
-                        extendedSaveData.SetData(modParticipants.Key, participant.Key, participant.Value.Save());
+                        extendedSaveData.SetData(modGUID, key, participant.Save());
                     }
                     catch (System.Exception ex)
                     {
-                        WinchCore.Log.Error($"Failed to save participant {participant.Key} of {modParticipants.Key}\n{ex}");
+                        WinchCore.Log.Error($"Failed to save participant {key} of {modGUID}\n{ex}");
                     }
                 }
             }

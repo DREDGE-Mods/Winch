@@ -22,6 +22,8 @@ namespace Winch.Components
         public abstract void Load(JToken token);
         /// <inheritdoc cref="ExtendedSaveData.Participant.Save"/>
         public abstract object Save();
+        /// <inheritdoc cref="ExtendedSaveData.Participant.Create"/>
+        public abstract object Create();
 
         /// <summary>
         /// Registers this participant

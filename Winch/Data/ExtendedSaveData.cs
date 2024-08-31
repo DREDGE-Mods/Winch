@@ -251,6 +251,10 @@ namespace Winch.Data
 
         public Dictionary<string, JToken> GetData(ModAssembly mod) => GetData(mod.GUID);
 
+        public bool HasData(string modGUID, string key) => GetData(modGUID).ContainsKey(key);
+
+        public bool HasData(ModAssembly mod, string key) => HasData(mod.GUID, key);
+
         public JToken GetData(string modGUID, string key)
         {
             var data = GetData(modGUID);
@@ -318,16 +322,22 @@ namespace Winch.Data
             public string Key { get; }
 
             /// <summary>
-            /// Load saveData from <paramref name="token"/>
+            /// Load saved data from <paramref name="token"/>
             /// </summary>
-            /// <param name="token">The saveData for you to parse</param>
+            /// <param name="token">The save data for you to parse</param>
             public void Load(JToken token);
 
             /// <summary>
-            /// Save saveData
+            /// Save data
             /// </summary>
             /// <returns>The object for Winch to save</returns>
             public object Save();
+
+            /// <summary>
+            /// Create default save data
+            /// </summary>
+            /// <returns>The default save</returns>
+            public object Create();
         }
     }
 }

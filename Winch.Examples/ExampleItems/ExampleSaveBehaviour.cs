@@ -13,18 +13,23 @@ namespace ExampleItems
     /// </summary>
     public class ExampleSaveBehaviour : ExtendedSaveBehaviour
     {
-        public ExampleItemsSaveData saveData = new ExampleItemsSaveData();
+        public ExampleItemsSaveData saveData;
 
         public override string Key => "behaviour";
 
         public override void Load(JToken token)
         {
-            saveData = token.ToObject<ExampleItemsSaveData>() ?? new ExampleItemsSaveData();
+            saveData = token.ToObject<ExampleItemsSaveData>();
         }
 
         public override object Save()
         {
             return saveData;
+        }
+
+        public override object Create()
+        {
+            return new ExampleItemsSaveData();
         }
     }
 }
