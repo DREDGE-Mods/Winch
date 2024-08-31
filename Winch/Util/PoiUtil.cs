@@ -60,6 +60,17 @@ public static class PoiUtil
 
     internal static void PopulateHarvestablesAndHarvestParticlePrefabs()
     {
+        foreach (var harvestableParticle in Resources.FindObjectsOfTypeAll<HarvestableParticles>().Reverse())
+        {
+            var prefab = harvestableParticle.gameObject;
+            var name = prefab.name.RemoveClone();
+            if (!HarvestParticlePrefabs.ContainsKey(name))
+            {
+                prefab.name = name;
+                HarvestParticlePrefabs.Add(name, prefab);
+                WinchCore.Log.Debug($"Added particle {name} to HarvestParticlePrefabs");
+            }
+        }
         foreach (var harvestPoi in GameManager.Instance.HarvestPOIManager.allHarvestPOIs)
         {
             try
@@ -67,10 +78,12 @@ public static class PoiUtil
                 if (!Harvestables.ContainsKey(harvestPoi.Harvestable.GetId()))
                     Harvestables.Add(harvestPoi.Harvestable.GetId(), harvestPoi.Harvestable);
                 var prefab = harvestPoi.Harvestable.GetParticlePrefab();
-                if (!HarvestParticlePrefabs.ContainsKey(prefab.name))
+                var name = prefab.name.RemoveClone();
+                if (!HarvestParticlePrefabs.ContainsKey(name))
                 {
-                    HarvestParticlePrefabs.Add(prefab.name, prefab);
-                    WinchCore.Log.Debug($"Added particle {prefab.name} to HarvestParticlePrefabs");
+                    prefab.name = name;
+                    HarvestParticlePrefabs.Add(name, prefab);
+                    WinchCore.Log.Debug($"Added particle {name} to HarvestParticlePrefabs");
                 }
             }
             catch (Exception ex)
@@ -85,10 +98,12 @@ public static class PoiUtil
                 if (!Harvestables.ContainsKey(itemPoi.Harvestable.GetId()))
                     Harvestables.Add(itemPoi.Harvestable.GetId(), itemPoi.Harvestable);
                 var prefab = itemPoi.Harvestable.GetParticlePrefab();
-                if (!HarvestParticlePrefabs.ContainsKey(prefab.name))
+                var name = prefab.name.RemoveClone();
+                if (!HarvestParticlePrefabs.ContainsKey(name))
                 {
-                    HarvestParticlePrefabs.Add(prefab.name, prefab);
-                    WinchCore.Log.Debug($"Added particle {prefab.name} to HarvestParticlePrefabs");
+                    prefab.name = name;
+                    HarvestParticlePrefabs.Add(name, prefab);
+                    WinchCore.Log.Debug($"Added particle {name} to HarvestParticlePrefabs");
                 }
             }
             catch (Exception ex)

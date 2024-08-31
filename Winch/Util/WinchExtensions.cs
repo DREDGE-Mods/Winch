@@ -785,9 +785,10 @@ public static class WinchExtensions
     /// </summary>
     public static string? NullIfEmpty(this string s) => string.IsNullOrWhiteSpace(s) ? null : s;
 
-    /// <inheritdoc cref="Regex.Replace(string,string,string)" />
-    public static string RegexReplace(this string input, string pattern, string replacement) =>
-        Regex.Replace(input, pattern, replacement);
+    /// <inheritdoc cref="Regex.Replace(string,string,string,RegexOptions)" />
+    public static string RegexReplace(this string input, string pattern, string replacement,
+          RegexOptions options = RegexOptions.Multiline | RegexOptions.CultureInvariant) =>
+        Regex.Replace(input, pattern, replacement, options);
 
     public static bool TryMatch(this Regex regex, string input, out Match? match)
     {
@@ -802,6 +803,22 @@ public static class WinchExtensions
             return false;
         }
     }
+
+    /// <summary>
+    /// Gets the index of a string inside this string using Invariant Culture
+    /// </summary>
+    /// <param name="source">The string to get the index from</param>
+    /// <param name="value">The string to find the index of</param>
+    /// <returns>The index if found, -1 if not</returns>
+    public static int IndexOfInvariant(this string source, string value) => CultureInfo.InvariantCulture.CompareInfo.IndexOf(source, value);
+
+    /// <summary>
+    /// Gets the last index of a string inside this string using Invariant Culture
+    /// </summary>
+    /// <param name="source">The string to get the last index from</param>
+    /// <param name="value">The string to find the last index of</param>
+    /// <returns>The index if found, -1 if not</returns>
+    public static int LastIndexOfInvariant(this string source, string value) => CultureInfo.InvariantCulture.CompareInfo.LastIndexOf(source, value);
 
     public static string FixBackslashes(this string s) => s.Replace("\\\\", "/").Replace("\\", "/");
     #endregion
@@ -1139,6 +1156,8 @@ public static class WinchExtensions
     #endregion
 
     #region Unity
+    public static string RemoveClone(this string str) => str.Replace("(Clone)", "").Trim();
+
     internal static Transform? prefabParent;
     internal static Transform PrefabParent
     {
@@ -1497,6 +1516,12 @@ public static class WinchExtensions
 
         return null;
     }
+
+    public static float[] ToArray(this Vector2 value) => new float[2] { value.x, value.y };
+    public static float[] ToArray(this Vector3 value) => new float[3] { value.x, value.y, value.z };
+    public static float[] ToArray(this Vector4 value) => new float[4] { value.x, value.y, value.z, value.w };
+
+    public static Vector3 Abs(this Vector3 value) => new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
 
     #region Coroutines
     public static void FireOnNextUpdate(this MonoBehaviour component, Action action) =>
