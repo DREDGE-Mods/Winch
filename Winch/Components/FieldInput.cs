@@ -82,6 +82,7 @@ namespace Winch.Components
         {
             if (!initialized) return;
             WinchCore.Log.Debug(string.Format("[FieldInput:{0}] OnSelect({1})", base.name, value));
+            inputField.caretPosition = inputField.text.Length;
         }
 
         private void OnDeselect(string value)

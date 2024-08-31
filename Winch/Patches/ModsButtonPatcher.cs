@@ -209,7 +209,11 @@ namespace Winch.Patches
                 var integerInputField = modsTab.integerInputFieldPrefab = integerInputFieldOld.gameObject.AddComponent<IntegerFieldInput>();
                 integerInputField.localizedStringField = integerInputFieldOld.localizedStringField;
                 integerInputField.inputField = integerInputFieldOld.inputField;
+                integerInputField.uiSelectable = integerInputFieldOld.uiSelectable;
+                integerInputField.focusButton = integerInputFieldOld.focusButton;
                 integerInputField.textTooltipRequester = integerInputFieldOld.textTooltipRequester;
+                integerInputField.selectableDisabler = integerInputFieldOld.selectableDisabler;
+                integerInputField.dialog = __instance;
                 integerInputField.placeholder = integerInputFieldOld.placeholder;
                 integerInputField.placeholder.LabelString = "0";
                 integerInputFieldOld.DestroyImmediate();
@@ -218,7 +222,11 @@ namespace Winch.Patches
                 var decimalInputField = modsTab.decimalInputFieldPrefab = decimalInputFieldOld.gameObject.AddComponent<DecimalFieldInput>();
                 decimalInputField.localizedStringField = decimalInputFieldOld.localizedStringField;
                 decimalInputField.inputField = decimalInputFieldOld.inputField;
+                decimalInputField.uiSelectable = decimalInputFieldOld.uiSelectable;
+                decimalInputField.focusButton = decimalInputFieldOld.focusButton;
                 decimalInputField.textTooltipRequester = decimalInputFieldOld.textTooltipRequester;
+                decimalInputField.selectableDisabler = decimalInputFieldOld.selectableDisabler;
+                decimalInputField.dialog = __instance;
                 decimalInputField.placeholder = decimalInputFieldOld.placeholder;
                 decimalInputField.placeholder.LabelString = "0";
                 decimalInputFieldOld.DestroyImmediate();

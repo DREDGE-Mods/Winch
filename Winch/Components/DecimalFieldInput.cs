@@ -8,6 +8,7 @@ namespace Winch.Components
         protected override void Awake()
         {
             base.Awake();
+            inputField.keyboardType = UnityEngine.TouchScreenKeyboardType.NumbersAndPunctuation;
             inputField.characterValidation = TMPro.TMP_InputField.CharacterValidation.Decimal;
         }
 
