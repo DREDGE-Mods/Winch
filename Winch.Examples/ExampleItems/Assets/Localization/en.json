@@ -9,6 +9,8 @@
 	"exampleitems.mcsalmon.desc": "Salmon are common bucketable aquatic passive mobs found in oceans and rivers that are a source of raw salmon and occasionally bones or bone meal.",
 	"exampleitems.mctropical.name": "Tropical Fish",
 	"exampleitems.mctropical.desc": "Tropical Fish are common bucketable aquatic passive mobs found in oceans, mangrove swamps and lush caves.",
+	"exampleitems.mcpufferfish.name": "Pufferfish",
+	"exampleitems.mcpufferfish.desc": "Pufferfish are bucketable aquatic mobs found in oceans. Although they never seek out mobs to attack, they defensively inflate themselves when approached too closely by players, axolotls, or non-aquatic mobs, dealing damage and inflicting Poison on them.",
 	"exampleitems.rainbowfiddlercrab.name": "Rainbow Fiddler Crab",
 	"exampleitems.rainbowfiddlercrab.desc": "Crabs are passive mobs with a large arm that are found in mangrove swamps.",
 	"exampleitems.torch.name": "Torch",

@@ -97,10 +97,6 @@ namespace ExampleItems
                 cubeLand.transform.localScale = new Vector3(200, 5, 200);
 
                 var datas = Resources.FindObjectsOfTypeAll<DockData>();
-                foreach (var data in datas)
-                {
-                    WinchCore.Log.Warn(data.name + " | " + data.id);
-                }
                 var pontoon = datas.FirstOrDefault(dockData => dockData.id == "dock.pontoon-gc");
                 var speakers = pontoon.Speakers;
                 speakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));

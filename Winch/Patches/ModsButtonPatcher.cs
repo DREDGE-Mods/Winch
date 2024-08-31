@@ -173,7 +173,7 @@ namespace Winch.Patches
                 inputFieldContainer.gameObject.RemoveComponentImmediate<LanguageSelectorDropdown>();
                 var inputFieldOld = inputFieldContainer.GetComponent<SliderInput>();
                 inputFieldContainer.localizedStringField = inputFieldOld.localizedStringField;
-                var inputField = Resources.FindObjectsOfTypeAll<TMPro.TMP_InputField>().Skip(1).First().Instantiate(inputFieldContainer.transform, true).Rename("InputField");
+                var inputField = Resources.FindObjectsOfTypeAll<TMPro.TMP_InputField>().FirstOrDefault(inFi => inFi.name == "DetailField").Instantiate(inputFieldContainer.transform, true).Rename("InputField");
                 inputField.image.sprite = dropdownInput.dropdown.image.sprite;
                 inputField.image.color = dropdownInput.dropdown.image.color;
                 inputField.placeholder.color = dropdownInput.dropdown.itemText.color/2;

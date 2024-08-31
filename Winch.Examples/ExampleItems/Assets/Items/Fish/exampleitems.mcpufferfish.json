@@ -1,9 +1,9 @@
 ﻿{
-  "itemNameKey": "exampleitems.mctropical.name",
-  "itemDescriptionKey": "exampleitems.mctropical.desc",
+  "itemNameKey": "exampleitems.mcpufferfish.name",
+  "itemDescriptionKey": "exampleitems.mcpufferfish.desc",
   "itemType": "GENERAL",
   "itemSubtype": "FISH",
-  "sprite": "exampleitems.mctropical",
+  "sprite": "exampleitems.mcpufferfish",
   "itemColor": {
     "r": 136,
     "g": 0,
@@ -21,20 +21,19 @@
   "dimensions": [
     "X"
   ],
-  "zonesFoundIn": "TWISTED_STRAND",
+  "zonesFoundIn": "OPEN_OCEAN",
   "day": true,
   "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
-  "harvestMinigameType": "FISHING_DIAMOND",
+  "harvestMinigameType": "FISHING_PENDULUM",
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "OCEANIC",
-  "harvestDifficulty": "EASY",
+  "harvestDifficulty": "HARD",
   "isAberration": true,
   "nonAberrationParent": "exampleitems.mccod",
   "canBeCaughtByRod": true,
   "canBeCaughtByNet": true
 }
-
