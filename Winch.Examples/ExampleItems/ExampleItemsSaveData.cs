@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 
 namespace ExampleItems
 {
@@ -9,9 +10,11 @@ namespace ExampleItems
         [JsonIgnore, NonSerialized] // Can use either one
         public string nonSerialized = "Test";
 
+        [DefaultValue("Test")]
         public string serialized = "Test";
 
         [JsonProperty("property")] // Must have this or else this property will act as non serialized automatically
-        public string Property { get; set; }
+        [DefaultValue("Test")]
+        public string Property { get; set; } = "Test";
     }
 }
