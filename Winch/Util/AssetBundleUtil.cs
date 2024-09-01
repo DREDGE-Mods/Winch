@@ -29,7 +29,7 @@ namespace Winch.Util
             Shader replacementShader;
             if (cachedShaders.TryGetValue(name, out replacementShader)) return replacementShader;
 
-            replacementShader = Resources.FindObjectsOfTypeAll<Shader>().Reverse().FirstOrDefault(shader => shader.name == name);// Shader.Find(name);
+            replacementShader = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported).Reverse().FirstOrDefault(shader => shader.name == name);// Shader.Find(name);
             if (replacementShader != null)
                 return replacementShader.CacheShader();
 

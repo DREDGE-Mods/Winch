@@ -60,7 +60,7 @@ public static class PoiUtil
 
     internal static void PopulateHarvestablesAndHarvestParticlePrefabs()
     {
-        foreach (var harvestableParticle in Resources.FindObjectsOfTypeAll<HarvestableParticles>().Reverse())
+        foreach (var harvestableParticle in Resources.FindObjectsOfTypeAll<HarvestableParticles>().Where(hp => !ModdedHarvestParticlePrefabs.Values.Contains(hp.gameObject)).Reverse())
         {
             var prefab = harvestableParticle.gameObject;
             var name = prefab.name.RemoveClone();
