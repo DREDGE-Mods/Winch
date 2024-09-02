@@ -108,4 +108,8 @@ public static class GridConfigUtil
         }
     }
 
+    public static GridConfiguration[] GetAllGridConfigs()
+    {
+        return AllGridConfigDict.Values.ToArray();
+    }
 }

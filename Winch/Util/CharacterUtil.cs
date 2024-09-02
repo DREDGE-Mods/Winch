@@ -99,4 +99,9 @@ public static class CharacterUtil
             WinchCore.Log.Error($"No character converter found");
         }
     }
+
+    public static SpeakerData[] GetAllSpeakerData()
+    {
+        return AllSpeakerDataDict.Values.ToArray();
+    }
 }

@@ -227,4 +227,9 @@ public static class WorldEventUtil
     {
         AllWorldEventDataDict.Clear();
     }
+
+    public static WorldEventData[] GetAllWorldEventData()
+    {
+        return AllWorldEventDataDict.Values.ToArray();
+    }
 }

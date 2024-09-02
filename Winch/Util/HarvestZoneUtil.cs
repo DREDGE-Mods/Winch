@@ -19,6 +19,12 @@ public static class HarvestZoneUtil
     }
 
     internal static Dictionary<string, CustomHarvestZone> ModdedHarvestZoneDict = new();
+    internal static Dictionary<string, HarvestZone> CreatedModdedHarvestZoneDict = new();
+
+    internal static void Clear()
+    {
+        CreatedModdedHarvestZoneDict.Clear();
+    }
 
     public static CustomHarvestZone GetModdedHarvestZone(string id)
     {
@@ -26,6 +32,17 @@ public static class HarvestZoneUtil
             return null;
 
         if (ModdedHarvestZoneDict.TryGetValue(id, out CustomHarvestZone harvestZone))
+            return harvestZone;
+        else
+            return null;
+    }
+
+    public static HarvestZone GetCreatedModdedHarvestZone(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (CreatedModdedHarvestZoneDict.TryGetValue(id, out HarvestZone harvestZone))
             return harvestZone;
         else
             return null;
@@ -66,6 +83,8 @@ public static class HarvestZoneUtil
         harvestZone.night = customHarvestZone.night;
 
         harvestZoneObj.layer = Layer.HarvestZone;
+
+        CreatedModdedHarvestZoneDict.Add(customHarvestZone.id, harvestZone);
 
         return harvestZoneObj;
     }

@@ -38,6 +38,7 @@ public static class PoiUtil
     }
 
     internal static Dictionary<string, CustomPOI> ModdedPOIDict = new();
+    internal static Dictionary<string, POI> CreatedModdedPOIDict = new();
     internal static Dictionary<string, IHarvestable> Harvestables = new();
     internal static Dictionary<string, GameObject> HarvestParticlePrefabs = new();
     internal static Dictionary<string, GameObject> ModdedHarvestParticlePrefabs = new();
@@ -53,8 +54,29 @@ public static class PoiUtil
             return null;
     }
 
-    internal static void PopulateHarvestablesAndHarvestParticlePrefabs()
+    public static POI GetCreatedModdedPOI(string id)
     {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (CreatedModdedPOIDict.TryGetValue(id, out POI poi))
+            return poi;
+        else
+            return null;
+    }
+
+    internal static GameObject InspectPoiContainer;
+    internal static GameObject InspectionGlint;
+    internal static VibrationData ExplodingWalls;
+    internal static NoiseSettings _6DShake;
+
+    internal static void Populate()
+    {
+        InspectPoiContainer = GameObject.FindObjectOfType<FinalePOIEnabler>().gameObject;
+        if (InspectionGlint == null) InspectionGlint = Resources.FindObjectsOfTypeAll<ParticleSystemRenderer>().FirstOrDefault(psr => psr.name == "InspectionGlint").gameObject.CopyPrefab();
+        if (ExplodingWalls == null) ExplodingWalls = Resources.FindObjectsOfTypeAll<VibrationData>().FirstOrDefault(vd => vd.name == "ExplodingWalls").DontDestroyOnLoad();
+        if (_6DShake == null) _6DShake = Resources.FindObjectsOfTypeAll<NoiseSettings>().FirstOrDefault(vd => vd.name == "6D Shake").DontDestroyOnLoad();
+
         foreach (var harvestableParticle in Resources.FindObjectsOfTypeAll<HarvestableParticles>().Where(hp => !ModdedHarvestParticlePrefabs.Values.Contains(hp.gameObject)).Reverse())
         {
             var prefab = harvestableParticle.gameObject;
@@ -108,8 +130,9 @@ public static class PoiUtil
         }
     }
 
-    internal static void ClearHarvestablesAndHarvestParticlePrefabs()
+    internal static void Clear()
     {
+        CreatedModdedPOIDict.Clear();
         Harvestables.Clear();
         HarvestParticlePrefabs.Clear();
     }
@@ -383,6 +406,7 @@ public static class PoiUtil
         customPoiObject.transform.SetParent(parent);
         customPoiObject.transform.position = customPoi.location;
         var poi = customPoiObject.AddComponent<T>();
+        CreatedModdedPOIDict.Add(customPoi.id, poi);
 
         poi.canBeGhostWindTarget = customPoi.canBeGhostWindTarget;
 
@@ -436,16 +460,8 @@ public static class PoiUtil
         }
     }
 
-    internal static GameObject InspectPoiContainer;
-    internal static GameObject InspectionGlint;
-    internal static VibrationData ExplodingWalls;
-    internal static NoiseSettings _6DShake;
-
-    internal static void PopulateConversationPois()
+    public static IHarvestable[] GetAllHarvestables()
     {
-        InspectPoiContainer = GameObject.FindObjectOfType<FinalePOIEnabler>().gameObject;
-        if (InspectionGlint == null) InspectionGlint = Resources.FindObjectsOfTypeAll<ParticleSystemRenderer>().FirstOrDefault(psr => psr.name == "InspectionGlint").gameObject.CopyPrefab();
-        if (ExplodingWalls == null) ExplodingWalls = Resources.FindObjectsOfTypeAll<VibrationData>().FirstOrDefault(vd => vd.name == "ExplodingWalls").DontDestroyOnLoad();
-        if (_6DShake == null) _6DShake = Resources.FindObjectsOfTypeAll<NoiseSettings>().FirstOrDefault(vd => vd.name == "6D Shake").DontDestroyOnLoad();
+        return Harvestables.Values.ToArray();
     }
 }

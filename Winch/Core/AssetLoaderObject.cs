@@ -65,7 +65,8 @@ namespace Winch.Core
         private void OnGameEnded()
         {
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
-            PoiUtil.ClearHarvestablesAndHarvestParticlePrefabs();
+            PoiUtil.Clear();
+            HarvestZoneUtil.Clear();
             CharacterUtil.ClearSpeakerData();
         }
 
