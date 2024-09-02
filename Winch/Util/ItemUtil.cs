@@ -250,4 +250,9 @@ public static class ItemUtil
             WinchCore.Log.Error($"No item data converter found for type {typeof(T)}");
         }
     }
+
+    public static ItemData[] GetAllItemData()
+    {
+        return AllItemDataDict.Values.ToArray();
+    }
 }
