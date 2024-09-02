@@ -20,6 +20,14 @@ namespace ExampleItems
             SaveUtil.RegisterDataParticipant(Participant);
             new GameObject(nameof(ExampleSaveBehaviour), typeof(ExampleSaveBehaviour)).DontDestroyOnLoad();
 
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftClownfishParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftClownfishParticles"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCodParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCodParticles"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCodParticlesOriginal", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCodParticlesOriginal"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCodParticlesOriginalTropical", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCodParticlesOriginalTropical"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftPufferfishParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftPufferfishParticles"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftSalmonParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftSalmonParticles"));
+            PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCrabParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCrabParticles"));
+
             MilkBucketVibrationData = ScriptableObject.CreateInstance<VibrationData>().DontDestroyOnLoad().Rename("MilkBucket");
             MilkBucketVibrationData.vibrationParamsList = new List<VibrationParams>
             {

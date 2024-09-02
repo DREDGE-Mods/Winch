@@ -7,12 +7,9 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-	</PropertyGroup>
-
-	<PropertyGroup>
 		<DebugType>portable</DebugType>
 		<OutputPath>./bin</OutputPath>
-		<AssemblyVersion>1.0.*</AssemblyVersion>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
 		<Deterministic>False</Deterministic>
 	</PropertyGroup>
 

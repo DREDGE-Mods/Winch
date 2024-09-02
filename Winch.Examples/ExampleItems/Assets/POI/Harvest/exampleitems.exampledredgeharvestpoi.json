@@ -1,15 +1,16 @@
 {
     "location": {
-        "x": 382.0,
+        "x": 362.0,
         "y": 0.0,
         "z": -354.0
     },
-    "harvestableParticlePrefab": "MinecraftCodParticlesOriginal",
-    "items": [ "exampleitems.mccod" ],
-    "startStock": 5,
-    "maxStock": 10,
+    "harvestableParticlePrefab": "TrinketParticles",
+    "items": [ "exampleitems.diamond" ],
+    "nightItems": [ "exampleitems.musicdisc" ],
+    "startStock": 3,
+    "maxStock": 5,
     "doesRestock": true,
-    "usesTimeSpecificStock": false,
+    "usesTimeSpecificStock": true,
     "overrideDefaultDaySpecialChance": true,
     "overriddenDaytimeSpecialChance": 0.5,
     "overrideDefaultNightSpecialChance": true,

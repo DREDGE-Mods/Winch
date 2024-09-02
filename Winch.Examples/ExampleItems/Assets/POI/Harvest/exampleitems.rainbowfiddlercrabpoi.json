@@ -1,16 +1,15 @@
 {
 	"location": {
-		"x": 386.0,
+		"x": 356.0,
 		"y": 0.0,
-		"z": -354.0
+		"z": -344.0
 	},
-	"harvestableParticlePrefab": "MinecraftSalmonParticles",
-	"items": [],
-	"nightItems": [ "exampleitems.mcsalmon" ],
-	"startStock": 3,
-	"maxStock": 5,
+	"harvestableParticlePrefab": "MinecraftCrabParticles",
+	"items": [ "exampleitems.rainbowfiddlercrab" ],
+	"startStock": 1,
+	"maxStock": 3,
 	"doesRestock": true,
-	"usesTimeSpecificStock": true,
+	"usesTimeSpecificStock": false,
 	"overrideDefaultDaySpecialChance": true,
 	"overriddenDaytimeSpecialChance": 0.5,
 	"overrideDefaultNightSpecialChance": true,
