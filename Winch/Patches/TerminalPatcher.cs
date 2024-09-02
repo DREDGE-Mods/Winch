@@ -342,5 +342,34 @@ namespace Winch.Patches
             }
             return false;
         }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(HarvestValidator), nameof(HarvestValidator.AddTerminalCommands))]
+        public static void HarvestValidator_AddTerminalCommands_Postfix(HarvestValidator __instance)
+        {
+            Terminal.Shell.AddCommand("restock.all", __instance.RestockHarvestSpots, 0, 0, "fully stocks ALL harvest spots in the world");
+            Terminal.Shell.AddCommand("harvest.list", __instance.ListHarvestSpots, 0, 0, "lists every harvest spot in the world");
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(HarvestValidator), nameof(HarvestValidator.RemoveTerminalCommands))]
+        public static void HarvestValidator_RemoveTerminalCommands_Postfix()
+        {
+            Terminal.Shell.RemoveCommand("restock.all");
+            Terminal.Shell.RemoveCommand("harvest.list");
+        }
+
+        public static void RestockHarvestSpots(this HarvestValidator harvestValidator, CommandArg[] args)
+        {
+            WinchCore.Log.Debug("[HarvestValidator] RestockHarvestSpots()");
+            harvestValidator.allHarvestPOIs.ForEach(harvestPOI => harvestPOI.AddStock(harvestPOI.MaxStock));
+        }
+
+        public static void ListHarvestSpots(this HarvestValidator harvestValidator, CommandArg[] args)
+        {
+            string pois = harvestValidator.allHarvestPOIs.Reduce((pois, i) => pois + i.Harvestable.GetId() + ", ", "");
+            WinchCore.Log.Debug("[HarvestValidator] ListHarvestSpots(): " + pois);
+            Terminal.Buffer.HandleLog(pois, TerminalLogType.Message);
+        }
     }
 }
