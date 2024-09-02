@@ -4,17 +4,16 @@ namespace Winch.Serialization.POI.Conversation;
 
 // ReSharper disable HeapView.BoxingAllocation
 
-public class ExplosivePoiConverter : ConversationPoiConverter
+public class CustomExplosivePOIConverter : CustomConversationPOIConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "animator", new( null, null) },
-        { "ExplodeVibration", new( null, null) },
-        { "id", new( null, null) },
-        { "impulseSource", new( null, null) },
+        { "conversationNodeName", new("Explosives_Root", null) },
+        { "isOneTimeOnly", new(false, null) },
+        { "explodeVibration", new(string.Empty, null) },
     };
     
-    public ExplosivePoiConverter()
+    public CustomExplosivePOIConverter()
     {
         AddDefinitions(_definitions);
     }

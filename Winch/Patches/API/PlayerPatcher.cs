@@ -16,6 +16,7 @@ public class PlayerPatch
         {
             AbilityUtil.AddModdedAbilitiesToPlayer(__instance.transform.Find("Abilities"));
             PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
+            PoiUtil.PopulateConversationPois();
             PoiUtil.CreateModdedPois();
             HarvestZoneUtil.CreateModdedHarvestZones();
             ItemUtil.Encyclopedia();

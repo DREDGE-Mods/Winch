@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Cinemachine;
 using HarmonyLib;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -13,6 +14,7 @@ using Winch.Serialization;
 
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Conversation;
+using Winch.Serialization.POI.Dock;
 using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
 
@@ -22,11 +24,10 @@ public static class PoiUtil
 {
     private static Dictionary<Type, IDredgeTypeConverter> Converters = new()
     {
-        //{ typeof(DockPOI), new DockPoiConverter() },
-        //{ typeof(ConversationPOI), new ConversationPoiConverter() },
-        //{ typeof(AutoMovePOI), new AutoMovePoiConverter() },
-        //{ typeof(ConversationPOI), new ConversationPoiConverter() },
-        //{ typeof(ExplosivePOI), new ExplosivePoiConverter() },
+        { typeof(CustomDockPOI), new CustomDockPOIConverter() },
+        { typeof(CustomAutoMovePOI), new CustomAutoMovePOIConverter() },
+        { typeof(CustomInspectPOI), new CustomInspectPOIConverter() },
+        { typeof(CustomExplosivePOI), new CustomExplosivePOIConverter() },
         { typeof(CustomHarvestPOI), new CustomHarvestPOIConverter()},
         { typeof(CustomItemPOI), new CustomItemPOIConverter()}
     };
@@ -167,16 +168,35 @@ public static class PoiUtil
         {
             return CreateGameObjectFromCustomItemPoi(customItemPoi);
         }
+        else if (customPoi is CustomConversationPOI customConversationPoi)
+        {
+            return CreateGameObjectFromCustomConversationPoi(customConversationPoi);
+        }
+
+        return null;
+    }
+
+    internal static GameObject? CreateGameObjectFromCustomConversationPoi(CustomConversationPOI customConversationPoi)
+    {
+        if (customConversationPoi is CustomInspectPOI customInspectPoi)
+        {
+            return CreateGameObjectFromCustomInspectPoi(customInspectPoi);
+        }
+        else if (customConversationPoi is CustomAutoMovePOI customAutoMovePoi)
+        {
+            return CreateGameObjectFromCustomAutoMovePoi(customAutoMovePoi);
+        }
+        else if (customConversationPoi is CustomExplosivePOI customExplosivePoi)
+        {
+            return CreateGameObjectFromCustomExplosivePoi(customExplosivePoi);
+        }
 
         return null;
     }
 
     internal static GameObject CreateGameObjectFromCustomHarvestPoi(CustomHarvestPOI customHarvestPoi)
     {
-        GameObject customPoi = new GameObject(customHarvestPoi.id);
-        customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
-        customPoi.transform.position = customHarvestPoi.location;
-        var harvestPoi = customPoi.AddComponent<HarvestPOI>();
+        (GameObject customPoi, HarvestPOI harvestPoi) = CreateGenericPoiFromCustomPoi<HarvestPOI>(customHarvestPoi, GameSceneInitializer.Instance.HarvestPoiContainer.transform);
 
         var harvestPoiDataModel = new HarvestPOIDataModel();
         harvestPoiDataModel.doesRestock = customHarvestPoi.doesRestock;
@@ -199,8 +219,6 @@ public static class PoiUtil
 
         harvestPoi.harvestParticlePrefab = customHarvestPoi.HarvestableParticlePrefab;
 
-        harvestPoi.canBeGhostWindTarget = customHarvestPoi.canBeGhostWindTarget;
-
         // Default Harvest POI Sphere Collider
         var sphereCollider = customPoi.AddComponent<SphereCollider>();
         sphereCollider.radius = 2;
@@ -218,17 +236,12 @@ public static class PoiUtil
         customPoi.AddComponent<SimpleBuoyantObject>();
 
         GameManager.Instance.HarvestPOIManager.allHarvestPOIs.Add(harvestPoi);
-
-        customPoi.layer = Layer.POI;
         return customPoi;
     }
 
     internal static GameObject CreateGameObjectFromCustomItemPoi(CustomItemPOI customItemPoi)
     {
-        GameObject customPoi = new GameObject(customItemPoi.id);
-        customPoi.transform.SetParent(GameSceneInitializer.Instance.HarvestPoiContainer.transform);
-        customPoi.transform.position = customItemPoi.location;
-        var itemPoi = customPoi.AddComponent<ParticledItemPOI>();
+        (GameObject customPoi, ParticledItemPOI itemPoi) = CreateGenericPoiFromCustomPoi<ParticledItemPOI>(customItemPoi, GameSceneInitializer.Instance.HarvestPoiContainer.transform);
 
         var itemPoiDataModel = new ItemPOIDataModel();
 
@@ -240,8 +253,6 @@ public static class PoiUtil
         itemPoi.Harvestable = itemPoiDataModel;
 
         itemPoi.harvestParticlePrefab = customItemPoi.HarvestableParticlePrefab;
-
-        itemPoi.canBeGhostWindTarget = customItemPoi.canBeGhostWindTarget;
 
         // Default Harvest POI Sphere Collider
         var sphereCollider = customPoi.AddComponent<SphereCollider>();
@@ -272,9 +283,127 @@ public static class PoiUtil
         itemPoi.intermittentSFXPlayer = sfx;
 
         GameManager.Instance.HarvestPOIManager.allItemPOIs.Add(itemPoi);
-
-        customPoi.layer = Layer.POI;
         return customPoi;
+    }
+
+    internal static GameObject CreateGameObjectFromCustomInspectPoi(CustomInspectPOI customInspectPoi)
+    {
+        (GameObject customPoi, InspectPOI inspectPoi) = CreateGenericPoiFromCustomConversationPoi<InspectPOI>(customInspectPoi);
+
+        return customPoi;
+    }
+
+    internal static GameObject CreateGameObjectFromCustomAutoMovePoi(CustomAutoMovePOI customAutoMovePoi)
+    {
+        (GameObject customPoi, ModdedAutoMovePOI autoMovePoi) = CreateGenericPoiFromCustomConversationPoi<ModdedAutoMovePOI>(customAutoMovePoi);
+
+        var autoMoveDestination = new GameObject("AutoMoveDestination");
+        autoMoveDestination.transform.SetParent(customPoi.transform);
+        autoMoveDestination.transform.localPosition = customAutoMovePoi.autoMovePosition;
+        autoMoveDestination.transform.localEulerAngles = customAutoMovePoi.autoMoveRotation;
+
+        autoMovePoi.autoMoveDestination = autoMoveDestination.transform;
+        autoMovePoi.includeRotation = customAutoMovePoi.includeRotation;
+        autoMovePoi.unlockPlayerMovementAfterConversationCompleted = customAutoMovePoi.unlockPlayerMovementAfterConversationCompleted;
+
+        return customPoi;
+    }
+
+    internal static GameObject CreateGameObjectFromCustomExplosivePoi(CustomExplosivePOI customExplosivePoi)
+    {
+        (GameObject customPoi, ExplosivePOI explosivePoi) = CreateGenericPoiFromCustomConversationPoi<ExplosivePOI>(customExplosivePoi, false, 2);
+
+        explosivePoi.id = customExplosivePoi.id;
+        explosivePoi.animator = customPoi.AddComponent<Animator>();
+        explosivePoi.impulseSource = customPoi.AddComponent<CinemachineImpulseSource>();
+        explosivePoi.impulseSource.m_ImpulseDefinition = new CinemachineImpulseDefinition();
+        explosivePoi.impulseSource.m_ImpulseDefinition.m_AmplitudeGain = 5;
+        explosivePoi.impulseSource.m_ImpulseDefinition.m_FrequencyGain = 5;
+        explosivePoi.impulseSource.m_ImpulseDefinition.m_RawSignal = _6DShake;
+        explosivePoi.ExplodeVibration = ExplodingWalls;
+
+        var collider = (SphereCollider)explosivePoi.interactCollider;
+        collider.radius = 7;
+        explosivePoi.interactCollider = null;
+        explosivePoi.canBeGhostWindTarget = false;
+
+        return customPoi;
+    }
+
+    internal static (GameObject, T) CreateGenericPoiFromCustomConversationPoi<T>(CustomConversationPOI customConversationPoi, bool isCullable = true, float glintHeight = 1) where T : ConversationPOI
+    {
+        (GameObject customPoi, T poi) = CreateGenericPoiFromCustomPoi<T>(customConversationPoi, InspectPoiContainer.transform);
+
+        poi.isOneTimeOnly = customConversationPoi.isOneTimeOnly;
+        poi.releaseCameraOnComplete = customConversationPoi.releaseCameraOnComplete;
+        poi.conversationNodeName = customConversationPoi.conversationNodeName;
+        poi.enabledByOtherNodeVisit = customConversationPoi.enabledByOtherNodeVisit;
+        poi.enableNodeNames = customConversationPoi.enableNodeNames;
+        poi.shouldDisableOnOtherNodeVisit = customConversationPoi.shouldDisableOnOtherNodeVisit;
+        poi.otherNodeNames = customConversationPoi.otherNodeNames;
+
+        var glint = InspectionGlint.Instantiate(customPoi.transform, false);
+        glint.transform.localPosition = new Vector3(0, glintHeight, 0);
+
+        var vcamObject = new GameObject("InspectPOI_VCam");
+        vcamObject.transform.SetParent(customPoi.transform);
+        vcamObject.transform.localPosition = customConversationPoi.vCam;
+        vcamObject.SetActive(false);
+        var vcam = vcamObject.AddComponent<CinemachineVirtualCamera>();
+        vcam.LookAt = customPoi.transform;
+        vcam.AddExtension(vcamObject.AddComponent<CinemachineCollider>());
+        vcam.AddExtension(vcamObject.AddComponent<CinemachineImpulseListener>());
+        vcam.AddCinemachineComponent<CinemachineComposer>();
+        vcamObject.AddComponent<CameraShakeSettingResponder>();
+        poi.vCam = vcam;
+
+        // Default Harvest POI Sphere Collider
+        var sphereCollider = customPoi.AddComponent<SphereCollider>();
+        sphereCollider.radius = 5;
+        sphereCollider.enabled = true;
+        sphereCollider.contactOffset = 0.01f;
+
+        poi.interactCollider = sphereCollider;
+
+        if (isCullable)
+        {
+            // This needs to be added to the GameManager.Instance.CullingBrain
+            var cullable = customPoi.AddComponent<Cullable>();
+            cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
+            cullable.sphereRadius = 15;
+            GameManager.Instance.CullingBrain.AddCullable(cullable);
+        }
+
+        return (customPoi, poi);
+    }
+
+    internal static (GameObject, T) CreateGenericPoiFromCustomPoi<T>(CustomPOI customPoi, Transform parent) where T : POI
+    {
+        GameObject customPoiObject = new GameObject(customPoi.id);
+        customPoiObject.transform.SetParent(parent);
+        customPoiObject.transform.position = customPoi.location;
+        var poi = customPoiObject.AddComponent<T>();
+
+        poi.canBeGhostWindTarget = customPoi.canBeGhostWindTarget;
+
+        if (customPoi.ghostWindTarget != Vector3.zero)
+        {
+            GameObject ghostWindTarget = new GameObject("GhostWindTarget");
+            ghostWindTarget.transform.SetParent(customPoiObject.transform);
+            ghostWindTarget.transform.localPosition = customPoi.ghostWindTarget;
+            poi.ghostWindTargetTransform = ghostWindTarget.transform;
+        }
+
+        if (customPoi.interactPointTarget != Vector3.zero)
+        {
+            GameObject interactPointTarget = new GameObject("InteractionUITransform");
+            interactPointTarget.transform.SetParent(customPoiObject.transform);
+            interactPointTarget.transform.localPosition = customPoi.interactPointTarget;
+            poi.interactPointTargetTransform = interactPointTarget.transform;
+        }
+
+        customPoiObject.layer = Layer.POI;
+        return (customPoiObject, poi);
     }
 
     internal static void AddCustomPoiFromMeta<T>(string metaPath) where T : CustomPOI
@@ -307,4 +436,16 @@ public static class PoiUtil
         }
     }
 
+    internal static GameObject InspectPoiContainer;
+    internal static GameObject InspectionGlint;
+    internal static VibrationData ExplodingWalls;
+    internal static NoiseSettings _6DShake;
+
+    internal static void PopulateConversationPois()
+    {
+        InspectPoiContainer = GameObject.FindObjectOfType<FinalePOIEnabler>().gameObject;
+        if (InspectionGlint == null) InspectionGlint = Resources.FindObjectsOfTypeAll<ParticleSystemRenderer>().FirstOrDefault(psr => psr.name == "InspectionGlint").gameObject.CopyPrefab();
+        if (ExplodingWalls == null) ExplodingWalls = Resources.FindObjectsOfTypeAll<VibrationData>().FirstOrDefault(vd => vd.name == "ExplodingWalls").DontDestroyOnLoad();
+        if (_6DShake == null) _6DShake = Resources.FindObjectsOfTypeAll<NoiseSettings>().FirstOrDefault(vd => vd.name == "6D Shake").DontDestroyOnLoad();
+    }
 }

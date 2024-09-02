@@ -96,6 +96,8 @@ namespace ExampleItems
 
         private static void OnGameStarted()
         {
+            GameManager.Instance.SaveData.SetBoolVariable("exampleitems.explosive-detonated", val: false); // for testing
+
             GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
 
             try

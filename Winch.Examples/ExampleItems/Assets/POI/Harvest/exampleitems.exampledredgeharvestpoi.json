@@ -7,12 +7,8 @@
     "harvestableParticlePrefab": "TrinketParticles",
     "items": [ "exampleitems.diamond" ],
     "nightItems": [ "exampleitems.musicdisc" ],
-    "startStock": 3,
-    "maxStock": 5,
+    "startStock": 1,
+    "maxStock": 2,
     "doesRestock": true,
-    "usesTimeSpecificStock": true,
-    "overrideDefaultDaySpecialChance": true,
-    "overriddenDaytimeSpecialChance": 0.5,
-    "overrideDefaultNightSpecialChance": true,
-    "overriddenNighttimeSpecialChance": 0.5
+    "usesTimeSpecificStock": true
 }

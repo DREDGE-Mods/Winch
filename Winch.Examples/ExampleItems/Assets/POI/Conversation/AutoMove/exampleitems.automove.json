@@ -1,0 +1,20 @@
+{
+    "location": {
+        "x": 375,
+        "y": 0,
+        "z": -344
+    },
+    "conversationNodeName": "ExampleItems_Alex_Root",
+    "isOneTimeOnly": "false",
+    "autoMovePosition": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+    },
+    "autoMoveRotation": {
+        "x": 0,
+        "y": 45,
+        "z": 0
+    },
+    "includeRotation": "true"
+}

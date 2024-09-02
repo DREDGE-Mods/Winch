@@ -8,6 +8,8 @@ using Winch.Serialization.POI.Harvest;
 using Winch.Serialization.POI.Item;
 using Winch.Serialization.HarvestZone;
 using Winch.Data.Item;
+using Winch.Serialization.POI.Conversation;
+using Winch.Serialization.POI.Dock;
 
 namespace Winch.Core
 {
@@ -97,11 +99,10 @@ namespace Winch.Core
             {
                 { typeof(CustomHarvestPOI), "Harvest"},
                 { typeof(CustomItemPOI), "Item"},
-                //{ typeof(BaitHarvestPOI), "Bait"},
-                //{ typeof(PlacedHarvestPOI), "Placed"},
-                //{ typeof(AutoMovePOI), "Conversation/AutoMove"},
-                //{ typeof(ExplosivePOI), "Conversation/Explosive"},
-                //{ typeof(InspectPOI), "Conversation/Inspect"}
+                { typeof(CustomDockPOI), "Dock"},
+                { typeof(CustomAutoMovePOI), "Conversation/AutoMove"},
+                { typeof(CustomExplosivePOI), "Conversation/Explosive"},
+                { typeof(CustomInspectPOI), "Conversation/Inspect"}
             };
 
         private static void LoadPoiFiles(string poiFolderPath)

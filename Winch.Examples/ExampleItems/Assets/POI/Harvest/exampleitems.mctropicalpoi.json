@@ -10,9 +10,5 @@
 	"startStock": 5,
 	"maxStock": 10,
 	"doesRestock": true,
-	"usesTimeSpecificStock": true,
-	"overrideDefaultDaySpecialChance": true,
-	"overriddenDaytimeSpecialChance": 0.5,
-	"overrideDefaultNightSpecialChance": true,
-	"overriddenNighttimeSpecialChance": 0.5
+	"usesTimeSpecificStock": true
 }

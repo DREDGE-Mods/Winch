@@ -12,6 +12,8 @@ public class CustomPOIConverter : DredgeTypeConverter<CustomPOI>
         { "id", new( string.Empty, null) },
         { "location", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "canBeGhostWindTarget", new( false, o=> bool.Parse(o.ToString())) },
+        { "ghostWindTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "interactPointTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) }
     };
     
     public CustomPOIConverter()

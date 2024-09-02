@@ -26,6 +26,18 @@ public class CustomPOI : SerializedScriptableObject
     /// </summary>
     [SerializeField]
     public bool canBeGhostWindTarget;
+
+    /// <summary>
+    /// Ghost wind target relative position
+    /// </summary>
+    [SerializeField]
+    public Vector3 ghostWindTarget = Vector3.zero;
+
+    /// <summary>
+    /// Interact point UI relative position
+    /// </summary>
+    [SerializeField]
+    public Vector3 interactPointTarget = Vector3.zero;
 }
 
 
