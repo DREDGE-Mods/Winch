@@ -434,9 +434,9 @@ public static class WinchExtensions
 
     public static bool DeployBaitModified(this BaitAbility baitAbility, SpatialItemInstance baitInstance)
     {
-        BaitPOIDataModel baitPOIDataModel = new BaitPOIDataModel();
         SpatialItemData spatialItemData = baitInstance.GetItemData<SpatialItemData>();
         BaitType baitType = spatialItemData.GetBaitTypeFromItemData();
+        BaitPOIDataModel baitPOIDataModel = baitType.IsFish() ? new BaitPOIDataModel() : new MaterialBaitPOIDataModel();
         baitPOIDataModel.doesRestock = false;
         bool deepForm = baitType == BaitType.ABERRATED && GameManager.Instance.QuestManager.IsQuestCompleted(baitAbility.deepFormItemData.QuestCompleteRequired.name) && baitAbility.deepFormItemData.zonesFoundIn.HasFlag(GameManager.Instance.Player.PlayerZoneDetector.GetCurrentZone()) && UnityEngine.Random.value <= baitAbility.deepFormItemData.BaitChanceOverride;
         List<HarvestableItemData> items = deepForm ? new List<HarvestableItemData> { baitAbility.deepFormItemData } : spatialItemData.GetBaitItemsFromItemData();
