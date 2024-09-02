@@ -22,13 +22,7 @@ public static class PoiUtil
 {
     private static Dictionary<Type, IDredgeTypeConverter> Converters = new()
     {
-        //{ typeof(POI), new PoiConverter() },
         //{ typeof(DockPOI), new DockPoiConverter() },
-        //{ typeof(ItemPOI), new ItemPoiConverter() },
-        //{ typeof(HarvestPOI), new HarvestPoiConverter() },
-        //{ typeof(HarvestPOIDataModel), new HarvestPoiDataModelConverter() },
-        //{ typeof(BaitHarvestPOI), new BaitPoiConverter() },
-        //{ typeof(PlacedHarvestPOI), new PlacedPoiConverter() },
         //{ typeof(ConversationPOI), new ConversationPoiConverter() },
         //{ typeof(AutoMovePOI), new AutoMovePoiConverter() },
         //{ typeof(ConversationPOI), new ConversationPoiConverter() },
