@@ -15,7 +15,7 @@ public class AbilityDataConverter : DredgeTypeConverter<ModdedAbilityData>
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new(null, null) },
+        { "id", new(string.Empty, null) },
         { "autoUnlock", new(true, o=> bool.Parse(o.ToString())) },
         { "nameKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
         { "descriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },

@@ -13,7 +13,7 @@ public class StaticWorldEventDataConverter : DredgeTypeConverter<StaticWorldEven
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new(null, null) },
+        { "id", new(string.Empty, null) },
         { "location", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "eventType", new(WorldEventType.NONE, o=> DredgeTypeHelpers.GetEnumValue<WorldEventType>(o) )}
     };

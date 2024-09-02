@@ -13,7 +13,7 @@ public class AnyOfItemConditionConverter : InventoryConditionConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new(null, null) }
+        { "id", new(string.Empty, null) }
     };
 
     public AnyOfItemConditionConverter()

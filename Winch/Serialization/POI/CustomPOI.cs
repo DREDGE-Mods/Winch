@@ -4,10 +4,27 @@ using UnityEngine;
 
 namespace Winch.Serialization.POI;
 
+/// <summary>
+/// An object used by Winch to create a real <see cref="POI"/>
+/// </summary>
 public class CustomPOI : SerializedScriptableObject
 {
-    public string id;
-    public Vector3 location;
+    /// <summary>
+    /// The unique id of this POI
+    /// </summary>
+    [SerializeField]
+    public string id = string.Empty;
+
+    /// <summary>
+    /// World position of this point of interest
+    /// </summary>
+    [SerializeField]
+    public Vector3 location = Vector3.zero;
+
+    /// <summary>
+    /// Can the ghost wind world event target this point of interest?
+    /// </summary>
+    [SerializeField]
     public bool canBeGhostWindTarget;
 }
 

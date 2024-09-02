@@ -12,7 +12,7 @@ public class AdvancedSpeakerDataConverter : SpeakerDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new(null, null) },
+        { "id", new(string.Empty, null) },
         { "paralinguisticsNameKey", new(ParalinguisticsNameKey.NONE, o=> DredgeTypeHelpers.GetEnumValue<ParalinguisticsNameKey>(o)) },
         { "portraitSprite", new(TextureUtil.GetSprite("EmptyPortrait"), o=> TextureUtil.GetSprite(o.ToString())) },
     };

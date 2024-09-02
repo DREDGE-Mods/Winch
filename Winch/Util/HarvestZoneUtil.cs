@@ -41,7 +41,7 @@ public static class HarvestZoneUtil
 
     internal static GameObject CreateGameObjectFromCustomHarvestZone(CustomHarvestZone customHarvestZone)
     {
-        GameObject harvestZoneObj = new GameObject(customHarvestZone.name);
+        GameObject harvestZoneObj = new GameObject(customHarvestZone.id);
         harvestZoneObj.transform.SetParent(GameObject.Find("HarvestZones/FullZones").transform);
         harvestZoneObj.transform.position = customHarvestZone.location;
 

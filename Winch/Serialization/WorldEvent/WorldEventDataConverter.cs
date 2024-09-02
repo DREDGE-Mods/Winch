@@ -20,7 +20,7 @@ public class WorldEventDataConverter : DredgeTypeConverter<ModdedWorldEvent>
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new(null, null) },
+        { "id", new(string.Empty, null) },
         { "eventType", new(WorldEventType.NONE, o=> DredgeTypeHelpers.GetEnumValue<WorldEventType>(o) )},
         { "allowInPassiveMode", new(false, o=> bool.Parse(o.ToString())) },
         { "dispelByBanish", new(true, o=> bool.Parse(o.ToString())) },
