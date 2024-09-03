@@ -255,6 +255,7 @@ public static class PoiUtil
 
         // This needs to be added to the GameManager.Instance.CullingBrain
         var cullable = customPoi.AddComponent<Cullable>();
+        cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
         cullable.sphereRadius = 5;
         GameManager.Instance.CullingBrain.AddCullable(cullable);
 
@@ -293,6 +294,7 @@ public static class PoiUtil
 
         // This needs to be added to the GameManager.Instance.CullingBrain
         var cullable = customPoi.AddComponent<Cullable>();
+        cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
         cullable.sphereRadius = 1;
         GameManager.Instance.CullingBrain.AddCullable(cullable);
 
