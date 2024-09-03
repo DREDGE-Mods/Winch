@@ -19,8 +19,23 @@ public static class AbilityUtil
         return UtilHelpers.PopulateObjectFromMeta(abilityData, meta, Converter);
     }
 
+    internal static Dictionary<string, AbilityData> AllAbilityDataDict = new();
     internal static Dictionary<string, ModdedAbilityData> ModdedAbilityDataDict = new();
     internal static Dictionary<string, ModdedAbility> ModdedAbilityDict = new();
+
+    public static AbilityData GetAbilityData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllAbilityDataDict.TryGetValue(id, out AbilityData abilityData))
+            return abilityData;
+
+        if (ModdedAbilityDataDict.TryGetValue(id, out ModdedAbilityData moddedAbilityData))
+            return moddedAbilityData;
+
+        return null;
+    }
 
     public static ModdedAbilityData GetModdedAbilityData(string id)
     {
@@ -122,6 +137,16 @@ public static class AbilityUtil
             modAbilityData.Populate();
             abilityDatas.Add(modAbilityData.id, modAbilityData);
         }
+        foreach (var abilityDataByKey in abilityDatas)
+        {
+            AllAbilityDataDict.Add(abilityDataByKey.Key, abilityDataByKey.Value);
+            WinchCore.Log.Debug($"Added ability {abilityDataByKey.Key} to AllAbilityDataDict");
+        }
+    }
+
+    internal static void Clear()
+    {
+        AllAbilityDataDict.Clear();
     }
 
     internal static void AddModdedAbilitiesToRadial(GameObject buttonCenter, Transform abiltiesParent, List<AbilityRadialWedge> wedges, Sprite lockedSprite)
@@ -144,5 +169,10 @@ public static class AbilityUtil
             abilityRadialWedge.buttonCenter = buttonCenter;
             abilityRadialWedge.attentionCallout = attentionCalloutPrefab.Instantiate(abilityRadialWedgeObj.transform, false);
         }
+    }
+
+    public static AbilityData[] GetAllAbilityData()
+    {
+        return AllAbilityDataDict.Values.ToArray();
     }
 }

@@ -39,7 +39,21 @@ public static class GridConfigUtil
     internal static Dictionary<string, DeferredGridConfiguration> ModdedGridConfigDict = new();
     internal static Dictionary<string, GridConfiguration> AllGridConfigDict = new();
 
-    public static GridConfiguration GetModdedGridConfiguration(string id)
+    public static GridConfiguration GetGridConfiguration(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllGridConfigDict.TryGetValue(id, out GridConfiguration gridConfig))
+            return gridConfig;
+
+        if (ModdedGridConfigDict.TryGetValue(id, out DeferredGridConfiguration deferredGridConfig))
+            return deferredGridConfig;
+
+        return null;
+    }
+
+    public static DeferredGridConfiguration GetModdedGridConfiguration(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             return null;

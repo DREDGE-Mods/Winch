@@ -37,7 +37,7 @@ public static class VibrationUtil
             return null;
     }
 
-    internal static VibrationData GetVibrationData(string id)
+    public static VibrationData GetVibrationData(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             return null;

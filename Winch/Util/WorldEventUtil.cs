@@ -39,6 +39,20 @@ public static class WorldEventUtil
     internal static Dictionary<string, ModdedWorldEvent> ModdedWorldEventDict = new();
     internal static Dictionary<string, StaticWorldEvent> ModdedStaticWorldEventDict = new();
 
+    public static WorldEventData GetWorldEventData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllWorldEventDataDict.TryGetValue(id, out WorldEventData worldEventData))
+            return worldEventData;
+
+        if (ModdedWorldEventDataDict.TryGetValue(id, out ModdedWorldEventData moddedWorldEventData))
+            return moddedWorldEventData;
+
+        return null;
+    }
+
     public static ModdedWorldEventData GetModdedWorldEventData(string id)
     {
         if (string.IsNullOrWhiteSpace(id))

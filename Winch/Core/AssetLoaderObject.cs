@@ -66,6 +66,7 @@ namespace Winch.Core
         {
             WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
             VibrationUtil.ClearVibrationDatas();
+            AbilityUtil.Clear();
             PoiUtil.Clear();
             HarvestZoneUtil.Clear();
             CharacterUtil.ClearSpeakerData();

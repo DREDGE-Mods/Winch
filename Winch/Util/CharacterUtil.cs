@@ -11,6 +11,7 @@ using UnityEngine.Localization;
 using Winch.Components;
 using Winch.Core;
 using Winch.Data.Character;
+using Winch.Data.GridConfig;
 using Winch.Serialization;
 using Winch.Serialization.Character;
 
@@ -27,6 +28,20 @@ public static class CharacterUtil
 
     internal static Dictionary<string, AdvancedSpeakerData> ModdedSpeakerDataDict = new();
     internal static Dictionary<string, SpeakerData> AllSpeakerDataDict = new();
+
+    public static SpeakerData GetSpeakerData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllSpeakerDataDict.TryGetValue(id, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s.name == id, out speakerData))
+            return speakerData;
+
+        if (ModdedSpeakerDataDict.TryGetValue(id, out AdvancedSpeakerData advancedSpeakerData))
+            return advancedSpeakerData;
+
+        return null;
+    }
 
     public static AdvancedSpeakerData GetModdedSpeakerData(string id)
     {
@@ -98,6 +113,24 @@ public static class CharacterUtil
         {
             WinchCore.Log.Error($"No character converter found");
         }
+    }
+
+    internal static List<SpeakerData> TryGetSpeakers(List<string> ids)
+    {
+        List<SpeakerData> speakers = new List<SpeakerData>();
+
+        if (ids == null)
+            return speakers;
+
+        foreach (var speaker in ids)
+        {
+            if (!string.IsNullOrWhiteSpace(speaker) && (AllSpeakerDataDict.TryGetValue(speaker, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s.name == speaker, out speakerData)))
+            {
+                speakers.Add(speakerData);
+            }
+        }
+
+        return speakers;
     }
 
     public static SpeakerData[] GetAllSpeakerData()

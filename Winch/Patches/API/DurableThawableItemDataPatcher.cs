@@ -271,7 +271,7 @@ namespace Winch.Patches.API
             {
                 fishChange = proportionOfDayJustElapsed * GameManager.Instance.GameConfigData.FreshnessLossPerDay;
                 coolingChange = 0;
-                WinchCore.Log.Debug($"[FreshnessCoroutine] AdjustFreshnessForGrid({grid.GridConfiguration}, {proportionOfDayJustElapsed}) fishChange: {fishChange}");
+                //WinchCore.Log.Debug($"[FreshnessCoroutine] AdjustFreshnessForGrid({grid.GridConfiguration}, {proportionOfDayJustElapsed}) fishChange: {fishChange}");
             }
             else
             {
@@ -280,7 +280,7 @@ namespace Winch.Patches.API
                 float actualVal = 1 - reductionVal;
                 coolingChange = proportionOfDayJustElapsed * actualVal;
                 fishChange = coolingChange * GameManager.Instance.GameConfigData.FreshnessLossPerDay;
-                WinchCore.Log.Debug($"[FreshnessCoroutine] AdjustFreshnessForGrid({grid.GridConfiguration}, {proportionOfDayJustElapsed}) cooledCells: {cooledCells} | propOfMaxReduction: {propOfMaxReduction} | reductionVal: {reductionVal} | actualVal: {actualVal} | coolingChange: {coolingChange} | fishChange: {fishChange}");
+                //WinchCore.Log.Debug($"[FreshnessCoroutine] AdjustFreshnessForGrid({grid.GridConfiguration}, {proportionOfDayJustElapsed}) cooledCells: {cooledCells} | propOfMaxReduction: {propOfMaxReduction} | reductionVal: {reductionVal} | actualVal: {actualVal} | coolingChange: {coolingChange} | fishChange: {fishChange}");
             }
             instances.ForEach(i => i.durability -= coolingChange);
             instances.Where(WinchExtensions.IsBroken).ForEach(i => grid.RemoveObjectFromGridData(i, true));
