@@ -132,6 +132,10 @@ namespace Winch.Data
 
         internal void InsertModdedData()
         {
+            if (baseSaveData.dockId == "exampleitems.dock")
+            {
+                baseSaveData.dockId = "dock.pontoon-gc";
+            }
             var gridsToRemove = new List<string>();
             foreach (var gridByKey in saveData.grids)
             {

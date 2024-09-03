@@ -1,7 +1,9 @@
+using AeLa.EasyFeedback.APIs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AI;
 using Winch.Core;
 using Winch.Util;
 using Yarn;
@@ -94,22 +96,17 @@ namespace ExampleItems
 
             GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
 
-            try
-            {
-                var cubeLand = CreateCube();
-                cubeLand.transform.position = new Vector3(1000, 0, -1000);
-                cubeLand.transform.localScale = new Vector3(200, 5, 200);
+            var cubeLand = CreateCube();
+            cubeLand.transform.position = new Vector3(1000, 0, -1000);
+            cubeLand.transform.localScale = new Vector3(200, 5, 200);
+            var safeZone = new GameObject("SafeZone", typeof(BoxCollider), typeof(NavMeshObstacle));
+            safeZone.layer = Layer.SafeZone;
+            safeZone.transform.SetParent(cubeLand.transform, false);
+            safeZone.transform.localScale = Vector3.one * 1.25f;
 
-                var datas = Resources.FindObjectsOfTypeAll<DockData>();
-                var pontoon = datas.FirstOrDefault(dockData => dockData.id == "dock.pontoon-gc");
-                var speakers = pontoon.Speakers;
-                speakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));
-                speakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.steve"));
-            }
-            catch (Exception e)
-            {
-                WinchCore.Log.Error(e);
-            }
+            var pontoonSpeakers = DockUtil.GetDockData("dock.pontoon-gc").Speakers;
+            pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));
+            pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.steve"));
         }
 
         private static void OnGameEnded()

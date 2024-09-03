@@ -62,6 +62,7 @@ namespace Winch.Core
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
             string vibrationFolderpath = Path.Combine(path, "Vibrations");
             string mapMarkerFolderpath = Path.Combine(path, "MapMarkers");
+            string dockFolderpath = Path.Combine(path, "Docks");
             string abilityFolderpath = Path.Combine(path, "Abilities");
             string worldEventFolderpath = Path.Combine(path, "WorldEvents");
             string dialogueFolderpath = Path.Combine(path, "Dialogues");
@@ -74,6 +75,7 @@ namespace Winch.Core
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
             if(Directory.Exists(mapMarkerFolderpath)) LoadMapMarkerFiles(mapMarkerFolderpath);
+            if(Directory.Exists(dockFolderpath)) LoadDockFiles(dockFolderpath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
@@ -193,6 +195,21 @@ namespace Winch.Core
             }
         }
 
+        private static void LoadDockFiles(string dockFolderPath)
+        {
+            string[] dockFiles = Directory.GetFiles(dockFolderPath);
+            foreach (string file in dockFiles)
+            {
+                try
+                {
+                    DockUtil.AddDockDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load dock data from {file}: {ex}");
+                }
+            }
+        }
 
         private static void LoadMapMarkerFiles(string mapMarkerFolderPath)
         {

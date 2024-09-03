@@ -1,0 +1,8 @@
+﻿{
+	"dockNameKey": "exampleitems.dock.name",
+	"yarnRootNode": "ExampleItems_Steve_Root",
+	"speakers": [ "exampleitems.steve", "exampleitems.alex" ],
+	"hasCameraOverride": false,
+	"cameraOverrideX": 0.5,
+	"cameraOverrideY": 0.5
+}
