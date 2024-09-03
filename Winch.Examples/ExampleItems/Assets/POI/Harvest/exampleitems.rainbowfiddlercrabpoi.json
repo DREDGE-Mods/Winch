@@ -7,7 +7,7 @@
 	"harvestableParticlePrefab": "MinecraftCrabParticles",
 	"items": [ "exampleitems.rainbowfiddlercrab" ],
 	"startStock": 1,
-	"maxStock": 3,
+	"maxStock": 4,
 	"doesRestock": true,
 	"usesTimeSpecificStock": false
 }
