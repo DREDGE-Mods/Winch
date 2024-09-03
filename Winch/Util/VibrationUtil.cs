@@ -55,7 +55,7 @@ public static class VibrationUtil
     {
         foreach (var vibrationData in Resources.FindObjectsOfTypeAll<VibrationData>())
         {
-            AllVibrationDataDict.Add(vibrationData.name, vibrationData);
+            AllVibrationDataDict.SafeAdd(vibrationData.name, vibrationData);
             WinchCore.Log.Debug($"Added vibration data {vibrationData.name} to AllVibrationDataDict");
         }
     }
