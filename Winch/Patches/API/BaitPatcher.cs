@@ -13,7 +13,7 @@ namespace Winch.Patches.API
     [HarmonyPatch]
     internal static class BaitPatcher
     {
-        public static GameObject? MaterialHarvestPOI = AssetBundleUtil.GetPrefab("materialbaitpoi.bundle", "Assets/DREDGE/Mods/MaterialBaitPOI.prefab");
+        public static GameObject? MaterialHarvestPOI = AssetBundleUtil.GetPrefab("materialbaitpoi.bundle", "Assets/DREDGE/Mods/Winch/MaterialBaitPOI.prefab");
 
         [HarmonyPrefix]
         [HarmonyPatch(typeof(BaitAbility), nameof(BaitAbility.Init))]

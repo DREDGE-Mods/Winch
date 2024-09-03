@@ -27,6 +27,7 @@ using Winch.Data;
 using Winch.Data.Abilities;
 using Winch.Data.Character;
 using Winch.Data.Item;
+using Winch.Data.POI;
 using Winch.Data.WorldEvent;
 using Winch.Patches.API;
 using Winch.Util;

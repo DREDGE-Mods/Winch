@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 114503989
+CRC: 959606328
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 76acad271bbabb5f1acc33881cf1949f
+    Hash: 6986fbd935d748841b64754431880240
   TypeTreeHash:
     serializedVersion: 2
     Hash: 3c05c613dfdb2de30a164b7230ae92a4
@@ -53,6 +53,7 @@ SerializeReferenceClassIdentifiers:
 - AssemblyName: Sirenix.Serialization
   ClassName: Sirenix.Serialization.SerializationData
 Assets:
-- Assets/DREDGE/Mods/MaterialBaitPOI.prefab
-- Assets/DREDGE/Mods/MaterialBaitParticles.prefab
+- Assets/DREDGE/Mods/Winch/MaterialBaitPOI.prefab
+- Assets/DREDGE/Mods/Winch/DisturbedWaterParticles.prefab
+- Assets/DREDGE/Mods/Winch/MaterialBaitParticles.prefab
 Dependencies: []
