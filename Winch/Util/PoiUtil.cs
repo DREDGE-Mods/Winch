@@ -10,9 +10,12 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
 using Winch.Components;
 using Winch.Core;
+using Winch.Data.POI;
+using Winch.Data.POI.Conversation;
+using Winch.Data.POI.Dock;
+using Winch.Data.POI.Harvest;
+using Winch.Data.POI.Item;
 using Winch.Serialization;
-
-using Winch.Serialization.POI;
 using Winch.Serialization.POI.Conversation;
 using Winch.Serialization.POI.Dock;
 using Winch.Serialization.POI.Harvest;

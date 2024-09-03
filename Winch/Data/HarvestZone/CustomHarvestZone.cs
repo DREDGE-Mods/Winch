@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Serialization.HarvestZone;
+namespace Winch.Data.HarvestZone;
 
 using HarvestZone = global::HarvestZone;
 

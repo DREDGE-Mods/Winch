@@ -4,10 +4,11 @@ using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Winch.Data.POI;
 using Winch.Serialization.Item;
 using Winch.Util;
 
-namespace Winch.Serialization.POI.Harvest;
+namespace Winch.Data.POI.Harvest;
 
 /// <summary>
 /// An object used by Winch to create a real <see cref="HarvestPOI"/>

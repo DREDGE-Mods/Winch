@@ -3,9 +3,10 @@ using System.Linq;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Winch.Data.POI;
 using Winch.Util;
 
-namespace Winch.Serialization.POI.Item;
+namespace Winch.Data.POI.Item;
 
 /// <summary>
 /// An object used by Winch to create a real <see cref="ItemPOI"/>

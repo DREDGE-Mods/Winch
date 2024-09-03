@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Data.HarvestZone;
 
 // ReSharper disable HeapView.BoxingAllocation
 

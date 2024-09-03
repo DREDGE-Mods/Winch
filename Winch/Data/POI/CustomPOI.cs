@@ -2,7 +2,7 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Winch.Serialization.POI;
+namespace Winch.Data.POI;
 
 /// <summary>
 /// An object used by Winch to create a real <see cref="POI"/>

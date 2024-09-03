@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Winch.Data
+namespace Winch.Data.GridConfig
 {
     /// <summary>
     /// Need this or else SetValue won't work

@@ -1,5 +1,5 @@
 ﻿using HarmonyLib;
-using Winch.Data;
+using Winch.Data.GridConfig;
 using Winch.Util;
 
 namespace Winch.Patches.API

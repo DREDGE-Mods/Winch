@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Winch.Data.POI;
 
-namespace Winch.Serialization.POI.Dock;
+namespace Winch.Data.POI.Dock;
 
 // TODO: actually implement this
 public class CustomDockPOI : CustomPOI

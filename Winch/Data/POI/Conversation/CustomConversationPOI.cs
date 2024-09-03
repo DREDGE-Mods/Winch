@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Winch.Data.POI;
 
-namespace Winch.Serialization.POI.Conversation;
+namespace Winch.Data.POI.Conversation;
 
 public class CustomConversationPOI : CustomPOI
 {

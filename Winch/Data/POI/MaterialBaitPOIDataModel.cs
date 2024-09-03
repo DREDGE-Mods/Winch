@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Winch.Util;
 
-namespace Winch.Data
+namespace Winch.Data.POI
 {
     public class MaterialBaitPOIDataModel : BaitPOIDataModel
     {

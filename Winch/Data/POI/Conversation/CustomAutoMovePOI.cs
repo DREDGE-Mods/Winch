@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Winch.Serialization.POI.Conversation;
+namespace Winch.Data.POI.Conversation;
 
 public class CustomAutoMovePOI : CustomConversationPOI
 {

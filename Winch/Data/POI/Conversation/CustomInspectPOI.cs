@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Winch.Serialization.POI.Conversation;
+namespace Winch.Data.POI.Conversation;
 
 public class CustomInspectPOI : CustomConversationPOI
 {

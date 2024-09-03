@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Winch.Serialization.WorldEvent.Condition
+namespace Winch.Data.WorldEvent.Condition
 {
     public enum InventoryConditionType
     {

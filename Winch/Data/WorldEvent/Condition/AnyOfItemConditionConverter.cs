@@ -5,18 +5,19 @@ using UnityEngine.Localization;
 using Winch.Components;
 using Winch.Core;
 using Winch.Data.WorldEvent;
+using Winch.Serialization;
 using Winch.Util;
 
-namespace Winch.Serialization.WorldEvent.Condition;
+namespace Winch.Data.WorldEvent.Condition;
 
-public class NumOfItemConditionConverter : NumConditionConverter
+public class AnyOfItemConditionConverter : InventoryConditionConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new(string.Empty, null) }
     };
 
-    public NumOfItemConditionConverter()
+    public AnyOfItemConditionConverter()
     {
         AddDefinitions(_definitions);
     }

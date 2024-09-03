@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Winch.Data
+namespace Winch.Data.GridConfig
 {
     public class DeferredGridConfiguration : GridConfiguration
     {

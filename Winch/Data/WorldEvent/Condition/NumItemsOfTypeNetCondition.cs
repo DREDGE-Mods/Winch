@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using Winch.Util;
 
-namespace Winch.Serialization.WorldEvent.Condition
+namespace Winch.Data.WorldEvent.Condition
 {
     public class NumItemsOfTypeNetCondition : NumOfItemNetCondition
     {

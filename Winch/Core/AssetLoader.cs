@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using Winch.Util;
-using Winch.Serialization.POI;
-using Winch.Serialization.POI.Harvest;
-using Winch.Serialization.POI.Item;
 using Winch.Serialization.HarvestZone;
 using Winch.Data.Item;
-using Winch.Serialization.POI.Conversation;
-using Winch.Serialization.POI.Dock;
+using Winch.Data.POI;
+using Winch.Data.POI.Conversation;
+using Winch.Data.POI.Item;
+using Winch.Data.POI.Dock;
+using Winch.Data.POI.Harvest;
 
 namespace Winch.Core
 {
