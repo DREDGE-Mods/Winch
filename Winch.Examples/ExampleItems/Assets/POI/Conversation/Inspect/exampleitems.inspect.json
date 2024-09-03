@@ -4,6 +4,7 @@
         "y": 0.0,
         "z": -344.0
     },
-    "conversationNodeName": "ExampleItems_Steve_Root",
-    "isOneTimeOnly": "false"
+    "conversationNodeName": "ExampleItems_Steve_Chat",
+    "isOneTimeOnly": "false",
+    "mapMarkerData": "exampleitems.mapmarker"
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Patches.API
 {
@@ -13,6 +14,7 @@ namespace Winch.Patches.API
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+            MapMarkerUtil.AddModdedMapMarkerData(handle.Result);
             DredgeEvent.AddressableEvents.MapMarkersLoaded.Trigger(__instance, handle, true);
         }
 
@@ -20,6 +22,7 @@ namespace Winch.Patches.API
         {
             if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+            MapMarkerUtil.PopulateMapMarkerData(handle.Result);
             DredgeEvent.AddressableEvents.MapMarkersLoaded.Trigger(__instance, handle, false);
         }
     }

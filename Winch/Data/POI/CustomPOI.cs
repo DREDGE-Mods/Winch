@@ -38,6 +38,12 @@ public class CustomPOI : SerializedScriptableObject
     /// </summary>
     [SerializeField]
     public Vector3 interactPointTarget = Vector3.zero;
+
+    /// <summary>
+    /// ID of this POI's map marker data
+    /// </summary>
+    [SerializeField]
+    public string mapMarkerData = string.Empty;
 }
 
 

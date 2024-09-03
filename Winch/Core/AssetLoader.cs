@@ -61,6 +61,7 @@ namespace Winch.Core
             string poiFolderpath = Path.Combine(path, "POI");
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
             string vibrationFolderpath = Path.Combine(path, "Vibrations");
+            string mapMarkerFolderpath = Path.Combine(path, "MapMarkers");
             string abilityFolderpath = Path.Combine(path, "Abilities");
             string worldEventFolderpath = Path.Combine(path, "WorldEvents");
             string dialogueFolderpath = Path.Combine(path, "Dialogues");
@@ -72,6 +73,7 @@ namespace Winch.Core
             if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
             if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
+            if(Directory.Exists(mapMarkerFolderpath)) LoadMapMarkerFiles(mapMarkerFolderpath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
@@ -187,6 +189,23 @@ namespace Winch.Core
                 catch (Exception ex)
                 {
                     WinchCore.Log.Error($"Failed to load vibration from {file}: {ex}");
+                }
+            }
+        }
+
+
+        private static void LoadMapMarkerFiles(string mapMarkerFolderPath)
+        {
+            string[] mapMarkerFiles = Directory.GetFiles(mapMarkerFolderPath);
+            foreach (string file in mapMarkerFiles)
+            {
+                try
+                {
+                    MapMarkerUtil.AddMapMarkerDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load map marker data from {file}: {ex}");
                 }
             }
         }

@@ -14,7 +14,8 @@ public class CustomPOIConverter : DredgeTypeConverter<CustomPOI>
         { "location", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "canBeGhostWindTarget", new( false, o=> bool.Parse(o.ToString())) },
         { "ghostWindTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "interactPointTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) }
+        { "interactPointTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "mapMarkerData", new( string.Empty, null) }
     };
     
     public CustomPOIConverter()

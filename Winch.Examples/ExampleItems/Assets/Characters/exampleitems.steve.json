@@ -4,5 +4,5 @@
 	"portraitSprite": "Steve",
 	"smallPortraitSprite": "SteveSmall",
 	"alwaysAvailable": true,
-	"yarnRootNode": "ExampleItems_Steve_Root"
+	"yarnRootNode": "ExampleItems_Steve_Chat"
 }

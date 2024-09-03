@@ -1,4 +1,8 @@
 ﻿﻿title: ExampleItems_Steve_Root
 ---
+<<AddMapMarker exampleitems.mapmarker false>>
+===
+﻿title: ExampleItems_Steve_Chat
+---
 exampleitems.steve: Test #line:ex78383 
 ===

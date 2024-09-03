@@ -433,6 +433,13 @@ public static class PoiUtil
             poi.interactPointTargetTransform = interactPointTarget.transform;
         }
 
+        if (!string.IsNullOrWhiteSpace(customPoi.mapMarkerData))
+        {
+            var mapMarkerLocation = customPoiObject.AddComponent<MapMarkerLocation>();
+            mapMarkerLocation.mapMarkerData = MapMarkerUtil.GetMapMarkerData(customPoi.mapMarkerData);
+            mapMarkerLocation.SetMapMarkerData();
+        }
+
         customPoiObject.layer = Layer.POI;
         return (customPoiObject, poi);
     }
