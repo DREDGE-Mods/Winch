@@ -343,7 +343,9 @@ public static class PoiUtil
         explosivePoi.impulseSource.m_ImpulseDefinition.m_AmplitudeGain = 5;
         explosivePoi.impulseSource.m_ImpulseDefinition.m_FrequencyGain = 5;
         explosivePoi.impulseSource.m_ImpulseDefinition.m_RawSignal = _6DShake;
-        explosivePoi.ExplodeVibration = ExplodingWalls;
+        explosivePoi.ExplodeVibration = !string.IsNullOrWhiteSpace(customExplosivePoi.explodeVibration)
+                ? VibrationUtil.GetVibrationData(customExplosivePoi.explodeVibration)
+                : ExplodingWalls;
 
         var collider = (SphereCollider)explosivePoi.interactCollider;
         collider.radius = 7;

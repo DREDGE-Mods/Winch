@@ -13,7 +13,7 @@ namespace ExampleItems
         public static ExampleSaveParticipant Participant = new ExampleSaveParticipant();
 
         public static ItemData MilkBucket => ItemUtil.GetModdedItemData("exampleitems.milk");
-        public static VibrationData MilkBucketVibrationData;
+        public static VibrationData MilkBucketVibrationData => VibrationUtil.GetModdedVibrationData("exampleitems.milk");
 
         public static void Initialize()
         {
@@ -27,12 +27,6 @@ namespace ExampleItems
             PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftPufferfishParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftPufferfishParticles"));
             PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftSalmonParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftSalmonParticles"));
             PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCrabParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCrabParticles"));
-
-            MilkBucketVibrationData = ScriptableObject.CreateInstance<VibrationData>().DontDestroyOnLoad().Rename("MilkBucket");
-            MilkBucketVibrationData.vibrationParamsList = new List<VibrationParams>
-            {
-                new VibrationParams(0.03f,0,0.1f,0.3f,0.75f)
-            };
 
             #region Dialogue
             try

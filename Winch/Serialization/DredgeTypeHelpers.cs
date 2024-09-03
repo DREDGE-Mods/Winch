@@ -9,6 +9,7 @@ using Winch.Core;
 using Winch.Data;
 using Winch.Data.Item.Prerequisites;
 using Winch.Serialization.GridConfig;
+using Winch.Serialization.Vibration;
 using Winch.Serialization.WorldEvent.Condition;
 using Winch.Util;
 
@@ -252,7 +253,7 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    private static OwnedItemResearchablePrerequisite ParseOwnedPrerequisite(string prerequisite)
+    internal static OwnedItemResearchablePrerequisite ParseOwnedPrerequisite(string prerequisite)
     {
         return new ModdedOwnedItemResearchablePrerequisite
         {
@@ -270,11 +271,22 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    private static ResearchedItemResearchablePrerequisite ParseResearchedPrerequisite(string prerequisite)
+    internal static ResearchedItemResearchablePrerequisite ParseResearchedPrerequisite(string prerequisite)
     {
         return new ModdedResearchedItemResearchablePrerequisite
         {
             itemId = prerequisite
         };
+    }
+
+    internal static List<VibrationParams> ParseVibrationParamsList(JArray o)
+    {
+        var parsed = new List<VibrationParams>();
+        foreach (var vibrationParams in o)
+        {
+            var obj = vibrationParams.ToObject<CustomVibrationParams>();
+            if (obj != null) parsed.Add(obj);
+        }
+        return parsed;
     }
 }

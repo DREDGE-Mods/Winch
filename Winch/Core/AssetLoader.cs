@@ -60,6 +60,7 @@ namespace Winch.Core
             string itemFolderPath = Path.Combine(path, "Items");
             string poiFolderpath = Path.Combine(path, "POI");
             string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
+            string vibrationFolderpath = Path.Combine(path, "Vibrations");
             string abilityFolderpath = Path.Combine(path, "Abilities");
             string worldEventFolderpath = Path.Combine(path, "WorldEvents");
             string dialogueFolderpath = Path.Combine(path, "Dialogues");
@@ -70,6 +71,7 @@ namespace Winch.Core
             if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
             if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
             if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
+            if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
             if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
             if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
             if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
@@ -168,7 +170,23 @@ namespace Winch.Core
                 }
                 catch(Exception ex)
                 {
-                    WinchCore.Log.Error($"Failed to load Grid Configuration from {file}: {ex}");
+                    WinchCore.Log.Error($"Failed to load grid configuration from {file}: {ex}");
+                }
+            }
+        }
+
+        private static void LoadVibrationFiles(string vibrationFolderPath)
+        {
+            string[] vibrationFiles = Directory.GetFiles(vibrationFolderPath);
+            foreach (string file in vibrationFiles)
+            {
+                try
+                {
+                    VibrationUtil.AddVibrationDataFromMeta(file);
+                }
+                catch (Exception ex)
+                {
+                    WinchCore.Log.Error($"Failed to load vibration from {file}: {ex}");
                 }
             }
         }
