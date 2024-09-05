@@ -60,6 +60,7 @@ public class CustomDockPOI : CustomPOI
     /// <summary>
     /// Extra destinations for docks
     /// </summary>
+    // TODO: implement this
     [SerializeField]
     public List<CustomBaseDestination> destinations = new List<CustomBaseDestination>();
 
