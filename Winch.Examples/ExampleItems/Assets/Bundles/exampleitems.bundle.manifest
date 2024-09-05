@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3381553314
+CRC: 2174349118
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 952648250f2546eb074df2220ac7281b
+    Hash: 6280ca4dea00171b8ee8437e86b2755c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e282e9bab93dd46b641462eabc7070ab
+    Hash: d3e4c86706f7ed6f10029190df84dd60
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,8 +25,16 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
 - Class: 114
   Script: {fileID: 11500000, guid: 1ba89d84c864fa8745bd682cfc321cbb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 77abd2422559db535631f032f97865ad, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
 - Class: 114
   Script: {fileID: -1866638701, guid: f270df68dea28cc47a43caf5b7b11785, type: 3}
 - Class: 115
@@ -36,6 +44,8 @@ ClassTypes:
 - Class: 199
   Script: {instanceID: 0}
 - Class: 205
+  Script: {instanceID: 0}
+- Class: 208
   Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
@@ -53,6 +63,7 @@ Assets:
 - Assets/DREDGE/Mods/ExampleItems/MinecraftCodParticlesOriginal.prefab
 - Assets/DREDGE/Mods/ExampleItems/MinecraftClownfishParticles.prefab
 - Assets/DREDGE/Mods/ExampleItems/cod-original-tropical.prefab
+- Assets/DREDGE/Mods/ExampleItems/CircleIsland.prefab
 - Assets/DREDGE/Mods/ExampleItems/pufferfish_small.prefab
 - Assets/DREDGE/Mods/ExampleItems/crab.prefab
 - Assets/DREDGE/Mods/ExampleItems/salmon.prefab

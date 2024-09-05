@@ -96,6 +96,8 @@ namespace ExampleItems
 
             GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
 
+            AssetBundleUtil.GetPrefab("exampleitems.bundle", "CircleIsland").Instantiate(new Vector3(365, 0, -265));
+
             var cubeLand = CreateCube();
             cubeLand.transform.position = new Vector3(1000, 0, -1000);
             cubeLand.transform.localScale = new Vector3(200, 5, 200);
