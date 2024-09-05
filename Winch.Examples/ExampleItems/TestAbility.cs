@@ -15,7 +15,7 @@ namespace ExampleItems
         {
             if (Locked) return false;
 
-            if (this.isActive)
+            if (isActive)
             {
                 this.Deactivate();
                 return false;
@@ -56,14 +56,22 @@ namespace ExampleItems
 
         public static void UnstabilizeOcean()
         {
-            GameManager.Instance.WaveController.steepness = 0.1158f;
-            Shader.SetGlobalFloat("_WaveSteepness", 0.1158f);
+            GameManager.Instance.WaveController.steepness = 0.1f;
+            Shader.SetGlobalFloat("_WaveSteepness", 0.1f);
             GameManager.Instance.WaveController.wavelength = 6;
             Shader.SetGlobalFloat("_WaveLength", 6);
             GameManager.Instance.WaveController.speed = 0.1f;
             Shader.SetGlobalFloat("_WaveSpeed", 0.1f);
             GameManager.Instance.WaveController.waveDirections = new float[4] { 0.1f, 0.4f, 0.2f, 0.3f };
             Shader.SetGlobalVector("_WaveDirections", new Vector4(0.1f, 0.4f, 0.2f, 0.3f));
+        }
+
+        public void Update()
+        {
+            if (isActive)
+            {
+                StabilizeOcean();
+            }
         }
 
         public override void Init()
