@@ -1580,7 +1580,8 @@ public static class WinchExtensions
     /// </summary>
     public static GameObject Prefabitize(this GameObject obj)
     {
-        obj.transform.SetParent(PrefabParent, false);
+        if (!obj.IsResource())
+            obj.transform.SetParent(PrefabParent, false);
         return obj;
     }
 
@@ -1588,6 +1589,11 @@ public static class WinchExtensions
     /// Copies an object and prefabitizes that copy.
     /// </summary>
     public static GameObject CopyPrefab(this GameObject original) => original.Instantiate(PrefabParent, false).Rename(original.name);
+
+    public static bool IsResource(this GameObject obj)
+    {
+        return !obj.scene.IsValid();
+    }
 
     /// <summary>
     /// Activates the game object.
