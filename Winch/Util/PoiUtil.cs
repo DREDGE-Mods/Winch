@@ -8,6 +8,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 using Winch.Components;
 using Winch.Core;
 using Winch.Data.POI;
@@ -146,7 +147,7 @@ public static class PoiUtil
             return;
 
         if (!PoiUtil.ModdedHarvestParticlePrefabs.ContainsKey(id))
-            PoiUtil.ModdedHarvestParticlePrefabs.Add(id, prefab.DontDestroyOnLoad());
+            PoiUtil.ModdedHarvestParticlePrefabs.Add(id, prefab.Prefabitize());
         else
             WinchCore.Log.Error($"Modded harvest particle prefab \"{id}\" already registered");
     }
@@ -197,6 +198,10 @@ public static class PoiUtil
         else if (customPoi is CustomConversationPOI customConversationPoi)
         {
             return CreateGameObjectFromCustomConversationPoi(customConversationPoi);
+        }
+        else if (customPoi is CustomDockPOI customDockPoi)
+        {
+            return CreateGameObjectFromCustomDockPoi(customDockPoi);
         }
 
         return null;
@@ -405,6 +410,11 @@ public static class PoiUtil
         }
 
         return (customPoi, poi);
+    }
+
+    internal static GameObject CreateGameObjectFromCustomDockPoi(CustomDockPOI customDockPoi)
+    {
+        return DockUtil.CreateDock(customDockPoi).gameObject;
     }
 
     internal static (GameObject, T) CreateGenericPoiFromCustomPoi<T>(CustomPOI customPoi, Transform parent) where T : POI
