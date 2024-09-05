@@ -1,0 +1,68 @@
+﻿{
+	"prefab": "ROCK",
+	"dockData": "exampleitems.dock",
+	"location": {
+		"x": 362.25,
+		"y": 0,
+		"z": -255.65
+	},
+	"rotation": {
+		"x": 0,
+		"y": 240,
+		"z": 1.5
+	},
+	"poiOffset": {
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"collider": {
+		"colliderType": "SPHERE",
+		"radius": 3.54
+	},
+	"vCam": {
+		"x": 8,
+		"y": 3.25,
+		"z": -7
+	},
+	"lookAtTarget": {
+		"x": -0.7217255,
+		"y": 2.75,
+		"z": -0.8538818
+	},
+	"boatActions": {
+		"x": -1.5,
+		"y": 0,
+		"z": 1.5
+	},
+	"storage": {
+		"enabled": true,
+		"position": {
+			"x": -0.5625,
+			"y": 0.188,
+			"z": -2.24
+		},
+		"vCam": {
+			"x": 0.56,
+			"y": 3.45,
+			"z": 6.75
+		},
+		"overflowHeight": 0.65,
+		"hasBoxes": false
+	},
+	"destinations": [],
+	"dockSlots": [
+		{
+			"position": {
+				"x": 1.407684,
+				"y": 0,
+				"z": -0.1358032
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		}
+	]
+}

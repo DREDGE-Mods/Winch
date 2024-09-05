@@ -1,18 +1,18 @@
-{
-	"prefab": "GENERIC",
+﻿{
+	"prefab": "PLAIN_STONE",
 	"dockData": "exampleitems.dock",
 	"location": {
-		"x": 355,
+		"x": 376,
 		"y": 0,
-		"z": -273
+		"z": -260
 	},
 	"rotation": {
 		"x": 0,
-		"y": 140,
+		"y": 335,
 		"z": 0
 	},
 	"poiOffset": {
-		"x": 1.43,
+		"x": 2,
 		"y": 0,
 		"z": 0
 	},
@@ -21,37 +21,39 @@
 		"radius": 3.54
 	},
 	"vCam": {
-		"x": 10,
-		"y": 3.4,
-		"z": -4.9
+		"x": 10.125,
+		"y": 4.59,
+		"z": -8.1
 	},
 	"lookAtTarget": {
-		"x": -1,
-		"y": 1,
-		"z": 0
+		"x": 1,
+		"y": 1.5,
+		"z": -0.3
 	},
 	"boatActions": {
-		"x": 3.03,
-		"y": 1.6,
+		"x": 2,
+		"y": 2.05,
 		"z": 0
 	},
 	"storage": {
+		"enabled": true,
 		"position": {
-			"x": -1.65,
-			"y": 0.5,
-			"z": -0.45
+			"x": -3,
+			"y": 0.55,
+			"z": -0.3
 		},
 		"vCam": {
 			"x": 4.5,
 			"y": 3.45,
 			"z": 6.75
-		}
+		},
+		"overflowHeight": 0.6
 	},
 	"destinations": [],
 	"dockSlots": [
 		{
 			"position": {
-				"x": 3.03,
+				"x": 4,
 				"y": 0,
 				"z": 0
 			},
@@ -63,7 +65,7 @@
 		},
 		{
 			"position": {
-				"x": 1.13,
+				"x": 1,
 				"y": 0,
 				"z": -2
 			},
@@ -75,7 +77,7 @@
 		},
 		{
 			"position": {
-				"x": 1.13,
+				"x": 1,
 				"y": 0,
 				"z": 2
 			},

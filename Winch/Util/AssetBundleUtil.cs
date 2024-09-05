@@ -1,4 +1,5 @@
-﻿using InControl;
+﻿using AeLa.EasyFeedback.APIs;
+using InControl;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,8 @@ namespace Winch.Util
     {
         public static Dictionary<string, AssetBundle> AssetBundles = new();
 
+        private static Dictionary<int, Shader> blacklistedShaders = new Dictionary<int, Shader>();
+
         private static Dictionary<string, Shader> cachedShaders = new Dictionary<string, Shader>();
 
         internal static Shader CacheShader(this Shader shader)
@@ -26,6 +29,14 @@ namespace Winch.Util
 
             cachedShaders.AddOrChange(shader.name, shader);
             return shader;
+        }
+
+        internal static Shader[] GetSortedShaders()
+        {
+            var shaders = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported).Distinct(UnityObjectComparer<Shader>.Instance).ToList();
+            shaders.Sort(UnityObjectComparer.Instance);
+            shaders.Reverse();
+            return shaders.ToArray();
         }
 
         public static Shader GetReplacementShader(string name)
@@ -71,6 +82,7 @@ namespace Winch.Util
                     }
 
                     WinchCore.Log.Debug($"Loaded asset bundle at [{assetBundlePath}]");
+                    bundle.BlacklistShaders();
                     AssetBundles[key] = bundle;
                 }
                 return bundle;
@@ -80,6 +92,81 @@ namespace Winch.Util
                 WinchCore.Log.Error($"Couldn't load asset bundle at [{assetBundlePath}]:\n{e}");
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Replaces shaders on all of the asset bundle's prefabs with one's from the game (if they are available)
+        /// </summary>
+        /// <param name="bundle">The bundle to get the prefabs from and replace their shaders</param>
+        public static void BlacklistShaders(this AssetBundle bundle)
+        {
+            foreach (GameObject prefab in bundle.LoadAllAssets<GameObject>())
+            {
+                if (prefab != null)
+                {
+                    prefab.BlacklistShaders();
+                }
+            }
+            foreach (Material material in bundle.LoadAllAssets<Material>())
+            {
+                if (material != null)
+                {
+                    material.BlacklistShader();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Replaces shaders on an asset bundle prefab with one's from the game (if they are available)
+        /// </summary>
+        /// <param name="prefab">The prefab to replace the shaders of</param>
+        public static void BlacklistShaders(this GameObject prefab)
+        {
+            foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
+            {
+                renderer.BlacklistShaders();
+            }
+            foreach (var harvestableParticles in prefab.GetComponentsInChildren<HarvestableParticles>(true))
+            {
+                if (harvestableParticles.specialParticlePrefab != null) harvestableParticles.specialParticlePrefab.BlacklistShaders();
+                if (harvestableParticles.disturbedWaterParticles != null) harvestableParticles.disturbedWaterParticles.BlacklistShaders();
+                if (harvestableParticles.disturbedOozeParticles != null) harvestableParticles.disturbedOozeParticles.BlacklistShaders();
+            }
+            foreach (var placeTrees in prefab.GetComponentsInChildren<PlaceTrees>(true))
+            {
+                placeTrees.treeMaterial.BlacklistShader();
+            }
+            foreach (var recipeEntry in prefab.GetComponentsInChildren<RecipeEntry>(true))
+            {
+                recipeEntry.silhouetteMaterial.BlacklistShader();
+            }
+            foreach (var researchableEntry in prefab.GetComponentsInChildren<ResearchableEntry>(true))
+            {
+                researchableEntry.silhouetteMaterial.BlacklistShader();
+            }
+        }
+
+        public static void BlacklistShaders(this Renderer renderer)
+        {
+            foreach (var material in renderer.sharedMaterials)
+            {
+                material.BlacklistShader();
+            }
+        }
+
+        public static bool BlacklistShader(this Material material)
+        {
+            if (material == null) return false;
+
+            return material.shader.Blacklist();
+        }
+
+        public static bool Blacklist(this Shader shader)
+        {
+            if (shader == null) return false;
+
+            blacklistedShaders.AddOrChange(shader.GetInstanceID(), shader);
+            return true;
         }
 
         /// <summary>

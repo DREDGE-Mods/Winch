@@ -15,7 +15,7 @@ public class PlayerPatch
         try
         {
             VibrationUtil.PopulateVibrationDatas();
-            DockUtil.PopulateDockDatas();
+            DockUtil.Populate();
             AbilityUtil.AddModdedAbilitiesToPlayer(__instance.transform.Find("Abilities"));
             PoiUtil.Populate();
             PoiUtil.CreateModdedPois();

@@ -9,9 +9,11 @@ using Winch.Core;
 using Winch.Data;
 using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
+using Winch.Data.POI.Dock;
 using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
 using Winch.Util;
+using static Winch.Data.POI.Dock.CustomDockPOI;
 
 namespace Winch.Serialization;
 
@@ -288,5 +290,97 @@ public static class DredgeTypeHelpers
             if (obj != null) parsed.Add(obj);
         }
         return parsed;
+    }
+
+    internal static List<DockSlot> ParseDockSlots(JArray o)
+    {
+        var parsed = new List<DockSlot>();
+        foreach (var dockSlot in o)
+        {
+            var position = dockSlot["position"];
+            var rotation = dockSlot["rotation"];
+            parsed.Add(new DockSlot
+            {
+                position = position != null ? ParseVector3(position) : Vector3.zero,
+                rotation = rotation != null ? ParseVector3(rotation) : Vector3.zero,
+            });
+        }
+        return parsed;
+    }
+
+    public static DockPOICollider ParseDockCollider(JToken o)
+    {
+        var colliderType = o["colliderType"];
+        var center = o["center"];
+        var radius = o["radius"];
+        var size = o["size"];
+        return new DockPOICollider
+        {
+            colliderType = colliderType != null ? GetEnumValue<ColliderType>(colliderType) : ColliderType.SPHERE,
+            center = center != null ? ParseVector3(center) : Vector3.zero,
+            radius = radius != null ? float.Parse(radius.ToString()) : 3.54f,
+            size = size != null ? ParseVector3(size) : new Vector3(5, 2, 5),
+        };
+    }
+
+    public static PrebuiltStorageDestination ParsePrebuiltStorageDestination(JToken o)
+    {
+        if (o.IsNullOrEmpty()) return new PrebuiltStorageDestination();
+
+        var enabled = o["enabled"];
+        var position = o["position"];
+        var yRotation = o["yRotation"];
+        var vCam = o["vCam"];
+        var hasOverflow = o["hasOverflow"];
+        var overflowHeight = o["overflowHeight"];
+        var hasBoxes = o["hasBoxes"];
+        return new PrebuiltStorageDestination
+        {
+            enabled = enabled != null ? bool.Parse(enabled.ToString()) : true,
+            position = position != null ? ParseVector3(position) : new Vector3(1.65f, 0.55f, -0.45f),
+            yRotation = yRotation != null ? float.Parse(yRotation.ToString()) : 0,
+            vCam = vCam != null ? ParseVector3(vCam) : new Vector3(4.5f, 3.45f, 6.75f),
+            hasOverflow = hasOverflow != null ? bool.Parse(hasOverflow.ToString()) : false,
+            overflowHeight = overflowHeight != null ? float.Parse(overflowHeight.ToString()) : 0.6f,
+            hasBoxes = hasBoxes != null ? bool.Parse(hasBoxes.ToString()) : true,
+        };
+    }
+
+    public static DockSanityModifier ParseDockSanityModifier(JToken o)
+    {
+        if (o.IsNullOrEmpty()) return new DockSanityModifier();
+
+        var position = o["position"];
+        var fullValueDay = o["fullValueDay"];
+        var fullValueNight = o["fullValueNight"];
+        var fullValueRadius = o["fullValueRadius"];
+        var partialValueMinDay = o["partialValueMinDay"];
+        var partialValueMinNight = o["partialValueMinNight"];
+        var partialValueRadius = o["partialValueRadius"];
+        var ignoreTimescale = o["ignoreTimescale"];
+        return new DockSanityModifier
+        {
+            position = position != null ? ParseVector3(position) : Vector3.zero,
+            fullValueDay = fullValueDay != null ? float.Parse(fullValueDay.ToString()) : 0,
+            fullValueNight = fullValueNight != null ? float.Parse(fullValueNight.ToString()) : 1,
+            fullValueRadius = fullValueRadius != null ? float.Parse(fullValueRadius.ToString()) : 3,
+            partialValueMinDay = partialValueMinDay != null ? float.Parse(partialValueMinDay.ToString()) : 0,
+            partialValueMinNight = partialValueMinNight != null ? float.Parse(partialValueMinNight.ToString()) : 0,
+            partialValueRadius = partialValueRadius != null ? float.Parse(partialValueRadius.ToString()) : 6,
+            ignoreTimescale = ignoreTimescale != null ? bool.Parse(ignoreTimescale.ToString()) : false,
+        };
+    }
+
+    public static DockSafeZone ParseDockSafeZone(JToken o)
+    {
+        if (o.IsNullOrEmpty()) return new DockSafeZone();
+
+        var position = o["position"];
+        var radius = o["radius"];
+        return new DockSafeZone
+        {
+            position = position != null ? ParseVector3(position) : Vector3.zero,
+            radius = radius != null ? float.Parse(radius.ToString()) : 15f,
+        };
     }
 }
