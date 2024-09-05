@@ -81,13 +81,7 @@ namespace ExampleItems
 
         private static GameObject CreateCube()
         {
-            var prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            prefab.RemoveComponent<Collider>();
-            prefab.GetComponent<MeshRenderer>().sharedMaterial = new Material(Shader.Find("Shader Graphs/Lit_Shader"));
-            var collider = new GameObject("Collider", typeof(BoxCollider));
-            collider.layer = Layer.CollidesWithPlayerAndCamera;
-            collider.transform.SetParent(prefab.transform, false);
-            return prefab;
+            return GameObject.CreatePrimitive(PrimitiveType.Cube).FixPrimitive();
         }
 
         private static void OnGameStarted()

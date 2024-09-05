@@ -1559,6 +1559,55 @@ public static class WinchExtensions
     #region Unity
     public static string RemoveClone(this string str) => str.Replace("(Clone)", "").Trim();
 
+    public static GameObject FixPrimitive(this GameObject primitive, bool fixCollider = true)
+    {
+        var specific = primitive.GetOrAddComponent<SpecificShaderReplacer>();
+        specific.shader = "Shader Graphs/Lit_Shader";
+        specific.material = primitive.GetComponent<MeshRenderer>().sharedMaterial;
+        specific.material.name = "Lit";
+        specific.ReplaceShader();
+        if (fixCollider)
+        {
+            if (primitive.TryGetComponent<SphereCollider>(out SphereCollider sphereCollider))
+            {
+                var collider = new GameObject("Collider", typeof(SphereCollider));
+                collider.layer = Layer.CollidesWithPlayerAndCamera;
+                collider.transform.SetParent(primitive.transform, false);
+                collider.GetOrAddComponent<SphereCollider>().center = sphereCollider.center;
+                collider.GetOrAddComponent<SphereCollider>().radius = sphereCollider.radius;
+            }
+            else if (primitive.TryGetComponent<BoxCollider>(out BoxCollider boxCollider))
+            {
+                var collider = new GameObject("Collider", typeof(BoxCollider));
+                collider.layer = Layer.CollidesWithPlayerAndCamera;
+                collider.transform.SetParent(primitive.transform, false);
+                collider.GetOrAddComponent<BoxCollider>().center = boxCollider.center;
+                collider.GetOrAddComponent<BoxCollider>().size = boxCollider.size;
+            }
+            else if (primitive.TryGetComponent<CapsuleCollider>(out CapsuleCollider capsuleCollider))
+            {
+                var collider = new GameObject("Collider", typeof(CapsuleCollider));
+                collider.layer = Layer.CollidesWithPlayerAndCamera;
+                collider.transform.SetParent(primitive.transform, false);
+                collider.GetOrAddComponent<CapsuleCollider>().center = capsuleCollider.center;
+                collider.GetOrAddComponent<CapsuleCollider>().radius = capsuleCollider.radius;
+                collider.GetOrAddComponent<CapsuleCollider>().height = capsuleCollider.height;
+                collider.GetOrAddComponent<CapsuleCollider>().direction = capsuleCollider.direction;
+            }
+            else if (primitive.TryGetComponent<MeshCollider>(out MeshCollider meshCollider))
+            {
+                var collider = new GameObject("Collider", typeof(MeshCollider));
+                collider.layer = Layer.CollidesWithPlayerAndCamera;
+                collider.transform.SetParent(primitive.transform, false);
+                collider.GetOrAddComponent<MeshCollider>().convex = meshCollider.convex;
+                collider.GetOrAddComponent<MeshCollider>().cookingOptions = meshCollider.cookingOptions;
+                collider.GetOrAddComponent<MeshCollider>().sharedMesh = meshCollider.sharedMesh;
+            }
+            primitive.RemoveComponent<Collider>();
+        }
+        return primitive;
+    }
+
     internal static Transform? prefabParent;
     internal static Transform PrefabParent
     {

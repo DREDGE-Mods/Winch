@@ -6,7 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Winch.Core;
+using Winch.Data;
 using static Mono.Security.X509.X520;
 
 namespace Winch.Util
@@ -19,15 +21,17 @@ namespace Winch.Util
 
         internal static Shader CacheShader(this Shader shader)
         {
-            if (!cachedShaders.ContainsKey(shader.name)) cachedShaders.Add(shader.name, shader.DontDestroyOnLoad());
+            if (cachedShaders.TryGetValue(shader.name, out var replacementShader) && replacementShader != null)
+                return replacementShader;
 
+            cachedShaders.AddOrChange(shader.name, shader);
             return shader;
         }
 
         public static Shader GetReplacementShader(string name)
         {
             Shader replacementShader;
-            if (cachedShaders.TryGetValue(name, out replacementShader)) return replacementShader;
+            if (cachedShaders.TryGetValue(name, out replacementShader) && replacementShader != null) return replacementShader;
 
             replacementShader = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported).Reverse().FirstOrDefault(shader => shader.name == name);// Shader.Find(name);
             if (replacementShader != null)
@@ -36,16 +40,14 @@ namespace Winch.Util
             return null;
         }
 
-        public static AssetBundle? GetBundle(string assetBundleName)
+        public static AssetBundle GetBundle(string assetBundleName)
         {
-            if (AssetBundles.TryGetValue(assetBundleName, out AssetBundle bundle))
-                return bundle;
-            return null;
+            return AssetBundles[assetBundleName];
         }
 
-        public static GameObject? GetPrefab(string assetBundleName, string prefabName)
+        public static GameObject GetPrefab(string assetBundleName, string prefabName)
         {
-            return GetBundle(assetBundleName)?.LoadAsset<GameObject>(prefabName);
+            return GetBundle(assetBundleName).LoadAsset<GameObject>(prefabName);
         }
 
         public static AssetBundle? LoadBundle(string assetBundlePath)
@@ -68,6 +70,7 @@ namespace Winch.Util
                         return null;
                     }
 
+                    WinchCore.Log.Debug($"Loaded asset bundle at [{assetBundlePath}]");
                     AssetBundles[key] = bundle;
                 }
                 return bundle;
@@ -92,6 +95,13 @@ namespace Winch.Util
                     prefab.ReplaceShaders();
                 }
             }
+            foreach (Material material in bundle.LoadAllAssets<Material>())
+            {
+                if (material != null)
+                {
+                    material.ReplaceShader();
+                }
+            }
         }
 
         /// <summary>
@@ -102,29 +112,101 @@ namespace Winch.Util
         {
             foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
             {
-                foreach (var material in renderer.sharedMaterials)
-                {
-                    if (material == null) continue;
-
-                    var replacementShader = GetReplacementShader(material.shader.name);
-                    if (replacementShader == null) continue;
-
-                    // preserve override tag and render queue (for Standard shader)
-                    // keywords and properties are already preserved
-                    if (material.renderQueue != material.shader.renderQueue)
-                    {
-                        var renderType = material.GetTag("RenderType", false);
-                        var renderQueue = material.renderQueue;
-                        material.shader = replacementShader;
-                        material.SetOverrideTag("RenderType", renderType);
-                        material.renderQueue = renderQueue;
-                    }
-                    else
-                    {
-                        material.shader = replacementShader;
-                    }
-                }
+                renderer.ReplaceShaders();
             }
+            foreach (var harvestableParticles in prefab.GetComponentsInChildren<HarvestableParticles>(true))
+            {
+                if (harvestableParticles.specialParticlePrefab != null) harvestableParticles.specialParticlePrefab.ReplaceShaders();
+                if (harvestableParticles.disturbedWaterParticles != null) harvestableParticles.disturbedWaterParticles.ReplaceShaders();
+                if (harvestableParticles.disturbedOozeParticles != null) harvestableParticles.disturbedOozeParticles.ReplaceShaders();
+            }
+            foreach (var placeTrees in prefab.GetComponentsInChildren<PlaceTrees>(true))
+            {
+                placeTrees.treeMaterial.ReplaceShader();
+            }
+            foreach (var recipeEntry in prefab.GetComponentsInChildren<RecipeEntry>(true))
+            {
+                recipeEntry.silhouetteMaterial.ReplaceShader();
+            }
+            foreach (var researchableEntry in prefab.GetComponentsInChildren<ResearchableEntry>(true))
+            {
+                researchableEntry.silhouetteMaterial.ReplaceShader();
+            }
+        }
+
+        /// <summary>
+        /// Replaces shaders on an asset bundle prefab's renderer with one's from the game (if they are available)
+        /// </summary>
+        /// <param name="renderer">The renderer to replace the shaders of</param>
+        public static void ReplaceShaders(this Renderer renderer)
+        {
+            foreach (var material in renderer.sharedMaterials)
+            {
+                material.ReplaceShader();
+            }
+        }
+
+        /// <summary>
+        /// Replaces shaders on an asset bundle prefab's renderer's material with one's from the game (if they are available)
+        /// </summary>
+        /// <param name="material">The material to replace the shaders of</param>
+        public static bool ReplaceShader(this Material material)
+        {
+            if (material == null) return false;
+
+            if (SceneManager.GetActiveScene().name == "Manager") return false;
+
+            var replacementShader = GetReplacementShader(material.shader.name);
+            if (replacementShader == null) return false;
+
+            // preserve override tag and render queue (for Standard shader)
+            // keywords and properties are already preserved
+            if (material.renderQueue != material.shader.renderQueue)
+            {
+                var renderType = material.GetTag("RenderType", false);
+                var renderQueue = material.renderQueue;
+                material.shader = replacementShader;
+                material.SetOverrideTag("RenderType", renderType);
+                material.renderQueue = renderQueue;
+            }
+            else
+            {
+                material.shader = replacementShader;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Replaces shaders on an asset bundle prefab's renderer's material with one's from the game (if they are available)
+        /// </summary>
+        /// <param name="material">The material to replace the shader of</param>
+        /// <param name="shaderName">The name of the shader to grab</param>
+        public static bool ReplaceShader(this Material material, string shaderName)
+        {
+            if (material == null) return false;
+
+            if (SceneManager.GetActiveScene().name == "Manager") return false;
+
+            var replacementShader = GetReplacementShader(shaderName);
+            if (replacementShader == null) return false;
+
+            // preserve override tag and render queue (for Standard shader)
+            // keywords and properties are already preserved
+            if (material.renderQueue != material.shader.renderQueue)
+            {
+                var renderType = material.GetTag("RenderType", false);
+                var renderQueue = material.renderQueue;
+                material.shader = replacementShader;
+                material.SetOverrideTag("RenderType", renderType);
+                material.renderQueue = renderQueue;
+            }
+            else
+            {
+                material.shader = replacementShader;
+            }
+
+            return true;
         }
     }
 }
