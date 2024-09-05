@@ -907,7 +907,7 @@ public static class WinchExtensions
         return autocomplete.known_words.Remove(word.ToLower());
     }
 
-    public static JToken ToJToken(this object? value) => value != null ? JToken.FromObject(value, JSONConfig.jsonSerializer) : JValue.CreateNull();
+    public static JToken ToJToken(this object? value) => value != null ? (value is JToken jtoken ? jtoken : JToken.FromObject(value, JSONConfig.jsonSerializer)) : JValue.CreateNull();
 
     public static bool IsNullOrEmpty(this JToken token)
     {
