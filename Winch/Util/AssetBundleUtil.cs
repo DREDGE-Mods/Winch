@@ -33,7 +33,7 @@ namespace Winch.Util
 
         internal static Shader[] GetSortedShaders()
         {
-            var shaders = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported).Distinct(UnityObjectComparer<Shader>.Instance).ToList();
+            var shaders = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported && !blacklistedShaders.ContainsKey(shader.GetInstanceID())).Distinct(UnityObjectComparer<Shader>.Instance).ToList();
             shaders.Sort(UnityObjectComparer.Instance);
             shaders.Reverse();
             return shaders.ToArray();
@@ -44,7 +44,7 @@ namespace Winch.Util
             Shader replacementShader;
             if (cachedShaders.TryGetValue(name, out replacementShader) && replacementShader != null) return replacementShader;
 
-            replacementShader = Resources.FindObjectsOfTypeAll<Shader>().Where(shader => shader.isSupported).Reverse().FirstOrDefault(shader => shader.name == name);// Shader.Find(name);
+            replacementShader = GetSortedShaders().FirstOrDefault(shader => shader.name == name);// Shader.Find(name);
             if (replacementShader != null)
                 return replacementShader.CacheShader();
 
