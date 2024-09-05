@@ -132,7 +132,7 @@ namespace Winch.Data
 
         internal void InsertModdedData()
         {
-            if (baseSaveData.dockId == "exampleitems.dock")
+            if (baseSaveData.dockId == "exampleitems.dock") // TODO: make save data handle last dock
             {
                 baseSaveData.dockId = "dock.pontoon-gc";
             }
