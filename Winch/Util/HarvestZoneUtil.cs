@@ -7,6 +7,7 @@ using Winch.Serialization.HarvestZone;
 using Winch.Serialization.POI;
 using Winch.Serialization.POI.Item;
 using Winch.Data.HarvestZone;
+using Winch.Data;
 
 namespace Winch.Util;
 
@@ -63,14 +64,14 @@ public static class HarvestZoneUtil
         harvestZoneObj.transform.SetParent(GameObject.Find("HarvestZones/FullZones").transform);
         harvestZoneObj.transform.position = customHarvestZone.location;
 
-        if (customHarvestZone.colliderType == CustomHarvestZone.ColliderType.SPHERE)
+        if (customHarvestZone.colliderType == ColliderType.SPHERE)
         {
             var sphereCollider = harvestZoneObj.AddComponent<SphereCollider>();
             sphereCollider.radius = customHarvestZone.radius;
             sphereCollider.enabled = true;
             sphereCollider.contactOffset = 0.01f;
         }
-        else if (customHarvestZone.colliderType == CustomHarvestZone.ColliderType.BOX)
+        else if (customHarvestZone.colliderType == ColliderType.BOX)
         {
             var boxCollider = harvestZoneObj.AddComponent<BoxCollider>();
             boxCollider.size = customHarvestZone.size;

@@ -70,10 +70,4 @@ public class CustomHarvestZone : SerializedScriptableObject
     /// </summary>
     [JsonIgnore]
     public List<HarvestableItemData> HarvestableItems => ItemUtil.TryGetHarvestables(harvestableItems);
-
-    public enum ColliderType
-    {
-        SPHERE,
-        BOX
-    }
 }
