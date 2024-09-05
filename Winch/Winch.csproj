@@ -46,5 +46,14 @@
 		<ProjectReference Include="..\WinchCommon\WinchCommon.csproj">
 		</ProjectReference>
 	</ItemGroup>
-
+	<ItemGroup>
+		<_CopyItems Include="$(TargetDir)\*.*"/>
+	</ItemGroup>
+	
+	<Target Name="MoveDllToPlugins" AfterTargets="Build">
+		<Message Text="Copying to Folder..." Importance="High"/>
+		
+		<Copy SourceFiles="@(_CopyItems)"
+			  DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\DREDGE\Winch\"/>
+	</Target>
 </Project>

@@ -2,8 +2,8 @@
 using System;
 using UnityEngine;
 using Winch.Core.API;
-using Winch.Patches;
 using Winch.Util;
+using Winch.Patches;
 
 namespace Winch.Core
 {

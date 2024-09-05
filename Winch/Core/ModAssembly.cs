@@ -44,11 +44,11 @@ namespace Winch.Core
 
             CheckCompatibility();
 
-            LoadedAssembly = Assembly.LoadFrom(assemblyPath);
+            LoadedAssembly = Assembly.Load(assemblyPath);
 
             WinchCore.Log.Debug($"Loaded Assembly '{LoadedAssembly.GetName().Name}'.");
 
-			if (Metadata.ContainsKey("Preload"))
+            if (Metadata.ContainsKey("Preload"))
 			{
 				ProcessPreload();
 			}

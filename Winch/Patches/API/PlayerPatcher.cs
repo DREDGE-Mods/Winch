@@ -5,8 +5,7 @@ using Winch.Util;
 
 namespace Winch.Patches.API;
 
-[HarmonyPatch(typeof(Player))]
-[HarmonyPatch("OnEnable")]
+//[HarmonyPatch(typeof(Player), nameof(Player.OnEnable))]
 public class PlayerPatch
 {
     public static void Postfix(Player __instance)
