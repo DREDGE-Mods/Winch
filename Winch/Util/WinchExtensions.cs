@@ -1815,6 +1815,12 @@ public static class WinchExtensions
         return copy;
     }
 
+    public static T Instantiate<T>(this T original, Vector3 position) where T : UnityEngine.Object
+        => original.Instantiate<T>(position, Quaternion.identity);
+
+    public static T Instantiate<T>(this T original, Vector3 position, Transform parent) where T : UnityEngine.Object
+        => original.Instantiate<T>(position, Quaternion.identity, parent);
+
     public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation) where T : UnityEngine.Object
     {
         var copy = UnityEngine.Object.Instantiate(original, position, rotation);
