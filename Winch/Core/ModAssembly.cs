@@ -44,7 +44,7 @@ namespace Winch.Core
 
             CheckCompatibility();
 
-            LoadedAssembly = Assembly.Load(assemblyPath);
+            LoadedAssembly = Assembly.LoadFrom(assemblyPath);
 
             WinchCore.Log.Debug($"Loaded Assembly '{LoadedAssembly.GetName().Name}'.");
 
