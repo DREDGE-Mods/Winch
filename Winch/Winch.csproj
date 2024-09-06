@@ -22,9 +22,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Assets\**\*.*">
+	  <Content Include="Assets\**\*.*">
 		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+	  </Content>
 	  <None Include="mod_meta.json">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
@@ -47,13 +47,20 @@
 		</ProjectReference>
 	</ItemGroup>
 	<ItemGroup>
-		<_CopyItems Include="$(TargetDir)\*.*"/>
+		<DLLFiles Include="$(TargetDir)\*.*"/>
+		<AssetsFiles Include="$(TargetDir)\Assets\**\*.*"/>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="bin\" />
 	</ItemGroup>
 	
 	<Target Name="MoveDllToPlugins" AfterTargets="Build">
 		<Message Text="Copying to Folder..." Importance="High"/>
-		
-		<Copy SourceFiles="@(_CopyItems)"
+
+		<Copy SourceFiles="@(DLLFiles)"
 			  DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\DREDGE\Winch\"/>
+		<Copy SourceFiles="@(AssetsFiles)"
+			  DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\DREDGE\Winch\Assets\"/>
+		
 	</Target>
 </Project>

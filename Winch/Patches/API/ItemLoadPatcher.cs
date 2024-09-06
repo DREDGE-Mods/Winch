@@ -8,9 +8,8 @@ using Winch.Util;
 
 namespace Winch.Patches.API
 {
-    //[HarmonyPatch(typeof(ItemManager))]
-    //[HarmonyPatch(nameof(ItemManager.OnItemDataAddressablesLoaded))]
-    class ItemLoadPatcher
+    //[HarmonyPatch(typeof(ItemManager), nameof(ItemManager.OnItemDataAddressablesLoaded))]
+    static class ItemLoadPatcher
     {
         public static void Prefix(ItemManager __instance, AsyncOperationHandle<IList<ItemData>> handle)
         {
