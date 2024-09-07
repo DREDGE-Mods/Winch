@@ -12,13 +12,21 @@ namespace Winch.Components
     public class ModdedDock : Dock
     {
         /// <summary>
+        /// Unique identifier of the dock
+        /// </summary>
+        [SerializeField]
+        public string id = string.Empty;
+
+        /// <summary>
         /// Whether this dock has a storage.
         /// </summary>
+        [SerializeField]
         public bool storageEnabled = true;
 
         /// <summary>
         /// Whether this storage has an overflow.
         /// </summary>
+        [SerializeField]
         public bool overflowStorageEnabled = false;
 
         [SerializeField]

@@ -25,8 +25,14 @@ public class CustomDockPOIConverter : CustomPOIConverter
         { "safeZone", new( new DockSafeZone(), o=> DredgeTypeHelpers.ParseDockSafeZone(o.ToJToken())) },
     };
 
+    private readonly Dictionary<string, string> _reroutes = new()
+    {
+        { "dockData", "id" }
+    };
+
     public CustomDockPOIConverter()
     {
         AddDefinitions(_definitions);
+        AddReroutes(_reroutes);
     }
 }

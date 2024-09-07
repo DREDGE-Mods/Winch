@@ -310,6 +310,7 @@ public static class DockUtil
         dockObject.transform.position = customDockPoi.location;
         dockObject.transform.eulerAngles = customDockPoi.rotation;
         var dock = dockObject.AddComponent<ModdedDock>();
+        dock.id = customDockPoi.id;
         dock.dockData = DockUtil.GetDockData(customDockPoi.dockData);
 
         // This needs to be added to the GameManager.Instance.CullingBrain
