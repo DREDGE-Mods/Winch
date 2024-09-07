@@ -1,6 +1,6 @@
 ﻿{
 	"prefab": "STONE",
-	"dockData": "exampleitems.dock",
+	"dockData": "exampleitems.stonedock",
 	"location": {
 		"x": 375,
 		"y": 0,

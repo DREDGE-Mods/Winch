@@ -1,6 +1,6 @@
 ﻿{
 	"prefab": "ROCK",
-	"dockData": "exampleitems.dock",
+	"dockData": "exampleitems.rockdock",
 	"location": {
 		"x": 362.25,
 		"y": 0,

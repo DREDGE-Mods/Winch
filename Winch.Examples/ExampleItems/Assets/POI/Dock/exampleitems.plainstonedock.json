@@ -1,6 +1,6 @@
 ﻿{
 	"prefab": "PLAIN_STONE",
-	"dockData": "exampleitems.dock",
+	"dockData": "exampleitems.plainstonedock",
 	"location": {
 		"x": 376,
 		"y": 0,
