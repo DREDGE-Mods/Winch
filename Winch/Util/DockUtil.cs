@@ -260,20 +260,6 @@ public static class DockUtil
         return null;
     }
 
-    internal static void PopulateDockDatas()
-    {
-        foreach (var dockData in Resources.FindObjectsOfTypeAll<DockData>())
-        {
-            AllDockDataDict.Add(dockData.id, dockData);
-            WinchCore.Log.Debug($"Added dock data \"{dockData.id}\" to AllDockDataDict");
-        }
-    }
-
-    internal static void ClearDockDatas()
-    {
-        AllDockDataDict.Clear();
-    }
-
     public static Transform Docks;
     public static HighlightConditionExtraData ResearchTutorial;
     public static HighlightConditionExtraData ResearchBottomlessLines;
@@ -302,6 +288,7 @@ public static class DockUtil
     {
         AllDockDataDict.Clear();
         AllDockDict.Clear();
+        ModdedDockDict.Clear();
     }
 
     internal static void AddDockDataFromMeta(string metaPath)
