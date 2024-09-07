@@ -15,6 +15,7 @@ using UnityEngine.SceneManagement;
 using Winch.Components;
 using Cinemachine;
 using UnityEngine.AddressableAssets;
+using Winch.Data.HarvestZone;
 
 namespace Winch.Util;
 
@@ -204,15 +205,42 @@ public static class DockUtil
         return UtilHelpers.PopulateObjectFromMeta(data, meta, DockDataConverter);
     }
 
-    internal static Dictionary<string, DeferredDockData> DeferredDockDataDict = new();
+    internal static Dictionary<string, DeferredDockData> ModdedDockDataDict = new();
     internal static Dictionary<string, DockData> AllDockDataDict = new();
+    internal static Dictionary<string, ModdedDock> ModdedDockDict = new();
+    internal static Dictionary<string, Dock> AllDockDict = new();
 
-    public static DeferredDockData GetDeferredDockData(string id)
+    public static ModdedDock GetModdedDock(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
             return null;
 
-        if (DeferredDockDataDict.TryGetValue(id, out DeferredDockData dockData))
+        if (ModdedDockDict.TryGetValue(id, out ModdedDock dock))
+            return dock;
+        else
+            return null;
+    }
+
+    public static Dock GetDock(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllDockDict.TryGetValue(id, out var dock))
+            return dock;
+
+        if (ModdedDockDict.TryGetValue(id, out var moddedDock))
+            return moddedDock;
+
+        return null;
+    }
+
+    public static DeferredDockData GetModdedDockData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (ModdedDockDataDict.TryGetValue(id, out DeferredDockData dockData))
             return dockData;
         else
             return null;
@@ -226,7 +254,7 @@ public static class DockUtil
         if (AllDockDataDict.TryGetValue(id, out var dock))
             return dock;
 
-        if (DeferredDockDataDict.TryGetValue(id, out var moddedDock))
+        if (ModdedDockDataDict.TryGetValue(id, out var moddedDock))
             return moddedDock;
 
         return null;
@@ -246,6 +274,36 @@ public static class DockUtil
         AllDockDataDict.Clear();
     }
 
+    public static Transform Docks;
+    public static HighlightConditionExtraData ResearchTutorial;
+    public static HighlightConditionExtraData ResearchBottomlessLines;
+
+    public static void Populate()
+    {
+        foreach (var dockData in Resources.FindObjectsOfTypeAll<DockData>())
+        {
+            AllDockDataDict.Add(dockData.Id, dockData);
+            WinchCore.Log.Debug($"Added dock data \"{dockData.Id}\" to AllDockDataDict");
+        }
+
+        foreach (var dock in Resources.FindObjectsOfTypeAll<Dock>())
+        {
+            AllDockDict.Add(dock.Data.Id, dock);
+            WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
+        }
+
+        Docks = SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(go => go.name == "Docks").transform;
+        var hceds = Resources.FindObjectsOfTypeAll<HighlightConditionExtraData>();
+        ResearchTutorial = hceds.FirstOrDefault(hced => hced.name == "ResearchTutorial");
+        ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
+    }
+
+    internal static void Clear()
+    {
+        AllDockDataDict.Clear();
+        AllDockDict.Clear();
+    }
+
     internal static void AddDockDataFromMeta(string metaPath)
     {
         var meta = UtilHelpers.ParseMeta(metaPath);
@@ -261,14 +319,14 @@ public static class DockUtil
             return;
         }
         var id = (string)meta["id"];
-        if (DeferredDockDataDict.ContainsKey(id))
+        if (ModdedDockDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate dock data {id} at {metaPath} failed to load");
             return;
         }
         if (PopulateDockDataFromMetaWithConverter(dockData, meta))
         {
-            DeferredDockDataDict.Add(id, dockData);
+            ModdedDockDataDict.Add(id, dockData);
         }
         else
         {
@@ -281,26 +339,17 @@ public static class DockUtil
         return AllDockDataDict.Values.ToArray();
     }
 
+    public static Dock[] GetAllDocks()
+    {
+        return AllDockDict.Values.Concat(ModdedDockDict.Values).ToArray();
+    }
+
     public static GameObject GetDockPrefab(DockPrefab prefab)
     {
         if (DockPrefabs.TryGetValue(prefab, out var dockPrefab))
             return dockPrefab;
         else
             throw new InvalidOperationException(prefab.ToString());
-    }
-
-    public static Transform Docks;
-    public static HighlightConditionExtraData ResearchTutorial;
-    public static HighlightConditionExtraData ResearchBottomlessLines;
-
-    public static void Populate()
-    {
-        PopulateDockDatas();
-        Docks = SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(go => go.name == "Docks").transform;
-        var hceds = Resources.FindObjectsOfTypeAll<HighlightConditionExtraData>();
-        ResearchTutorial = hceds.FirstOrDefault(hced => hced.name == "ResearchTutorial");
-        ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
-
     }
 
     public static DockPOI CreateDock(CustomDockPOI customDockPoi)
@@ -312,6 +361,7 @@ public static class DockUtil
         var dock = dockObject.AddComponent<ModdedDock>();
         dock.id = customDockPoi.id;
         dock.dockData = DockUtil.GetDockData(customDockPoi.dockData);
+        ModdedDockDict.Add(customDockPoi.id, dock);
 
         // This needs to be added to the GameManager.Instance.CullingBrain
         var cullable = dockObject.AddComponent<Cullable>();
