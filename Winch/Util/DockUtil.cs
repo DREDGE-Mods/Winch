@@ -232,6 +232,9 @@ public static class DockUtil
         if (ModdedDockDict.TryGetValue(id, out var moddedDock))
             return moddedDock;
 
+        if (ModdedDockDict.Values.TryGetValue(dock => dock.Data.Id == id, out var moddedDock2))
+            return moddedDock2;
+
         return null;
     }
 
@@ -282,6 +285,16 @@ public static class DockUtil
         var hceds = Resources.FindObjectsOfTypeAll<HighlightConditionExtraData>();
         ResearchTutorial = hceds.FirstOrDefault(hced => hced.name == "ResearchTutorial");
         ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
+    }
+
+    public static void Fix()
+    {
+        var id = GameManager.Instance.SaveData.dockId;
+        if (!AllDockDict.ContainsKey(id) && !ModdedDockDict.Values.Any(dock => dock.Data.Id == id))
+        {
+            GameManager.Instance.SaveData.dockId = AllDockDataDict.Keys.FirstOrDefault();
+            GameManager.Instance.SaveData.dockSlotIndex = 0;
+        }
     }
 
     internal static void Clear()

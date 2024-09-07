@@ -21,6 +21,7 @@ internal static class GameSceneInitializerPatch
             HarvestZoneUtil.CreateModdedHarvestZones();
             WorldEventUtil.CreateModdedStaticWorldEvents();
             ItemUtil.Encyclopedia();
+            DockUtil.Fix();
             DredgeEvent.TriggerOnGameLoading(__instance);
         }
         catch (Exception ex)
