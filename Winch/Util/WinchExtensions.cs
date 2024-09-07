@@ -2065,4 +2065,136 @@ public static class WinchExtensions
     }
     #endregion
     #endregion
+
+    #region Math
+    /// <inheritdoc cref="Math.Abs(double)"/>
+    public static double Abs(this double value) => Math.Abs(value);
+    /// <inheritdoc cref="Math.Abs(float)"/>
+    public static float Abs(this float value) => Mathf.Abs(value);
+    /// <inheritdoc cref="Math.Abs(int)"/>
+    public static int Abs(this int value) => Mathf.Abs(value);
+    /// <inheritdoc cref="Math.Abs(long)"/>
+    public static long Abs(this long value) => Math.Abs(value);
+    /// <inheritdoc cref="Math.Abs(short)"/>
+    public static short Abs(this short value) => Math.Abs(value);
+    /// <inheritdoc cref="Math.Abs(decimal)"/>
+    public static decimal Abs(this decimal value) => Math.Abs(value);
+    /// <inheritdoc cref="Math.Abs(sbyte)"/>
+    public static sbyte Abs(this sbyte value) => Math.Abs(value);
+
+    /// <inheritdoc cref="Math.Min(double, double)"/>
+    public static double Min(this double val1, double val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(float, float)"/>
+    public static float Min(this float val1, float val2) => Mathf.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(int, int)"/>
+    public static int Min(this int val1, int val2) => Mathf.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(long, long)"/>
+    public static long Min(this long val1, long val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(short, short)"/>
+    public static short Min(this short val1, short val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(uint, uint)"/>
+    public static uint Min(this uint val1, uint val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(ulong, ulong)"/>
+    public static ulong Min(this ulong val1, ulong val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(ushort, ushort)"/>
+    public static ushort Min(this ushort val1, ushort val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(byte, byte)"/>
+    public static byte Min(this byte val1, byte val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(sbyte, sbyte)"/>
+    public static sbyte Min(this sbyte val1, sbyte val2) => Math.Min(val1, val2);
+    /// <inheritdoc cref="Math.Min(decimal, decimal)"/>
+    public static decimal Min(this decimal val1, decimal val2) => Math.Min(val1, val2);
+
+    /// <inheritdoc cref="Math.Max(double, double)"/>
+    public static double Max(this double val1, double val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(float, float)"/>
+    public static float Max(this float val1, float val2) => Mathf.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(int, int)"/>
+    public static int Max(this int val1, int val2) => Mathf.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(long, long)"/>
+    public static long Max(this long val1, long val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(short, short)"/>
+    public static short Max(this short val1, short val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(uint, uint)"/>
+    public static uint Max(this uint val1, uint val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(ulong, ulong)"/>
+    public static ulong Max(this ulong val1, ulong val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(ushort, ushort)"/>
+    public static ushort Max(this ushort val1, ushort val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(byte, byte)"/>
+    public static byte Max(this byte val1, byte val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(sbyte, sbyte)"/>
+    public static sbyte Max(this sbyte val1, sbyte val2) => Math.Max(val1, val2);
+    /// <inheritdoc cref="Math.Max(decimal, decimal)"/>
+    public static decimal Max(this decimal val1, decimal val2) => Math.Max(val1, val2);
+
+    /// <inheritdoc cref="Math.Floor(double)"/>
+    public static double Floor(this double d) => Math.Floor(d);
+    /// <inheritdoc cref="Math.Round(double)"/>
+    /// <param name="d">A double-precision floating-point number to be rounded.</param>
+    public static double Round(this double d) => Math.Round(d);
+    /// <inheritdoc cref="Math.Ceiling(double)"/>
+    /// <param name="d">A double-precision floating-point number.</param>
+    public static double Ceil(this double d) => Math.Ceiling(d);
+    public static float Floor(this float f) => Mathf.Floor(f);
+    public static float Round(this float f) => Mathf.Round(f);
+    public static float Ceil(this float f) => Mathf.Ceil(f);
+    public static int FloorToInt(this float f) => Mathf.FloorToInt(f);
+    public static int RoundToInt(this float f) => Mathf.RoundToInt(f);
+    public static int CeilToInt(this float f) => Mathf.CeilToInt(f);
+
+    /// <inheritdoc cref="Math.Pow(double,double)"/>
+    public static double Pow(this double x, double y) => Math.Pow(x, y);
+    /// <summary>
+    /// Returns a specified number raised to the specified power.
+    /// </summary>
+    /// <param name="x">A single-precision floating-point number to be raised to a power.</param>
+    /// <param name="y">A single-precision floating-point number that specifies a power.</param>
+    /// <returns>The number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
+    public static float Pow(this float x, float y) => Mathf.Pow(x, y);
+    /// <summary>
+    /// Returns a specified number raised to the specified power.
+    /// </summary>
+    /// <param name="x">A single-precision floating-point number to be raised to a power.</param>
+    /// <param name="y">A 32-bit signed integer that specifies a power.</param>
+    /// <returns>The number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
+    public static float Pow(this float x, int y) => Pow(x, (float)y);
+    /// <summary>
+    /// Returns a specified number raised to the specified power.
+    /// </summary>
+    /// <param name="x">A 32-bit signed integer to be raised to a power.</param>
+    /// <param name="y">A 32-bit signed integer that specifies a power.</param>
+    /// <returns>The number <paramref name="x"/> raised to the power <paramref name="y"/>.</returns>
+    public static float Pow(this int x, int y) => Pow((float)x, y);
+
+    /// <summary>
+    /// Stop value from going above max or below min values.
+    /// </summary>
+    public static float Clamp(this float val, float min, float max) => Mathf.Clamp(val, min, max);
+
+    /// <summary>
+    /// Stop value from going above max or below min values.
+    /// </summary>
+    public static int Clamp(this int val, int min, int max) => Mathf.Clamp(val, min, max);
+
+    /// <summary>
+    /// Stop value from going above 1 or below 0.
+    /// </summary>
+    public static float Clamp01(this float val) => Mathf.Clamp01(val);
+
+    /// <summary>
+    /// Snap to grid of "round" size
+    /// </summary>
+    public static float Snap(this float val, float round) => round * Mathf.Round(val / round);
+
+    /// <summary>
+    /// Returns the sign 1/-1 evaluated at the given value.
+    /// </summary>
+    public static int Sign(IComparable x) => x.CompareTo(0);
+
+    /// <summary>
+    /// Shortcut for <see cref="Mathf.Approximately"/>
+    /// </summary>
+    public static bool Approximately(this float value, float compare) => Mathf.Approximately(value, compare);
+    #endregion
 }
