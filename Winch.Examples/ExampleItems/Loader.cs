@@ -75,6 +75,7 @@ namespace ExampleItems
             #endregion
             #endregion
 
+            ApplicationEvents.Instance.OnGameLoaded += OnGameLoaded;
             GameManager.Instance.OnGameStarted += OnGameStarted;
             GameManager.Instance.OnGameEnded += OnGameEnded;
         }
@@ -84,12 +85,8 @@ namespace ExampleItems
             return GameObject.CreatePrimitive(PrimitiveType.Cube).FixPrimitive();
         }
 
-        private static void OnGameStarted()
+        private static void OnGameLoaded()
         {
-            GameManager.Instance.SaveData.SetBoolVariable("exampleitems.explosive-detonated", val: false); // for testing
-
-            GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
-
             AssetBundleUtil.GetPrefab("exampleitems.bundle", "CircleIsland").Instantiate(new Vector3(365, 0, -265));
 
             var cubeLand = CreateCube();
@@ -103,6 +100,13 @@ namespace ExampleItems
             var pontoonSpeakers = DockUtil.GetDockData("dock.pontoon-gc").Speakers;
             pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));
             pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.steve"));
+        }
+
+        private static void OnGameStarted()
+        {
+            GameManager.Instance.SaveData.SetBoolVariable("exampleitems.explosive-detonated", val: false); // for testing
+
+            GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
         }
 
         private static void OnGameEnded()
