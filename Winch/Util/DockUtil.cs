@@ -494,7 +494,7 @@ public static class DockUtil
         var box = StorageBox.Instantiate(storageObject.transform, false);
         box.transform.localPosition = Vector3.zero;
         box.transform.localEulerAngles = new Vector3(0, 360, 0);
-        box.transform.Find("StorageBox/StorageBoxes").gameObject.Deactivate();
+        box.transform.Find("StorageBox/StorageBoxes").gameObject.SetActive(prebuilt.hasBoxes);
         return (storageDestination, overflowStorageDestination);
     }
 
