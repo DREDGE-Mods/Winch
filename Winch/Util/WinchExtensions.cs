@@ -26,6 +26,8 @@ using Winch.Core;
 using Winch.Data;
 using Winch.Data.Abilities;
 using Winch.Data.Character;
+using Winch.Data.Dock;
+using Winch.Data.GridConfig;
 using Winch.Data.Item;
 using Winch.Data.POI;
 using Winch.Data.WorldEvent;
@@ -47,7 +49,7 @@ public static class WinchExtensions
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this SerializedCrabPotPOIData crabPotPOI) => ItemUtil.ModdedItemDataDict.ContainsKey(crabPotPOI.deployableItemId) || !ItemUtil.VanillaItemIDList.Contains(crabPotPOI.deployableItemId);
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this GridConfiguration gridConfiguration) => GridConfigUtil.ModdedGridConfigDict.ContainsKey(gridConfiguration.name) || !GridConfigUtil.VanillaGridConfigIDList.Contains(gridConfiguration.name);
+    public static bool IsModded(this GridConfiguration gridConfiguration) => gridConfiguration is DeferredGridConfiguration || GridConfigUtil.ModdedGridConfigDict.ContainsKey(gridConfiguration.name) || !GridConfigUtil.VanillaGridConfigIDList.Contains(gridConfiguration.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this SpeakerData speakerData) => speakerData is AdvancedSpeakerData;
     /// <inheritdoc cref="IsModded(ItemData)"/>
@@ -58,6 +60,10 @@ public static class WinchExtensions
     public static bool IsModded(this WorldEvent worldEvent) => worldEvent is ModdedWorldEvent || worldEvent.worldEventData.IsModded();
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this WorldEventData worldEvent) => worldEvent is ModdedWorldEventData || !WorldEventUtil.VanillaWorldEventIDList.Contains(worldEvent.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this DockData dockData) => dockData is DeferredDockData || DockUtil.ModdedDockDataDict.ContainsKey(dockData.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this Dock dock) => dock is ModdedDock || dock.dockData.IsModded();
 
     /// <summary>
     /// Check if the object is vanilla
@@ -80,6 +86,10 @@ public static class WinchExtensions
     public static bool IsVanilla(this WorldEvent worldEvent) => !worldEvent.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this WorldEventData worldEvent) => !worldEvent.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this DockData dockData) => !dockData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this Dock dock) => !dock.IsModded();
 
     /// <summary>
     /// Check if the associated item data exists
