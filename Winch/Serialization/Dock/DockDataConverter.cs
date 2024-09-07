@@ -35,15 +35,9 @@ public class DockDataConverter : DredgeTypeConverter<DeferredDockData>
         { "cameraOverrideY", new(0.5f, o => float.Parse(o.ToString()))}
     };
 
-    private readonly Dictionary<string, string> _reroutes = new()
-    {
-        { "dockNameKey", "id" }
-    };
-
     public DockDataConverter()
     {
         AddDefinitions(_definitions);
-        AddReroutes(_reroutes);
     }
 
     protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(DockTableDefinition, value);
