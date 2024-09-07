@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using Winch.Util;
 
 namespace Winch.Components
@@ -6,15 +7,18 @@ namespace Winch.Components
     [UsedInUnityProject]
     public class ShaderReplacer : MonoBehaviour
     {
-        private void Awake() => ReplaceShaders();
+        private void Awake() => StartCoroutine(KeepReplacingShaders());
 
-        private void Start() => ReplaceShaders();
-
-        private void OnEnable() => ReplaceShaders();
-
-        public void ReplaceShaders()
+        private IEnumerator KeepReplacingShaders()
         {
-            gameObject.ReplaceShaders();
+            bool result = false;
+            while (!result)
+            {
+                result = ReplaceShaders();
+                yield return new WaitForEndOfFrame();
+            }
         }
+
+        public bool ReplaceShaders() => gameObject.ReplaceShaders();
     }
 }

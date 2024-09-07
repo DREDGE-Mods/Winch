@@ -1375,6 +1375,52 @@ public static class WinchExtensions
             action(item, num++);
     }
 
+    public static bool AnyForEach<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (predicate == null) throw new ArgumentNullException("predicate");
+
+        bool result = false;
+        foreach (TSource item in source)
+            result = result || predicate(item);
+        return result;
+    }
+
+    public static bool AllForEach<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (predicate == null) throw new ArgumentNullException("predicate");
+
+        bool result = true;
+        foreach (TSource item in source)
+            result = result && predicate(item);
+        return result;
+    }
+
+    public static bool AnyForEach<TSource>(this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (predicate == null) throw new ArgumentNullException("predicate");
+
+        bool result = false;
+        int num = 0;
+        foreach (TSource item in source)
+            result = result || predicate(item, num++);
+        return result;
+    }
+
+    public static bool AllForEach<TSource>(this IEnumerable<TSource> source, Func<TSource, int, bool> predicate)
+    {
+        if (source == null) throw new ArgumentNullException("source");
+        if (predicate == null) throw new ArgumentNullException("predicate");
+
+        bool result = true;
+        int num = 0;
+        foreach (TSource item in source)
+            result = result && predicate(item, num++);
+        return result;
+    }
+
     /// <summary>Searches for a sequence and returns the index of its first value that matches the condition.</summary>
     /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to search.</param>
     /// <param name="predicate">The condition used to locate the index in <paramref name="source" />.</param>
@@ -1616,7 +1662,7 @@ public static class WinchExtensions
         specific.renderer = primitive.GetComponent<MeshRenderer>();
         specific.shader = "Shader Graphs/Lit_Shader";
         specific.renderer.sharedMaterial.name = "Lit";
-        specific.ReplaceShader();
+        specific.ReplaceShaders();
         if (fixCollider)
         {
             if (primitive.TryGetComponent<SphereCollider>(out SphereCollider sphereCollider))

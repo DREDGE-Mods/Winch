@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Winch.Core;
 using Winch.Data;
+using static UnityEngine.Networking.UnityWebRequest;
 
 namespace Winch.Util
 {
@@ -168,65 +169,64 @@ namespace Winch.Util
         /// Replaces shaders on all of the asset bundle's prefabs with one's from the game (if they are available)
         /// </summary>
         /// <param name="bundle">The bundle to get the prefabs from and replace their shaders</param>
-        public static void ReplaceShaders(this AssetBundle bundle)
+        public static bool ReplaceShaders(this AssetBundle bundle)
         {
+            bool result = true;
             foreach (GameObject prefab in bundle.LoadAllAssets<GameObject>())
             {
                 if (prefab != null)
                 {
-                    prefab.ReplaceShaders();
+                    result = result && prefab.ReplaceShaders();
                 }
             }
             foreach (Material material in bundle.LoadAllAssets<Material>())
             {
                 if (material != null)
                 {
-                    material.ReplaceShader();
+                    result = result && material.ReplaceShader();
                 }
             }
+            return result;
         }
 
         /// <summary>
         /// Replaces shaders on an asset bundle prefab with one's from the game (if they are available)
         /// </summary>
         /// <param name="prefab">The prefab to replace the shaders of</param>
-        public static void ReplaceShaders(this GameObject prefab)
+        public static bool ReplaceShaders(this GameObject prefab)
         {
+            bool result = true;
             foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
             {
-                renderer.ReplaceShaders();
+                result = result && renderer.ReplaceShaders();
             }
             foreach (var harvestableParticles in prefab.GetComponentsInChildren<HarvestableParticles>(true))
             {
-                if (harvestableParticles.specialParticlePrefab != null) harvestableParticles.specialParticlePrefab.ReplaceShaders();
-                if (harvestableParticles.disturbedWaterParticles != null) harvestableParticles.disturbedWaterParticles.ReplaceShaders();
-                if (harvestableParticles.disturbedOozeParticles != null) harvestableParticles.disturbedOozeParticles.ReplaceShaders();
+                if (harvestableParticles.specialParticlePrefab != null) result = result && harvestableParticles.specialParticlePrefab.ReplaceShaders();
+                if (harvestableParticles.disturbedWaterParticles != null) result = result && harvestableParticles.disturbedWaterParticles.ReplaceShaders();
+                if (harvestableParticles.disturbedOozeParticles != null) result = result && harvestableParticles.disturbedOozeParticles.ReplaceShaders();
             }
             foreach (var placeTrees in prefab.GetComponentsInChildren<PlaceTrees>(true))
             {
-                placeTrees.treeMaterial.ReplaceShader();
+                result = result && placeTrees.treeMaterial.ReplaceShader();
             }
             foreach (var recipeEntry in prefab.GetComponentsInChildren<RecipeEntry>(true))
             {
-                recipeEntry.silhouetteMaterial.ReplaceShader();
+                result = result && recipeEntry.silhouetteMaterial.ReplaceShader();
             }
             foreach (var researchableEntry in prefab.GetComponentsInChildren<ResearchableEntry>(true))
             {
-                researchableEntry.silhouetteMaterial.ReplaceShader();
+                result = result && researchableEntry.silhouetteMaterial.ReplaceShader();
             }
+            return result;
         }
 
         /// <summary>
         /// Replaces shaders on an asset bundle prefab's renderer with one's from the game (if they are available)
         /// </summary>
         /// <param name="renderer">The renderer to replace the shaders of</param>
-        public static void ReplaceShaders(this Renderer renderer)
-        {
-            foreach (var material in renderer.sharedMaterials)
-            {
-                material.ReplaceShader();
-            }
-        }
+        public static bool ReplaceShaders(this Renderer renderer)
+            => renderer.sharedMaterials.AllForEach(ReplaceShader);
 
         /// <summary>
         /// Replaces shaders on an asset bundle prefab's renderer's material with one's from the game (if they are available)

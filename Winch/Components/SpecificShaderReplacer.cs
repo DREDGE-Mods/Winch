@@ -1,4 +1,5 @@
 ﻿using Sirenix.Utilities;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -28,19 +29,30 @@ namespace Winch.Components
             }
         }
 
-        private void Awake() => ReplaceShader();
+        private void Awake() => StartCoroutine(KeepReplacingShaders());
 
-        private void Start() => ReplaceShader();
-
-        private void OnEnable() => ReplaceShader();
-
-        public void ReplaceShader()
+        private IEnumerator KeepReplacingShaders()
         {
-            if (renderer != null && shaders != null && shaders.Count >= 0) renderer.sharedMaterials.ForEach((material, i) =>
+            bool result = false;
+            while (!result)
             {
-                if (shaders.Count > i && shaders.TryGetValue(i, out string shader) && !string.IsNullOrWhiteSpace(shader))
-                    material.ReplaceShader(shader);
-            });
+                result = ReplaceShaders();
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
+        public bool ReplaceShaders()
+        {
+            if (renderer != null && shaders != null && shaders.Count >= 0)
+            {
+                return renderer.sharedMaterials.AllForEach((material, i) =>
+                {
+                    if (shaders.Count > i && shaders.TryGetValue(i, out string shader) && !string.IsNullOrWhiteSpace(shader))
+                        return material.ReplaceShader(shader);
+                    return true;
+                });
+            }
+            return true;
         }
 
         public void OnValidate()
