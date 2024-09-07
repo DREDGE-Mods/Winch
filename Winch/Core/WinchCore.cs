@@ -82,8 +82,7 @@ namespace Winch.Core
 
             try
             {
-                Addressables.ResourceManager.ResourceProviders.Add(new ModdedResourceProvider());
-                Addressables.AddResourceLocator(new ModdedResourceLocator());
+                AddressablesUtil.Initialize();
             }
             catch (Exception e)
             {
