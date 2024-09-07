@@ -1541,6 +1541,28 @@ public static class WinchExtensions
         list.RemoveAt(list.Count - 1);
     }
 
+    public static bool TryGetValue<T>(this T[] source, int index, out T value)
+    {
+        if (source.Length > index)
+        {
+            value = source[index];
+            return true;
+        }
+        value = default(T);
+        return false;
+    }
+
+    public static bool TryGetValue<T>(this List<T> source, int index, out T value)
+    {
+        if (source.Count > index)
+        {
+            value = source[index];
+            return true;
+        }
+        value = default(T);
+        return false;
+    }
+
     public static bool TryGetValue<T>(this IEnumerable<T> source, Predicate<T> predicate, out T value)
     {
         foreach (var item in source)
@@ -1562,9 +1584,9 @@ public static class WinchExtensions
     public static GameObject FixPrimitive(this GameObject primitive, bool fixCollider = true)
     {
         var specific = primitive.GetOrAddComponent<SpecificShaderReplacer>();
+        specific.renderer = primitive.GetComponent<MeshRenderer>();
         specific.shader = "Shader Graphs/Lit_Shader";
-        specific.material = primitive.GetComponent<MeshRenderer>().sharedMaterial;
-        specific.material.name = "Lit";
+        specific.renderer.sharedMaterial.name = "Lit";
         specific.ReplaceShader();
         if (fixCollider)
         {

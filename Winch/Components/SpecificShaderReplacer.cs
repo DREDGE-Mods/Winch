@@ -1,16 +1,32 @@
-﻿using UnityEngine;
+﻿using Sirenix.Utilities;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Winch.Util;
 
 namespace Winch.Components
 {
     [UsedInUnityProject]
+    [RequireComponent(typeof(Renderer))]
     public class SpecificShaderReplacer : MonoBehaviour
     {
         [SerializeField]
-        public Material material;
+        public Renderer renderer;
 
         [SerializeField]
-        public string shader;
+        public List<string> shaders = new List<string>();
+
+        public string shader
+        {
+            get => shaders?.FirstOrDefault() ?? string.Empty;
+            set
+            {
+                if (shaders != null && shaders.Count > 0)
+                    shaders[0] = value;
+                else
+                    shaders = new List<string> { value };
+            }
+        }
 
         private void Awake() => ReplaceShader();
 
@@ -20,12 +36,17 @@ namespace Winch.Components
 
         public void ReplaceShader()
         {
-            if (material != null && !string.IsNullOrWhiteSpace(shader)) material.ReplaceShader(shader);
+            if (renderer != null && shaders != null && shaders.Count >= 0) renderer.sharedMaterials.ForEach((material, i) =>
+            {
+                if (shaders.Count > i && shaders.TryGetValue(i, out string shader) && !string.IsNullOrWhiteSpace(shader))
+                    material.ReplaceShader(shader);
+            });
         }
 
         public void OnValidate()
         {
-            if (material != null && string.IsNullOrWhiteSpace(shader)) shader = material.shader.name;
+            if (renderer == null) renderer = GetComponent<Renderer>();
+            if (renderer != null && (shaders == null || shaders.Count == 0)) shaders = renderer.sharedMaterials.Select(material => material.shader.name).ToList();
         }
     }
 }
