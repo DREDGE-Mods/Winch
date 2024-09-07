@@ -278,7 +278,7 @@ public static class DockUtil
             WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
         }
 
-        Docks = SceneManager.GetActiveScene().GetRootGameObjects().FirstOrDefault(go => go.name == "Docks").transform;
+        Docks = AllDockDict.Values.FirstOrDefault().transform.parent;
         var hceds = Resources.FindObjectsOfTypeAll<HighlightConditionExtraData>();
         ResearchTutorial = hceds.FirstOrDefault(hced => hced.name == "ResearchTutorial");
         ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
