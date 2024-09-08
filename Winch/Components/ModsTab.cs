@@ -46,6 +46,9 @@ internal class ModsTab : MonoBehaviour
     internal Transform footer;
     internal LocalizedLabel footerText;
     internal BasicButtonWrapper footerButton;
+    internal BasicButtonWrapper resetAllSettingsButton;
+    internal BasicButtonWrapper resumeButton;
+    internal BasicButtonWrapper saveAndQuitButton;
     internal Transform list;
     internal Transform options;
     internal ScrollRect listScroller;
@@ -199,8 +202,31 @@ internal class ModsTab : MonoBehaviour
         footerText.LabelString = footerOptions;
         footerButton.gameObject.Activate();
         AddWinchOptions();
-        optionsControllerFocusGrabber.SetSelectable(options.GetComponentInChildren<Selectable>());
+        var firstSelectable = options.GetComponentInChildren<Selectable>();
+        Navigation footerNavigation = footerButton.Button.navigation;
+        footerNavigation.mode = Navigation.Mode.Explicit;
+        footerNavigation.selectOnLeft = firstSelectable;
+        footerNavigation.selectOnUp = firstSelectable;
+        footerNavigation.selectOnDown = resumeButton.Button;
+        footerButton.Button.navigation = footerNavigation;
+        optionsControllerFocusGrabber.SetSelectable(firstSelectable);
         optionsControllerFocusGrabber.SelectSelectable();
+        Navigation resumeNavigation = resumeButton.Button.navigation;
+        Navigation saveAndQuitNavigation = saveAndQuitButton.Button.navigation;
+        Navigation resetAllSettingsNavigation = resetAllSettingsButton.Button.navigation;
+        resumeNavigation.mode = Navigation.Mode.Explicit;
+        saveAndQuitNavigation.mode = Navigation.Mode.Explicit;
+        resetAllSettingsNavigation.mode = Navigation.Mode.Explicit;
+        resumeNavigation.selectOnUp = footerButton.Button;
+        saveAndQuitNavigation.selectOnUp = footerButton.Button;
+        resetAllSettingsNavigation.selectOnUp = footerButton.Button;
+        resetAllSettingsNavigation.selectOnRight = resumeButton.Button;
+        resumeNavigation.selectOnRight = saveAndQuitButton.Button;
+        resumeNavigation.selectOnLeft = resetAllSettingsButton.Button;
+        saveAndQuitNavigation.selectOnLeft = resumeButton.Button;
+        resumeButton.Button.navigation = resumeNavigation;
+        saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
+        resetAllSettingsButton.Button.navigation = resetAllSettingsNavigation;
         ScrollToTop();
     }
 
@@ -267,8 +293,31 @@ internal class ModsTab : MonoBehaviour
         footerText.LabelString = footerOptions;
         footerButton.gameObject.Activate();
         AddOptions(mod);
-        optionsControllerFocusGrabber.SetSelectable(options.GetComponentInChildren<Selectable>());
+        var firstSelectable = options.GetComponentInChildren<Selectable>();
+        Navigation footerNavigation = footerButton.Button.navigation;
+        footerNavigation.mode = Navigation.Mode.Explicit;
+        footerNavigation.selectOnLeft = firstSelectable;
+        footerNavigation.selectOnUp = firstSelectable;
+        footerNavigation.selectOnDown = resumeButton.Button;
+        footerButton.Button.navigation = footerNavigation;
+        optionsControllerFocusGrabber.SetSelectable(firstSelectable);
         optionsControllerFocusGrabber.SelectSelectable();
+        Navigation resumeNavigation = resumeButton.Button.navigation;
+        Navigation saveAndQuitNavigation = saveAndQuitButton.Button.navigation;
+        Navigation resetAllSettingsNavigation = resetAllSettingsButton.Button.navigation;
+        resumeNavigation.mode = Navigation.Mode.Explicit;
+        saveAndQuitNavigation.mode = Navigation.Mode.Explicit;
+        resetAllSettingsNavigation.mode = Navigation.Mode.Explicit;
+        resumeNavigation.selectOnUp = footerButton.Button;
+        saveAndQuitNavigation.selectOnUp = footerButton.Button;
+        resetAllSettingsNavigation.selectOnUp = footerButton.Button;
+        resetAllSettingsNavigation.selectOnRight = resumeButton.Button;
+        resumeNavigation.selectOnRight = saveAndQuitButton.Button;
+        resumeNavigation.selectOnLeft = resetAllSettingsButton.Button;
+        saveAndQuitNavigation.selectOnLeft = resumeButton.Button;
+        resumeButton.Button.navigation = resumeNavigation;
+        saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
+        resetAllSettingsButton.Button.navigation = resetAllSettingsNavigation;
         ScrollToTop();
     }
 
@@ -714,5 +763,14 @@ internal class ModsTab : MonoBehaviour
         headerTextLocalized.gameObject.Activate();
         footerText.LabelString = footerList;
         footerButton.gameObject.Deactivate();
+        Navigation resumeNavigation = resumeButton.Button.navigation;
+        Navigation saveAndQuitNavigation = saveAndQuitButton.Button.navigation;
+        Navigation resetAllSettingsNavigation = resetAllSettingsButton.Button.navigation;
+        resumeNavigation.mode = Navigation.Mode.Automatic;
+        saveAndQuitNavigation.mode = Navigation.Mode.Automatic;
+        resetAllSettingsNavigation.mode = Navigation.Mode.Automatic;
+        resumeButton.Button.navigation = resumeNavigation;
+        saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
+        resetAllSettingsButton.Button.navigation = resetAllSettingsNavigation;
     }
 }

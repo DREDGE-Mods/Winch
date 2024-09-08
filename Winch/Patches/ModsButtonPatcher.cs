@@ -29,6 +29,7 @@ internal static class ModsButtonPatcher
             activeField = null;
             var generalTabbedPanel = __instance.dialog.tabbedPanels.First();
             var controlsTabbedPanel = __instance.dialog.tabbedPanels.Last();
+            var mapping = controlsTabbedPanel.panel.GetComponentInChildren<ControlMappingContainer>(true);
             var modsPanel = generalTabbedPanel.panel.Instantiate(generalTabbedPanel.panel.transform.parent, false).Rename("ModsPanel");
             var prefabs = new GameObject("Prefabs").transform;
             prefabs.gameObject.Deactivate();
@@ -88,6 +89,9 @@ internal static class ModsButtonPatcher
             modsTab.footer = modsFooter;
             modsTab.footerText = footerText;
             modsTab.footerButton = footerButton;
+            modsTab.resetAllSettingsButton = mapping.resetAllSettingsButton;
+            modsTab.resumeButton = mapping.resumeButton;
+            modsTab.saveAndQuitButton = mapping.saveAndQuitButton;
             modsTab.list = modsList;
             modsTab.options = modOptions;
             modsTab.listScroller = modsListScroller;
