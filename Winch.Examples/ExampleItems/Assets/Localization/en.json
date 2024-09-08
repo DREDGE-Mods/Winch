@@ -59,6 +59,13 @@
 	"exampleitems.testability.desc": "Ability Desc",
 	"exampleitems.testability.shortDesc": "Ability ShortDesc",
 
+	"exampleitems.dock.name": "Generic Dock",
+	"exampleitems.largedock.name": "Large Dock",
+	"exampleitems.makeshiftdock.name": "Makeshift Dock",
+	"exampleitems.stonedock.name": "Stone Dock",
+	"exampleitems.plainstonedock.name": "Plain Stone Dock",
+	"exampleitems.rockdock.name": "Rock Dock",
+
 	"exampleconfig.separator.title": "Separator",
 	"exampleconfig.toggle.title": "Toggle",
 	"exampleconfig.toggle.tooltip": "An on/off dropdown",
