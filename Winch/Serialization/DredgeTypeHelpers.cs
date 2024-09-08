@@ -478,6 +478,11 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
+    public static List<MarketTabConfig> ParseMarketTabConfigList(JArray o)
+    {
+        throw new NotImplementedException();
+    }
+
     public static Dictionary<string, SpeakerVCam> GetSpeakerVCamsFromJsonObject(object value)
     {
         var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse speaker cameras.");
