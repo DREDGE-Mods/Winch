@@ -4,5 +4,6 @@
 	"speakers": [ "exampleitems.steve", "exampleitems.alex" ],
 	"hasCameraOverride": true,
 	"cameraOverrideX": 0.5,
-	"cameraOverrideY": 0.5
+	"cameraOverrideY": 0.5,
+	"musicAssetReference": "exampleitems.music"
 }

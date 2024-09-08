@@ -1,3 +1,4 @@
 ﻿{
-	"dockNameKey": "exampleitems.rockdock.name"
+	"dockNameKey": "exampleitems.rockdock.name",
+	"musicAssetReference": "exampleitems.music"
 }
