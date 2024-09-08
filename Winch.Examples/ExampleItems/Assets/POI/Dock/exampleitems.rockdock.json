@@ -64,5 +64,19 @@
 				"z": 0
 			}
 		}
-	]
+	],
+	"speakerVCams": {
+		"exampleitems.steve": {
+			"vCam": {
+				"x": 13,
+				"y": 2.5,
+				"z": 9
+			},
+			"lookAtTarget": {
+				"x": -0.7,
+				"y": -2,
+				"z": -0.25
+			}
+		}
+	}
 }

@@ -1,4 +1,9 @@
 character,text,id
+exampleitems.steve,Hi,line:ex43556
+exampleitems.steve,Test,line:ex78383
+,,
+exampleitems.alex,Test,line:exa2539
+,,
 TRAVELLING_MERCHANT_NAME_KEY,"Hey, there! You have a question for me?",line:0a344d1
 ,,
 ,Nope.,line:062c02e

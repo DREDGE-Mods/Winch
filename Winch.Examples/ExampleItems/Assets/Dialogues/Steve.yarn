@@ -1,5 +1,12 @@
 ﻿﻿title: ExampleItems_Steve_Root
 ---
+<<if GetHasVisitedNode("ExampleItems_Steve_Intro") == false>>
+	<<jump ExampleItems_Steve_Intro>>
+<<endif>>
+===
+﻿title: ExampleItems_Steve_Intro
+---
+exampleitems.steve: Hi #line:ex43556 
 <<AddMapMarker exampleitems.mapmarker false>>
 ===
 ﻿title: ExampleItems_Steve_Chat
