@@ -13,14 +13,14 @@ public class CustomDockPOIConverter : CustomPOIConverter
         { "dockData", new(string.Empty, null) },
         { "prefab", new(DockPrefab.GENERIC, o=>DredgeTypeHelpers.GetEnumValue<DockPrefab>(o) ) },
         { "poiOffset", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "collider", new( null, o=> DredgeTypeHelpers.ParseDockCollider(o.ToJToken())) },
+        { "collider", new( null, o=> DredgeTypeHelpers.ParseDockCollider(o)) },
         { "vCam", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "lookAtTarget", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "boatActions", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "storage", new( null, o=> DredgeTypeHelpers.ParsePrebuiltStorageDestination(o.ToJToken())) },
+        { "storage", new( null, o=> DredgeTypeHelpers.ParsePrebuiltStorageDestination(o)) },
         { "dockSlots", new(null, o=>DredgeTypeHelpers.ParseDockSlots((JArray)o) ) },
-        { "sanityModifier", new( new DockSanityModifier(), o=> DredgeTypeHelpers.ParseDockSanityModifier(o.ToJToken())) },
-        { "safeZone", new( new DockSafeZone(), o=> DredgeTypeHelpers.ParseDockSafeZone(o.ToJToken())) },
+        { "sanityModifier", new( new DockSanityModifier(), o=> DredgeTypeHelpers.ParseDockSanityModifier(o)) },
+        { "safeZone", new( new DockSafeZone(), o=> DredgeTypeHelpers.ParseDockSafeZone(o)) },
     };
 
     private readonly Dictionary<string, string> _reroutes = new()

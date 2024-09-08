@@ -98,6 +98,16 @@ public static class DredgeTypeHelpers
         return list;
     }
 
+    public static List<int> ParseIntList(JArray jArray)
+    {
+        var list = new List<int>();
+        foreach (var num in jArray)
+        {
+            list.Add(int.Parse(num.ToString()));
+        }
+        return list;
+    }
+
     public static Color GetColorFromJsonObject(object value)
     {
         var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, int>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse color.");
@@ -296,90 +306,66 @@ public static class DredgeTypeHelpers
         var parsed = new List<DockSlot>();
         foreach (var dockSlot in o)
         {
-            var position = dockSlot["position"];
-            var rotation = dockSlot["rotation"];
+            var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(dockSlot.ToString()) ?? throw new InvalidOperationException("Unable to parse dock slot.");
             parsed.Add(new DockSlot
             {
-                position = position != null ? ParseVector3(position) : Vector3.zero,
-                rotation = rotation != null ? ParseVector3(rotation) : Vector3.zero,
+                position = jsonDict.TryGetValue("position", out object position) ? ParseVector3(position) : Vector3.zero,
+                rotation = jsonDict.TryGetValue("rotation", out object rotation) ? ParseVector3(rotation) : Vector3.zero
             });
         }
         return parsed;
     }
 
-    public static DockPOICollider ParseDockCollider(JToken o)
+    public static DockPOICollider ParseDockCollider(object value)
     {
-        var colliderType = o["colliderType"];
-        var center = o["center"];
-        var radius = o["radius"];
-        var size = o["size"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse dock POI collider.");
         return new DockPOICollider
         {
-            colliderType = colliderType != null ? GetEnumValue<ColliderType>(colliderType) : ColliderType.SPHERE,
-            center = center != null ? ParseVector3(center) : Vector3.zero,
-            radius = radius != null ? float.Parse(radius.ToString()) : 3.54f,
-            size = size != null ? ParseVector3(size) : new Vector3(5, 2, 5),
+            colliderType = jsonDict.TryGetValue("colliderType", out object colliderType) ? GetEnumValue<ColliderType>(colliderType) : ColliderType.SPHERE,
+            center = jsonDict.TryGetValue("center", out object center) ? ParseVector3(center) : Vector3.zero,
+            radius = jsonDict.TryGetValue("radius", out object radius) ? float.Parse(radius.ToString()) : 3.54f,
+            size = jsonDict.TryGetValue("size", out object size) ? ParseVector3(size) : new Vector3(5, 2, 5),
         };
     }
 
-    public static CustomStorageDestination ParsePrebuiltStorageDestination(JToken o)
+    public static CustomStorageDestination ParsePrebuiltStorageDestination(object value)
     {
-        if (o.IsNullOrEmpty()) return new CustomStorageDestination();
-
-        var enabled = o["enabled"];
-        var position = o["position"];
-        var yRotation = o["yRotation"];
-        var vCam = o["vCam"];
-        var hasOverflow = o["hasOverflow"];
-        var overflowHeight = o["overflowHeight"];
-        var hasBoxes = o["hasBoxes"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse storage destination.");
         return new CustomStorageDestination
         {
-            enabled = enabled != null ? bool.Parse(enabled.ToString()) : true,
-            position = position != null ? ParseVector3(position) : new Vector3(1.65f, 0.55f, -0.45f),
-            yRotation = yRotation != null ? float.Parse(yRotation.ToString()) : 0,
-            vCam = vCam != null ? ParseVector3(vCam) : new Vector3(4.5f, 3.45f, 6.75f),
-            hasOverflow = hasOverflow != null ? bool.Parse(hasOverflow.ToString()) : false,
-            overflowHeight = overflowHeight != null ? float.Parse(overflowHeight.ToString()) : 0.6f,
-            hasBoxes = hasBoxes != null ? bool.Parse(hasBoxes.ToString()) : true,
+            enabled = jsonDict.TryGetValue("enabled", out object enabled) ? bool.Parse(enabled.ToString()) : true,
+            position = jsonDict.TryGetValue("position", out object position) ? ParseVector3(position) : new Vector3(1.65f, 0.55f, -0.45f),
+            yRotation = jsonDict.TryGetValue("yRotation", out object yRotation) ? float.Parse(yRotation.ToString()) : 0,
+            vCam = jsonDict.TryGetValue("vCam", out object vCam) ? ParseVector3(vCam) : new Vector3(4.5f, 3.45f, 6.75f),
+            hasOverflow = jsonDict.TryGetValue("hasOverflow", out object hasOverflow) ? bool.Parse(hasOverflow.ToString()) : false,
+            overflowHeight = jsonDict.TryGetValue("overflowHeight", out object overflowHeight) ? float.Parse(overflowHeight.ToString()) : 0.6f,
+            hasBoxes = jsonDict.TryGetValue("hasBoxes", out object hasBoxes) ? bool.Parse(hasBoxes.ToString()) : true,
         };
     }
 
-    public static DockSanityModifier ParseDockSanityModifier(JToken o)
+    public static DockSanityModifier ParseDockSanityModifier(object value)
     {
-        if (o.IsNullOrEmpty()) return new DockSanityModifier();
-
-        var position = o["position"];
-        var fullValueDay = o["fullValueDay"];
-        var fullValueNight = o["fullValueNight"];
-        var fullValueRadius = o["fullValueRadius"];
-        var partialValueMinDay = o["partialValueMinDay"];
-        var partialValueMinNight = o["partialValueMinNight"];
-        var partialValueRadius = o["partialValueRadius"];
-        var ignoreTimescale = o["ignoreTimescale"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse dock sanity modifier.");
         return new DockSanityModifier
         {
-            position = position != null ? ParseVector3(position) : Vector3.zero,
-            fullValueDay = fullValueDay != null ? float.Parse(fullValueDay.ToString()) : 0,
-            fullValueNight = fullValueNight != null ? float.Parse(fullValueNight.ToString()) : 1,
-            fullValueRadius = fullValueRadius != null ? float.Parse(fullValueRadius.ToString()) : 3,
-            partialValueMinDay = partialValueMinDay != null ? float.Parse(partialValueMinDay.ToString()) : 0,
-            partialValueMinNight = partialValueMinNight != null ? float.Parse(partialValueMinNight.ToString()) : 0,
-            partialValueRadius = partialValueRadius != null ? float.Parse(partialValueRadius.ToString()) : 6,
-            ignoreTimescale = ignoreTimescale != null ? bool.Parse(ignoreTimescale.ToString()) : false,
+            position = jsonDict.TryGetValue("position", out object position) ? ParseVector3(position) : Vector3.zero,
+            fullValueDay = jsonDict.TryGetValue("fullValueDay", out object fullValueDay) ? float.Parse(fullValueDay.ToString()) : 0,
+            fullValueNight = jsonDict.TryGetValue("fullValueNight", out object fullValueNight) ? float.Parse(fullValueNight.ToString()) : 1,
+            fullValueRadius = jsonDict.TryGetValue("fullValueRadius", out object fullValueRadius) ? float.Parse(fullValueRadius.ToString()) : 3,
+            partialValueMinDay = jsonDict.TryGetValue("partialValueMinDay", out object partialValueMinDay) ? float.Parse(partialValueMinDay.ToString()) : 0,
+            partialValueMinNight = jsonDict.TryGetValue("partialValueMinNight", out object partialValueMinNight) ? float.Parse(partialValueMinNight.ToString()) : 0,
+            partialValueRadius = jsonDict.TryGetValue("partialValueRadius", out object partialValueRadius) ? float.Parse(partialValueRadius.ToString()) : 6,
+            ignoreTimescale = jsonDict.TryGetValue("ignoreTimescale", out object ignoreTimescale) ? bool.Parse(ignoreTimescale.ToString()) : false,
         };
     }
 
-    public static DockSafeZone ParseDockSafeZone(JToken o)
+    public static DockSafeZone ParseDockSafeZone(object value)
     {
-        if (o.IsNullOrEmpty()) return new DockSafeZone();
-
-        var position = o["position"];
-        var radius = o["radius"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse dock safe zone.");
         return new DockSafeZone
         {
-            position = position != null ? ParseVector3(position) : Vector3.zero,
-            radius = radius != null ? float.Parse(radius.ToString()) : 15f,
+            position = jsonDict.TryGetValue("position", out object position) ? ParseVector3(position) : Vector3.zero,
+            radius = jsonDict.TryGetValue("radius", out object radius) ? float.Parse(radius.ToString()) : 15f
         };
     }
 
@@ -433,20 +419,15 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    public static AssetReferenceOverride ParseAssetReferenceOverride(JToken o)
+    public static AssetReferenceOverride ParseAssetReferenceOverride(object value)
     {
-        if (o.IsNullOrEmpty()) return new AssetReferenceOverride();
-
-        var assetReference = o["assetReference"];
-        var nodesVisited = o["nodesVisited"];
-        var boolValues = o["boolValues"];
-        var tirWorldPhase = o["tirWorldPhase"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse asset reference override.");
         return new AssetReferenceOverride
         {
-            assetReference = assetReference != null ? ParseAssetReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
-            nodesVisited = nodesVisited != null ? ParseStringList((JArray)nodesVisited) : new List<string>(),
-            boolValues = boolValues != null ? ParseStringList((JArray)boolValues) : new List<string>(),
-            tirWorldPhase = tirWorldPhase != null ? int.Parse(tirWorldPhase.ToString()) : 0,
+            assetReference = jsonDict.TryGetValue("assetReference", out object assetReference) ? ParseAssetReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
+            nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+            boolValues = jsonDict.TryGetValue("boolValues", out object boolValues) ? ParseStringList((JArray)boolValues) : new List<string>(),
+            tirWorldPhase = jsonDict.TryGetValue("tirWorldPhase", out object tirWorldPhase) ? int.Parse(tirWorldPhase.ToString()) : 0,
         };
     }
 
@@ -475,20 +456,15 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    public static AssetReferenceOverride ParseAudioReferenceOverride(JToken o)
+    public static AssetReferenceOverride ParseAudioReferenceOverride(object value)
     {
-        if (o.IsNullOrEmpty()) return new AssetReferenceOverride();
-
-        var assetReference = o["assetReference"];
-        var nodesVisited = o["nodesVisited"];
-        var boolValues = o["boolValues"];
-        var tirWorldPhase = o["tirWorldPhase"];
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse audio reference override.");
         return new AssetReferenceOverride
         {
-            assetReference = assetReference != null ? ParseAudioReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
-            nodesVisited = nodesVisited != null ? ParseStringList((JArray)nodesVisited) : new List<string>(),
-            boolValues = boolValues != null ? ParseStringList((JArray)boolValues) : new List<string>(),
-            tirWorldPhase = tirWorldPhase != null ? int.Parse(tirWorldPhase.ToString()) : 0,
+            assetReference = jsonDict.TryGetValue("assetReference", out object assetReference) ? ParseAudioReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
+            nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+            boolValues = jsonDict.TryGetValue("boolValues", out object boolValues) ? ParseStringList((JArray)boolValues) : new List<string>(),
+            tirWorldPhase = jsonDict.TryGetValue("tirWorldPhase", out object tirWorldPhase) ? int.Parse(tirWorldPhase.ToString()) : 0,
         };
     }
 
