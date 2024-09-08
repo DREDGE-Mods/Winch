@@ -97,4 +97,9 @@ public class CustomDockPOI : CustomPOI
     /// The dock's safe zone settings
     /// </summary>
     public DockSafeZone safeZone = new DockSafeZone();
+
+    /// <summary>
+    /// Cameras for any speakers in the dock data
+    /// </summary>
+    public Dictionary<string, SpeakerVCam> speakerVCams = new Dictionary<string, SpeakerVCam>();
 }

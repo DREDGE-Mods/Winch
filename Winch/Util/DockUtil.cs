@@ -443,7 +443,23 @@ public static class DockUtil
         dock.sanityModifier = CreateDockSanityModifier(customDockPoi.sanityModifier, dockObject.transform);
         dock.safeZone = CreateDockSafeZone(customDockPoi.safeZone, dockObject.transform);
 
+        Dictionary<string, CinemachineVirtualCamera> speakerVCams = new Dictionary<string, CinemachineVirtualCamera>();
+        foreach (var speakerVCam in customDockPoi.speakerVCams)
+        {
+            speakerVCams.Add(speakerVCam.Key, CreateSpeakerVCam(speakerVCam.Key, speakerVCam.Value, dockObject.transform));
+        }
+        dock.speakerVCams = speakerVCams;
+
         return dockPoi;
+    }
+
+    public static CinemachineVirtualCamera CreateSpeakerVCam(string speaker, SpeakerVCam settings, Transform parent)
+    {
+        var speakerObject = new GameObject(speaker);
+        speakerObject.transform.SetParent(parent, false);
+        speakerObject.transform.localPosition = Vector3.zero;
+        var lookAt = CreateLookAtTarget(settings.lookAtTarget, speakerObject.transform);
+        return CreateDockVirtualCamera(settings.vCam, lookAt, speakerObject.transform);
     }
 
     public static Transform CreateLookAtTarget(Vector3 position, Transform parent, string name = "LookAt")

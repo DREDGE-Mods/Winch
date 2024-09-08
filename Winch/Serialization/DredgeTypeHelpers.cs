@@ -477,4 +477,30 @@ public static class DredgeTypeHelpers
         }
         return parsed;
     }
+
+    public static Dictionary<string, SpeakerVCam> GetSpeakerVCamsFromJsonObject(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse speaker cameras.");
+        return GetSpeakerVCamsDictionary(jsonDict);
+    }
+
+    private static Dictionary<string, SpeakerVCam> GetSpeakerVCamsDictionary(Dictionary<string, object> vcams)
+    {
+        var parsed = new Dictionary<string, SpeakerVCam>();
+        foreach (var kvp in vcams)
+        {
+            parsed.Add(kvp.Key, ParseSpeakerVCam(kvp.Value));
+        }
+        return parsed;
+    }
+
+    private static SpeakerVCam ParseSpeakerVCam(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse speaker camera.");
+        return new SpeakerVCam
+        {
+            vCam = jsonDict.TryGetValue("vCam", out object vCam) ? ParseVector3(vCam) : new Vector3(13, 2.5f, 9),
+            lookAtTarget = jsonDict.TryGetValue("lookAtTarget", out object lookAtTarget) ? ParseVector3(lookAtTarget) : new Vector3(-0.7f, -2f, -0.25f)
+        };
+    }
 }

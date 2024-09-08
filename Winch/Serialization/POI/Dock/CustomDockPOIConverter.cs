@@ -21,6 +21,7 @@ public class CustomDockPOIConverter : CustomPOIConverter
         { "dockSlots", new(null, o=>DredgeTypeHelpers.ParseDockSlots((JArray)o) ) },
         { "sanityModifier", new( new DockSanityModifier(), o=> DredgeTypeHelpers.ParseDockSanityModifier(o)) },
         { "safeZone", new( new DockSafeZone(), o=> DredgeTypeHelpers.ParseDockSafeZone(o)) },
+        { "speakerVCams", new( new Dictionary<string, SpeakerVCam>(), o=> DredgeTypeHelpers.GetSpeakerVCamsFromJsonObject(o)) },
     };
 
     private readonly Dictionary<string, string> _reroutes = new()
