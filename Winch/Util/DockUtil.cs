@@ -8,6 +8,8 @@ using Winch.Data.Dock;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Dock.Destinations;
 using Winch.Serialization.Dock;
+using Winch.Serialization.POI.Dock.Destinations;
+using Winch.Serialization;
 using Winch.Components;
 using Cinemachine;
 using UnityEngine.AddressableAssets;
@@ -199,6 +201,21 @@ public static class DockUtil
     {
         return UtilHelpers.PopulateObjectFromMeta(data, meta, DockDataConverter);
     }
+
+    private static Dictionary<Type, IDredgeTypeConverter> DestinationConverters = new()
+    {
+        { typeof(CustomCharacterDestination), new CustomCharacterDestinationConverter() },
+        { typeof(CustomConstructableDestination), new CustomConstructableDestinationConverter() },
+        { typeof(CustomMarketDestination), new CustomMarketDestinationConverter() },
+        { typeof(CustomShipyardDestination), new CustomShipyardDestinationConverter() },
+        { typeof(CustomUpgradeDestination), new CustomUpgradeDestinationConverter()}
+    };
+
+    internal static bool PopulateDestinationFromMetaWithConverters<T>(T item, Dictionary<string, object> meta) where T : CustomBaseDestination
+    {
+        return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, DestinationConverters);
+    }
+
 
     internal static Dictionary<string, DeferredDockData> ModdedDockDataDict = new();
     internal static Dictionary<string, DockData> AllDockDataDict = new();
@@ -438,7 +455,36 @@ public static class DockUtil
         dock.storageEnabled = prebuiltStorage.enabled;
         dock.overflowStorageEnabled = prebuiltStorage.hasOverflow;
 
-        dock.destinations = new List<BaseDestination>();
+        Dictionary<CustomBaseDestination, BaseDestination> destinations = new Dictionary<CustomBaseDestination, BaseDestination>();
+        foreach (var destination in customDockPoi.characters)
+        {
+            destinations.Add(destination, CreateBaseDestination<CharacterDestination>(destination, dockObject.transform));
+        }
+        foreach (var destination in customDockPoi.markets)
+        {
+            destinations.Add(destination, CreateMarketDestination<MarketDestination>(destination, dockObject.transform));
+        }
+        foreach (var destination in customDockPoi.shipyards)
+        {
+            destinations.Add(destination, CreateMarketDestination<ShipyardDestination>(destination, dockObject.transform));
+        }
+        foreach (var destination in customDockPoi.upgraders)
+        {
+            destinations.Add(destination, CreateBaseDestination<UpgradeDestination>(destination, dockObject.transform));
+        }
+        foreach (var destination in customDockPoi.constructables)
+        {
+            destinations.Add(destination, CreateBaseDestination<ConstructableDestination>(destination, dockObject.transform));
+        }
+        var destinationsList = destinations.Values.ToList();
+        foreach (var kvp in destinations)
+        {
+            if (kvp.Key is CustomConstructableDestination custom && kvp.Value is ConstructableDestination destination)
+                PostConstructableDestination(custom, destination, destinationsList);
+            else
+                PostBaseDestination(kvp.Key, kvp.Value, destinationsList);
+        }
+        dock.destinations = destinationsList;
 
         dock.sanityModifier = CreateDockSanityModifier(customDockPoi.sanityModifier, dockObject.transform);
         dock.safeZone = CreateDockSafeZone(customDockPoi.safeZone, dockObject.transform);
@@ -451,6 +497,67 @@ public static class DockUtil
         dock.speakerVCams = speakerVCams;
 
         return dockPoi;
+    }
+
+    public static T CreateBaseDestination<T>(CustomBaseDestination custom, Transform parent) where T : BaseDestination
+    {
+        var baseObject = new GameObject(custom.id);
+        baseObject.transform.SetParent(parent, false);
+        baseObject.transform.localPosition = custom.position;
+        var lookAt = CreateLookAtTarget(custom.lookAtTarget, baseObject.transform);
+        var vCam = CreateDockVirtualCamera(custom.vCam, lookAt, baseObject.transform);
+        var destinationObject = new GameObject("Destination");
+        destinationObject.transform.SetParent(baseObject.transform, false);
+        destinationObject.transform.localPosition = Vector3.zero;
+        var destination = destinationObject.AddComponent<T>();
+        destination.id = custom.id;
+        destination.vCam = vCam;
+        destination.alwaysShow = custom.alwaysShow;
+        destination.icon = custom.icon;
+        destination.titleKey = custom.titleKey;
+        destination.playerInventoryTabIndexesToShow = custom.playerInventoryTabIndexesToShow;
+        destination.highlightConditions = custom.highlightConditions;
+        destination.speakerData = CharacterUtil.GetSpeakerData(custom.speakerData);
+        destination.speakerRootNodeOverride = custom.speakerRootNodeOverride;
+        destination.visitSFX = custom.visitSFX;
+        destination.loopSFX = AudioClipUtil.GetAudioClip(custom.loopSFX);
+        destination.useFixedScreenPosition = custom.useFixedScreenPosition;
+        destination.transformToPointTo = CreateLookAtTarget(custom.pointTo, baseObject.transform, "PointTo");
+        destination.screenPosition = custom.screenPosition;
+        return destination;
+    }
+
+    public static T CreateMarketDestination<T>(CustomMarketDestination custom, Transform parent) where T : MarketDestination
+    {
+        var destination = CreateBaseDestination<T>(custom, parent);
+        destination.itemTypesBought = custom.itemTypesBought;
+        destination.itemSubtypesBought = custom.itemSubtypesBought;
+        destination.bulkItemTypesBought = custom.bulkItemTypesBought;
+        destination.bulkItemSubtypesBought = custom.bulkItemSubtypesBought;
+        destination.specificItemsBought = ItemUtil.TryGetSpatials(custom.specificItemsBought).ToArray();
+        destination.sellValueModifier = custom.sellValueModifier;
+        destination.allowSellIfGridFull = custom.allowSellIfGridFull;
+        destination.allowStorageAccess = custom.allowStorageAccess;
+        destination.allowRepairs = custom.allowRepairs;
+        destination.allowBulkSell = custom.allowBulkSell;
+        destination.bulkSellPromptString = custom.bulkSellPromptString;
+        destination.bulkSellNotificationString = custom.bulkSellNotificationString;
+        destination.marketTabs = custom.marketTabs;
+        return destination;
+    }
+
+    public static void PostBaseDestination(CustomBaseDestination custom, BaseDestination destination, List<BaseDestination> all)
+    {
+        destination.selectOnLeft = all.FindAll(x => custom.selectOnLeft.Contains(x.id));
+        destination.selectOnRight = all.FindAll(x => custom.selectOnRight.Contains(x.id));
+        destination.selectOnUp = all.FindAll(x => custom.selectOnUp.Contains(x.id));
+        destination.selectOnDown = all.FindAll(x => custom.selectOnDown.Contains(x.id));
+    }
+
+    public static void PostConstructableDestination(CustomConstructableDestination custom, ConstructableDestination destination, List<BaseDestination> all)
+    {
+        PostBaseDestination(custom, destination, all);
+        destination.useThisDestinationInsteadIfConstructed = all.Find(x => x.id == custom.useThisDestinationInsteadIfConstructed);
     }
 
     public static CinemachineVirtualCamera CreateSpeakerVCam(string speaker, SpeakerVCam settings, Transform parent)

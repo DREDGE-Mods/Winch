@@ -368,6 +368,24 @@ public static class ItemUtil
         return items;
     }
 
+    public static List<SpatialItemData> TryGetSpatials(List<string> ids)
+    {
+        List<SpatialItemData> spatials = new List<SpatialItemData>();
+
+        if (ids == null)
+            return spatials;
+
+        foreach (var spatial in ids)
+        {
+            if (!string.IsNullOrWhiteSpace(spatial) && SpatialItemDataDict.TryGetValue(spatial, out var itemData))
+            {
+                spatials.Add(itemData);
+            }
+        }
+
+        return spatials;
+    }
+
     public static List<HarvestableItemData> TryGetHarvestables(List<string> ids)
     {
         List<HarvestableItemData> harvestables = new List<HarvestableItemData>();

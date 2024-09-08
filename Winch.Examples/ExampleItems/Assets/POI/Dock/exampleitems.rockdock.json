@@ -78,5 +78,12 @@
 				"z": -0.25
 			}
 		}
-	}
+	},
+	"characters": [
+		{
+			"id": "exampleitems.destination.steve",
+			"titleKey": "exampleitems.destination.steve",
+			"speakerRootNodeOverride": "DLC1_DockMiddle_Cabin"
+		}
+	]
 }

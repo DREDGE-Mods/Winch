@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Winch.Data.POI.Dock;
+using Winch.Data.POI.Dock.Destinations;
 
 namespace Winch.Serialization.POI.Dock;
 
@@ -17,6 +18,11 @@ public class CustomDockPOIConverter : CustomPOIConverter
         { "vCam", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "lookAtTarget", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "boatActions", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "characters", new( new List<CustomCharacterDestination>() , o=> DredgeTypeHelpers.ParseCharacterDestinations((JArray)o)) },
+        { "markets", new( new List<CustomMarketDestination>() , o=> DredgeTypeHelpers.ParseMarketDestinations((JArray)o)) },
+        { "shipyards", new( new List<CustomShipyardDestination>() , o=> DredgeTypeHelpers.ParseShipyardDestinations((JArray)o)) },
+        { "upgraders", new( new List<CustomUpgradeDestination>() , o=> DredgeTypeHelpers.ParseUpgradeDestinations((JArray)o)) },
+        { "constructables", new( new List<CustomConstructableDestination>() , o=> DredgeTypeHelpers.ParseConstructableDestinations((JArray)o)) },
         { "storage", new( null, o=> DredgeTypeHelpers.ParsePrebuiltStorageDestination(o)) },
         { "dockSlots", new(null, o=>DredgeTypeHelpers.ParseDockSlots((JArray)o) ) },
         { "sanityModifier", new( new DockSanityModifier(), o=> DredgeTypeHelpers.ParseDockSanityModifier(o)) },

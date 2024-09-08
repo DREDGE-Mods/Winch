@@ -175,6 +175,16 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
+    public static Vector2 ParseVector2(object inVal)
+    {
+        var position = JsonConvert.DeserializeObject<Dictionary<string, float>>(inVal.ToString()) ?? throw new InvalidOperationException("Unable to parse position.");
+        float x = 0, y = 0;
+        if (position.TryGetValue("x", out var value1)) x = value1;
+        if (position.TryGetValue("y", out var value2)) y = value2;
+
+        return new Vector2(x, y);
+    }
+
     public static HarvestableType[] ParseHarvestableTypes(JArray values)
     {
         List<HarvestableType> types = new();
@@ -612,5 +622,95 @@ public static class DredgeTypeHelpers
             speakerNameKey = jsonDict.TryGetValue("speakerNameKey", out object speakerNameKey) ? speakerNameKey.ToString() : string.Empty,
             nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
         };
+    }
+
+    public static CustomCharacterDestination ParseCharacterDestination(JToken destination)
+    {
+        var config = new CustomCharacterDestination();
+        var meta = destination.ToObject<Dictionary<string, object>>();
+        DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
+        return config;
+    }
+
+    public static List<CustomCharacterDestination> ParseCharacterDestinations(JArray destinations)
+    {
+        var parsed = new List<CustomCharacterDestination>();
+        foreach (var destination in destinations)
+        {
+            parsed.Add(ParseCharacterDestination(destination));
+        }
+        return parsed;
+    }
+
+    public static CustomConstructableDestination ParseConstructableDestination(JToken destination)
+    {
+        var config = new CustomConstructableDestination();
+        var meta = destination.ToObject<Dictionary<string, object>>();
+        DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
+        return config;
+    }
+
+    public static List<CustomConstructableDestination> ParseConstructableDestinations(JArray destinations)
+    {
+        var parsed = new List<CustomConstructableDestination>();
+        foreach (var destination in destinations)
+        {
+            parsed.Add(ParseConstructableDestination(destination));
+        }
+        return parsed;
+    }
+
+    public static CustomMarketDestination ParseMarketDestination(JToken destination)
+    {
+        var config = new CustomMarketDestination();
+        var meta = destination.ToObject<Dictionary<string, object>>();
+        DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
+        return config;
+    }
+
+    public static List<CustomMarketDestination> ParseMarketDestinations(JArray destinations)
+    {
+        var parsed = new List<CustomMarketDestination>();
+        foreach (var destination in destinations)
+        {
+            parsed.Add(ParseMarketDestination(destination));
+        }
+        return parsed;
+    }
+
+    public static CustomShipyardDestination ParseShipyardDestination(JToken destination)
+    {
+        var config = new CustomShipyardDestination();
+        var meta = destination.ToObject<Dictionary<string, object>>();
+        DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
+        return config;
+    }
+
+    public static List<CustomShipyardDestination> ParseShipyardDestinations(JArray destinations)
+    {
+        var parsed = new List<CustomShipyardDestination>();
+        foreach (var destination in destinations)
+        {
+            parsed.Add(ParseShipyardDestination(destination));
+        }
+        return parsed;
+    }
+
+    public static CustomUpgradeDestination ParseUpgradeDestination(JToken destination)
+    {
+        var config = new CustomUpgradeDestination();
+        var meta = destination.ToObject<Dictionary<string, object>>();
+        DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
+        return config;
+    }
+
+    public static List<CustomUpgradeDestination> ParseUpgradeDestinations(JArray destinations)
+    {
+        var parsed = new List<CustomUpgradeDestination>();
+        foreach (var destination in destinations)
+        {
+            parsed.Add(ParseUpgradeDestination(destination));
+        }
+        return parsed;
     }
 }

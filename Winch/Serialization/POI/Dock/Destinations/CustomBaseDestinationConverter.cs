@@ -30,7 +30,7 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
         { "highlightConditions", new(new List<HighlightCondition>(), o=>DredgeTypeHelpers.ParseHighlightConditions((JArray)o)) },
         { "useFixedScreenPosition", new( false, o=> bool.Parse(o.ToString())) },
         { "pointTo", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "screenPosition", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "screenPosition", new(Vector2.zero, o=> DredgeTypeHelpers.ParseVector2(o)) },
         { "selectOnLeft", new(new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "selectOnRight", new(new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "selectOnUp", new(new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
