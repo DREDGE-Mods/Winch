@@ -39,16 +39,27 @@ public static class DialogueUtil
     internal static List<DredgeInstruction> instructions = new();
 
     /// <summary>
+    /// Compilation results of programs from dialogue-providing mods.
+    /// </summary>
+    internal static Dictionary<string, CompilationResult> programCompilationResults = new();
+
+    /// <summary>
     /// Programs from dialogue-providing mods.
     /// </summary>
-    internal static List<Program> programs = new();
+    internal static Dictionary<string, Program> programs = new();
 
     internal static void LoadDialogueFiles(string dialogueFolderPath)
     {
         string[] yarnFiles = Directory.GetFiles(dialogueFolderPath).Where(f => f.EndsWith(".yarn")).ToArray();
 
         CompilationResult compilationResult = CompileProgram(yarnFiles);
-        programs.Add(compilationResult.Program);
+        programCompilationResults.Add(dialogueFolderPath, compilationResult);
+        var program = compilationResult.Program;
+        if (program != null)
+            programs.Add(dialogueFolderPath, program);
+
+        foreach (var diagnotic in compilationResult.Diagnostics)
+            WinchCore.Log.Error(diagnotic.FileName + "\n" + diagnotic.ToString());
 
         // Load "fallback" lines from the Yarn program's string table.
         foreach (var stringEntry in compilationResult.StringTable)
@@ -234,63 +245,70 @@ public static class DialogueUtil
     /// </remarks>
     internal static void Inject()
     {
-        var exportYarnProgram = WinchConfig.GetProperty("ExportYarnProgram", false);
-
-        DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
-        DredgeLocalizedLineProvider lineProvider = runner.lineProvider as DredgeLocalizedLineProvider;
-
-        foreach (var line in lines)
+        try
         {
-            lineProvider.stringTable.AddEntry(line.Key, line.Value);
-        }
+            var exportYarnProgram = WinchConfig.GetProperty("ExportYarnProgram", false);
 
-        // Override localized lines.
-        foreach (var localizedLine in GetLinesForLocale(GameManager.Instance.SettingsSaveData.localeId))
-        {
-            lineProvider.stringTable.AddEntry(localizedLine.Key, localizedLine.Value);
-        }
+            DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
+            DredgeLocalizedLineProvider lineProvider = runner.lineProvider as DredgeLocalizedLineProvider;
 
-        var newProgram = new Program();
+            foreach (var line in lines)
+            {
+                lineProvider.stringTable.AddEntry(line.Key, line.Value);
+            }
 
-        Program oldProgram = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
+            // Override localized lines.
+            foreach (var localizedLine in GetLinesForLocale(GameManager.Instance.SettingsSaveData.localeId))
+            {
+                lineProvider.stringTable.AddEntry(localizedLine.Key, localizedLine.Value);
+            }
 
-        if (exportYarnProgram)
-        {
-            WriteYarnProgramToText("YarnProgramVanilla", oldProgram);
-        }
+            var newProgram = new Program();
 
-        foreach (var nodeName in oldProgram.Nodes)
-        {
-            newProgram.Nodes[nodeName.Key] = nodeName.Value.Clone();
-        }
-        newProgram.InitialValues.Add(oldProgram.InitialValues);
+            Program oldProgram = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
 
-        foreach (var modProgram in programs)
-        {
-            foreach (var nodeName in modProgram.Nodes)
+            if (exportYarnProgram)
+            {
+                WriteYarnProgramToText("YarnProgramVanilla", oldProgram);
+            }
+
+            foreach (var nodeName in oldProgram.Nodes)
             {
                 newProgram.Nodes[nodeName.Key] = nodeName.Value.Clone();
             }
-            newProgram.InitialValues.Add(modProgram.InitialValues);
+            newProgram.InitialValues.Add(oldProgram.InitialValues);
+
+            foreach (var modProgram in programs.Values)
+            {
+                foreach (var nodeName in modProgram.Nodes)
+                {
+                    newProgram.Nodes[nodeName.Key] = nodeName.Value.Clone();
+                }
+                newProgram.InitialValues.Add(modProgram.InitialValues);
+            }
+
+            runner.Dialogue.SetProgram(newProgram);
+
+            var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
+
+            foreach (var metadataEntry in metadata)
+            {
+                _lineMetadata.Add(metadataEntry.Key, string.Join(" ", metadataEntry.Value));
+            }
+
+            foreach (var instruction in instructions)
+            {
+                InsertInstruction(instruction);
+            }
+
+            if (exportYarnProgram)
+            {
+                WriteYarnProgramToText("YarnProgramModded", newProgram);
+            }
         }
-
-        runner.Dialogue.SetProgram(newProgram);
-
-        var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
-
-        foreach (var metadataEntry in metadata)
+        catch (Exception ex)
         {
-            _lineMetadata.Add(metadataEntry.Key, string.Join(" ", metadataEntry.Value));
-        }
-
-        foreach (var instruction in instructions)
-        {
-            InsertInstruction(instruction);
-        }
-
-        if (exportYarnProgram)
-        {
-            WriteYarnProgramToText("YarnProgramModded", newProgram);
+            WinchCore.Log.Error(ex);
         }
     }
 
