@@ -67,10 +67,15 @@
 	],
 	"speakerVCams": {
 		"exampleitems.steve": {
+			"position": {
+				"x": -1.825,
+				"y": 3,
+				"z": 0.125
+			},
 			"vCam": {
-				"x": 13,
-				"y": 2.5,
-				"z": 9
+				"x": 10,
+				"y": 2,
+				"z": 6.675
 			},
 			"lookAtTarget": {
 				"x": -0.7,
@@ -81,9 +86,24 @@
 	},
 	"characters": [
 		{
-			"id": "exampleitems.destination.steve",
-			"titleKey": "exampleitems.destination.steve",
-			"speakerRootNodeOverride": "DLC1_DockMiddle_Cabin"
+			"id": "exampleitems.destination.rock",
+			"titleKey": "exampleitems.destination.rock",
+			"speakerRootNodeOverride": "ExampleItems_Rock_Root",
+			"position": {
+				"x": -1.825,
+				"y": 3,
+				"z": 0.125
+			},
+			"vCam": {
+				"x": 7.5,
+				"y": 1.5,
+				"z": 5
+			},
+			"lookAtTarget": {
+				"x": -0.7,
+				"y": -2,
+				"z": -0.25
+			}
 		}
 	]
 }

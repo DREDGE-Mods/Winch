@@ -25,7 +25,7 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
         { "visitSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
         { "loopSFX", new(string.Empty, null) },
         { "isIndoors", new( false, o=> bool.Parse(o.ToString())) },
-        { "icon", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
+        { "icon", new(null, o => TextureUtil.GetSprite(o.ToString())) },
         { "playerInventoryTabIndexesToShow", new(new List<int>(), o => DredgeTypeHelpers.ParseIntList((JArray)o)) },
         { "highlightConditions", new(new List<HighlightCondition>(), o=>DredgeTypeHelpers.ParseHighlightConditions((JArray)o)) },
         { "useFixedScreenPosition", new( false, o=> bool.Parse(o.ToString())) },

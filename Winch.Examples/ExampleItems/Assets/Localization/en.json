@@ -65,6 +65,7 @@
 	"exampleitems.stonedock.name": "Stone Dock",
 	"exampleitems.plainstonedock.name": "Plain Stone Dock",
 	"exampleitems.rockdock.name": "Rock Dock",
+	"exampleitems.destination.rock": "Rock",
 
 	"exampleconfig.separator.title": "Separator",
 	"exampleconfig.toggle.title": "Toggle",

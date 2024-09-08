@@ -501,14 +501,11 @@ public static class DockUtil
 
     public static T CreateBaseDestination<T>(CustomBaseDestination custom, Transform parent) where T : BaseDestination
     {
-        var baseObject = new GameObject(custom.id);
-        baseObject.transform.SetParent(parent, false);
-        baseObject.transform.localPosition = custom.position;
-        var lookAt = CreateLookAtTarget(custom.lookAtTarget, baseObject.transform);
-        var vCam = CreateDockVirtualCamera(custom.vCam, lookAt, baseObject.transform);
-        var destinationObject = new GameObject("Destination");
-        destinationObject.transform.SetParent(baseObject.transform, false);
-        destinationObject.transform.localPosition = Vector3.zero;
+        var destinationObject = new GameObject(custom.id);
+        destinationObject.transform.SetParent(parent, false);
+        destinationObject.transform.localPosition = custom.position;
+        var lookAt = CreateLookAtTarget(custom.lookAtTarget, destinationObject.transform);
+        var vCam = CreateDockVirtualCamera(custom.vCam, lookAt, destinationObject.transform);
         var destination = destinationObject.AddComponent<T>();
         destination.id = custom.id;
         destination.vCam = vCam;
@@ -522,7 +519,7 @@ public static class DockUtil
         destination.visitSFX = custom.visitSFX;
         destination.loopSFX = AudioClipUtil.GetAudioClip(custom.loopSFX);
         destination.useFixedScreenPosition = custom.useFixedScreenPosition;
-        destination.transformToPointTo = CreateLookAtTarget(custom.pointTo, baseObject.transform, "PointTo");
+        destination.transformToPointTo = CreateLookAtTarget(custom.pointTo, destinationObject.transform, "PointTo");
         destination.screenPosition = custom.screenPosition;
         return destination;
     }
@@ -564,7 +561,7 @@ public static class DockUtil
     {
         var speakerObject = new GameObject(speaker);
         speakerObject.transform.SetParent(parent, false);
-        speakerObject.transform.localPosition = Vector3.zero;
+        speakerObject.transform.localPosition = settings.position;
         var lookAt = CreateLookAtTarget(settings.lookAtTarget, speakerObject.transform);
         return CreateDockVirtualCamera(settings.vCam, lookAt, speakerObject.transform);
     }

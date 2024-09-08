@@ -515,6 +515,7 @@ public static class DredgeTypeHelpers
         var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse speaker camera.");
         return new SpeakerVCam
         {
+            position = jsonDict.TryGetValue("position", out object position) ? ParseVector3(position) : new Vector3(-1.825f, 3, 0.125f),
             vCam = jsonDict.TryGetValue("vCam", out object vCam) ? ParseVector3(vCam) : new Vector3(13, 2.5f, 9),
             lookAtTarget = jsonDict.TryGetValue("lookAtTarget", out object lookAtTarget) ? ParseVector3(lookAtTarget) : new Vector3(-0.7f, -2f, -0.25f)
         };
