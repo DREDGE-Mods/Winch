@@ -1,8 +1,19 @@
 ﻿{
 	"speakerNameKey": "exampleitems.steve.name",
-	"paralinguisticsNameKey": "MAYOR",
 	"portraitSprite": "Steve",
 	"smallPortraitSprite": "SteveSmall",
 	"alwaysAvailable": true,
-	"yarnRootNode": "ExampleItems_Steve_Chat"
+	"yarnRootNode": "ExampleItems_Steve_Chat",
+	"portraitOverrideConditions": [
+		{
+			"portraitSprite": "SteveNew",
+			"smallPortraitSprite": "SteveNewSmall",
+			"useManualState": true,
+			"stateName": "exampleitems.steve.portrait-state",
+			"stateValue": 1
+		}
+	],
+	"paralinguistics": {
+		"GASP": [ "exampleitems.oof" ]
+	}
 }

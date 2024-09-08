@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Winch.Data;
+using Winch.Data.Character;
 using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
 using Winch.Data.POI.Dock;
@@ -506,6 +507,110 @@ public static class DredgeTypeHelpers
         {
             vCam = jsonDict.TryGetValue("vCam", out object vCam) ? ParseVector3(vCam) : new Vector3(13, 2.5f, 9),
             lookAtTarget = jsonDict.TryGetValue("lookAtTarget", out object lookAtTarget) ? ParseVector3(lookAtTarget) : new Vector3(-0.7f, -2f, -0.25f)
+        };
+    }
+
+    internal static List<AdvancedPortraitOverride> ParsePortraitOverrides(JArray o)
+    {
+        var parsed = new List<AdvancedPortraitOverride>();
+        foreach (var portraitOverride in o)
+        {
+            parsed.Add(ParsePortraitOverride(portraitOverride));
+        }
+        return parsed;
+    }
+
+    private static AdvancedPortraitOverride ParsePortraitOverride(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse portrait override.");
+        return new AdvancedPortraitOverride
+        {
+            portraitSprite = jsonDict.TryGetValue("portraitSprite", out object portraitSprite) ? TextureUtil.GetSprite(portraitSprite.ToString()) : TextureUtil.GetSprite("EmptyPortrait"),
+            smallPortraitSprite = jsonDict.TryGetValue("smallPortraitSprite", out object smallPortraitSprite) ? TextureUtil.GetSprite(smallPortraitSprite.ToString()) : TextureUtil.GetSprite("EmptySmallPortrait"),
+            useManualState = jsonDict.TryGetValue("useManualState", out object useManualState) ? bool.Parse(useManualState.ToString()) : false,
+            stateName = jsonDict.TryGetValue("stateName", out object stateName) ? stateName.ToString() : string.Empty,
+            stateValue = jsonDict.TryGetValue("stateValue", out object stateValue) ? int.Parse(stateValue.ToString()) : 0,
+            nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+        };
+    }
+
+    public static Dictionary<ParalinguisticType, List<AssetReference>> GetParalinguisticsFromJsonObject(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse paralinguistics.");
+        return GetParalinguisticsDictionary(jsonDict);
+    }
+
+    private static Dictionary<ParalinguisticType, List<AssetReference>> GetParalinguisticsDictionary(Dictionary<string, object> paralinguistics)
+    {
+        var parsed = new Dictionary<ParalinguisticType, List<AssetReference>>();
+        foreach (var kvp in paralinguistics)
+        {
+            parsed.Add(GetEnumValue<ParalinguisticType>(kvp.Key), ParseAudioReferences((JArray)kvp.Value));
+        }
+        return parsed;
+    }
+
+    internal static List<ParalinguisticOverride> ParseParalinguisticsOverrides(JArray o)
+    {
+        var parsed = new List<ParalinguisticOverride>();
+        foreach (var portraitOverride in o)
+        {
+            parsed.Add(ParseParalinguisticOverride(portraitOverride));
+        }
+        return parsed;
+    }
+
+    private static ParalinguisticOverride ParseParalinguisticOverride(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse paralinguistic override.");
+        var config = ScriptableObject.CreateInstance<SpeakerParalinguisticConfig>().DontDestroyOnLoad();
+        config.paralinguistics = jsonDict.TryGetValue("paralinguistics", out object paralinguistics) ? GetParalinguisticsFromJsonObject(paralinguistics) : new Dictionary<ParalinguisticType, List<AssetReference>>();
+        return new ParalinguisticOverride
+        {
+            config = config,
+            nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+        };
+    }
+
+    internal static List<HighlightCondition> ParseHighlightConditions(JArray o)
+    {
+        var parsed = new List<HighlightCondition>();
+        foreach (var highlightCondition in o)
+        {
+            parsed.Add(ParseHighlightCondition(highlightCondition));
+        }
+        return parsed;
+    }
+
+    private static HighlightCondition ParseHighlightCondition(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse highlight condition.");
+        return new UnstructedHighlightCondition
+        {
+            alwaysHighlight = jsonDict.TryGetValue("alwaysHighlight", out object alwaysHighlight) ? bool.Parse(alwaysHighlight.ToString()) : false,
+            highlightIfNodesUnvisited = jsonDict.TryGetValue("highlightIfNodesUnvisited", out object highlightIfNodesUnvisited) ? ParseStringList((JArray)highlightIfNodesUnvisited) : new List<string>(),
+            andTheseNodesVisited = jsonDict.TryGetValue("andTheseNodesVisited", out object andTheseNodesVisited) ? ParseStringList((JArray)andTheseNodesVisited) : new List<string>(),
+            // TODO: implement the other fields
+        };
+    }
+
+    internal static List<NameKeyOverride> ParseNameKeyOverrides(JArray o)
+    {
+        var parsed = new List<NameKeyOverride>();
+        foreach (var nameKeyOverride in o)
+        {
+            parsed.Add(ParseNameKeyOverride(nameKeyOverride));
+        }
+        return parsed;
+    }
+
+    private static NameKeyOverride ParseNameKeyOverride(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse name key override.");
+        return new NameKeyOverride
+        {
+            speakerNameKey = jsonDict.TryGetValue("speakerNameKey", out object speakerNameKey) ? speakerNameKey.ToString() : string.Empty,
+            nodesVisited = jsonDict.TryGetValue("nodesVisited", out object nodesVisited) ? ParseStringList((JArray)nodesVisited) : new List<string>(),
         };
     }
 }

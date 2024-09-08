@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using Winch.Data.Character;
@@ -22,11 +23,11 @@ public class AdvancedSpeakerDataConverter : DredgeTypeConverter<AdvancedSpeakerD
         { "alwaysAvailable", new(false, o=> bool.Parse(o.ToString())) },
         { "hideNameplate", new(false, o=> bool.Parse(o.ToString())) },
         { "availableInDemo", new(false, null) },
-        { "speakerNameKeyOverrides", new(new List<NameKeyOverride>(), null) },
-        { "portraitOverrideConditions", new(new List<PortraitOverride>(), null) },
-        { "highlightConditions", new(new List<HighlightCondition>(), null) },
-        { "paralinguistics", new(new Dictionary<ParalinguisticType, List<AssetReference>>(), null) },
-        { "paralinguisticOverrideConditions", new(new List<ParalinguisticOverride>(), null) }
+        { "speakerNameKeyOverrides", new(new List<NameKeyOverride>(), o=>DredgeTypeHelpers.ParseNameKeyOverrides((JArray)o)) },
+        { "portraitOverrideConditions", new(new List<AdvancedPortraitOverride>(), o=>DredgeTypeHelpers.ParsePortraitOverrides((JArray)o)) },
+        { "highlightConditions", new(new List<HighlightCondition>(), o=>DredgeTypeHelpers.ParseHighlightConditions((JArray)o)) },
+        { "paralinguistics", new(new Dictionary<ParalinguisticType, List<AssetReference>>(), o=>DredgeTypeHelpers.GetParalinguisticsFromJsonObject(o)) },
+        { "paralinguisticOverrideConditions", new(new List<ParalinguisticOverride>(), o=>DredgeTypeHelpers.ParseParalinguisticsOverrides((JArray)o)) }
     };
 
     public AdvancedSpeakerDataConverter() : base()

@@ -27,7 +27,7 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
         { "isIndoors", new( false, o=> bool.Parse(o.ToString())) },
         { "icon", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "playerInventoryTabIndexesToShow", new(new List<int>(), o => DredgeTypeHelpers.ParseIntList((JArray)o)) },
-        { "highlightConditions", new(new List<HighlightCondition>(), null) },
+        { "highlightConditions", new(new List<HighlightCondition>(), o=>DredgeTypeHelpers.ParseHighlightConditions((JArray)o)) },
         { "useFixedScreenPosition", new( false, o=> bool.Parse(o.ToString())) },
         { "pointTo", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "screenPosition", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },

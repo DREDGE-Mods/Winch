@@ -96,7 +96,7 @@ public static class CharacterUtil
         if (PopulateSpeakerDataFromMetaWithConverter(speaker, meta))
         {
             ModdedSpeakerDataDict.Add(id, speaker);
-            speaker.MakePortraitPrefab();
+            speaker.MakePortraitPrefabs();
         }
         else
         {

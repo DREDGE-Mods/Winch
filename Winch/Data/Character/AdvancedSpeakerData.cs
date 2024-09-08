@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 using Winch.Components;
 using Winch.Util;
@@ -22,11 +23,16 @@ public class AdvancedSpeakerData : SpeakerData
     /// </summary>
     public Sprite portraitSprite;
 
-    public virtual void MakePortraitPrefab()
+    /// <summary>
+    /// Image overrides
+    /// </summary>
+    public new List<AdvancedPortraitOverride> portraitOverrideConditions = new List<AdvancedPortraitOverride>();
+
+    public static GameObject MakePortraitPrefab(string name, Sprite portraitSprite)
     {
-        portraitPrefab = new GameObject($"{id} PortraitPrefab", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster), typeof(SpeakerPortraitAnimator)).Prefabitize();
+        var portraitPrefab = new GameObject($"{name} PortraitPrefab", typeof(RectTransform), typeof(Canvas), typeof(GraphicRaycaster), typeof(SpeakerPortraitAnimator)).Prefabitize();
         portraitPrefab.layer = Layer.UI;
-        var imageObj = new GameObject(id, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+        var imageObj = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
         var rt = (RectTransform)imageObj.transform;
         rt.SetParent(portraitPrefab.transform, false);
         rt.localScale = Vector3.one * 100f;
@@ -35,5 +41,31 @@ public class AdvancedSpeakerData : SpeakerData
         image.sprite = portraitSprite;
         image.preserveAspect = true;
         image.raycastTarget = false;
+        return portraitPrefab;
+    }
+
+    public static List<PortraitOverride> MakePortraitOverrides(string name, List<AdvancedPortraitOverride> portraitOverrideConditions)
+    {
+        var portraitOverrides = new List<PortraitOverride>();
+        var num = 2;
+        foreach (var portraitOverride in portraitOverrideConditions)
+        {
+            portraitOverrides.Add(new PortraitOverride
+            {
+                portraitPrefab = MakePortraitPrefab($"{name} {num++}", portraitOverride.portraitSprite),
+                smallPortraitSprite = portraitOverride.smallPortraitSprite,
+                useManualState = portraitOverride.useManualState,
+                stateName = portraitOverride.stateName,
+                stateValue = portraitOverride.stateValue,
+                nodesVisited = portraitOverride.nodesVisited
+            });
+        }
+        return portraitOverrides;
+    }
+
+    public void MakePortraitPrefabs()
+    {
+        portraitPrefab = MakePortraitPrefab(id, portraitSprite);
+        base.portraitOverrideConditions = MakePortraitOverrides(id, portraitOverrideConditions);
     }
 }

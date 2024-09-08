@@ -6,10 +6,14 @@
 ===
 ﻿title: ExampleItems_Steve_Intro
 ---
-exampleitems.steve: Hi #line:ex43556 
+exampleitems.steve: Hi #gasp #line:ex43556 
 <<AddMapMarker exampleitems.mapmarker false>>
 ===
 ﻿title: ExampleItems_Steve_Chat
 ---
-exampleitems.steve: Test #line:ex78383 
+exampleitems.steve: Test #gasp #line:ex78383 
+	-> Old #line:ex653246
+		<<SetIntVariable exampleitems.steve.portrait-state 0>>
+	-> New #line:ex639673
+		<<SetIntVariable exampleitems.steve.portrait-state 1>>
 ===
