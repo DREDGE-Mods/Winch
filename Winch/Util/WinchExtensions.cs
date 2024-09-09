@@ -375,7 +375,14 @@ public static class WinchExtensions
         return harvestableItemData.zonesFoundIn == ZoneEnum.ALL || harvestableItemData.zonesFoundIn.HasFlag(playerZoneDetector.GetCurrentZone());
     }
 
+    public static List<SpatialItemData> GetSpatialItemDataByType(this ItemManager itemManager, ItemType itemType)
+    {
+        return (from od in itemManager.allItems.OfType<SpatialItemData>()
+                where od.itemType == itemType
+                select od).ToList();
+    }
     public static IEnumerable<T> FilterWithEntitlements<T>(this IEnumerable<T> items) where T : ItemData => items.Where(item => item.entitlementsRequired == null || item.entitlementsRequired.Count == 0 || (item.entitlementsRequired.Count == 1 && item.entitlementsRequired.FirstOrDefault() == Entitlement.NONE) || item.entitlementsRequired.All(GameManager.Instance.EntitlementManager.GetHasEntitlement));
+    public static List<SpatialItemData> GetEquipmentItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataByType(ItemType.EQUIPMENT).FilterWithEntitlements().ToList();
     public static List<FishItemData> GetFishItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.FISH).OfType<FishItemData>().FilterWithEntitlements().ToList();
     public static List<EngineItemData> GetEngineItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.ENGINE).OfType<EngineItemData>().FilterWithEntitlements().ToList();
     public static List<RodItemData> GetRodItems(this ItemManager itemManager) => itemManager.GetSpatialItemDataBySubtype(ItemSubtype.ROD).OfType<RodItemData>().FilterWithEntitlements().ToList();
