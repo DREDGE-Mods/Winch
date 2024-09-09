@@ -9,6 +9,8 @@ namespace ExampleItems;
 
 public static class Loader
 {
+    public static string BasePath => ModAssemblyLoader.GetCurrentMod().BasePath;
+
     public static ExampleSaveParticipant Participant = new ExampleSaveParticipant();
 
     public static ItemData MilkBucket => ItemUtil.GetModdedItemData("exampleitems.milk");

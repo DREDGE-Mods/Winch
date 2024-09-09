@@ -17,9 +17,8 @@ public class ModAssembly
     public Assembly? LoadedAssembly { get; private set; }
 
     public string AssetsPath => Path.Combine(BasePath, "Assets");
-    public string AssemblyLocation => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryPath(LoadedAssembly) : string.Empty;
-    public string AssemblyFolderName => LoadedAssembly != null ? ReflectionUtil.GetAssemblyDirectoryName(LoadedAssembly) : string.Empty;
     public string AssemblyName => LoadedAssembly != null ? LoadedAssembly.GetName().Name : string.Empty;
+    public string BasePathFolderName => Path.GetFileName(BasePath);
     public string GUID => Metadata.ContainsKey("ModGUID") ? Metadata["ModGUID"].ToString() : throw new MissingFieldException("No 'ModGUID' field found in Mod Metadata.");
     public string AssemblyRelativePath => Metadata.ContainsKey("ModAssembly") ? Metadata["ModAssembly"].ToString() : throw new MissingFieldException("Property 'ModAssembly' not found in mod_meta.json");
     public string Name => Metadata.ContainsKey("Name") ? Metadata["Name"].ToString().Spaced() : string.Empty;
@@ -32,9 +31,9 @@ public class ModAssembly
     public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
     public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
     public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
-    public ModConfig? Config => ModConfig.TryGetConfig(AssemblyFolderName, out var config) ? config : null;
-    public bool DefaultConfig => ModConfig.HasDefaultConfig(AssemblyFolderName);
-    public ModConfig GetConfig() => ModConfig.GetConfig(AssemblyFolderName);
+    public ModConfig? Config => ModConfig.TryGetConfig(BasePathFolderName, out var config) ? config : null;
+    public bool DefaultConfig => ModConfig.HasDefaultConfig(BasePathFolderName);
+    public ModConfig GetConfig() => ModConfig.GetConfig(BasePathFolderName);
 
     private ModAssembly(string basePath) {
         BasePath = basePath;
