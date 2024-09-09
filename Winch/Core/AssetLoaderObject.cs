@@ -58,7 +58,6 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
     private void OnGameStarted()
     {
         WinchCore.Log.Debug("[AssetLoaderObject] OnGameStarted()");
-        DialogueUtil.Inject();
     }
 
     private void OnGameEnded()
