@@ -4,10 +4,13 @@ using Winch.Util;
 
 namespace Winch.Core;
 
-internal class AssetLoaderObject : MonoBehaviour
+internal class AssetLoaderObject : USingleton<AssetLoaderObject>
 {
-    private void Awake()
+    protected override bool ShouldNotDestroyOnLoad => true;
+
+    protected override void Awake()
     {
+        base.Awake();
         WinchCore.Log.Debug("[AssetLoaderObject] Awake()");
         ApplicationEvents.Instance.OnTitleClosed += OnTitleClosed;
         ApplicationEvents.Instance.OnGameLoaded += OnGameLoaded;
