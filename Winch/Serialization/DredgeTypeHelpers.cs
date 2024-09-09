@@ -4,6 +4,7 @@ using System.Reflection.Emit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Winch.Data;
 using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
@@ -158,7 +159,7 @@ public static class DredgeTypeHelpers
         {
             throw new InvalidOperationException("Failed to create item. Dimensions require the upper-left cell to be filled.");
         }
-        
+
         return parsed;
     }
 
@@ -379,5 +380,124 @@ public static class DredgeTypeHelpers
             position = position != null ? ParseVector3(position) : Vector3.zero,
             radius = radius != null ? float.Parse(radius.ToString()) : 15f,
         };
+    }
+
+    public static AssetReference ParseAssetReference(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return AddressablesUtil.EmptyAssetReference;
+
+        if (Guid.TryParse(s, out _)) return new AssetReference(s);
+
+        if (AddressablesUtil.TryGetAssetGUID(s, out string guid))
+            return new AssetReference(guid);
+
+        if (AddressablesUtil.TryGetIdenticalLocationKey(s, out string identical))
+            return new AssetReference(identical);
+
+        return AddressablesUtil.EmptyAssetReference;
+    }
+
+    public static List<AssetReference> ParseAssetReferences(JArray o)
+    {
+        var parsed = new List<AssetReference>();
+        foreach (var s in ParseStringList(o))
+        {
+            parsed.Add(ParseAssetReference(s));
+        }
+        return parsed;
+    }
+
+    public static AssetReferenceT<TObject> ParseAssetReference<TObject>(string s) where TObject : UnityEngine.Object
+    {
+        if (string.IsNullOrWhiteSpace(s)) return new AssetReferenceT<TObject>(string.Empty);
+
+        if (Guid.TryParse(s, out _)) return new AssetReferenceT<TObject>(s);
+
+        if (AddressablesUtil.TryGetAssetGUID(s, out string guid))
+            return new AssetReferenceT<TObject>(guid);
+
+        if (AddressablesUtil.TryGetIdenticalLocationKey<TObject>(s, out string identical))
+            return new AssetReferenceT<TObject>(identical);
+
+        return new AssetReferenceT<TObject>(string.Empty);
+    }
+
+    public static List<AssetReference> ParseAssetReferences<TObject>(JArray o) where TObject : UnityEngine.Object
+    {
+        var parsed = new List<AssetReference>();
+        foreach (var s in ParseStringList(o))
+        {
+            parsed.Add(ParseAssetReference<TObject>(s));
+        }
+        return parsed;
+    }
+
+    public static AssetReferenceOverride ParseAssetReferenceOverride(JToken o)
+    {
+        if (o.IsNullOrEmpty()) return new AssetReferenceOverride();
+
+        var assetReference = o["assetReference"];
+        var nodesVisited = o["nodesVisited"];
+        var boolValues = o["boolValues"];
+        var tirWorldPhase = o["tirWorldPhase"];
+        return new AssetReferenceOverride
+        {
+            assetReference = assetReference != null ? ParseAssetReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
+            nodesVisited = nodesVisited != null ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+            boolValues = boolValues != null ? ParseStringList((JArray)boolValues) : new List<string>(),
+            tirWorldPhase = tirWorldPhase != null ? int.Parse(tirWorldPhase.ToString()) : 0,
+        };
+    }
+
+    public static List<AssetReferenceOverride> ParseAssetReferenceOverrides(JArray o)
+    {
+        var parsed = new List<AssetReferenceOverride>();
+        foreach (var refOverride in o)
+        {
+            parsed.Add(ParseAssetReferenceOverride(refOverride));
+        }
+        return parsed;
+    }
+
+    public static AssetReference ParseAudioReference(string o)
+    {
+        return ParseAssetReference<AudioClip>(o);
+    }
+
+    public static List<AssetReference> ParseAudioReferences(JArray o)
+    {
+        var parsed = new List<AssetReference>();
+        foreach (var s in ParseStringList(o))
+        {
+            parsed.Add(ParseAudioReference(s));
+        }
+        return parsed;
+    }
+
+    public static AssetReferenceOverride ParseAudioReferenceOverride(JToken o)
+    {
+        if (o.IsNullOrEmpty()) return new AssetReferenceOverride();
+
+        var assetReference = o["assetReference"];
+        var nodesVisited = o["nodesVisited"];
+        var boolValues = o["boolValues"];
+        var tirWorldPhase = o["tirWorldPhase"];
+        return new AssetReferenceOverride
+        {
+            assetReference = assetReference != null ? ParseAudioReference(assetReference.ToString()) : AddressablesUtil.EmptyAssetReference,
+            nodesVisited = nodesVisited != null ? ParseStringList((JArray)nodesVisited) : new List<string>(),
+            boolValues = boolValues != null ? ParseStringList((JArray)boolValues) : new List<string>(),
+            tirWorldPhase = tirWorldPhase != null ? int.Parse(tirWorldPhase.ToString()) : 0,
+        };
+    }
+
+    public static List<AssetReferenceOverride> ParseAudioReferenceOverrides(JArray o)
+    {
+        var parsed = new List<AssetReferenceOverride>();
+        foreach (var refOverride in o)
+        {
+            parsed.Add(ParseAudioReferenceOverride(refOverride));
+        }
+        return parsed;
     }
 }

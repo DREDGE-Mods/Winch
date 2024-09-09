@@ -1,12 +1,4 @@
-﻿using Sirenix.Utilities;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.Localization;
-using Winch.Components;
-using Winch.Core;
-using Winch.Data.Item;
+﻿using System.Collections.Generic;
 using Winch.Util;
 
 namespace Winch.Data.Abilities;
@@ -27,6 +19,15 @@ public class ModdedAbilityData : AbilityData
     public bool autoUnlock = true;
 
     /// <summary>
+    /// IDs of advanced ability data linked to this ability
+    /// </summary>
+    public new string linkedAdvancedVersion = string.Empty;
+
+    public new string primaryVibration = string.Empty;
+
+    public new string secondaryVibration = string.Empty;
+
+    /// <summary>
     /// IDs of item datas linked to this ability
     /// </summary>
     public new List<string> linkedItems = new List<string>();
@@ -35,6 +36,18 @@ public class ModdedAbilityData : AbilityData
 
     internal void Populate()
     {
+        if (!string.IsNullOrWhiteSpace(linkedAdvancedVersion))
+        {
+            base.linkedAdvancedVersion = AbilityUtil.GetAbilityData(linkedAdvancedVersion);
+        }
+        if (!string.IsNullOrWhiteSpace(primaryVibration))
+        {
+            base.primaryVibration = VibrationUtil.GetVibrationData(primaryVibration);
+        }
+        if (!string.IsNullOrWhiteSpace(secondaryVibration))
+        {
+            base.secondaryVibration = VibrationUtil.GetVibrationData(secondaryVibration);
+        }
         if (linkedItems != null)
         {
             List<ItemData> items = new List<ItemData>();

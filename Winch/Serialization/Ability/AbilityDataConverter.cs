@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using Winch.Data.Abilities;
 using Winch.Util;
@@ -33,7 +34,12 @@ public class AbilityDataConverter : DredgeTypeConverter<ModdedAbilityData>
         { "persistAbilityToggle", new(false, o=> bool.Parse(o.ToString())) },
         { "requiresAbilityFocus", new(false, o=> bool.Parse(o.ToString())) },
         { "sfxRepeatThreshold", new(0f, o => float.Parse(o.ToString())) },
-        { "showsCounter", new(false, o=> bool.Parse(o.ToString())) }
+        { "showsCounter", new(false, o=> bool.Parse(o.ToString())) },
+        { "linkedAdvancedVersion", new(string.Empty, null) },
+        { "primaryVibration", new(string.Empty, null) },
+        { "secondaryVibration", new(string.Empty, null) },
+        { "castSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "deactivateSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) }
     };
 
     public AbilityDataConverter()

@@ -158,6 +158,87 @@ public static class AddressablesUtil
         return locations;
     }
 
+    /// <inheritdoc cref="GetIdenticalLocationKey(string, Type)"/>
+    public static string GetIdenticalLocationKey<T>(string key) => GetIdenticalLocationKey(key, typeof(T));
+
+    /// <inheritdoc cref="GetIdenticalLocationKey(string, Type)"/>
+    public static string GetIdenticalLocationKey(string key) => GetIdenticalLocationKey(key, null);
+
+    /// <summary>
+    /// Searches the resource location map for a key with an identical location as the given <paramref name="key"/>
+    /// </summary>
+    /// <param name="key">The key to grab the location from and search for another with an identical location</param>
+    /// <returns>A different key with an identical location as the given <paramref name="key"/></returns>
+    public static string GetIdenticalLocationKey(string key, Type type)
+    {
+        if (string.IsNullOrWhiteSpace(key)) return null;
+
+        var keyLocations = GetLocations(key, type);
+        if (keyLocations == null || keyLocations.Count == 0) return null;
+
+        if (keyLocations.Count > 1)
+        {
+            WinchCore.Log.Error($"Key \"{key}\" has more than one location attached to it.");
+            return null;
+        }
+
+        var keyLocation = keyLocations.First();
+        var locations = AllLocations.Where(kvp => kvp.Value.Count > 0 && (type != null ? kvp.Value.Any(v => v.ResourceType.IsAssignableFrom(type)) : true) && kvp.Key.ToString() != key);
+        foreach (var kvp in locations)
+        {
+            var oKey = kvp.Key.ToString();
+            var location = type != null ? kvp.Value.First(v => v.ResourceType.IsAssignableFrom(type)) : kvp.Value.First();
+            if (location.ToString() == keyLocation.ToString())
+                return oKey;
+        }
+        return null;
+    }
+
+    /// <inheritdoc cref="TryGetIdenticalLocationKey(string, Type, out string)"/>
+    public static bool TryGetIdenticalLocationKey<T>(string key, out string identical) => TryGetIdenticalLocationKey(key, typeof(T), out identical);
+
+    /// <inheritdoc cref="TryGetIdenticalLocationKey(string, Type, out string)"/>
+    public static bool TryGetIdenticalLocationKey(string key, out string identical) => TryGetIdenticalLocationKey(key, null, out identical);
+
+    /// <summary>
+    /// Searches the resource location map for a key with an identical location as the given <paramref name="key"/>
+    /// </summary>
+    /// <param name="key">The key to grab the location from and search for another with an identical location</param>
+    /// <param name="identical">If found, this will be a different key with an identical location as the given <paramref name="key"/></param>
+    /// <returns><see langword="true"/> if found, <see langword="false"/> if not.</returns>
+    public static bool TryGetIdenticalLocationKey(string key, Type type, out string identical)
+    {
+        identical = string.Empty;
+
+        if (string.IsNullOrWhiteSpace(key)) return false;
+
+        var keyLocations = GetLocations(key, type);
+        if (keyLocations == null || keyLocations.Count == 0) return false;
+
+        if (keyLocations.Count > 1)
+        {
+            WinchCore.Log.Error($"Key \"{key}\" has more than one location attached to it.");
+            return false;
+        }
+
+        var keyLocation = keyLocations.First();
+        var locations = AllLocations.Where(kvp => kvp.Value.Count > 0 && (type != null ? kvp.Value.Any(v => v.ResourceType.IsAssignableFrom(type)) : true) && kvp.Key.ToString() != key);
+        foreach (var kvp in locations)
+        {
+            var oKey = kvp.Key.ToString();
+            var location = type != null ? kvp.Value.First(v => v.ResourceType.IsAssignableFrom(type)) : kvp.Value.First();
+            if (location.ToString() == keyLocation.ToString())
+            {
+                identical = oKey;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Searches for an asset path's GUID
+    /// </summary>
     public static string GetAssetGUID(string assetPath)
     {
         if (GuidByAssetPath.TryGetValue(assetPath, out string guid))
@@ -165,6 +246,15 @@ public static class AddressablesUtil
         return string.Empty;
     }
 
+    /// <summary>
+    /// Searches for an asset path's GUID
+    /// </summary>
+    public static bool TryGetAssetGUID(string assetPath, out string guid)
+        => GuidByAssetPath.TryGetValue(assetPath, out guid);
+
+    /// <summary>
+    /// Searches for an asset GUID's path
+    /// </summary>
     public static string GetAssetPath(string guid)
     {
         if (AssetPathByGuid.TryGetValue(guid, out string assetPath))
@@ -172,47 +262,73 @@ public static class AddressablesUtil
         return string.Empty;
     }
 
+    /// <summary>
+    /// Searches for an asset GUID's path
+    /// </summary>
+    public static bool TryGetAssetPath(string guid, out string assetPath)
+        => AssetPathByGuid.TryGetValue(guid, out assetPath);
+
     public static AssetReference EmptyAssetReference => new AssetReference(string.Empty);
 
-    private static string GetPossibleAssetGUID(string assetPath)
+    private static string GetPossibleAssetGUID(string s)
     {
-        var possibleGUID = GetAssetGUID(assetPath);
-        return !string.IsNullOrWhiteSpace(possibleGUID) && Guid.TryParse(possibleGUID, out _) ? possibleGUID : assetPath;
+        if (string.IsNullOrWhiteSpace(s)) return string.Empty;
+
+        if (Guid.TryParse(s, out _)) return s;
+
+        if (AddressablesUtil.TryGetAssetGUID(s, out string guid))
+            return guid;
+
+        if (AddressablesUtil.TryGetIdenticalLocationKey(s, out string identical))
+            return identical;
+
+        return s;
+    }
+
+    private static string GetPossibleAssetGUID<TObject>(string namePathOrGuid) where TObject : UnityEngine.Object
+    {
+        if (string.IsNullOrWhiteSpace(namePathOrGuid)) return string.Empty;
+
+        if (Guid.TryParse(namePathOrGuid, out _)) return namePathOrGuid;
+
+        if (AddressablesUtil.TryGetAssetGUID(namePathOrGuid, out string guid))
+            return guid;
+
+        if (AddressablesUtil.TryGetIdenticalLocationKey<TObject>(namePathOrGuid, out string identical))
+            return identical;
+
+        return namePathOrGuid;
     }
 
     /// <summary>
     /// Creates an asset reference from an asset path if it exists in the resource location map
     /// </summary>
-    public static AssetReference CreateAssetReference(string assetPath)
-        => new AssetReference(GetPossibleAssetGUID(assetPath));
+    public static AssetReference CreateAssetReference(string namePathOrGuid)
+        => new AssetReference(GetPossibleAssetGUID(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceT<TObject> CreateAssetReferenceT<TObject>(string assetPath) where TObject : UnityEngine.Object
-        => new AssetReferenceT<TObject>(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceT<TObject> CreateAssetReference<TObject>(string namePathOrGuid) where TObject : UnityEngine.Object
+        => new AssetReferenceT<TObject>(GetPossibleAssetGUID<TObject>(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceGameObject CreateAssetReferenceGameObject(string assetPath)
-        => new AssetReferenceGameObject(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceGameObject CreateAssetReferenceGameObject(string namePathOrGuid)
+        => new AssetReferenceGameObject(GetPossibleAssetGUID<GameObject>(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceTexture3D CreateAssetReferenceTexture3D(string assetPath)
-        => new AssetReferenceTexture3D(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceTexture3D CreateAssetReferenceTexture3D(string namePathOrGuid)
+        => new AssetReferenceTexture3D(GetPossibleAssetGUID<Texture3D>(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceTexture2D CreateAssetReferenceTexture2D(string assetPath)
-        => new AssetReferenceTexture2D(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceTexture2D CreateAssetReferenceTexture2D(string namePathOrGuid)
+        => new AssetReferenceTexture2D(GetPossibleAssetGUID<Texture2D>(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceTexture CreateAssetReferenceTexture(string assetPath)
-        => new AssetReferenceTexture(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceTexture CreateAssetReferenceTexture(string namePathOrGuid)
+        => new AssetReferenceTexture(GetPossibleAssetGUID<Texture>(namePathOrGuid));
 
     /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceSprite CreateAssetReferenceSprite(string assetPath)
-        => new AssetReferenceSprite(GetPossibleAssetGUID(assetPath));
-
-    /// <inheritdoc cref="CreateAssetReference(string)"/>
-    public static AssetReferenceAtlasedSprite CreateAssetReferenceAtlasedSprite(string assetPath)
-        => new AssetReferenceAtlasedSprite(GetPossibleAssetGUID(assetPath));
+    public static AssetReferenceSprite CreateAssetReferenceSprite(string namePathOrGuid)
+        => new AssetReferenceSprite(GetPossibleAssetGUID<Sprite>(namePathOrGuid));
 
     /// <summary>
     /// Generates a new GUID in Unity's format
@@ -263,5 +379,16 @@ public static class AddressablesUtil
         var guid = GenerateGUID();
         AddResourceAtLocation(guid, resource.name, location, resource);
         return guid;
+    }
+}
+
+public class AssetPathReference : AssetReference
+{
+    [SerializeField]
+    protected internal string m_AssetPath;
+
+    public AssetPathReference(string assetPath) : base(AddressablesUtil.GetAssetGUID(assetPath))
+    {
+        m_AssetPath = assetPath;
     }
 }

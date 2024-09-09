@@ -55,6 +55,7 @@ internal static class AssetLoader
         string bundlesFolderpath = Path.Combine(path, "Bundles");
         string localizationFolderPath = Path.Combine(path, "Localization");
         string textureFolderPath = Path.Combine(path, "Textures");
+        string audioFolderPath = Path.Combine(path, "Audio");
         string gridConfigFolderpath = Path.Combine(path, "GridConfigs");
         string itemFolderPath = Path.Combine(path, "Items");
         string poiFolderpath = Path.Combine(path, "POI");
@@ -70,6 +71,7 @@ internal static class AssetLoader
         if(Directory.Exists(bundlesFolderpath)) LoadAssetBundleFiles(bundlesFolderpath);
         if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
         if(Directory.Exists(textureFolderPath)) LoadTextureFiles(textureFolderPath);
+        if(Directory.Exists(audioFolderPath)) LoadAudioFiles(audioFolderPath);
         if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
         if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
         if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
@@ -286,6 +288,22 @@ internal static class AssetLoader
             catch(Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load texture file {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadAudioFiles(string audioFolderPath)
+    {
+        string[] audioFiles = Directory.GetFiles(audioFolderPath);
+        foreach (string file in audioFiles)
+        {
+            try
+            {
+                AudioClipUtil.LoadAudioFromFile(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load audio file {file}: {ex}");
             }
         }
     }
