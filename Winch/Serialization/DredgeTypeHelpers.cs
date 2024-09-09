@@ -9,6 +9,7 @@ using Winch.Data;
 using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
 using Winch.Data.POI.Dock;
+using Winch.Data.POI.Dock.Destinations;
 using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
 using Winch.Util;
@@ -321,9 +322,9 @@ public static class DredgeTypeHelpers
         };
     }
 
-    public static PrebuiltStorageDestination ParsePrebuiltStorageDestination(JToken o)
+    public static CustomStorageDestination ParsePrebuiltStorageDestination(JToken o)
     {
-        if (o.IsNullOrEmpty()) return new PrebuiltStorageDestination();
+        if (o.IsNullOrEmpty()) return new CustomStorageDestination();
 
         var enabled = o["enabled"];
         var position = o["position"];
@@ -332,7 +333,7 @@ public static class DredgeTypeHelpers
         var hasOverflow = o["hasOverflow"];
         var overflowHeight = o["overflowHeight"];
         var hasBoxes = o["hasBoxes"];
-        return new PrebuiltStorageDestination
+        return new CustomStorageDestination
         {
             enabled = enabled != null ? bool.Parse(enabled.ToString()) : true,
             position = position != null ? ParseVector3(position) : new Vector3(1.65f, 0.55f, -0.45f),

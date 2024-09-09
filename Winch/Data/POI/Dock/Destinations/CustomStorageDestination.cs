@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Winch.Data.POI.Dock;
+namespace Winch.Data.POI.Dock.Destinations;
 
-public class PrebuiltStorageDestination
+public class CustomStorageDestination
 {
     /// <summary>
     /// Whether to make this storage destination

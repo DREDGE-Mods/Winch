@@ -6,6 +6,7 @@ using Winch.Core;
 using Winch.Data;
 using Winch.Data.Dock;
 using Winch.Data.POI.Dock;
+using Winch.Data.POI.Dock.Destinations;
 using Winch.Serialization.Dock;
 using Winch.Components;
 using Cinemachine;
@@ -155,35 +156,35 @@ public static class DockUtil
             }
         } },
     };
-    internal static Dictionary<DockPrefab, PrebuiltStorageDestination> DockPrefabStorages = new Dictionary<DockPrefab, PrebuiltStorageDestination>
+    internal static Dictionary<DockPrefab, CustomStorageDestination> DockPrefabStorages = new Dictionary<DockPrefab, CustomStorageDestination>
     {
-        { DockPrefab.GENERIC, new PrebuiltStorageDestination {
+        { DockPrefab.GENERIC, new CustomStorageDestination {
             position = new Vector3(-1.65f,0.5f,-0.45f),
             vCam = new Vector3(4.5f,3.45f,6.75f),
             overflowHeight = 0.6f
         } },
-        { DockPrefab.LARGE, new PrebuiltStorageDestination {
+        { DockPrefab.LARGE, new CustomStorageDestination {
             position = new Vector3(-5.8f,0.68f,-7.1f),
             yRotation = 90,
             vCam = new Vector3(7.2f,3.72f,4.8f),
             overflowHeight = 0.6f
         } },
-        { DockPrefab.MAKESHIFT, new PrebuiltStorageDestination {
+        { DockPrefab.MAKESHIFT, new CustomStorageDestination {
             position = new Vector3(-1.925f,0.58f,-0.35f),
             vCam = new Vector3(0.75f,2,4.25f),
             overflowHeight = 0.7f
         } },
-        { DockPrefab.STONE, new PrebuiltStorageDestination {
+        { DockPrefab.STONE, new CustomStorageDestination {
             position = new Vector3(-2.25f,0.575f,-0.3f),
             vCam = new Vector3(1.51f,2.63f,3.48f),
             overflowHeight = 0.65f
         } },
-        { DockPrefab.PLAIN_STONE, new PrebuiltStorageDestination {
+        { DockPrefab.PLAIN_STONE, new CustomStorageDestination {
             position = new Vector3(-3,0.55f,-0.3f),
             vCam = new Vector3(4.5f,3.45f,6.75f),
             overflowHeight = 0.6f
         } },
-        { DockPrefab.ROCK, new PrebuiltStorageDestination {
+        { DockPrefab.ROCK, new CustomStorageDestination {
             position = new Vector3(-0.5625f,0.188f,-2.24f),
             vCam = new Vector3(0.56f,3.45f,6.75f),
             overflowHeight = 0.65f,
@@ -429,7 +430,7 @@ public static class DockUtil
         customDockPoi.boatActions = boatActions;
         dock.boatActionsDestination = CreateBoatActions(boatActions, vCam, boatContainer.transform);
 
-        var prebuiltStorage = customDockPoi.storage ?? (DockPrefabStorages.ContainsKey(customDockPoi.prefab) ? DockPrefabStorages[customDockPoi.prefab] : new PrebuiltStorageDestination());
+        var prebuiltStorage = customDockPoi.storage ?? (DockPrefabStorages.ContainsKey(customDockPoi.prefab) ? DockPrefabStorages[customDockPoi.prefab] : new CustomStorageDestination());
         customDockPoi.storage = prebuiltStorage;
         (StorageDestination storage, OverflowStorageDestination overflowStorage) = CreateStorage(prebuiltStorage, dockObject.transform);
         dock.storageDestination = storage;
@@ -503,7 +504,7 @@ public static class DockUtil
 
     private static readonly Vector3 storageOffset = new Vector3(-0.1f, 0.32f, 0.3f);
 
-    public static (StorageDestination, OverflowStorageDestination) CreateStorage(PrebuiltStorageDestination prebuilt, Transform parent)
+    public static (StorageDestination, OverflowStorageDestination) CreateStorage(CustomStorageDestination prebuilt, Transform parent)
     {
         var storageObject = new GameObject("Storage");
         storageObject.transform.SetParent(parent, false);

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Winch.Data.POI.Dock.Destinations;
 
 namespace Winch.Data.POI.Dock;
 
@@ -49,14 +50,37 @@ public class CustomDockPOI : CustomPOI
     /// <summary>
     /// The settings for the storage destination
     /// </summary>
-    public PrebuiltStorageDestination? storage;
+    public CustomStorageDestination? storage;
 
     /// <summary>
-    /// Extra destinations for docks
+    /// Character destinations for docks
     /// </summary>
-    // TODO: implement this
     [SerializeField]
-    public List<CustomBaseDestination> destinations = new List<CustomBaseDestination>();
+    public List<CustomCharacterDestination> characters = new List<CustomCharacterDestination>();
+
+    /// <summary>
+    /// Market destinations for docks
+    /// </summary>
+    [SerializeField]
+    public List<CustomMarketDestination> markets = new List<CustomMarketDestination>();
+
+    /// <summary>
+    /// Shipyard destinations for docks
+    /// </summary>
+    [SerializeField]
+    public List<CustomShipyardDestination> shipyards = new List<CustomShipyardDestination>();
+
+    /// <summary>
+    /// Upgrader (dry docks and fleet services) destinations for docks
+    /// </summary>
+    [SerializeField]
+    public List<CustomUpgradeDestination> upgraders = new List<CustomUpgradeDestination>();
+
+    /// <summary>
+    /// Constructable destinations for docks
+    /// </summary>
+    [SerializeField]
+    public List<CustomConstructableDestination> constructables = new List<CustomConstructableDestination>();
 
     /// <summary>
     /// Relative locations for dock slots
