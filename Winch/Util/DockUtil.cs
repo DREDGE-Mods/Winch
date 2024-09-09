@@ -622,7 +622,7 @@ public static class DockUtil
         undock.playerInventoryTabIndexesToShow = new List<int>();
         undock.highlightConditions = new List<HighlightCondition>();
         undock.speakerRootNodeOverride = string.Empty;
-        undock.visitSFX = new AssetReference();
+        undock.visitSFX = AddressablesUtil.EmptyAssetReference;
         var rest = boatActionsObject.AddComponent<RestDestination>();
         rest.id = "destination.rest";
         rest.alwaysShow = false;
@@ -633,7 +633,7 @@ public static class DockUtil
         rest.playerInventoryTabIndexesToShow = new List<int>();
         rest.highlightConditions = new List<HighlightCondition>();
         rest.speakerRootNodeOverride = string.Empty;
-        rest.visitSFX = new AssetReference();
+        rest.visitSFX = AddressablesUtil.EmptyAssetReference;
         var research = boatActionsObject.AddComponent<ResearchDestination>();
         research.id = "destination.research";
         research.alwaysShow = false;

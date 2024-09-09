@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using Winch.Data.Dock;
+using Winch.Util;
 
 namespace Winch.Serialization.Dock;
 
@@ -14,10 +15,10 @@ public class DockDataConverter : DredgeTypeConverter<DeferredDockData>
     {
         { "id", new(string.Empty, null) },
         { "dockNameKey", new(null, o=> CreateLocalizedString(o.ToString())) },
-        { "musicAssetReference", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "musicAssetReference", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
         { "musicAssetOverrides", new(new List<AssetReferenceOverride>(), o=>DredgeTypeHelpers.ParseAudioReferenceOverrides((JArray)o)) },
-        { "ambienceDayAssetReference", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
-        { "ambienceNightAssetReference", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "ambienceDayAssetReference", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "ambienceNightAssetReference", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
         { "ambienceDayAssetOverrides", new(new List<AssetReferenceOverride>(), o=>DredgeTypeHelpers.ParseAudioReferenceOverrides((JArray)o)) },
         { "ambienceNightAssetOverrides", new(new List<AssetReferenceOverride>(), o=>DredgeTypeHelpers.ParseAudioReferenceOverrides((JArray)o)) },
         { "yarnRootNode", new(string.Empty, null) },

@@ -22,7 +22,7 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
         { "alwaysShow", new( true, o=> bool.Parse(o.ToString())) },
         { "speakerData", new( string.Empty, null) },
         { "speakerRootNodeOverride", new( string.Empty, null) },
-        { "visitSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "visitSFX", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
         { "loopSFX", new(string.Empty, null) },
         { "isIndoors", new( false, o=> bool.Parse(o.ToString())) },
         { "icon", new(null, o => TextureUtil.GetSprite(o.ToString())) },

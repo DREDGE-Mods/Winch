@@ -38,8 +38,8 @@ public class AbilityDataConverter : DredgeTypeConverter<ModdedAbilityData>
         { "linkedAdvancedVersion", new(string.Empty, null) },
         { "primaryVibration", new(string.Empty, null) },
         { "secondaryVibration", new(string.Empty, null) },
-        { "castSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
-        { "deactivateSFX", new(new AssetReference(), o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) }
+        { "castSFX", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
+        { "deactivateSFX", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) }
     };
 
     public AbilityDataConverter()

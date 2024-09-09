@@ -27,7 +27,8 @@ public class AdvancedSpeakerDataConverter : DredgeTypeConverter<AdvancedSpeakerD
         { "portraitOverrideConditions", new(new List<AdvancedPortraitOverride>(), o=>DredgeTypeHelpers.ParsePortraitOverrides((JArray)o)) },
         { "highlightConditions", new(new List<HighlightCondition>(), o=>DredgeTypeHelpers.ParseHighlightConditions((JArray)o)) },
         { "paralinguistics", new(new Dictionary<ParalinguisticType, List<AssetReference>>(), o=>DredgeTypeHelpers.GetParalinguisticsFromJsonObject(o)) },
-        { "paralinguisticOverrideConditions", new(new List<ParalinguisticOverride>(), o=>DredgeTypeHelpers.ParseParalinguisticsOverrides((JArray)o)) }
+        { "paralinguisticOverrideConditions", new(new List<ParalinguisticOverride>(), o=>DredgeTypeHelpers.ParseParalinguisticsOverrides((JArray)o)) },
+        { "visitSFX", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
     };
 
     public AdvancedSpeakerDataConverter() : base()
