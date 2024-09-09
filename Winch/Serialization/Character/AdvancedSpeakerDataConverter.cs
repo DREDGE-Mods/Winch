@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
-using Winch.Core;
 using Winch.Data.Character;
 using Winch.Util;
 

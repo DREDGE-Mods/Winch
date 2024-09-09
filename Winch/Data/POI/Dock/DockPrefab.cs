@@ -1,13 +1,12 @@
-﻿namespace Winch.Data.POI.Dock
+﻿namespace Winch.Data.POI.Dock;
+
+public enum DockPrefab
 {
-    public enum DockPrefab
-    {
-        NONE,
-        GENERIC,
-        LARGE,
-        MAKESHIFT,
-        STONE,
-        PLAIN_STONE,
-        ROCK
-    }
+    NONE,
+    GENERIC,
+    LARGE,
+    MAKESHIFT,
+    STONE,
+    PLAIN_STONE,
+    ROCK
 }

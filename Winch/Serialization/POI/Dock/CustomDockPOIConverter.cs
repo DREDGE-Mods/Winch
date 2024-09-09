@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Winch.Data.POI.Dock;
-using static Winch.Data.POI.Dock.CustomDockPOI;
 
 namespace Winch.Serialization.POI.Dock;
 

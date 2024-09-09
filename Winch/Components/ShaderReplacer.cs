@@ -2,23 +2,22 @@
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+[UsedInUnityProject]
+public class ShaderReplacer : MonoBehaviour
 {
-    [UsedInUnityProject]
-    public class ShaderReplacer : MonoBehaviour
+    private void Awake() => StartCoroutine(KeepReplacingShaders());
+
+    private IEnumerator KeepReplacingShaders()
     {
-        private void Awake() => StartCoroutine(KeepReplacingShaders());
-
-        private IEnumerator KeepReplacingShaders()
+        bool result = false;
+        while (!result)
         {
-            bool result = false;
-            while (!result)
-            {
-                result = ReplaceShaders();
-                yield return new WaitForEndOfFrame();
-            }
+            result = ReplaceShaders();
+            yield return new WaitForEndOfFrame();
         }
-
-        public bool ReplaceShaders() => gameObject.ReplaceShaders();
     }
+
+    public bool ReplaceShaders() => gameObject.ReplaceShaders();
 }

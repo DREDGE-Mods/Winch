@@ -1,14 +1,12 @@
 ﻿using HarmonyLib;
-using Winch.Core;
 
-namespace Winch.Patches
+namespace Winch.Patches;
+
+[HarmonyPatch(typeof(EntitlementManager), nameof(EntitlementManager.AddTerminalCommands))]
+internal static class EntitlementCommandPatcher
 {
-    [HarmonyPatch(typeof(EntitlementManager), nameof(EntitlementManager.AddTerminalCommands))]
-    internal static class EntitlementCommandPatcher
-    {
-        [HarmonyPrefix]
-        public static bool Prefix() {
-            return false;
-        }
+    [HarmonyPrefix]
+    public static bool Prefix() {
+        return false;
     }
 }

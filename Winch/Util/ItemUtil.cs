@@ -1,16 +1,10 @@
-﻿using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
-using DG.Tweening;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Localization;
 using Winch.Core;
 using Winch.Serialization;
 using Winch.Serialization.Item;
-using System.Text.RegularExpressions;
 using UnityEngine.UI;
 using Winch.Data.Item;
 using UnityEngine.AddressableAssets;

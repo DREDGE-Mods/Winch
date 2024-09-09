@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Winch.Data;
 
-namespace Winch.Data
+public enum ColliderType
 {
-    public enum ColliderType
-    {
-        SPHERE,
-        BOX
-    }
+    SPHERE,
+    BOX
 }

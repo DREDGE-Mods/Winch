@@ -1,52 +1,42 @@
-﻿using Steamworks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using UnityEngine;
-using UnityEngine.Events;
+﻿using System.Collections.Generic;
 using UnityEngine.Localization;
-using UnityEngine.Localization.Components;
-using UnityEngine.Localization.Settings;
-using Winch.Core;
 using Winch.Util;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+public class OnOffDropdownInput : DropdownInput
 {
-    public class OnOffDropdownInput : DropdownInput
+    protected override void Awake()
     {
-        protected override void Awake()
+        optionStrings = new List<LocalizedString>
         {
-            optionStrings = new List<LocalizedString>
-            {
-                LocalizationUtil.CreateReference("Strings", "settings.dropdown.disabled"),
-                LocalizationUtil.CreateReference("Strings", "settings.dropdown.enabled")
-            };
-            options = new List<string>
-            {
-                "Off",
-                "On"
-            };
-            base.Awake();
-            initialized = true;
-        }
-
-        protected override void RetrieveSelectedIndex()
+            LocalizationUtil.CreateReference("Strings", "settings.dropdown.disabled"),
+            LocalizationUtil.CreateReference("Strings", "settings.dropdown.enabled")
+        };
+        options = new List<string>
         {
-            if (!initialized) return;
-            if (!retrieveSelectedIndex) return;
+            "Off",
+            "On"
+        };
+        base.Awake();
+        initialized = true;
+    }
 
-            SetSelectedValue(GetConfigValue<bool>());
-        }
+    protected override void RetrieveSelectedIndex()
+    {
+        if (!initialized) return;
+        if (!retrieveSelectedIndex) return;
 
-        protected internal void SetSelectedValue(bool value)
-        {
-            SetSelectedIndex(value ? 1 : 0);
-        }
+        SetSelectedValue(GetConfigValue<bool>());
+    }
 
-        protected override void ChangeValue(int index)
-        {
-            SetConfigValue(index == 1);
-        }
+    protected internal void SetSelectedValue(bool value)
+    {
+        SetSelectedIndex(value ? 1 : 0);
+    }
+
+    protected override void ChangeValue(int index)
+    {
+        SetConfigValue(index == 1);
     }
 }

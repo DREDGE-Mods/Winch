@@ -1,12 +1,11 @@
 ﻿using UnityEngine;
 
-namespace DisasterButton
+namespace DisasterButton;
+
+public class Loader
 {
-    public class Loader
+    public static void Initialize()
     {
-        public static void Initialize()
-        {
-            UnityEngine.Object.DontDestroyOnLoad(new GameObject("DisasterButton", typeof(DisasterButton)));
-        }
+        UnityEngine.Object.DontDestroyOnLoad(new GameObject("DisasterButton", typeof(DisasterButton)));
     }
 }

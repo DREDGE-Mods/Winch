@@ -1,6 +1,5 @@
 ﻿using Winch.Util;
 using static ActiveAbilityInfoPanel;
-using static TrawlNetAbility;
 
 [EnumHolder]
 public static class AbilityModeExtra
