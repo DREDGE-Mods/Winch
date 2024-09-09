@@ -91,7 +91,7 @@ public class CustomDockPOI : CustomPOI
     /// Relative locations for dock slots
     /// </summary>
     [SerializeField]
-    public List<DockSlot> dockSlots = null;
+    public List<DockSlot>? dockSlots = null;
 
     /// <summary>
     /// The dock's sanity modifier settings

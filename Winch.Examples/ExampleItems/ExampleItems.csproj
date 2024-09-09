@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
@@ -9,7 +9,7 @@
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<DebugType>portable</DebugType>
 		<OutputPath>./bin</OutputPath>
-		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<VersionPrefix>$(Version)</VersionPrefix>
 		<Deterministic>False</Deterministic>
 	</PropertyGroup>
 

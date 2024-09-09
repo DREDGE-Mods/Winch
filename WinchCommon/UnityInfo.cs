@@ -20,12 +20,12 @@ public static class UnityInfo
     /// <summary>
     /// Path to the player executable.
     /// </summary>
-    public static string PlayerPath { get; private set; }
+    public static string PlayerPath { get; private set; } = string.Empty;
 
     /// <summary>
     /// Path to the game data directory (directory that contains the game assets).
     /// </summary>
-    public static string GameDataPath { get; private set; }
+    public static string GameDataPath { get; private set; } = string.Empty;
 
     /// <summary>
     /// Version of the Unity player
@@ -97,7 +97,7 @@ public static class UnityInfo
                     version = UnityVersion.Parse(sb.ToString());
                     return true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Ignore
                 }

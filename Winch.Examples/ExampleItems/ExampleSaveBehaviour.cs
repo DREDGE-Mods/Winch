@@ -5,7 +5,7 @@ using Winch.Components;
 namespace ExampleItems;
 
 /// <summary>
-/// Basically the exact same as <see cref="ExampleExtendedSaveDataParticipant"/> but as a <see cref="MonoBehaviour"/> instead.
+/// Basically the exact same as <see cref="ExampleSaveParticipant"/> but as a <see cref="MonoBehaviour"/> instead.
 /// </summary>
 public class ExampleSaveBehaviour : ExtendedSaveBehaviour
 {

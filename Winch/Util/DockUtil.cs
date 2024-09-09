@@ -247,6 +247,7 @@ public static class DockUtil
     internal static Dictionary<string, ModdedDock> ModdedDockDict = new();
     internal static Dictionary<string, Dock> AllDockDict = new();
 
+#pragma warning disable CS8603 // Possible null reference return.
     public static ModdedDock GetModdedDock(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -299,10 +300,13 @@ public static class DockUtil
 
         return null;
     }
+#pragma warning restore CS8603 // Possible null reference return.
 
+#pragma warning disable CS8618
     public static Transform Docks;
     public static HighlightConditionExtraData ResearchTutorial;
     public static HighlightConditionExtraData ResearchBottomlessLines;
+#pragma warning restore CS8618
 
     public static void Populate()
     {

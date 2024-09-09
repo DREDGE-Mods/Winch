@@ -19,15 +19,18 @@ namespace Winch.Serialization;
 
 public static class DredgeTypeHelpers
 {
-    public static TEnum GetEnumValue<TEnum>(object value) where TEnum : Enum
+    public static TEnum GetEnumValue<TEnum>(object? value) where TEnum : struct, Enum
     {
+        if (value == null)
+            throw new InvalidOperationException($"Invalid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
+
         if (EnumUtil.TryParse<TEnum>(value.ToString(), true, out TEnum enumValue))
             return enumValue;
         else
             throw new InvalidOperationException($"{value} is not a valid value of type {typeof(TEnum)}!\nValid values are [{string.Join(", ", EnumUtil.GetNames<TEnum>())}]");
     }
 
-    public static List<TEnum> GetEnumValues<TEnum>(object value) where TEnum : Enum
+    public static List<TEnum> GetEnumValues<TEnum>(object value) where TEnum : struct, Enum
     {
         if (value is JArray values)
         {
@@ -42,7 +45,7 @@ public static class DredgeTypeHelpers
             return new List<TEnum> { GetEnumValue<TEnum>(value) };
     }
 
-    public static TEnum ParseFlagsEnum<TEnum>(object value) where TEnum : Enum
+    public static TEnum ParseFlagsEnum<TEnum>(object value) where TEnum : struct, Enum
     {
         if (value is JArray values)
         {
@@ -57,7 +60,7 @@ public static class DredgeTypeHelpers
             return GetEnumValue<TEnum>(value);
     }
 
-    public static TEnum GetFlagsFromEnumArray<TEnum>(TEnum[] array) where TEnum : Enum
+    public static TEnum GetFlagsFromEnumArray<TEnum>(TEnum[] array) where TEnum : struct, Enum
     {
         TEnum merged = default(TEnum);
         if (array != null)
@@ -198,7 +201,7 @@ public static class DredgeTypeHelpers
     public static CellGroupConfiguration ParseCellGroupConfiguration(JToken cellGroupConfiguration)
     {
         var config = new UnstructedCellGroupConfiguration();
-        var meta = cellGroupConfiguration.ToObject<Dictionary<string, object>>();
+        var meta = cellGroupConfiguration.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         GridConfigUtil.PopulateCellGroupConfigFromMetaWithConverter(config, meta);
         return config;
     }
@@ -230,9 +233,9 @@ public static class DredgeTypeHelpers
 
     internal static InventoryCondition ParseInventoryCondition(JToken condition)
     {
-        var meta = condition.ToObject<Dictionary<string, object>>();
-        var net = bool.Parse(meta?.GetValueOrDefault("net", "false").ToString());
-        var type = GetEnumValue<InventoryConditionType>(meta.GetValueOrDefault("type"));
+        var meta = condition.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        var net = bool.Parse(meta.GetValueOrDefault("net", "false").ToString());
+        var type = GetEnumValue<InventoryConditionType>(meta.GetValueOrDefault("type", string.Empty).ToString());
         switch (type)
         {
             case InventoryConditionType.AnyOfItem:
@@ -628,7 +631,7 @@ public static class DredgeTypeHelpers
     public static CustomCharacterDestination ParseCharacterDestination(JToken destination)
     {
         var config = new CustomCharacterDestination();
-        var meta = destination.ToObject<Dictionary<string, object>>();
+        var meta = destination.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
         return config;
     }
@@ -646,7 +649,7 @@ public static class DredgeTypeHelpers
     public static CustomConstructableDestination ParseConstructableDestination(JToken destination)
     {
         var config = new CustomConstructableDestination();
-        var meta = destination.ToObject<Dictionary<string, object>>();
+        var meta = destination.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
         return config;
     }
@@ -664,7 +667,7 @@ public static class DredgeTypeHelpers
     public static CustomMarketDestination ParseMarketDestination(JToken destination)
     {
         var config = new CustomMarketDestination();
-        var meta = destination.ToObject<Dictionary<string, object>>();
+        var meta = destination.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
         return config;
     }
@@ -682,7 +685,7 @@ public static class DredgeTypeHelpers
     public static CustomShipyardDestination ParseShipyardDestination(JToken destination)
     {
         var config = new CustomShipyardDestination();
-        var meta = destination.ToObject<Dictionary<string, object>>();
+        var meta = destination.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
         return config;
     }
@@ -700,7 +703,7 @@ public static class DredgeTypeHelpers
     public static CustomUpgradeDestination ParseUpgradeDestination(JToken destination)
     {
         var config = new CustomUpgradeDestination();
-        var meta = destination.ToObject<Dictionary<string, object>>();
+        var meta = destination.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
         DockUtil.PopulateDestinationFromMetaWithConverters(config, meta);
         return config;
     }

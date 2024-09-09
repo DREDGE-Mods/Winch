@@ -94,7 +94,9 @@ public class ModConfig : JSONConfig
         }
         catch
         {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             config = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             return false;
         }
     }
@@ -116,11 +118,13 @@ public class ModConfig : JSONConfig
         {
         }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         config = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         return false;
     }
 
-    internal static Dictionary<string, object> GetProperties(string modName)
+    internal static Dictionary<string, object?> GetProperties(string modName)
     {
         return GetConfig(modName).GetProperties();
     }
@@ -138,7 +142,7 @@ public class ModConfig : JSONConfig
         return GetConfig(modName).GetProperty(key, defaultValue);
     }
 
-    internal static Dictionary<string, object> GetDefaultProperties(string modName)
+    internal static Dictionary<string, object?> GetDefaultProperties(string modName)
     {
         return GetConfig(modName).GetDefaultProperties();
     }

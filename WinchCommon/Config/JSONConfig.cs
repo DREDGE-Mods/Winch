@@ -48,15 +48,15 @@ public class JSONConfig
 
     private static StringBuilder stringBuilder = new StringBuilder();
 
-    public event ConfigChangedEvent OnConfigChanged;
+    public event ConfigChangedEvent? OnConfigChanged;
 
-    public event ConfigValueChangedEvent OnConfigValueChanged;
+    public event ConfigValueChangedEvent? OnConfigValueChanged;
 
     private Dictionary<string, object?> _config;
     private readonly Dictionary<string, object?> _defaultConfig;
-    private readonly string _configPath;
-    private readonly string _defaultConfigString;
-    private readonly string _defaultConfigPath;
+    private readonly string _configPath = string.Empty;
+    private readonly string _defaultConfigString = string.Empty;
+    private readonly string _defaultConfigPath = string.Empty;
 
     public bool hasProperties => _config.Count > 0;
 
@@ -66,6 +66,7 @@ public class JSONConfig
         return ParseConfig(File.ReadAllText(path));
     }
 
+#pragma warning disable CS8603 // Possible null reference return.
     public static T ReadConfig<T>(string path)
     {
         if (!File.Exists(path)) return default(T);
@@ -81,6 +82,7 @@ public class JSONConfig
     {
         return JsonConvert.DeserializeObject<T>(value, jsonSerializerSettings);
     }
+#pragma warning restore CS8603 // Possible null reference return.
 
     public static string ToSerializedJson(object? value)
     {
@@ -210,7 +212,7 @@ public class JSONConfig
         OnConfigValueChanged?.Invoke(key);
     }
 
-    internal static object? GetProperty(Dictionary<string, object?> config, string key, Dictionary<string, object?> defaultConfig = null)
+    internal static object? GetProperty(Dictionary<string, object?> config, string key, Dictionary<string, object?>? defaultConfig = null)
     {
         if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
         if (!config.TryGetValue(key, out var setting))
@@ -228,7 +230,7 @@ public class JSONConfig
         return setting is JObject objectValue ? objectValue["value"] : setting;
     }
 
-    internal static T? GetProperty<T>(Dictionary<string, object?> config, string key, Dictionary<string, object?> defaultConfig = null)
+    internal static T? GetProperty<T>(Dictionary<string, object?> config, string key, Dictionary<string, object?>? defaultConfig = null)
     {
         var type = typeof(T);
         var value = GetProperty(config, key, defaultConfig);
@@ -248,7 +250,7 @@ public class JSONConfig
         }
     }
 
-    internal Dictionary<string, object> GetDefaultProperties()
+    internal Dictionary<string, object?> GetDefaultProperties()
     {
         return _defaultConfig;
     }
@@ -258,15 +260,17 @@ public class JSONConfig
         return GetProperty<T>(_defaultConfig, key);
     }
 
-    internal Dictionary<string, object> GetProperties()
+    internal Dictionary<string, object?> GetProperties()
     {
         return _config;
     }
 
+#pragma warning disable CS8603 // Possible null reference return.
     public T ToObject<T>()
     {
         return JsonConvert.DeserializeObject<T>(ToSerializedJson(GetProperties().ToDictionary(kvp => kvp.Key, kvp => GetProperty(_config, kvp.Key, _defaultConfig))));
     }
+#pragma warning restore CS8603 // Possible null reference return.
 
     public T? GetProperty<T>(string key)
     {
@@ -291,9 +295,11 @@ public class JSONConfig
 
     public override string ToString() => _configPath;
 
-    private static T ConvertToEnum<T>(object value)
+    private static T ConvertToEnum<T>(object? value)
     {
+#pragma warning disable CS8603
         if (value == null) return default(T);
+#pragma warning restore CS8603
 
         if (value is float || value is double)
         {

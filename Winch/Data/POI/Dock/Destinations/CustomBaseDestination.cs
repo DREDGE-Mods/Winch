@@ -55,7 +55,9 @@ public abstract class CustomBaseDestination
     public bool isIndoors = false;
 
     [SerializeField]
+#pragma warning disable CS8618
     public Sprite icon;
+#pragma warning restore CS8618
 
     [SerializeField]
     public List<int> playerInventoryTabIndexesToShow = new List<int>();

@@ -276,7 +276,7 @@ public readonly partial struct UnityVersion : IEquatable<UnityVersion>, ICompara
     /// <summary>
     /// Serialize the version as a string
     /// </summary>
-    /// <param name="flags">The flags to control how the version is formatted</param>
+    /// <param name="excludeType">Control how the version is formatted</param>
     /// <returns>A new string containing the formatted version.</returns>
     public string ToString(bool excludeType)
     {
@@ -319,7 +319,7 @@ public readonly partial struct UnityVersion : IEquatable<UnityVersion>, ICompara
 
     private static readonly Regex normalRegex = new Regex(@"([0-9]+)\.([0-9]+)\.([0-9]+)\.?([abcfpx])([0-9]+)((?:.|[\r\n])+)?", RegexOptions.Compiled);
 
-    public static bool TryMatch(Regex regex, string input, out Match? match)
+    public static bool TryMatch(Regex regex, string input, out Match match)
     {
         match = regex.Match(input);
         if (match.Success)
@@ -328,7 +328,9 @@ public readonly partial struct UnityVersion : IEquatable<UnityVersion>, ICompara
         }
         else
         {
+#pragma warning disable CS8625
             match = null;
+#pragma warning restore CS8625
             return false;
         }
     }
