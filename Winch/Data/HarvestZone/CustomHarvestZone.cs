@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using FluffyUnderware.Curvy.ThirdParty.LibTessDotNet;
 using Newtonsoft.Json;
 using Sirenix.OdinInspector;
 using UnityEngine;

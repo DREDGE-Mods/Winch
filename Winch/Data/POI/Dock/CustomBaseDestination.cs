@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Winch.Data.POI.Dock;
 
-namespace Winch.Data.POI.Dock
+public class CustomBaseDestination
 {
-    public class CustomBaseDestination
-    {
-    }
 }

@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Winch.Util;
+﻿using Winch.Util;
 
-namespace Winch.Data.POI
+namespace Winch.Data.POI;
+
+public class MaterialBaitPOIDataModel : BaitPOIDataModel
 {
-    public class MaterialBaitPOIDataModel : BaitPOIDataModel
+    public override ItemSubtype GetHarvestableItemSubType()
     {
-        public override ItemSubtype GetHarvestableItemSubType()
-        {
-            return new ItemSubtype[2] { ItemSubtype.MATERIAL, ItemSubtype.TRINKET }.CombineFlagsValues();
-        }
+        return new ItemSubtype[2] { ItemSubtype.MATERIAL, ItemSubtype.TRINKET }.CombineFlagsValues();
     }
 }

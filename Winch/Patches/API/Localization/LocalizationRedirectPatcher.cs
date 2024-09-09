@@ -4,30 +4,29 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using Winch.Util;
 
-namespace Winch.Patches.API.Localization
+namespace Winch.Patches.API.Localization;
+
+[HarmonyPatch(typeof(LocalizedStringDatabase))]
+[HarmonyPatch("ProcessUntranslatedText")]
+internal static class LocalizationRedirectPatcher
 {
-    [HarmonyPatch(typeof(LocalizedStringDatabase))]
-    [HarmonyPatch("ProcessUntranslatedText")]
-    internal static class LocalizationRedirectPatcher
+    public static bool Prefix(ref string __result, string key, long keyId, TableReference tableReference, StringTable table, Locale locale)
     {
-        public static bool Prefix(ref string __result, string key, long keyId, TableReference tableReference, StringTable table, Locale locale)
+        string localeCode = locale.Identifier.Code;
+        string? localized = LocalizationUtil.GetLocalizedString(localeCode, key);
+        if (localized == null)
         {
-            string localeCode = locale.Identifier.Code;
-            string? localized = LocalizationUtil.GetLocalizedString(localeCode, key);
-            if (localized == null)
+            if (localeCode != "en")
             {
-                if (localeCode != "en")
-                {
-                    localized = LocalizationUtil.GetLocalizedString("en", key); // Default to english
-                    if (localized == null)
-                        return true;
-                }
-                else
+                localized = LocalizationUtil.GetLocalizedString("en", key); // Default to english
+                if (localized == null)
                     return true;
             }
-
-            __result = localized;
-            return false;
+            else
+                return true;
         }
+
+        __result = localized;
+        return false;
     }
 }

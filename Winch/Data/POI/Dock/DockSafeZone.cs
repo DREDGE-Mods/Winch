@@ -1,17 +1,16 @@
 ﻿using UnityEngine;
 
-namespace Winch.Data.POI.Dock
-{
-    public class DockSafeZone
-    {
-        /// <summary>
-        /// Relative position
-        /// </summary>
-        public Vector3 position = Vector3.zero;
+namespace Winch.Data.POI.Dock;
 
-        /// <summary>
-        /// Radius of the safe zone
-        /// </summary>
-        public float radius = 15f;
-    }
+public class DockSafeZone
+{
+    /// <summary>
+    /// Relative position
+    /// </summary>
+    public Vector3 position = Vector3.zero;
+
+    /// <summary>
+    /// Radius of the safe zone
+    /// </summary>
+    public float radius = 15f;
 }
