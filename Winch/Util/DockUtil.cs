@@ -322,7 +322,7 @@ public static class DockUtil
             WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
         }
 
-        Docks = AllDockDict.Values.FirstOrDefault().transform.parent;
+        Docks = AllDockDict["dock.outcast-isle"].transform.parent;
         var hceds = Resources.FindObjectsOfTypeAll<HighlightConditionExtraData>();
         ResearchTutorial = hceds.FirstOrDefault(hced => hced.name == "ResearchTutorial");
         ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
@@ -333,7 +333,7 @@ public static class DockUtil
         var id = GameManager.Instance.SaveData.dockId;
         if (!AllDockDict.ContainsKey(id) && !ModdedDockDict.Values.Any(dock => dock.Data.Id == id))
         {
-            GameManager.Instance.SaveData.dockId = AllDockDataDict.Keys.FirstOrDefault();
+            GameManager.Instance.SaveData.dockId = "dock.outcast-isle";
             GameManager.Instance.SaveData.dockSlotIndex = 0;
         }
     }
