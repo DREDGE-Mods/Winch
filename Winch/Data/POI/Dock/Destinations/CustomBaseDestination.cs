@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using UnityEngine;
@@ -6,19 +7,37 @@ using Winch.Util;
 
 namespace Winch.Data.POI.Dock.Destinations;
 
+[Serializable]
 public abstract class CustomBaseDestination
 {
+    /// <summary>
+    /// Destination identifier.
+    /// </summary>
     [SerializeField]
     public string id = string.Empty;
+
+    /// <summary>
+    /// Relative position of this destination
+    /// </summary>
+    public Vector3 position = new Vector3(-1.825f, 3, 0.125f);
 
     [SerializeField]
     public LocalizedString titleKey = LocalizationUtil.Empty;
 
     [SerializeField]
-    public bool alwaysShow = false;
+    public bool alwaysShow = true;
 
+    /// <summary>
+    /// Relative position of the camera from the destination.
+    /// </summary>
     [SerializeField]
-    public Vector3 vCam = new Vector3(8.125f, 5, 6.675f);
+    public Vector3 vCam = new Vector3(13, 2.5f, 9);
+
+    /// <summary>
+    /// The relative position for the camera look at target
+    /// </summary>
+    [SerializeField]
+    public Vector3 lookAtTarget = new Vector3(-0.7f, -2f, -0.25f);
 
     [SerializeField]
     public string speakerData = string.Empty;
@@ -30,7 +49,7 @@ public abstract class CustomBaseDestination
     public AssetReference visitSFX = AddressablesUtil.EmptyAssetReference;
 
     [SerializeField]
-    public AudioClip loopSFX;
+    public string loopSFX = string.Empty;
 
     [SerializeField]
     public bool isIndoors = false;

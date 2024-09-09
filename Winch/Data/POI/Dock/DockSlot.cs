@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Winch.Data.POI.Dock;
 
+[Serializable]
 public class DockSlot
 {
     /// <summary>

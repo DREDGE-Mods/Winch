@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Winch.Data.POI.Dock.Destinations;
 
+[Serializable]
 public class CustomConstructableDestination : CustomBaseDestination
 {
     [SerializeField]

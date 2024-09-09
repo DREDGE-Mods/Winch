@@ -1,5 +1,8 @@
-﻿namespace Winch.Data.POI.Dock;
+﻿using System;
 
+namespace Winch.Data.POI.Dock;
+
+[Serializable]
 public enum DockPrefab
 {
     NONE,

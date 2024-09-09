@@ -1,5 +1,8 @@
-﻿namespace Winch.Data.POI.Dock.Destinations;
+﻿using System;
 
+namespace Winch.Data.POI.Dock.Destinations;
+
+[Serializable]
 public class CustomUpgradeDestination : CustomBaseDestination
 {
     //[SerializeField]

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Winch.Data.POI.Dock.Destinations;
 
+[Serializable]
 public class CustomMarketDestination : CustomBaseDestination
 {
     [SerializeField]
