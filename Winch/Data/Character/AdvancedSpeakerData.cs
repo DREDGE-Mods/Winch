@@ -11,24 +11,33 @@ public class AdvancedSpeakerData : SpeakerData
     /// <summary>
     /// The id of this speaker data
     /// </summary>
+    [SerializeField]
     public string id = string.Empty;
 
     /// <summary>
     /// The character you'd like to copy the paralinguistics from.
     /// </summary>
+    [SerializeField]
     public ParalinguisticsNameKey paralinguisticsNameKey = ParalinguisticsNameKey.NONE;
 
     /// <summary>
     /// The image of the character. This will show up when you are talking to them.
     /// </summary>
 #pragma warning disable CS8618
+    [SerializeField]
     public Sprite portraitSprite;
 #pragma warning restore CS8618
 
     /// <summary>
     /// Image overrides
     /// </summary>
+    [SerializeField]
     public new List<AdvancedPortraitOverride> portraitOverrideConditions = new List<AdvancedPortraitOverride>();
+
+    [SerializeField]
+    public new string loopSFX = string.Empty;
+
+    public AudioClip LoopSFX => base.loopSFX;
 
     public static GameObject MakePortraitPrefab(string name, Sprite portraitSprite)
     {
@@ -69,5 +78,11 @@ public class AdvancedSpeakerData : SpeakerData
     {
         portraitPrefab = MakePortraitPrefab(id, portraitSprite);
         base.portraitOverrideConditions = MakePortraitOverrides(id, portraitOverrideConditions);
+    }
+
+    public void Populate()
+    {
+        MakePortraitPrefabs();
+        base.loopSFX = AudioClipUtil.GetAudioClip(loopSFX); // TODO: maybe move to this to when game is loaded
     }
 }
