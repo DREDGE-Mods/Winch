@@ -11,6 +11,27 @@ namespace Winch.Util;
 
 public static class AssetBundleUtil
 {
+    private static Texture2D bump;
+    public static Texture2D bumpTexture
+    {
+        get
+        {
+            if (bump == null)
+            {
+                bump = Texture2D.normalTexture.Instantiate().DontDestroyOnLoad();
+                bump.name = "UnityBump";
+                Color fillColor = new Color(0.5f, 0.5f, 1f, 0.5f);
+                Color[] fillColorArray = bump.GetPixels();
+                for (int i = 0; i < fillColorArray.Length; ++i)
+                    fillColorArray[i] = fillColor;
+                bump.SetPixels(fillColorArray);
+                bump.Apply();
+                bump.hideFlags = Texture2D.normalTexture.hideFlags;
+            }
+            return bump;
+        }
+    }
+
     public static Dictionary<string, AssetBundle> AssetBundles = new();
 
     private static Dictionary<int, Shader> blacklistedShaders = new Dictionary<int, Shader>();

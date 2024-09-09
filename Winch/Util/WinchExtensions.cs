@@ -18,6 +18,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
+using UnityEngine.Rendering;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 using Winch.Components;
@@ -2089,6 +2090,731 @@ public static class WinchExtensions
 
     public static Vector3 Abs(this Vector3 value) => new Vector3(Mathf.Abs(value.x), Mathf.Abs(value.y), Mathf.Abs(value.z));
 
+    #region Shader
+    public static Texture2D GetPropertyTextureDefaultValue(this Shader sha, int index)
+    {
+        switch (sha.GetPropertyTextureDefaultName(index))
+        {
+            case "black":
+                return Texture2D.blackTexture;
+            case "white":
+                return Texture2D.whiteTexture;
+            case "red":
+                return Texture2D.redTexture;
+            case "bump":
+                return AssetBundleUtil.bumpTexture;
+            default:
+                return Texture2D.grayTexture;
+        }
+    }
+
+    public static MaterialProperty[] GetShaderProperties(this Shader sha) => new Material(sha).GetMaterialProperties();
+
+    public static MaterialProperty[] GetMaterialProperties(this Material mat)
+    {
+        Shader sha = mat.shader;
+        int n = sha.GetPropertyCount();
+        List<MaterialProperty> properties = new List<MaterialProperty>();
+        for (int i = 0; i < n; i++)
+        {
+            var type = sha.GetPropertyType(i);
+            switch (type)
+            {
+                case ShaderPropertyType.Color:
+                    properties.Add(new ColorProperty(i, mat));
+                    break;
+                case ShaderPropertyType.Vector:
+                    properties.Add(new VectorProperty(i, mat));
+                    break;
+                case ShaderPropertyType.Float:
+                    properties.Add(new FloatProperty(i, mat));
+                    break;
+                case ShaderPropertyType.Range:
+                    properties.Add(new RangeProperty(i, mat));
+                    break;
+                case ShaderPropertyType.Texture:
+                    properties.Add(new TextureProperty(i, mat));
+                    break;
+                case ShaderPropertyType.Int:
+                    properties.Add(new IntegerProperty(i, mat));
+                    break;
+                default:
+                    properties.Add(new MaterialProperty(i, mat));
+                    break;
+            }
+        }
+        return properties.ToArray();
+    }
+
+    public static MaterialProperty GetMaterialPropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+                return prop;
+        }
+        return null;
+    }
+
+    public static MaterialProperty GetMaterialProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+                return prop;
+        }
+        return null;
+    }
+
+    public static MaterialProperty GetMaterialProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop;
+        }
+        return null;
+    }
+
+    public static MaterialProperty GetMaterialPropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+                return prop;
+        }
+        return null;
+    }
+
+    public static ColorProperty[] GetColorProperties(this Shader sha) => new Material(sha).GetColorProperties();
+
+    public static ColorProperty[] GetColorProperties(this Material mat)
+    {
+        List<ColorProperty> colors = new List<ColorProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is ColorProperty colorProperty)
+                colors.Add(colorProperty);
+        }
+        return colors.ToArray();
+    }
+
+    public static ColorProperty GetColorPropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is ColorProperty colorProperty)
+                    return colorProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a color property!");
+            }
+        }
+        return null;
+    }
+
+    public static ColorProperty GetColorProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is ColorProperty colorProperty)
+                    return colorProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a color!");
+            }
+        }
+        return null;
+    }
+
+    public static ColorProperty GetColorProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is ColorProperty colorProperty)
+                    return colorProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a color property!");
+            }
+        }
+        return null;
+    }
+
+    public static ColorProperty GetColorPropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is ColorProperty colorProperty)
+                    return colorProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a color property!");
+            }
+        }
+        return null;
+    }
+
+    public static TextureProperty[] GetTextureProperties(this Shader sha) => new Material(sha).GetTextureProperties();
+
+    public static TextureProperty[] GetTextureProperties(this Material mat)
+    {
+        List<TextureProperty> textures = new List<TextureProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is TextureProperty textureProperty)
+                textures.Add(textureProperty);
+        }
+        return textures.ToArray();
+    }
+
+    public static TextureProperty GetTexturePropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is TextureProperty textureProperty)
+                    return textureProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a texture property!");
+            }
+        }
+        return null;
+    }
+
+    public static TextureProperty GetTextureProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is TextureProperty textureProperty)
+                    return textureProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a texture!");
+            }
+        }
+        return null;
+    }
+
+    public static TextureProperty GetTextureProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is TextureProperty textureProperty)
+                    return textureProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a texture property!");
+            }
+        }
+        return null;
+    }
+
+    public static TextureProperty GetTexturePropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is TextureProperty textureProperty)
+                    return textureProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a texture property!");
+            }
+        }
+        return null;
+    }
+
+    public static FloatProperty[] GetFloatProperties(this Shader sha) => new Material(sha).GetFloatProperties();
+
+    public static FloatProperty[] GetFloatProperties(this Material mat)
+    {
+        List<FloatProperty> floats = new List<FloatProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is FloatProperty floatProperty)
+                floats.Add(floatProperty);
+        }
+        return floats.ToArray();
+    }
+
+    public static FloatProperty GetFloatPropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is FloatProperty floatProperty)
+                    return floatProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a float property!");
+            }
+        }
+        return null;
+    }
+
+    public static FloatProperty GetFloatProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is FloatProperty floatProperty)
+                    return floatProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a float!");
+            }
+        }
+        return null;
+    }
+
+    public static FloatProperty GetFloatProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is FloatProperty floatProperty)
+                    return floatProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a float property!");
+            }
+        }
+        return null;
+    }
+
+    public static FloatProperty GetFloatPropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is FloatProperty floatProperty)
+                    return floatProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a float property!");
+            }
+        }
+        return null;
+    }
+
+    public static RangeProperty[] GetRangeProperties(this Shader sha) => new Material(sha).GetRangeProperties();
+
+    public static RangeProperty[] GetRangeProperties(this Material mat)
+    {
+        List<RangeProperty> ranges = new List<RangeProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is RangeProperty rangeProperty)
+                ranges.Add(rangeProperty);
+        }
+        return ranges.ToArray();
+    }
+
+    public static RangeProperty GetRangePropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is RangeProperty rangeProperty)
+                    return rangeProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a range property!");
+            }
+        }
+        return null;
+    }
+
+    public static RangeProperty GetRangeProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is RangeProperty rangeProperty)
+                    return rangeProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a range!");
+            }
+        }
+        return null;
+    }
+
+    public static RangeProperty GetRangeProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is RangeProperty rangeProperty)
+                    return rangeProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a range property!");
+            }
+        }
+        return null;
+    }
+
+    public static RangeProperty GetRangePropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is RangeProperty rangeProperty)
+                    return rangeProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a range property!");
+            }
+        }
+        return null;
+    }
+
+    public static VectorProperty[] GetVectorProperties(this Shader sha) => new Material(sha).GetVectorProperties();
+
+    public static VectorProperty[] GetVectorProperties(this Material mat)
+    {
+        List<VectorProperty> vectors = new List<VectorProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is VectorProperty vectorProperty)
+                vectors.Add(vectorProperty);
+        }
+        return vectors.ToArray();
+    }
+
+    public static VectorProperty GetVectorPropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is VectorProperty vectorProperty)
+                    return vectorProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a vector property!");
+            }
+        }
+        return null;
+    }
+
+    public static VectorProperty GetVectorProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is VectorProperty vectorProperty)
+                    return vectorProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a vector!");
+            }
+        }
+        return null;
+    }
+
+    public static VectorProperty GetVectorProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is VectorProperty vectorProperty)
+                    return vectorProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a vector property!");
+            }
+        }
+        return null;
+    }
+
+    public static VectorProperty GetVectorPropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is VectorProperty vectorProperty)
+                    return vectorProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a vector property!");
+            }
+        }
+        return null;
+    }
+
+    public static IntegerProperty[] GetIntegerProperties(this Shader sha) => new Material(sha).GetIntegerProperties();
+
+    public static IntegerProperty[] GetIntegerProperties(this Material mat)
+    {
+        List<IntegerProperty> integers = new List<IntegerProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is IntegerProperty integerProperty)
+                integers.Add(integerProperty);
+        }
+        return integers.ToArray();
+    }
+
+    public static IntegerProperty GetIntegerPropertyFromNameId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+            {
+                if (prop is IntegerProperty integerProperty)
+                    return integerProperty;
+                else
+                    throw new System.Exception($"id {nameID} is not a integer property!");
+            }
+        }
+        return null;
+    }
+
+    public static IntegerProperty GetIntegerProperty(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+            {
+                if (prop is IntegerProperty integerProperty)
+                    return integerProperty;
+                else
+                    throw new System.Exception($"property at index #{index} is not a integer!");
+            }
+        }
+        return null;
+    }
+
+    public static IntegerProperty GetIntegerProperty(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is IntegerProperty integerProperty)
+                    return integerProperty;
+                else
+                    throw new System.Exception($"\"{name}\" is not a integer property!");
+            }
+        }
+        return null;
+    }
+
+    public static IntegerProperty GetIntegerPropertyFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+            {
+                if (prop is IntegerProperty integerProperty)
+                    return integerProperty;
+                else
+                    throw new System.Exception($"\"{description}\" is not a integer property!");
+            }
+        }
+        return null;
+    }
+
+    public static MaterialProperty[] GetUnknownProperties(this Shader sha) => new Material(sha).GetUnknownProperties();
+
+    public static MaterialProperty[] GetUnknownProperties(this Material mat)
+    {
+        List<MaterialProperty> unknown = new List<MaterialProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (!((prop is ColorProperty) || (prop is TextureProperty) || (prop is FloatProperty) || (prop is RangeProperty) || (prop is VectorProperty) || (prop is IntegerProperty)))
+                unknown.Add(prop);
+        }
+        return unknown.ToArray();
+    }
+
+    public static string GetPropertyName(this Material mat, int index)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Index == index)
+                return prop.Name;
+        }
+        return string.Empty;
+    }
+
+    public static string GetPropertyNameFromId(this Material mat, int nameID)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.NameID == nameID)
+                return prop.Name;
+        }
+        return string.Empty;
+    }
+
+    public static string GetPropertyNameFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+                return prop.Name;
+        }
+        return string.Empty;
+    }
+
+    public static int GetPropertyNameId(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.NameID;
+        }
+        return -1;
+    }
+
+    public static int GetPropertyNameIdFromDescription(this Material mat, string description)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Description == description)
+                return prop.NameID;
+        }
+        return -1;
+    }
+
+    public static string GetPropertyDescription(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.Description;
+        }
+        return string.Empty;
+    }
+
+    public static string[] GetPropertyAttributes(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.Attributes;
+        }
+        return null;
+    }
+
+    public static ShaderPropertyFlags GetPropertyFlags(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.Flags;
+        }
+        return ShaderPropertyFlags.None;
+    }
+
+    public static object GetPropertyValue(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.Value;
+        }
+        return null;
+    }
+
+    public static object GetPropertyDefaultValue(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is ColorProperty colorProperty)
+                    return colorProperty.DefaultValue;
+                else if (prop is TextureProperty textureProperty)
+                    return textureProperty.DefaultValue;
+                else if (prop is FloatProperty floatProperty)
+                    return floatProperty.DefaultValue;
+                else if (prop is RangeProperty rangeProperty)
+                    return rangeProperty.DefaultValue;
+                else if (prop is VectorProperty vectorProperty)
+                    return vectorProperty.DefaultValue;
+                else if (prop is IntegerProperty integerProperty)
+                    return integerProperty.DefaultValue;
+            }
+        }
+        return null;
+    }
+
+    public static Vector2 GetPropertyRangeLimits(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is RangeProperty rangeProperty)
+                    return rangeProperty.RangeLimits;
+                else
+                    throw new System.Exception($"\"{name}\" is not a range property!");
+            }
+        }
+        return Vector2.zero;
+    }
+
+    public static TextureDimension GetPropertyTextureDimension(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+            {
+                if (prop is TextureProperty textureProperty)
+                    return textureProperty.Dimension;
+                else
+                    throw new System.Exception($"\"{name}\" is not a texture property!");
+            }
+        }
+        return TextureDimension.Unknown;
+    }
+
+    public static ShaderPropertyType GetPropertyType(this Material mat, string name)
+    {
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop.Name == name)
+                return prop.Type;
+        }
+        return (ShaderPropertyType)(-1);
+    }
+
+    public static Color GetColorFromDescription(this Material mat, string description) => mat.GetColorPropertyFromDescription(description).Value;
+
+    public static Vector4 GetVectorFromDescription(this Material mat, string description) => mat.GetVectorPropertyFromDescription(description).Value;
+
+    public static float GetFloatFromDescription(this Material mat, string description) => mat.GetFloatPropertyFromDescription(description).Value;
+
+    public static Texture GetTextureFromDescription(this Material mat, string description) => mat.GetTexturePropertyFromDescription(description).Value;
+
+    public static int GetIntFromDescription(this Material mat, string description) => mat.GetFloatPropertyFromDescription(description).IntValue;
+
+    public static int GetIntegerFromDescription(this Material mat, string description) => mat.GetIntegerPropertyFromDescription(description).Value;
+
+    public static void SetColorFromDescription(this Material mat, string description, Color value) => mat.GetColorPropertyFromDescription(description).Value = value;
+
+    public static void SetVectorFromDescription(this Material mat, string description, Vector4 value) => mat.GetVectorPropertyFromDescription(description).Value = value;
+
+    public static void SetFloatFromDescription(this Material mat, string description, float value) => mat.GetFloatPropertyFromDescription(description).Value = value;
+
+    public static void SetTextureFromDescription(this Material mat, string description, Texture value) => mat.GetTexturePropertyFromDescription(description).Value = value;
+
+    public static int SetIntFromDescription(this Material mat, string description, int value) => mat.GetFloatPropertyFromDescription(description).IntValue = value;
+
+    public static int SetIntegerFromDescription(this Material mat, string description, int value) => mat.GetIntegerPropertyFromDescription(description).Value = value;
+    #endregion
+
     #region Coroutines
     public static void FireOnNextUpdate(this MonoBehaviour component, Action action) =>
         component.FireInNUpdates(action, 1);
@@ -2279,4 +3005,202 @@ public static class WinchExtensions
     /// </summary>
     public static bool Approximately(this float value, float compare) => Mathf.Approximately(value, compare);
     #endregion
+}
+
+namespace UnityEngine
+{
+    using Rendering;
+    using UnityEngine.Rendering.Universal;
+
+    public class MaterialProperty
+    {
+        protected Shader sha;
+        protected Material mat;
+        protected int index;
+
+        public Shader Shader => sha;
+        public Material Material => mat;
+        public int Index => index;
+        public string Name => sha.GetPropertyName(index);
+        public int NameID => sha.GetPropertyNameId(index);
+        public string Description => sha.GetPropertyDescription(index);
+        public string[] Attributes => sha.GetPropertyAttributes(index);
+
+        public object Value
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case ShaderPropertyType.Color:
+                        return mat.GetColor(Name);
+                    case ShaderPropertyType.Vector:
+                        return mat.GetVector(Name);
+                    case ShaderPropertyType.Float:
+                    case ShaderPropertyType.Range:
+                        return mat.GetFloat(Name);
+                    case ShaderPropertyType.Texture:
+                        return mat.GetTexture(Name);
+                    case ShaderPropertyType.Int:
+                        return mat.GetInteger(Name);
+                    default:
+                        throw new NotSupportedException($"Getting value for type {Type} is not supported!");
+                }
+            }
+        }
+
+        public object DefaultValue
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case ShaderPropertyType.Color:
+                    case ShaderPropertyType.Vector:
+                        return sha.GetPropertyDefaultVectorValue(Index);
+                    case ShaderPropertyType.Float:
+                    case ShaderPropertyType.Range:
+                        return sha.GetPropertyDefaultFloatValue(Index);
+                    case ShaderPropertyType.Texture:
+                        return sha.GetPropertyTextureDefaultValue(Index);
+                    //case ShaderPropertyType.Int:
+                    //    return sha.GetPropertyDefaultIntegerValue(Index);
+                    default:
+                        throw new NotSupportedException($"Getting default value for type {Type} is not supported!");
+                }
+            }
+        }
+
+        public ShaderPropertyType Type => sha.GetPropertyType(index);
+        public ShaderPropertyFlags Flags => sha.GetPropertyFlags(index);
+
+        public MaterialProperty(int index, Material mat)
+        {
+            this.sha = mat.shader;
+            this.mat = mat;
+            this.index = index;
+        }
+    }
+
+    public class ColorProperty : VectorProperty
+    {
+        public new Color Value
+        {
+            get => mat.GetColor(Name);
+            set => mat.SetColor(Name, value);
+        }
+
+        public new Color DefaultValue => sha.GetPropertyDefaultVectorValue(index);
+
+        public new Color GetValue() => mat.GetColor(Name);
+        public void SetValue(Color val) => mat.SetColor(Name, val);
+
+        public ColorProperty(int index, Material mat) : base(index, mat)
+        {
+            if (mat.shader.GetPropertyType(index) != ShaderPropertyType.Color)
+                throw new NotSupportedException("property must be a color");
+        }
+    }
+
+    public class TextureProperty : MaterialProperty
+    {
+        public new Texture Value
+        {
+            get => mat.GetTexture(Name);
+            set => mat.SetTexture(Name, value);
+        }
+
+        public string DefaultName => sha.GetPropertyTextureDefaultName(index);
+        public new Texture2D DefaultValue => sha.GetPropertyTextureDefaultValue(index);
+
+        public TextureDimension Dimension => sha.GetPropertyTextureDimension(index);
+        public Vector2 Offset => mat.GetTextureOffset(Name);
+        public Vector2 Scale => mat.GetTextureScale(index);
+
+        public Texture GetValue() => mat.GetTexture(Name);
+        public void SetValue(Texture val) => mat.SetTexture(Name, val);
+
+        public TextureProperty(int index, Material mat) : base(index, mat)
+        {
+            if (Type != ShaderPropertyType.Texture)
+                throw new NotSupportedException("property must be a texture");
+        }
+    }
+
+    public class VectorProperty : MaterialProperty
+    {
+        public new Vector4 Value
+        {
+            get => mat.GetVector(Name);
+            set => mat.SetVector(Name, value);
+        }
+
+        public new Vector4 DefaultValue => sha.GetPropertyDefaultVectorValue(index);
+
+        public Vector4 GetValue() => mat.GetVector(Name);
+        public void SetValue(Vector4 val) => mat.SetVector(Name, val);
+
+        public VectorProperty(int index, Material mat) : base(index, mat)
+        {
+            if (Type != ShaderPropertyType.Vector && Type != ShaderPropertyType.Color)
+                throw new NotSupportedException("property must be a vector");
+        }
+    }
+
+    public class FloatProperty : MaterialProperty
+    {
+        public new float Value
+        {
+            get => mat.GetFloat(Name);
+            set => mat.SetFloat(Name, value);
+        }
+
+        public int IntValue
+        {
+            get => mat.GetInt(Name);
+            set => mat.SetInt(Name, value);
+        }
+
+        public new float DefaultValue => sha.GetPropertyDefaultFloatValue(index);
+
+        public float GetValue() => mat.GetFloat(Name);
+        public void SetValue(float val) => mat.SetFloat(Name, val);
+
+        public FloatProperty(int index, Material mat) : base(index, mat)
+        {
+            if (Type != ShaderPropertyType.Float && Type != ShaderPropertyType.Range)
+                throw new NotSupportedException("property must be a float");
+        }
+    }
+
+    public class RangeProperty : FloatProperty
+    {
+        public Vector2 RangeLimits => sha.GetPropertyRangeLimits(index);
+
+        public RangeProperty(int index, Material mat) : base(index, mat)
+        {
+            if (Type != ShaderPropertyType.Range)
+                throw new NotSupportedException("property must be a range");
+        }
+    }
+
+    public class IntegerProperty : MaterialProperty
+    {
+        public new int Value
+        {
+            get => mat.GetInteger(Name);
+            set => mat.SetInteger(Name, value);
+        }
+
+        //public new int DefaultValue => sha.GetPropertyDefaultIntValue(index);
+
+        public float GetValue() => mat.GetInteger(Name);
+        public void SetValue(int val) => mat.SetInteger(Name, val);
+
+        public IntegerProperty(int index, Material mat) : base(index, mat)
+        {
+            if (Type != ShaderPropertyType.Int)
+                throw new NotSupportedException("property must be a integer");
+        }
+    }
 }
