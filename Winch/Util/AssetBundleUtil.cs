@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using Winch.Core;
 using Winch.Data;
+using static Mono.Security.X509.X520;
 
 namespace Winch.Util;
 
@@ -37,6 +39,68 @@ public static class AssetBundleUtil
     private static Dictionary<int, Shader> blacklistedShaders = new Dictionary<int, Shader>();
 
     private static Dictionary<string, Shader> cachedShaders = new Dictionary<string, Shader>();
+
+    private static readonly string DEFAULT_SHADER_NAME = "Shader Graphs/Lit_Shader";
+    private static readonly string DEFAULT_CUTOUT_SHADER_NAME = "Shader Graphs/Lit_CutoutShader";
+    private static readonly string DEFAULT_TEXTURE_ALBEDO_PROP = "Texture2D_9aa7ba2263944b48bbf43c218dc48459";
+    private static readonly string DEFAULT_TEXTURE_EMISSION_PROP = "Texture2D_c7b8c5c57d6443a5a9f86b68269754f3";
+    private static readonly string DEFAULT_TEXTURE_FLICKER_GRADIENT_PROP = "Texture2D_d75ba12263b343d3ad393c05a6dda1b7";
+    private static readonly string DEFAULT_FLOAT_EMIT_STRENGTH_PROP = "_LightStrength";
+    private static readonly string DEFAULT_BOOLEAN_EMIT_PROP = "BOOLEAN_0965F30455D645A4AD7F01AF266AE935";
+    private static readonly string DEFAULT_BOOLEAN_NIGHTTIME_ONLY_EMIT_PROP = "BOOLEAN_1C655FB145BE4DCDA50D5BE036D8DE1E";
+    private static readonly string DEFAULT_BOOLEAN_FLICKER_PROP = "BOOLEAN_3E4CD0FFFCDB4460AA7D73A352CD2455";
+    private static readonly string DEFAULT_BOOLEAN_RECIEVE_SHADOWS_PROP = "BOOLEAN_831B22E2CB064148ADEAE08DFC09DFD0";
+    private static readonly string DEFAULT_BOOLEAN_WET_EDGES_PROP = "_WETEDGES";
+    private static readonly string DEFAULT_FLOAT_WET_EDGE_HEIGHT_PROP = "_WetEdgeHeight";
+    private static readonly string DEFAULT_FLOAT_WET_EDGE_DARKNESS_PROP = "_WetEdgeDarkness";
+    private static readonly string KEYWORD_ON = "_ON";
+
+    private static Material CreateLitMaterial(string shaderName, string name, Texture? albedo = null, Texture? emission = null, float emitStrength = 4, bool turnOffEmitDuringDay = true, Texture? lightFlickerGradient = null, bool recieveShadows = false, bool wetEdges = false, float wetEdgeHeight = 0.3f, float wetEdgeDarkness = 0.7f)
+    {
+        Material newMaterial = new Material(AssetBundleUtil.GetReplacementShader(shaderName));
+        newMaterial.name = name;
+        var keywords = new List<string>();
+
+        if (albedo != null) newMaterial.SetTexture(DEFAULT_TEXTURE_ALBEDO_PROP, albedo);
+
+        newMaterial.SetBoolean(DEFAULT_BOOLEAN_EMIT_PROP, emission != null);
+        if (emission != null)
+        {
+            keywords.Add(DEFAULT_BOOLEAN_EMIT_PROP + KEYWORD_ON);
+            newMaterial.SetTexture(DEFAULT_TEXTURE_EMISSION_PROP, emission);
+        }
+
+        newMaterial.SetFloat(DEFAULT_FLOAT_EMIT_STRENGTH_PROP, emitStrength);
+
+        newMaterial.SetBoolean(DEFAULT_BOOLEAN_NIGHTTIME_ONLY_EMIT_PROP, turnOffEmitDuringDay);
+        if (turnOffEmitDuringDay) keywords.Add(DEFAULT_BOOLEAN_NIGHTTIME_ONLY_EMIT_PROP + KEYWORD_ON);
+
+        newMaterial.SetBoolean(DEFAULT_BOOLEAN_FLICKER_PROP, lightFlickerGradient != null);
+        if (lightFlickerGradient != null)
+        {
+            keywords.Add(DEFAULT_BOOLEAN_FLICKER_PROP + KEYWORD_ON);
+            newMaterial.SetTexture(DEFAULT_TEXTURE_FLICKER_GRADIENT_PROP, lightFlickerGradient);
+        }
+
+        newMaterial.SetBoolean(DEFAULT_BOOLEAN_RECIEVE_SHADOWS_PROP, recieveShadows);
+        if (recieveShadows) keywords.Add(DEFAULT_BOOLEAN_RECIEVE_SHADOWS_PROP + KEYWORD_ON);
+
+        newMaterial.SetBoolean(DEFAULT_BOOLEAN_WET_EDGES_PROP, wetEdges);
+        if (wetEdges) keywords.Add(DEFAULT_BOOLEAN_WET_EDGES_PROP);
+
+        newMaterial.SetFloat(DEFAULT_FLOAT_WET_EDGE_HEIGHT_PROP, wetEdgeHeight);
+        newMaterial.SetFloat(DEFAULT_FLOAT_WET_EDGE_DARKNESS_PROP, wetEdgeDarkness);
+
+        newMaterial.shaderKeywords = keywords.ToArray();
+
+        return newMaterial;
+    }
+
+    public static Material CreateLitMaterial(string name, Texture? albedo = null, Texture? emission = null, float emitStrength = 4, bool turnOffEmitDuringDay = true, Texture? lightFlickerGradient = null, bool recieveShadows = false, bool wetEdges = false, float wetEdgeHeight = 0.3f, float wetEdgeDarkness = 0.7f)
+        => CreateLitMaterial(DEFAULT_SHADER_NAME, name, albedo, emission, emitStrength, turnOffEmitDuringDay, lightFlickerGradient, recieveShadows, wetEdges, wetEdgeHeight, wetEdgeDarkness);
+
+    public static Material CreateLitCutoutMaterial(string name, Texture? albedo = null, Texture? emission = null, float emitStrength = 4, bool turnOffEmitDuringDay = true, Texture? lightFlickerGradient = null, bool recieveShadows = false, bool wetEdges = false, float wetEdgeHeight = 0.3f, float wetEdgeDarkness = 0.7f)
+        => CreateLitMaterial(DEFAULT_CUTOUT_SHADER_NAME, name, albedo, emission, emitStrength, turnOffEmitDuringDay, lightFlickerGradient, recieveShadows, wetEdges, wetEdgeHeight, wetEdgeDarkness);
 
     internal static Shader CacheShader(this Shader shader)
     {

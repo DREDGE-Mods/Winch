@@ -2654,6 +2654,19 @@ public static class WinchExtensions
         return unknown.ToArray();
     }
 
+    public static FloatProperty[] GetToggleProperties(this Shader sha) => new Material(sha).GetToggleProperties();
+
+    public static FloatProperty[] GetToggleProperties(this Material mat)
+    {
+        List<FloatProperty> floats = new List<FloatProperty>();
+        foreach (MaterialProperty prop in mat.GetMaterialProperties())
+        {
+            if (prop is FloatProperty floatProperty && floatProperty.IsToggle())
+                floats.Add(floatProperty);
+        }
+        return floats.ToArray();
+    }
+
     public static string GetPropertyName(this Material mat, int index)
     {
         foreach (MaterialProperty prop in mat.GetMaterialProperties())
@@ -2808,6 +2821,10 @@ public static class WinchExtensions
         return (ShaderPropertyType)(-1);
     }
 
+    public static bool GetBoolean(this Material mat, string name) => mat.GetInt(name) != 0;
+
+    public static void SetBoolean(this Material mat, string name, bool value) => mat.SetInt(name, value ? 1 : 0);
+
     public static Color GetColorFromDescription(this Material mat, string description) => mat.GetColorPropertyFromDescription(description).Value;
 
     public static Vector4 GetVectorFromDescription(this Material mat, string description) => mat.GetVectorPropertyFromDescription(description).Value;
@@ -2828,9 +2845,13 @@ public static class WinchExtensions
 
     public static void SetTextureFromDescription(this Material mat, string description, Texture value) => mat.GetTexturePropertyFromDescription(description).Value = value;
 
-    public static int SetIntFromDescription(this Material mat, string description, int value) => mat.GetFloatPropertyFromDescription(description).IntValue = value;
+    public static void SetIntFromDescription(this Material mat, string description, int value) => mat.GetFloatPropertyFromDescription(description).IntValue = value;
 
-    public static int SetIntegerFromDescription(this Material mat, string description, int value) => mat.GetIntegerPropertyFromDescription(description).Value = value;
+    public static void SetIntegerFromDescription(this Material mat, string description, int value) => mat.GetIntegerPropertyFromDescription(description).Value = value;
+
+    public static bool GetBooleanFromDescription(this Material mat, string description) => mat.GetFloatPropertyFromDescription(description).BoolValue;
+
+    public static void SetBooleanFromDescription(this Material mat, string description, bool value) => mat.GetFloatPropertyFromDescription(description).BoolValue = value;
     #endregion
 
     #region Coroutines
@@ -3099,6 +3120,8 @@ namespace UnityEngine
             this.mat = mat;
             this.index = index;
         }
+
+        public override string ToString() => $"{Index}: {Name} ({Type}) ({NameID}) ({Description}){(Attributes.Any() ? $" ({string.Join(", ", Attributes)})" : string.Empty)}";
     }
 
     public class ColorProperty : VectorProperty
@@ -3180,10 +3203,18 @@ namespace UnityEngine
             set => mat.SetInt(Name, value);
         }
 
+        public bool BoolValue
+        {
+            get => mat.GetInt(Name) != 0;
+            set => mat.SetInt(Name, value ? 1 : 0);
+        }
+
         public new float DefaultValue => sha.GetPropertyDefaultFloatValue(index);
 
         public float GetValue() => mat.GetFloat(Name);
         public void SetValue(float val) => mat.SetFloat(Name, val);
+
+        public bool IsToggle() => Attributes.Any(attribute => attribute.StartsWith("Toggle"));
 
         public FloatProperty(int index, Material mat) : base(index, mat)
         {
