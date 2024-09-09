@@ -7,7 +7,7 @@ root = true
 # A newline ending every file
 # Use 4 spaces as indentation
 [*]
-insert_final_newline = true
+insert_final_newline = false
 indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
