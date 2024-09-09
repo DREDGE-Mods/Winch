@@ -1,17 +1,16 @@
-﻿using System;
-using HarmonyLib;
-using UnityEngine;
+﻿using HarmonyLib;
 using Winch.Core;
 using Winch.Core.API;
-using Winch.Util;
 
 namespace Winch.Patches.API;
 
-[HarmonyPriority(Priority.First)]
-[HarmonyPatch(typeof(DredgeDialogueRunner), nameof(DredgeDialogueRunner.Awake))]
+[HarmonyPatch(typeof(DredgeDialogueRunner))]
 internal static class DialogueRunnerPatcher
 {
-    public static void Postfix(DredgeDialogueRunner __instance)
+    [HarmonyPostfix]
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(nameof(DredgeDialogueRunner.Awake))]
+    public static void Awake_Postfix(DredgeDialogueRunner __instance)
     {
         __instance.AddCommandHandler<string>("LogDebug", __instance.LogDebug);
         __instance.AddCommandHandler<string>("LogInfo", __instance.LogInfo);
@@ -39,4 +38,21 @@ internal static class DialogueRunnerPatcher
     {
         WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
     }
+
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(nameof(DredgeDialogueRunner.StartDialogue))]
+    public static bool StartDialogue_Prefix(DredgeDialogueRunner __instance, string nodeName)
+    {
+        if (!__instance.Dialogue.IsActive && !__instance.NodeExists(nodeName))
+        {
+            WinchCore.Log.Error("No node named " + nodeName + " has been loaded.", "DredgeDialogueRunner.StartDialogue");
+            GameEvents.Instance.TriggerDialogueStarted();
+            __instance.onDialogueComplete.Invoke();
+            return false;
+        }
+        else
+            return true;
+    }
+
 }
