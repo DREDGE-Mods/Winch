@@ -12,7 +12,7 @@ public class CustomDockPOIConverter : CustomPOIConverter
     {
         { "rotation", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "dockData", new(string.Empty, null) },
-        { "prefab", new(DockPrefab.GENERIC, o=>DredgeTypeHelpers.GetEnumValue<DockPrefab>(o) ) },
+        { "prefab", new(DockPrefab.NONE, o=>DredgeTypeHelpers.GetEnumValue<DockPrefab>(o) ) },
         { "poiOffset", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "collider", new( null, o=> DredgeTypeHelpers.ParseDockCollider(o)) },
         { "vCam", new( null, o=> DredgeTypeHelpers.ParseVector3(o)) },

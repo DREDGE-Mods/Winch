@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Winch.Core;
 using Winch.Data;
 using Winch.Data.Dock;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Dock.Destinations;
+using Winch.Serialization;
 using Winch.Serialization.Dock;
 using Winch.Serialization.POI.Dock.Destinations;
-using Winch.Serialization;
 using Winch.Components;
 using Cinemachine;
-using UnityEngine.AddressableAssets;
 
 namespace Winch.Util;
 
@@ -30,10 +30,22 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, DockPOICollider> DockPrefabColliders = new Dictionary<DockPrefab, DockPOICollider>
     {
+        { DockPrefab.NONE, new DockPOICollider() },
         { DockPrefab.MAKESHIFT, new DockPOICollider { colliderType = ColliderType.BOX, center = new Vector3(0,0,-1), size = new Vector3(5,2,3) } },
+    };
+    internal static Dictionary<DockPrefab, DockCullable> DockPrefabCullables = new Dictionary<DockPrefab, DockCullable>
+    {
+        { DockPrefab.NONE, new DockCullable() },
+        { DockPrefab.GENERIC, new DockCullable { center = new Vector3(-2, 0, 0) } },
+        { DockPrefab.LARGE, new DockCullable { center = new Vector3(-2, 0, 0), radius = 12 } },
+        { DockPrefab.MAKESHIFT, new DockCullable { center = new Vector3(-1, 0, 0) } },
+        { DockPrefab.STONE, new DockCullable { center = new Vector3(-2, 0, 0) } },
+        { DockPrefab.PLAIN_STONE, new DockCullable { center = new Vector3(-1, 0, 0) } },
+        { DockPrefab.ROCK, new DockCullable { center = new Vector3(-2, 0, 0) } },
     };
     internal static Dictionary<DockPrefab, Vector3> DockPrefabLookAtTargets = new Dictionary<DockPrefab, Vector3>
     {
+        { DockPrefab.NONE, Vector3.zero },
         { DockPrefab.GENERIC, new Vector3(-1,1,0) },
         { DockPrefab.LARGE, new Vector3(-2f,0,0) },
         { DockPrefab.MAKESHIFT, new Vector3(1,1.5f,-0.3f) },
@@ -43,6 +55,7 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, Vector3> DockPrefabVCams = new Dictionary<DockPrefab, Vector3>
     {
+        { DockPrefab.NONE, Vector3.zero },
         { DockPrefab.GENERIC, new Vector3(10,3.4f,-4.9f) },
         { DockPrefab.LARGE, new Vector3(18.57f,6.59f,6.04f) },
         { DockPrefab.MAKESHIFT, new Vector3(9.45f,4.6f,-8.1f) },
@@ -52,6 +65,7 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, Vector3> DockPrefabPOIOffsets = new Dictionary<DockPrefab, Vector3>
     {
+        { DockPrefab.NONE, Vector3.zero },
         { DockPrefab.GENERIC, new Vector3(1.43f,0,0) },
         { DockPrefab.LARGE, new Vector3(0,0,0) },
         { DockPrefab.MAKESHIFT, new Vector3(2, 0, 0) },
@@ -61,7 +75,8 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, Vector3> DockPrefabBoatActions = new Dictionary<DockPrefab, Vector3>
     {
-        { DockPrefab.GENERIC, new Vector3(3.03f,1.6f,0) },
+        { DockPrefab.NONE, Vector3.zero },
+        { DockPrefab.GENERIC, new Vector3(0,1,0) },
         { DockPrefab.LARGE, new Vector3(0.4f,1.14f,-0.08f) },
         { DockPrefab.MAKESHIFT, new Vector3(1.55f,2.05f,0.14f) },
         { DockPrefab.STONE, new Vector3(1,2.51f,-0.111f) },
@@ -70,6 +85,13 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, List<DockSlot>> DockPrefabSlots = new Dictionary<DockPrefab, List<DockSlot>>
     {
+        { DockPrefab.NONE, new List<DockSlot> {
+            new DockSlot
+            {
+                position = Vector3.zero,
+                rotation = Vector3.zero
+            }
+        } },
         { DockPrefab.GENERIC, new List<DockSlot> {
             new DockSlot
             {
@@ -160,6 +182,9 @@ public static class DockUtil
     };
     internal static Dictionary<DockPrefab, CustomStorageDestination> DockPrefabStorages = new Dictionary<DockPrefab, CustomStorageDestination>
     {
+        { DockPrefab.NONE, new CustomStorageDestination {
+            enabled = false
+        } },
         { DockPrefab.GENERIC, new CustomStorageDestination {
             position = new Vector3(-1.65f,0.5f,-0.45f),
             vCam = new Vector3(4.5f,3.45f,6.75f),
@@ -353,7 +378,7 @@ public static class DockUtil
 
     public static Dock[] GetAllDocks()
     {
-        return AllDockDict.Values.Concat(ModdedDockDict.Values).ToArray();
+        return AllDockDict.Values.ToArray();
     }
 
     public static GameObject GetDockPrefab(DockPrefab prefab)
@@ -374,14 +399,16 @@ public static class DockUtil
         dock.id = customDockPoi.id;
         dock.dockData = DockUtil.GetDockData(customDockPoi.dockData);
         ModdedDockDict.Add(customDockPoi.id, dock);
+        AllDockDict.Add(dock.Data.Id, dock);
+        WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
 
+        var cullableSettings = customDockPoi.cullable ?? (DockPrefabCullables.ContainsKey(customDockPoi.prefab) ? DockPrefabCullables[customDockPoi.prefab] : DockPrefabCullables[DockPrefab.NONE]);
+        customDockPoi.cullable = cullableSettings;
         // This needs to be added to the GameManager.Instance.CullingBrain
         var cullable = dockObject.AddComponent<Cullable>();
-        cullable.cullingGroupType = CullingGroupType.STATIC_LONG_RANGE;
-        cullable.sphereRadius = customDockPoi.prefab == DockPrefab.LARGE ? 12 : 5;
-        cullable.sphereOffset = new Vector3(-2, 0, 0);
-        if (customDockPoi.prefab == DockPrefab.MAKESHIFT || customDockPoi.prefab == DockPrefab.PLAIN_STONE)
-            cullable.sphereOffset = new Vector3(-1, 0, 0);
+        cullable.cullingGroupType = cullableSettings.cullingGroupType;
+        cullable.sphereRadius = cullableSettings.radius;
+        cullable.sphereOffset = cullableSettings.center;
         GameManager.Instance.CullingBrain.AddCullable(cullable);
 
         var dockContainer = new GameObject("Dock").transform;
@@ -389,13 +416,13 @@ public static class DockUtil
 
         (GameObject customPoi, DockPOI dockPoi) = PoiUtil.CreateGenericPoiFromCustomPoi<DockPOI>(customDockPoi, dockContainer);
         customPoi.name = "DockPOI";
-        var poiOffset = customDockPoi.poiOffset ?? (DockPrefabPOIOffsets.ContainsKey(customDockPoi.prefab) ? DockPrefabPOIOffsets[customDockPoi.prefab] : new Vector3(2, 0, 0));
+        var poiOffset = customDockPoi.poiOffset ?? (DockPrefabPOIOffsets.ContainsKey(customDockPoi.prefab) ? DockPrefabPOIOffsets[customDockPoi.prefab] : DockPrefabPOIOffsets[DockPrefab.NONE]);
         customDockPoi.poiOffset = poiOffset;
         customPoi.transform.localPosition = poiOffset;
         dock.dockPOI = dockPoi;
         dockPoi.dock = dock;
 
-        var colliderSettings = customDockPoi.collider ?? (DockPrefabColliders.ContainsKey(customDockPoi.prefab) ? DockPrefabColliders[customDockPoi.prefab] : new DockPOICollider());
+        var colliderSettings = customDockPoi.collider ?? (DockPrefabColliders.ContainsKey(customDockPoi.prefab) ? DockPrefabColliders[customDockPoi.prefab] : DockPrefabColliders[DockPrefab.NONE]);
         customDockPoi.collider = colliderSettings;
         if (colliderSettings.colliderType == ColliderType.SPHERE)
         {
@@ -414,7 +441,7 @@ public static class DockUtil
             boxCollider.contactOffset = 0.01f;
         }
 
-        var slots = customDockPoi.dockSlots ?? (DockPrefabSlots.ContainsKey(customDockPoi.prefab) ? DockPrefabSlots[customDockPoi.prefab] : DockPrefabSlots[DockPrefab.PLAIN_STONE]);
+        var slots = customDockPoi.dockSlots ?? (DockPrefabSlots.ContainsKey(customDockPoi.prefab) ? DockPrefabSlots[customDockPoi.prefab] : DockPrefabSlots[DockPrefab.NONE]);
         customDockPoi.dockSlots = slots;
         List<Transform> dockSlots = new List<Transform>();
         var count = 1;
@@ -435,25 +462,26 @@ public static class DockUtil
 
         var boatContainer = new GameObject("Boat").transform;
         boatContainer.SetParent(dockObject.transform, false);
-        var lookAtTargetPosition = customDockPoi.lookAtTarget ?? (DockPrefabLookAtTargets.ContainsKey(customDockPoi.prefab) ? DockPrefabLookAtTargets[customDockPoi.prefab] : new Vector3(1, 0, 0));
+        var lookAtTargetPosition = customDockPoi.lookAtTarget ?? (DockPrefabLookAtTargets.ContainsKey(customDockPoi.prefab) ? DockPrefabLookAtTargets[customDockPoi.prefab] : DockPrefabLookAtTargets[DockPrefab.NONE]);
         customDockPoi.lookAtTarget = lookAtTargetPosition;
         var lookAtTarget = CreateLookAtTarget(lookAtTargetPosition, boatContainer.transform);
-        var vCamPosition = customDockPoi.vCam ?? (DockPrefabVCams.ContainsKey(customDockPoi.prefab) ? DockPrefabVCams[customDockPoi.prefab] : new Vector3(10, 3.4f, -4.9f));
+        var vCamPosition = customDockPoi.vCam ?? (DockPrefabVCams.ContainsKey(customDockPoi.prefab) ? DockPrefabVCams[customDockPoi.prefab] : DockPrefabVCams[DockPrefab.NONE]);
         customDockPoi.vCam = vCamPosition;
         var vCam = CreateDockVirtualCamera(vCamPosition, lookAtTarget, boatContainer.transform, priority: 12);
         dock.lookAtTarget = lookAtTarget;
         dock.dockVCam = vCam;
-        var boatActions = customDockPoi.boatActions ?? (DockPrefabBoatActions.ContainsKey(customDockPoi.prefab) ? DockPrefabBoatActions[customDockPoi.prefab] : new Vector3(3.03f, 1.6f, 0));
+        var boatActions = customDockPoi.boatActions ?? (DockPrefabBoatActions.ContainsKey(customDockPoi.prefab) ? DockPrefabBoatActions[customDockPoi.prefab] : DockPrefabBoatActions[DockPrefab.NONE]);
         customDockPoi.boatActions = boatActions;
         dock.boatActionsDestination = CreateBoatActions(boatActions, vCam, boatContainer.transform);
 
-        var prebuiltStorage = customDockPoi.storage ?? (DockPrefabStorages.ContainsKey(customDockPoi.prefab) ? DockPrefabStorages[customDockPoi.prefab] : new CustomStorageDestination());
+        var prebuiltStorage = customDockPoi.storage ?? (DockPrefabStorages.ContainsKey(customDockPoi.prefab) ? DockPrefabStorages[customDockPoi.prefab] : DockPrefabStorages[DockPrefab.NONE]);
         customDockPoi.storage = prebuiltStorage;
-        (StorageDestination storage, OverflowStorageDestination overflowStorage) = CreateStorage(prebuiltStorage, dockObject.transform);
+        (StorageDestination storage, OverflowStorageDestination overflowStorage, GameObject storageObject) = CreateStorage(prebuiltStorage, dockObject.transform);
         dock.storageDestination = storage;
         dock.overflowStorageDestination = overflowStorage;
         dock.storageEnabled = prebuiltStorage.enabled;
         dock.overflowStorageEnabled = prebuiltStorage.hasOverflow;
+        storageObject.SetActive(prebuiltStorage.enabled);
 
         Dictionary<CustomBaseDestination, BaseDestination> destinations = new Dictionary<CustomBaseDestination, BaseDestination>();
         foreach (var destination in customDockPoi.characters)
@@ -624,7 +652,7 @@ public static class DockUtil
 
     private static readonly Vector3 storageOffset = new Vector3(-0.1f, 0.32f, 0.3f);
 
-    public static (StorageDestination, OverflowStorageDestination) CreateStorage(CustomStorageDestination prebuilt, Transform parent)
+    public static (StorageDestination, OverflowStorageDestination, GameObject) CreateStorage(CustomStorageDestination prebuilt, Transform parent)
     {
         var storageObject = new GameObject("Storage");
         storageObject.transform.SetParent(parent, false);
@@ -661,7 +689,7 @@ public static class DockUtil
         box.transform.localPosition = Vector3.zero;
         box.transform.localEulerAngles = new Vector3(0, 360, 0);
         box.transform.Find("StorageBox/StorageBoxes").gameObject.SetActive(prebuilt.hasBoxes);
-        return (storageDestination, overflowStorageDestination);
+        return (storageDestination, overflowStorageDestination, storageObject);
     }
 
     public static SanityModifier CreateDockSanityModifier(DockSanityModifier dockSanityModifier, Transform parent)

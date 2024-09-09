@@ -20,7 +20,7 @@ public class CustomDockPOI : CustomPOI
     /// <summary>
     /// Prefab to use for this dock
     /// </summary>
-    public DockPrefab prefab;
+    public DockPrefab prefab = DockPrefab.NONE;
 
     /// <summary>
     /// The relative position for the dock poi
@@ -31,6 +31,11 @@ public class CustomDockPOI : CustomPOI
     /// Collider settings for the dock poi
     /// </summary>
     public DockPOICollider? collider;
+
+    /// <summary>
+    /// Cullable settings
+    /// </summary>
+    public DockCullable? cullable;
 
     /// <summary>
     /// Relative position of the dock's default camera.
