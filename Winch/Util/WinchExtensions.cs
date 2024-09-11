@@ -76,7 +76,7 @@ public static class WinchExtensions
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this VibrationData vibrationData) => VibrationUtil.ModdedVibrationDataDict.ContainsKey(vibrationData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this MapMarkerData mapMarkerData) => MapMarkerUtil.ModdedMapMarkerDataDict.ContainsKey(mapMarkerData.name);
+    public static bool IsModded(this MapMarkerData mapMarkerData) => MapMarkerUtil.ModdedMapMarkerDataDict.ContainsKey(mapMarkerData.name) || !MapMarkerUtil.VanillaMapMarkerIDList.Contains(mapMarkerData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this ShopData shopData) => shopData is ModdedShopData || ShopUtil.ModdedShopDataDict.ContainsKey(shopData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
@@ -84,11 +84,11 @@ public static class WinchExtensions
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this ShopDataGridConfig shopDataGridConfig) => shopDataGridConfig is ModdedShopDataGridConfig || shopDataGridConfig.gridKey.IsDynamic() || shopDataGridConfig.shopData.IsModded();
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this QuestData questData) => questData is DeferredQuestData || QuestUtil.ModdedQuestDataDict.ContainsKey(questData.name);
+    public static bool IsModded(this QuestData questData) => questData is DeferredQuestData || QuestUtil.ModdedQuestDataDict.ContainsKey(questData.name) || !QuestUtil.VanillaQuestDataIDList.Contains(questData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this QuestStepData questStepData) => questStepData is DeferredQuestStepData || QuestUtil.ModdedQuestStepDataDict.ContainsKey(questStepData.name);
+    public static bool IsModded(this QuestStepData questStepData) => questStepData is DeferredQuestStepData || QuestUtil.ModdedQuestStepDataDict.ContainsKey(questStepData.name) || !QuestUtil.VanillaQuestStepDataIDList.Contains(questStepData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this QuestGridConfig questGridConfig) => questGridConfig is DeferredQuestGridConfig || QuestUtil.ModdedQuestGridConfigDict.ContainsKey(questGridConfig.name);
+    public static bool IsModded(this QuestGridConfig questGridConfig) => questGridConfig is DeferredQuestGridConfig || QuestUtil.ModdedQuestGridConfigDict.ContainsKey(questGridConfig.name) || !QuestUtil.VanillaQuestGridConfigIDList.Contains(questGridConfig.name);
 
     /// <summary>
     /// Check if the object is vanilla

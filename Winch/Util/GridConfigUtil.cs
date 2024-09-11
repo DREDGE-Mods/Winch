@@ -26,7 +26,8 @@ public static class GridConfigUtil
 
     internal static void Initialize()
     {
-        Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"), gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
+        Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"),
+             gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
     }
 
     internal static Dictionary<string, DeferredGridConfiguration> ModdedGridConfigDict = new();

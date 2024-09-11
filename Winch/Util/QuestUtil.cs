@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Winch.Core;
 using Winch.Data.Quest;
 using Winch.Data.Quest.Grid;
@@ -32,6 +33,22 @@ public static class QuestUtil
         return UtilHelpers.PopulateObjectFromMeta(gridConfig, meta, QuestGridConfigConverter);
     }
 
+
+    internal static List<string> VanillaQuestDataIDList = new();
+    internal static List<string> VanillaQuestStepDataIDList = new();
+    internal static List<string> VanillaQuestGridConfigIDList = new();
+
+    internal static void Initialize()
+    {
+        Addressables.LoadAssetsAsync<QuestData>(AddressablesUtil.GetLocations<QuestData>("QuestData"), questData =>
+        {
+            VanillaQuestDataIDList.SafeAdd(questData.name);
+            foreach (var kvp in QuestUtil.GetQuestStepDatas(questData))
+                VanillaQuestStepDataIDList.Add(kvp.Key);
+        });
+        Addressables.LoadAssetsAsync<QuestGridConfig>(AddressablesUtil.GetLocations<QuestGridConfig>("QuestGridConfig"),
+            questGridConfig => VanillaQuestGridConfigIDList.SafeAdd(questGridConfig.name));
+    }
 
     internal static Dictionary<string, DeferredQuestData> ModdedQuestDataDict = new();
     internal static Dictionary<string, QuestData> AllQuestDataDict = new();
@@ -195,6 +212,32 @@ public static class QuestUtil
         AllQuestDataDict.Clear();
     }
 
+    internal static Dictionary<string, QuestStepData> GetQuestStepDatas(QuestData questData)
+    {
+        Dictionary<string, QuestStepData> questSteps = new Dictionary<string, QuestStepData>();
+        if (questData.steps != null)
+        {
+            foreach (var qs in questData.steps)
+            {
+                if (qs != null)
+                    questSteps.SafeAdd(qs.name, qs);
+            }
+        }
+        if (questData.onOfferedQuestStep != null)
+            questSteps.SafeAdd(questData.onOfferedQuestStep.name, questData.onOfferedQuestStep);
+        return questSteps;
+    }
+
+    internal static Dictionary<string, QuestStepData> GetQuestStepDatas(IList<QuestData> result)
+    {
+        Dictionary<string, QuestStepData> allQuestSteps = new Dictionary<string, QuestStepData>();
+        foreach (var questData in result.SelectMany(GetQuestStepDatas))
+        {
+            allQuestSteps.SafeAdd(questData.Key, questData.Value);
+        }
+        return allQuestSteps;
+    }
+
     internal static void AddModdedQuestStepData(IDictionary<string, QuestStepData> result)
     {
         foreach (var questStepData in ModdedQuestStepDataDict)
@@ -285,6 +328,7 @@ public static class QuestUtil
         if (PopulateQuestDataFromMetaWithConverter(questData, meta))
         {
             ModdedQuestDataDict.Add(id, questData);
+            AddressablesUtil.AddResourceAtLocation("QuestData", id, id, questData);
         }
         else
         {
@@ -345,6 +389,7 @@ public static class QuestUtil
         if (PopulateQuestGridConfigFromMetaWithConverter(questGridConfig, meta))
         {
             ModdedQuestGridConfigDict.Add(id, questGridConfig);
+            AddressablesUtil.AddResourceAtLocation("QuestGridConfig", id, id, questGridConfig);
         }
         else
         {

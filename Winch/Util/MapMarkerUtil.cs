@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.AddressableAssets;
 using Winch.Core;
 using Winch.Serialization.MapMarker;
 
@@ -12,6 +13,14 @@ public static class MapMarkerUtil
 	internal static bool PopulateMapMarkerDataFromMetaWithConverter(MapMarkerData data, Dictionary<string, object> meta)
 	{
 		return UtilHelpers.PopulateObjectFromMeta(data, meta, MapMarkerDataConverter);
+	}
+
+	internal static List<string> VanillaMapMarkerIDList = new();
+
+	internal static void Initialize()
+	{
+		Addressables.LoadAssetsAsync<MapMarkerData>(AddressablesUtil.GetLocations<MapMarkerData>("MapMarkerData"),
+			mapMarkerData => VanillaMapMarkerIDList.SafeAdd(mapMarkerData.name));
 	}
 
 	internal static Dictionary<string, MapMarkerData> ModdedMapMarkerDataDict = new();
@@ -105,6 +114,7 @@ public static class MapMarkerUtil
 		if (PopulateMapMarkerDataFromMetaWithConverter(mapMarkerData, meta))
 		{
 			ModdedMapMarkerDataDict.Add(id, mapMarkerData);
+			AddressablesUtil.AddResourceAtLocation("MapMarkerData", id, id, mapMarkerData);
 		}
 		else
 		{

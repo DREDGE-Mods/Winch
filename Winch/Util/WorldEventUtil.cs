@@ -28,7 +28,8 @@ public static class WorldEventUtil
 
     internal static void Initialize()
     {
-        Addressables.LoadAssetsAsync<WorldEventData>(AddressablesUtil.GetLocations<WorldEventData>("WorldEventData"), worldEventData => VanillaWorldEventIDList.SafeAdd(worldEventData.name));
+        Addressables.LoadAssetsAsync<WorldEventData>(AddressablesUtil.GetLocations<WorldEventData>("WorldEventData"),
+            worldEventData => VanillaWorldEventIDList.SafeAdd(worldEventData.name));
     }
 
     internal static Dictionary<string, WorldEventData> AllWorldEventDataDict = new();

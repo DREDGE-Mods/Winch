@@ -27,6 +27,8 @@ internal static class AssetLoader
             ItemUtil.Initialize();
             GridConfigUtil.Initialize();
             WorldEventUtil.Initialize();
+            MapMarkerUtil.Initialize();
+            QuestUtil.Initialize();
         }
         catch (Exception ex)
         {

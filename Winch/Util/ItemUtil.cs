@@ -45,7 +45,8 @@ public static class ItemUtil
 
     internal static void Initialize()
     {
-        Addressables.LoadAssetsAsync<ItemData>(AddressablesUtil.GetLocations<ItemData>("ItemData"), itemData => VanillaItemIDList.SafeAdd(itemData.id));
+        Addressables.LoadAssetsAsync<ItemData>(AddressablesUtil.GetLocations<ItemData>("ItemData"),
+            itemData => VanillaItemIDList.SafeAdd(itemData.id));
     }
 
     internal static Dictionary<string, ItemData> AllItemDataDict = new();

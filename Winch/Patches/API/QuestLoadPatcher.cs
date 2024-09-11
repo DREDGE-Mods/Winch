@@ -11,30 +11,11 @@ namespace Winch.Patches.API;
 [HarmonyPatch("OnQuestDataAddressablesLoaded")]
 internal static class QuestLoadPatcher
 {
-    internal static Dictionary<string, QuestStepData> GetQuestStepDatas(IList<QuestData> result)
-    {
-        Dictionary<string, QuestStepData> allQuestSteps = new Dictionary<string, QuestStepData>();
-        foreach (var questData in result)
-        {
-            if (questData.steps != null)
-            {
-                foreach (var qs in questData.steps)
-                {
-                    if (qs != null)
-                        allQuestSteps.SafeAdd(qs.name, qs);
-                }
-            }
-            if (questData.onOfferedQuestStep != null)
-                allQuestSteps.SafeAdd(questData.onOfferedQuestStep.name, questData.onOfferedQuestStep);
-        }
-        return allQuestSteps;
-    }
-
     public static bool Prefix(DataLoader __instance, AsyncOperationHandle<IList<QuestData>> handle)
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return false;
 
-        var stepDatas = GetQuestStepDatas(handle.Result);
+        var stepDatas = QuestUtil.GetQuestStepDatas(handle.Result);
         QuestUtil.PopulateQuestStepData(stepDatas);
         QuestUtil.AddModdedQuestStepData(stepDatas);
         __instance.allQuestSteps = stepDatas;
