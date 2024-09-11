@@ -14,10 +14,12 @@ internal static class DialogueRunnerPatcher
     [HarmonyPatch(nameof(DredgeDialogueRunner.Awake))]
     public static void Awake_Postfix(DredgeDialogueRunner __instance)
     {
-        __instance.AddCommandHandler<string>("LogDebug", __instance.LogDebug);
-        __instance.AddCommandHandler<string>("LogInfo", __instance.LogInfo);
-        __instance.AddCommandHandler<string>("LogWarn", __instance.LogWarn);
-        __instance.AddCommandHandler<string>("LogError", __instance.LogError);
+#pragma warning disable IDE0200
+        __instance.AddCommandHandler<string>("LogDebug", message => __instance.LogDebug(message));
+        __instance.AddCommandHandler<string>("LogInfo", message => __instance.LogInfo(message));
+        __instance.AddCommandHandler<string>("LogWarn", message => __instance.LogWarn(message));
+        __instance.AddCommandHandler<string>("LogError", message => __instance.LogError(message));
+#pragma warning restore IDE0200
         DredgeEvent.TriggerDialogueRunnerLoaded(__instance);
     }
 
