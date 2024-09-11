@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
 using Winch.Core;
 using Winch.Core.API;
+using Winch.Util;
+using Yarn.Unity;
 
 namespace Winch.Patches.API;
 
@@ -37,6 +39,14 @@ internal static class DialogueRunnerPatcher
     private static void LogError(this DredgeDialogueRunner dialogueRunner, string message)
     {
         WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(DialogueRunner), "Start")]
+    public static void Start_Prefix(DredgeDialogueRunner __instance)
+    {
+        __instance.FireOnNextUpdate(DialogueUtil.Inject);
     }
 
     [HarmonyPrefix]

@@ -14,7 +14,6 @@ internal static class GameSceneInitializerPatch
     {
         try
         {
-            DialogueUtil.Inject();
             VibrationUtil.PopulateVibrationDatas();
             DockUtil.Populate();
             PoiUtil.Populate();
