@@ -62,6 +62,7 @@ internal static class AssetLoader
         string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
         string vibrationFolderpath = Path.Combine(path, "Vibrations");
         string mapMarkerFolderpath = Path.Combine(path, "MapMarkers");
+        string shopFolderpath = Path.Combine(path, "Shops");
         string dockFolderpath = Path.Combine(path, "Docks");
         string abilityFolderpath = Path.Combine(path, "Abilities");
         string worldEventFolderpath = Path.Combine(path, "WorldEvents");
@@ -76,6 +77,7 @@ internal static class AssetLoader
         if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
         if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
         if(Directory.Exists(mapMarkerFolderpath)) LoadMapMarkerFiles(mapMarkerFolderpath);
+        if(Directory.Exists(shopFolderpath)) LoadShopFiles(shopFolderpath);
         if(Directory.Exists(dockFolderpath)) LoadDockFiles(dockFolderpath);
         if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
         if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
@@ -224,6 +226,22 @@ internal static class AssetLoader
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load map marker data from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadShopFiles(string shopFolderPath)
+    {
+        string[] shopFolderFiles = Directory.GetFiles(shopFolderPath);
+        foreach (string file in shopFolderFiles)
+        {
+            try
+            {
+                ShopUtil.AddShopDataFromMeta(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load shop data from {file}: {ex}");
             }
         }
     }

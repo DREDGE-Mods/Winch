@@ -11,9 +11,11 @@ using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Dock.Destinations;
+using Winch.Data.Shop;
 using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
 using Winch.Util;
+using static ShopData;
 
 namespace Winch.Serialization;
 
@@ -732,6 +734,62 @@ public static class DredgeTypeHelpers
         foreach (var destination in destinations)
         {
             parsed.Add(ParseUpgradeDestination(destination));
+        }
+        return parsed;
+    }
+
+    public static ModdedShopData.ModdedShopItemData ParseShopItemData(JToken shopItemData)
+    {
+        var config = new ModdedShopData.ModdedShopItemData();
+        var meta = shopItemData.Type == JTokenType.String
+            ? new Dictionary<string, object> { { "itemData", shopItemData.ToString() } }
+            : shopItemData.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        ShopUtil.PopulateShopItemDataFromMetaWithConverter(config, meta);
+        return config;
+    }
+
+    internal static List<ShopItemData> ParseShopItemDataList(JArray o)
+    {
+        var parsed = new List<ShopItemData>();
+        foreach (var shopItemData in o)
+        {
+            parsed.Add(ParseShopItemData(shopItemData));
+        }
+        return parsed;
+    }
+
+    public static PhaseLinkedShopData ParsePhaseLinkedShopData(JToken shopData)
+    {
+        var config = new PhaseLinkedShopData();
+        var meta = shopData.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        ShopUtil.PopulatePhaseLinkedShopDataFromMetaWithConverter(config, meta);
+        return config;
+    }
+
+    internal static List<PhaseLinkedShopData> ParsePhaseLinkedShopDataList(JArray o)
+    {
+        var parsed = new List<PhaseLinkedShopData>();
+        foreach (var shopItemData in o)
+        {
+            parsed.Add(ParsePhaseLinkedShopData(shopItemData));
+        }
+        return parsed;
+    }
+
+    public static DialogueLinkedShopData ParseDialogueLinkedShopData(JToken shopData)
+    {
+        var config = new DialogueLinkedShopData();
+        var meta = shopData.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        ShopUtil.PopulateDialogueLinkedShopDataFromMetaWithConverter(config, meta);
+        return config;
+    }
+
+    internal static List<DialogueLinkedShopData> ParseDialogueLinkedShopDataList(JArray o)
+    {
+        var parsed = new List<DialogueLinkedShopData>();
+        foreach (var shopItemData in o)
+        {
+            parsed.Add(ParseDialogueLinkedShopData(shopItemData));
         }
         return parsed;
     }
