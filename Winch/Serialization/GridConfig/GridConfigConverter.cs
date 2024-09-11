@@ -17,6 +17,7 @@ public class GridConfigConverter : DredgeTypeConverter<DeferredGridConfiguration
         { "hasUnderlay", new(false, o => bool.Parse(o.ToString())) }, //Does this grid have an underlay (used for damage and reinforcement
         { "columns", new(0, o => int.Parse(o.ToString())) },
         { "rows", new(0, o => int.Parse(o.ToString())) },
+        { "gridKey", new(GridKey.NONE, o => DredgeTypeHelpers.GetEnumValue<GridKey>(o)) },
     };
 
     public GridConfigConverter()

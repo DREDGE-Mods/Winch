@@ -108,6 +108,7 @@ public static class GridConfigUtil
         {
             ModdedGridConfigDict.Add(id, gridConfig);
             AddressablesUtil.AddResourceAtLocation("GridConfigData", id, id, gridConfig);
+            if (gridConfig.gridKey != GridKey.NONE) GameManager.Instance.GameConfigData.gridConfigs.SafeAdd(gridConfig.gridKey, gridConfig);
         }
         else
         {
