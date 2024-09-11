@@ -42,6 +42,7 @@ using Winch.Patches.API;
 using Winch.Util;
 using static ActiveAbilityInfoPanel;
 using static ShopData;
+using static ShopRestocker;
 using static TrawlNetAbility;
 
 public static class WinchExtensions
@@ -80,6 +81,8 @@ public static class WinchExtensions
     public static bool IsModded(this ShopData shopData) => shopData is ModdedShopData || ShopUtil.ModdedShopDataDict.ContainsKey(shopData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this ShopItemData shopItemData) => shopItemData is ModdedShopItemData || shopItemData.itemData.IsModded();
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this ShopDataGridConfig shopDataGridConfig) => shopDataGridConfig is ModdedShopDataGridConfig || shopDataGridConfig.gridKey.IsDynamic() || shopDataGridConfig.shopData.IsModded();
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this QuestData questData) => questData is DeferredQuestData || QuestUtil.ModdedQuestDataDict.ContainsKey(questData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
@@ -120,6 +123,8 @@ public static class WinchExtensions
     public static bool IsVanilla(this ShopData shopData) => !shopData.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this ShopItemData shopItemData) => !shopItemData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this ShopDataGridConfig shopDataGridConfig) => !shopDataGridConfig.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this QuestData questData) => !questData.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>

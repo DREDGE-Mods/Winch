@@ -17,9 +17,5 @@ public class ModdedShopData : ShopData
         }
     }
 
-    public static implicit operator ShopRestocker.ShopDataGridConfig(ModdedShopData shopData) => new ShopRestocker.ShopDataGridConfig
-    {
-        shopData = shopData,
-        gridKey = shopData.gridKey,
-    };
+    public static implicit operator ShopRestocker.ShopDataGridConfig(ModdedShopData shopData) => new ModdedShopDataGridConfig(shopData);
 }
