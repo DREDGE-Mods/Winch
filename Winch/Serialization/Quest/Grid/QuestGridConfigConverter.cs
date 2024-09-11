@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine.Localization;
 using Winch.Data.Quest.Grid;
 using Winch.Util;
