@@ -48,7 +48,7 @@ internal static class DialogueRunnerPatcher
         {
             WinchCore.Log.Error("No node named " + nodeName + " has been loaded.", "DredgeDialogueRunner.StartDialogue");
             GameEvents.Instance.TriggerDialogueStarted();
-            __instance.onDialogueComplete.Invoke();
+            __instance.FireOnNextUpdate(__instance.onDialogueComplete.Invoke);
             return false;
         }
         else
