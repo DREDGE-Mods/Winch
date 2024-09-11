@@ -39,9 +39,24 @@ public static class PoiUtil
 
     internal static Dictionary<string, CustomPOI> ModdedPOIDict = new();
     internal static Dictionary<string, POI> CreatedModdedPOIDict = new();
+    internal static Dictionary<string, POI> AllPOIDict = new();
     internal static Dictionary<string, IHarvestable> Harvestables = new();
     internal static Dictionary<string, GameObject> HarvestParticlePrefabs = new();
     internal static Dictionary<string, GameObject> ModdedHarvestParticlePrefabs = new();
+
+    public static POI GetPOI(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllPOIDict.TryGetValue(id, out POI poi))
+            return poi;
+
+        if (CreatedModdedPOIDict.TryGetValue(id, out POI moddedPoi))
+            return moddedPoi;
+
+        return null;
+    }
 
     public static CustomPOI GetModdedPOI(string id)
     {
@@ -88,12 +103,24 @@ public static class PoiUtil
                 WinchCore.Log.Debug($"Added particle {name} to HarvestParticlePrefabs");
             }
         }
+        foreach (var dockPoi in Resources.FindObjectsOfTypeAll<DockPOI>())
+        {
+            AllPOIDict.Add(dockPoi.dock.Data.Id, dockPoi);
+            WinchCore.Log.Debug($"Added POI {dockPoi.dock.Data.Id} to AllPOIDict");
+        }
+        foreach (var conversationPoi in Resources.FindObjectsOfTypeAll<ConversationPOI>())
+        {
+            var id = conversationPoi is ExplosivePOI explosivePoi ? explosivePoi.id : conversationPoi.name.Replace("_Inspect", "");
+            AllPOIDict.Add(id, conversationPoi);
+            WinchCore.Log.Debug($"Added POI {id} to AllPOIDict");
+        }
         foreach (var harvestPoi in GameManager.Instance.HarvestPOIManager.allHarvestPOIs)
         {
             try
             {
-                if (!Harvestables.ContainsKey(harvestPoi.Harvestable.GetId()))
-                    Harvestables.Add(harvestPoi.Harvestable.GetId(), harvestPoi.Harvestable);
+                AllPOIDict.SafeAdd(harvestPoi.Harvestable.GetId(), harvestPoi);
+                WinchCore.Log.Debug($"Added POI \"{harvestPoi.name}\" to AllPOIDict");
+                Harvestables.SafeAdd(harvestPoi.Harvestable.GetId(), harvestPoi.Harvestable);
                 var prefab = harvestPoi.Harvestable.GetParticlePrefab();
                 var name = prefab.name.RemoveClone();
                 if (!HarvestParticlePrefabs.ContainsKey(name))
@@ -112,8 +139,9 @@ public static class PoiUtil
         {
             try
             {
-                if (!Harvestables.ContainsKey(itemPoi.Harvestable.GetId()))
-                    Harvestables.Add(itemPoi.Harvestable.GetId(), itemPoi.Harvestable);
+                AllPOIDict.SafeAdd(itemPoi.Harvestable.GetId(), itemPoi);
+                WinchCore.Log.Debug($"Added POI \"{itemPoi.name}\" to AllPOIDict");
+                Harvestables.SafeAdd(itemPoi.Harvestable.GetId(), itemPoi.Harvestable);
                 var prefab = itemPoi.Harvestable.GetParticlePrefab();
                 var name = prefab.name.RemoveClone();
                 if (!HarvestParticlePrefabs.ContainsKey(name))
@@ -133,6 +161,7 @@ public static class PoiUtil
     internal static void Clear()
     {
         CreatedModdedPOIDict.Clear();
+        AllPOIDict.Clear();
         Harvestables.Clear();
         HarvestParticlePrefabs.Clear();
     }
@@ -422,6 +451,7 @@ public static class PoiUtil
         customPoiObject.transform.position = customPoi.location;
         var poi = customPoiObject.AddComponent<T>();
         CreatedModdedPOIDict.Add(customPoi.id, poi);
+        WinchCore.Log.Debug($"Added POI {customPoi.id} to CreatedModdedPOIDict");
 
         poi.canBeGhostWindTarget = customPoi.canBeGhostWindTarget;
 
@@ -480,6 +510,11 @@ public static class PoiUtil
         {
             WinchCore.Log.Error($"No POI converter found for type {typeof(T)}");
         }
+    }
+
+    public static IReadOnlyDictionary<string, POI> GetAllPOI()
+    {
+        return AllPOIDict.Concat(CreatedModdedPOIDict).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }
 
     public static IHarvestable[] GetAllHarvestables()
