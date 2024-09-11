@@ -19,7 +19,7 @@ public abstract class CustomBaseDestination
     /// <summary>
     /// Relative position of this destination
     /// </summary>
-    public Vector3 position = new Vector3(-1.825f, 3, 0.125f);
+    public Vector3 position = Vector3.zero;
 
     [SerializeField]
     public LocalizedString titleKey = LocalizationUtil.Empty;
@@ -31,13 +31,13 @@ public abstract class CustomBaseDestination
     /// Relative position of the camera from the destination.
     /// </summary>
     [SerializeField]
-    public Vector3 vCam = new Vector3(13, 2.5f, 9);
+    public Vector3 vCam = Vector3.one;
 
     /// <summary>
     /// The relative position for the camera look at target
     /// </summary>
     [SerializeField]
-    public Vector3 lookAtTarget = new Vector3(-0.7f, -2f, -0.25f);
+    public Vector3 lookAtTarget = Vector3.zero;
 
     [SerializeField]
     public string speakerData = string.Empty;
