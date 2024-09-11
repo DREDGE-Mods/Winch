@@ -20,6 +20,7 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using UnityEngine.Rendering;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Winch.Components;
 using Winch.Config;
@@ -1994,6 +1995,14 @@ public static class WinchExtensions
 
     public static void Destroy<T>(this T target) where T : UnityEngine.Object => UnityEngine.Object.Destroy(target);
     public static void DestroyImmediate<T>(this T target) where T : UnityEngine.Object => UnityEngine.Object.DestroyImmediate(target);
+
+    public static GameObject MoveToScene(this GameObject go, Scene scene)
+    {
+        SceneManager.MoveGameObjectToScene(go, scene);
+        return go;
+    }
+
+    public static GameObject MoveToScene(this GameObject go, string sceneName) => go.MoveToScene(SceneManager.GetSceneByName(sceneName));
 
     public static void SmoothLookDir(this GameObject go, Vector3 direction, float dt, float angularVelocity)
     {

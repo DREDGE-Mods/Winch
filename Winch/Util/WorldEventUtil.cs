@@ -216,12 +216,14 @@ public static class WorldEventUtil
         }
     }
 
+    internal static Transform StaticWorldEvents;
+
     internal static void CreateModdedStaticWorldEvents()
     {
-        var staticWorldEvents = new GameObject("StaticWorldEvents").transform;
+        StaticWorldEvents = new GameObject("StaticWorldEvents").MoveToScene("Game").transform;
         foreach (var worldEventData in ModdedStaticWorldEventDataDict.Values)
         {
-            worldEventData.prefab.Instantiate(worldEventData.location, Quaternion.identity, staticWorldEvents);
+            worldEventData.prefab.Instantiate(worldEventData.location, Quaternion.identity, StaticWorldEvents);
         }
     }
 
