@@ -23,7 +23,7 @@ internal static class GameSceneInitializerPatch
             WorldEventUtil.CreateModdedStaticWorldEvents();
             ItemUtil.Encyclopedia();
             DockUtil.Fix();
-            DredgeEvent.TriggerOnGameLoading(__instance);
+            DredgeEvent.TriggerGameLoading(__instance);
         }
         catch (Exception ex)
         {
