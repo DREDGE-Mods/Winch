@@ -22,7 +22,7 @@ public class QuestDataConverter : DredgeTypeConverter<DeferredQuestData>
         { "steps", new(new List<string>(), o=>DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "subquests", new(new List<string>(), o=>DredgeTypeHelpers.ParseStringList((JArray)o)) },
         { "onOfferedQuestStep", new(string.Empty, null) },
-        { "offerConditions", new(new List<QuestStepCondition>(), null) },
+        { "offerConditions", new(new List<QuestStepCondition>(), null) }, //TODO: implement
         { "canBeOfferedAutomatically", new(false, o=> bool.Parse(o.ToString())) },
     };
 
