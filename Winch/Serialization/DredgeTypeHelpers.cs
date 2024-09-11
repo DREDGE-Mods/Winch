@@ -492,9 +492,27 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
+    private static MarketTabConfig ParseMarketTabConfig(object value)
+    {
+        var jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse market tab.");
+        return new MarketTabConfig
+        {
+            gridKey = jsonDict.TryGetValue("gridKey", out object gridKey) ? GetEnumValue<GridKey>(gridKey) : GridKey.NONE,
+            tabSprite = jsonDict.TryGetValue("tabSprite", out object tabSprite) ? TextureUtil.GetSprite(tabSprite.ToString()) : TextureUtil.GetSprite("EmptyIcon"),
+            titleKey = jsonDict.TryGetValue("titleKey", out object titleKey) ? LocalizationUtil.CreateReference("Strings", titleKey.ToString()) : LocalizationUtil.Empty,
+            isUnlockedBasedOnDialogue = jsonDict.TryGetValue("isUnlockedBasedOnDialogue", out object isUnlockedBasedOnDialogue) ? bool.Parse(isUnlockedBasedOnDialogue.ToString()) : false,
+            unlockDialogueNodes = jsonDict.TryGetValue("unlockDialogueNodes", out object unlockDialogueNodes) ? ParseStringList((JArray)unlockDialogueNodes) : new List<string>(),
+        };
+    }
+
     public static List<MarketTabConfig> ParseMarketTabConfigList(JArray o)
     {
-        throw new NotImplementedException();
+        var parsed = new List<MarketTabConfig>();
+        foreach (var marketTabConfig in o)
+        {
+            parsed.Add(ParseMarketTabConfig(marketTabConfig));
+        }
+        return parsed;
     }
 
     public static Dictionary<string, SpeakerVCam> GetSpeakerVCamsFromJsonObject(object value)
