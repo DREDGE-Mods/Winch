@@ -240,6 +240,7 @@ public static class PoiUtil
         harvestPoiDataModel.nightItems = customHarvestPoi.NightItems;
 
         harvestPoiDataModel.id = customHarvestPoi.id;
+        Harvestables.Add(customHarvestPoi.id, harvestPoiDataModel);
 
         harvestPoi.HarvestPOIData = harvestPoiDataModel;
         harvestPoi.Harvestable = harvestPoiDataModel;
@@ -276,6 +277,7 @@ public static class PoiUtil
         itemPoiDataModel.items = customItemPoi.Items;
 
         itemPoiDataModel.id = customItemPoi.id;
+        Harvestables.Add(customItemPoi.id, itemPoiDataModel);
 
         itemPoi.itemPOIData = itemPoiDataModel;
         itemPoi.Harvestable = itemPoiDataModel;
@@ -483,5 +485,10 @@ public static class PoiUtil
     public static IHarvestable[] GetAllHarvestables()
     {
         return Harvestables.Values.ToArray();
+    }
+
+    public static GameObject[] GetAllHarvestParticlePrefabs()
+    {
+        return HarvestParticlePrefabs.Values.Concat(ModdedHarvestParticlePrefabs.Values).ToArray();
     }
 }
