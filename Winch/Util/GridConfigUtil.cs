@@ -2,8 +2,10 @@
 using System.Linq;
 using UnityEngine.AddressableAssets;
 using Winch.Core;
+using Winch.Data;
 using Winch.Data.GridConfig;
 using Winch.Serialization.GridConfig;
+using static Mono.Security.X509.X520;
 
 namespace Winch.Util;
 
@@ -23,11 +25,18 @@ public static class GridConfigUtil
     }
 
     internal static List<string> VanillaGridConfigIDList = new();
+    internal static Dictionary<GridKey, string> VanillaGridKeyDict = new();
 
     internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"),
              gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
+        GameManager.Instance.GameConfigData.gridConfigs.AddOrChange(GridKeyExtra.UPGRADE_T1_HULL, GameManager.Instance.GameConfigData.hullTierGridConfigs[0]);
+        GameManager.Instance.GameConfigData.gridConfigs.ForEach(kvp =>
+        {
+            VanillaGridConfigIDList.Add(kvp.Value.name);
+            VanillaGridKeyDict.Add(kvp.Key, kvp.Value.name);
+        });
     }
 
     internal static Dictionary<string, DeferredGridConfiguration> ModdedGridConfigDict = new();
@@ -70,9 +79,27 @@ public static class GridConfigUtil
     {
         foreach (var gridConfig in result)
         {
-            AllGridConfigDict.Add(gridConfig.name, gridConfig);
+            AllGridConfigDict.SafeAdd(gridConfig.name, gridConfig);
             WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
         }
+        foreach (var gridConfig in GameManager.Instance.GameConfigData.gridConfigs.Values.Where(gridConfig => gridConfig != null && !AllGridConfigDict.ContainsKey(gridConfig.name)))
+        {
+            AllGridConfigDict.SafeAdd(gridConfig.name, gridConfig);
+            WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
+        }
+        FixGridConfigurations();
+    }
+
+    internal static void FixGridConfigurations()
+    {
+        // Change grid configurations to the addressable ones
+        foreach (var kvp in GameManager.Instance.GameConfigData.gridConfigs.Where(kvp => VanillaGridKeyDict.ContainsKey(kvp.Key) && (kvp.Value == null || (kvp.Value != null && AllGridConfigDict.ContainsKey(kvp.Value.name)))).ToArray())
+            GameManager.Instance.GameConfigData.gridConfigs.AddOrChange(kvp.Key, AllGridConfigDict[VanillaGridKeyDict[kvp.Key]]);
+        GameManager.Instance.GameConfigData.hullTierGridConfigs[0] = GameManager.Instance.GameConfigData.gridConfigs[GridKeyExtra.UPGRADE_T1_HULL];
+        GameManager.Instance.GameConfigData.hullTierGridConfigs[1] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T2_HULL];
+        GameManager.Instance.GameConfigData.hullTierGridConfigs[2] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T3_HULL];
+        GameManager.Instance.GameConfigData.hullTierGridConfigs[3] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T4_HULL];
+        GameManager.Instance.GameConfigData.hullTierGridConfigs[4] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T5_HULL];
     }
 
     internal static void ClearGridConfigurations()
