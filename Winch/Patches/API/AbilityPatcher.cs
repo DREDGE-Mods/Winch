@@ -18,6 +18,7 @@ internal static class AbilityPatcher
         __state = __instance.abilityDatas.ToDictionary(data => data.name, data => data);
         AbilityUtil.AddModdedAbilitiesToManager(__state);
         DredgeEvent.AddressableEvents.AbilitiesLoaded.Trigger(__instance, __state, true);
+        AbilityUtil.PopulateAbilityData(__state);
         __instance.abilityDatas = __state.Values.ToList();
     }
 

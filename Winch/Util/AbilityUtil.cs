@@ -136,6 +136,10 @@ public static class AbilityUtil
             modAbilityData.Populate();
             abilityDatas.Add(modAbilityData.id, modAbilityData);
         }
+    }
+
+    internal static void PopulateAbilityData(IDictionary<string, AbilityData> abilityDatas)
+    {
         foreach (var abilityDataByKey in abilityDatas)
         {
             AllAbilityDataDict.Add(abilityDataByKey.Key, abilityDataByKey.Value);
