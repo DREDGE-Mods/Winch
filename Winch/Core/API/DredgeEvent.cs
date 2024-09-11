@@ -34,4 +34,30 @@ public static class DredgeEvent
         WinchCore.Log.Debug("Triggered OnDialogueRunnerLoaded event");
         OnDialogueRunnerLoaded?.Invoke(dialogueRunner);
     }
+
+    public static event Action<HarvestPOI, SpatialItemInstance>? OnPOIHarvested;
+    /// <param name="harvestPOI">The POI that was harvested from</param>
+    /// <param name="itemInstance">Harvestable item instance</param>
+    public static void TriggerPOIHarvested(HarvestPOI harvestPOI, SpatialItemInstance itemInstance)
+    {
+        WinchCore.Log.Debug($"Triggered OnPOIHarvested({harvestPOI.Harvestable.GetId()}, {itemInstance.id}) event");
+        OnPOIHarvested?.Invoke(harvestPOI, itemInstance);
+    }
+
+    public static event Action<ItemPOI, ItemInstance>? OnPOIItemCollected;
+    /// <param name="itemPOI">The POI that was collected from</param>
+    /// <param name="itemInstance">Item instance (can be spatial or non spatial)</param>
+    public static void TriggerPOIItemCollected(ItemPOI itemPOI, ItemInstance itemInstance)
+    {
+        WinchCore.Log.Debug($"Triggered OnPOIItemCollected({itemPOI.Harvestable.GetId()}, {itemInstance.id}) event");
+        OnPOIItemCollected?.Invoke(itemPOI, itemInstance);
+    }
+
+    public static event Action<SpatialItemInstance>? OnFishCaught;
+    /// <param name="itemInstance">Fish item instance</param>
+    public static void TriggerFishCaught(SpatialItemInstance itemInstance)
+    {
+        WinchCore.Log.Debug($"Triggered OnFishCaught({itemInstance.id}) event");
+        OnFishCaught?.Invoke(itemInstance);
+    }
 }

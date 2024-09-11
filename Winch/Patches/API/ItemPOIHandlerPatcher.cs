@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Winch.Core;
+using Winch.Core.API;
 
 namespace Winch.Patches.API;
 
@@ -25,6 +26,8 @@ public static class ItemPOIHandlerPatcher
     {
         WinchCore.Log.Debug("[ItemPOIHandler] OnPressComplete()");
 
+        GameEvents.Instance.TriggerPlayerInteractedWithPOI();
+
         var itemPOI = __instance.itemPOI;
         var harvestable = itemPOI.Harvestable;
         var item = harvestable.GetFirstItem();
@@ -36,36 +39,35 @@ public static class ItemPOIHandlerPatcher
         }
 
         var itemInstance = GameManager.Instance.ItemManager.AddItemById(item.id, GameManager.Instance.SaveData.Inventory, true);
-
         if (itemInstance == null)
             return false;
 
-        var deduct = true;
+        var success = true;
         if (itemInstance is SpatialItemInstance spatialItemInstance)
         {
             if (spatialItemInstance.seen)
             {
                 GameEvents.Instance.TriggerItemAddedEvent(spatialItemInstance, true);
-                if (spatialItemInstance is FishItemInstance fishItemInstance && fishItemInstance.GetItemData<FishItemData>().IsAberration)
+                if (spatialItemInstance is FishItemInstance fishItemInstance)
                 {
-                    SaveData saveData = GameManager.Instance.SaveData;
-                    int numAberrationsCaught = saveData.NumAberrationsCaught;
-                    saveData.NumAberrationsCaught = numAberrationsCaught + 1;
+                    if (fishItemInstance.GetItemData<FishItemData>().IsAberration)
+                        GameManager.Instance.SaveData.NumAberrationsCaught += 1;
+
+                    GameEvents.Instance.TriggerFishCaught(fishItemInstance);
                 }
             }
             else
-                deduct = false;
+                success = false;
         }
 
-        if (deduct)
-            GameEvents.Instance.TriggerPlayerInteractedWithPOI();
+        if (success)
+        {
+            itemPOI.OnHarvested(true);
+            GameManager.Instance.Input.RemoveActionListener(new DredgePlayerActionPress[] { __instance.collectItemAction }, ActionLayer.BASE);
+            DredgeEvent.TriggerPOIItemCollected(itemPOI, itemInstance);
+        }
         else
             GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.quick-move-failed");
-
-        itemPOI.OnHarvested(deduct);
-
-        if (deduct)
-            GameManager.Instance.Input.RemoveActionListener(new DredgePlayerActionPress[] { __instance.collectItemAction }, ActionLayer.BASE);
 
         return false;
     }

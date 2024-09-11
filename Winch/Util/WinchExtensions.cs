@@ -24,6 +24,7 @@ using UnityEngine.UI;
 using Winch.Components;
 using Winch.Config;
 using Winch.Core;
+using Winch.Core.API;
 using Winch.Data;
 using Winch.Data.Abilities;
 using Winch.Data.Character;
@@ -155,6 +156,33 @@ public static class WinchExtensions
     /// Check whether this item thawable (slows down rotting of fish in your inventory)
     /// </summary>
     public static bool IsThawable(this SpatialItemInstance instance) => instance.ToItemData().IsThawable();
+
+    /// <summary>
+    /// Trigger the fish caught event for both DREDGE and Winch
+    /// </summary>
+    /// <param name="gameEvents">Game events</param>
+    /// <param name="itemInstance">Fish item instance</param>
+    public static void TriggerFishCaught(this GameEvents gameEvents, SpatialItemInstance itemInstance)
+    {
+        gameEvents.TriggerFishCaught();
+        DredgeEvent.TriggerFishCaught(itemInstance);
+    }
+
+    /// <param name="gameEvents">Game events</param>
+    /// <param name="harvestPOI">The POI that was harvested from</param>
+    /// <param name="itemInstance">Harvestable item instance</param>
+    public static void TriggerPOIHarvested(this GameEvents gameEvents, HarvestPOI harvestPOI, SpatialItemInstance itemInstance)
+    {
+        DredgeEvent.TriggerPOIHarvested(harvestPOI, itemInstance);
+    }
+
+    /// <param name="gameEvents">Game events</param>
+    /// <param name="itemPOI">The POI that was collected from</param>
+    /// <param name="itemInstance">Item instance (can be spatial or non spatial)</param>
+    public static void TriggerPOIItemCollected(this GameEvents gameEvents, ItemPOI itemPOI, ItemInstance itemInstance)
+    {
+        DredgeEvent.TriggerPOIItemCollected(itemPOI, itemInstance);
+    }
 
     /// <summary>
     /// Restocks the item point of interest to 1 (cannot go any higher)
@@ -764,7 +792,7 @@ public static class WinchExtensions
             FishItemInstance fishItemInstance = GameManager.Instance.ItemManager.CreateFishItem(fishItemData.id, FishAberrationGenerationMode.RANDOM_CHANCE, false, sizeGenerationMode, aberrationBonusMultiplier);
             GameManager.Instance.SaveData.TrawlNet.AddObjectToGridData(fishItemInstance, gridPos, true, null);
             GameManager.Instance.ItemManager.SetItemSeen(fishItemInstance);
-            GameEvents.Instance.TriggerFishCaught();
+            GameEvents.Instance.TriggerFishCaught(fishItemInstance);
             GameManager.Instance.VibrationManager.Vibrate(trawlNetAbility.fishAddedVibrationData, VibrationRegion.WholeBody, true).Run();
         }
         else
