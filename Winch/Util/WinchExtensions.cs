@@ -1083,6 +1083,24 @@ public static class WinchExtensions
             }
         }));
     }
+
+    public static void RestockHarvestSpot(this HarvestValidator harvestValidator, string targetId)
+    {
+        WinchCore.Log.Debug($"[HarvestValidator] RestockHarvestSpot({targetId})");
+        HarvestPOI harvestPOI = harvestValidator.allHarvestPOIs.Find((HarvestPOI h) => h.Harvestable.GetId() == targetId);
+        if (harvestPOI != null)
+        {
+            harvestPOI.AddStock(harvestPOI.MaxStock);
+        }
+        else
+            WinchCore.Log.Error($"[HarvestValidator] RestockHarvestSpot({targetId}) there is no spot with that ID.");
+    }
+
+    public static void RestockHarvestSpots(this HarvestValidator harvestValidator)
+    {
+        WinchCore.Log.Debug("[HarvestValidator] RestockHarvestSpots()");
+        harvestValidator.allHarvestPOIs.ForEach(harvestPOI => harvestPOI.AddStock(harvestPOI.MaxStock));
+    }
     #endregion
 
     #region Reflection

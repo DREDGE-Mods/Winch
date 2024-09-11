@@ -361,7 +361,7 @@ internal static class TerminalPatcher
     public static void RestockHarvestSpots(this HarvestValidator harvestValidator, CommandArg[] args)
     {
         WinchCore.Log.Debug("[HarvestValidator] RestockHarvestSpots()");
-        harvestValidator.allHarvestPOIs.ForEach(harvestPOI => harvestPOI.AddStock(harvestPOI.MaxStock));
+        harvestValidator.RestockHarvestSpots();
     }
 
     public static void ListHarvestSpots(this HarvestValidator harvestValidator, CommandArg[] args)
