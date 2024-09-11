@@ -70,7 +70,7 @@ class Initializer
 
         try
         {
-            InitializeAssetLoader();
+            InitializeWinchBehaviour();
 
             /*if (WinchConfig.GetProperty("EnableDeveloperConsole", false))
                 InitializeDevConsole();*/
@@ -88,9 +88,9 @@ class Initializer
         InitializeVersionLabel();
     }
 
-    private static void InitializeAssetLoader()
+    private static void InitializeWinchBehaviour()
     {
-        UnityEngine.Object.DontDestroyOnLoad(new GameObject("AssetLoader", typeof(AssetLoaderObject)));
+        UnityEngine.Object.DontDestroyOnLoad(new GameObject("Winch", typeof(WinchBehaviour)));
     }
 
     internal static void InitializeVersionLabel()

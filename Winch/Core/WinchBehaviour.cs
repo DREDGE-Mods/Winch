@@ -7,14 +7,15 @@ using Winch.Util;
 
 namespace Winch.Core;
 
-internal class AssetLoaderObject : USingleton<AssetLoaderObject>
+[DefaultExecutionOrder(-500)]
+internal class WinchBehaviour : USingleton<WinchBehaviour>
 {
     protected override bool ShouldNotDestroyOnLoad => true;
 
     protected override void Awake()
     {
         base.Awake();
-        WinchCore.Log.Debug("[AssetLoaderObject] Awake()");
+        WinchCore.Log.Debug("[WinchBehaviour] Awake()");
         ApplicationEvents.Instance.OnTitleClosed += OnTitleClosed;
         ApplicationEvents.Instance.OnGameLoaded += OnGameLoaded;
         ApplicationEvents.Instance.OnGameStartable += OnGameStartable;
@@ -25,7 +26,7 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
 
     private void OnDestroy()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnDestroy()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnDestroy()");
         ApplicationEvents.Instance.OnTitleClosed -= OnTitleClosed;
         ApplicationEvents.Instance.OnGameLoaded -= OnGameLoaded;
         ApplicationEvents.Instance.OnGameStartable -= OnGameStartable;
@@ -36,7 +37,7 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
 
     public void Start()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] Start()");
+        WinchCore.Log.Debug("[WinchBehaviour] Start()");
         AssetLoader.LoadAssets();
         DredgeEvent.TriggerModAssetsLoaded();
         ModAssemblyLoader.ExecuteModAssemblies();
@@ -45,28 +46,28 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
 
     private void OnTitleClosed()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnTitleClosed()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnTitleClosed()");
     }
 
     private void OnGameLoaded()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnGameLoaded()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnGameLoaded()");
     }
 
     private void OnGameStartable()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnGameStartable()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnGameStartable()");
     }
 
     private void OnGameStarted()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnGameStarted()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnGameStarted()");
         GameEvents.Instance.OnItemDestroyed -= OnItemDestroyed;
     }
 
     private void OnGameEnded()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnGameEnded()");
         GameEvents.Instance.OnItemDestroyed -= OnItemDestroyed;
         Clear();
     }
@@ -83,7 +84,7 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
 
     private void OnGameUnloaded()
     {
-        WinchCore.Log.Debug("[AssetLoaderObject] OnGameUnloaded()");
+        WinchCore.Log.Debug("[WinchBehaviour] OnGameUnloaded()");
     }
 
     private void OnItemDestroyed(SpatialItemData spatialItemData, bool playerDestroyed)
