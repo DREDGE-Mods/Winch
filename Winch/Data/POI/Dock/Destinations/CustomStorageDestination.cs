@@ -37,6 +37,11 @@ public class CustomStorageDestination
     public float overflowHeight = 0.6f;
 
     /// <summary>
+    /// Whether to enable the chest mesh
+    /// </summary>
+    public bool hasChest = true;
+
+    /// <summary>
     /// Whether to enable the boxes next to the chest
     /// </summary>
     public bool hasBoxes = true;

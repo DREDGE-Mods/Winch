@@ -355,6 +355,7 @@ public static class DredgeTypeHelpers
             vCam = jsonDict.TryGetValue("vCam", out object vCam) ? ParseVector3(vCam) : new Vector3(4.5f, 3.45f, 6.75f),
             hasOverflow = jsonDict.TryGetValue("hasOverflow", out object hasOverflow) ? bool.Parse(hasOverflow.ToString()) : false,
             overflowHeight = jsonDict.TryGetValue("overflowHeight", out object overflowHeight) ? float.Parse(overflowHeight.ToString()) : 0.6f,
+            hasChest = jsonDict.TryGetValue("hasChest", out object hasChest) ? bool.Parse(hasChest.ToString()) : true,
             hasBoxes = jsonDict.TryGetValue("hasBoxes", out object hasBoxes) ? bool.Parse(hasBoxes.ToString()) : true,
         };
     }
