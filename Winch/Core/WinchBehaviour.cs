@@ -89,9 +89,9 @@ internal class WinchBehaviour : USingleton<WinchBehaviour>
 
     private void OnItemDestroyed(SpatialItemData spatialItemData, bool playerDestroyed)
     {
-        if (spatialItemData is HarvestableItemData harvestableItemData && harvestableItemData.regenHarvestSpotOnDestroy)
+        if ((spatialItemData is HarvestableItemData harvestableItemData && harvestableItemData.regenHarvestSpotOnDestroy) || spatialItemData is not HarvestableItemData)
         {
-            StartCoroutine(FindAndRegenItemSpot(harvestableItemData));
+            StartCoroutine(FindAndRegenItemSpot(spatialItemData));
         }
     }
     private IEnumerator FindAndRegenItemSpot(ItemData itemData)
