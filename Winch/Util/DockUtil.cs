@@ -303,12 +303,12 @@ public static class DockUtil
 #pragma warning restore CS8603 // Possible null reference return.
 
 #pragma warning disable CS8618
-    public static Transform Docks;
-    public static HighlightConditionExtraData ResearchTutorial;
-    public static HighlightConditionExtraData ResearchBottomlessLines;
+    internal static Transform Docks;
+    internal static HighlightConditionExtraData ResearchTutorial;
+    internal static HighlightConditionExtraData ResearchBottomlessLines;
 #pragma warning restore CS8618
 
-    public static void Populate()
+    internal static void Populate()
     {
         foreach (var dockData in Resources.FindObjectsOfTypeAll<DockData>())
         {
@@ -328,7 +328,7 @@ public static class DockUtil
         ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
     }
 
-    public static void Fix()
+    internal static void Fix()
     {
         var id = GameManager.Instance.SaveData.dockId;
         if (!AllDockDict.ContainsKey(id) && !ModdedDockDict.Values.Any(dock => dock.Data.Id == id))
@@ -393,7 +393,7 @@ public static class DockUtil
             throw new InvalidOperationException(prefab.ToString());
     }
 
-    public static DockPOI CreateDock(CustomDockPOI customDockPoi)
+    internal static DockPOI CreateDock(CustomDockPOI customDockPoi)
     {
         var dockObject = new GameObject(customDockPoi.id);
         dockObject.transform.SetParent(Docks, false);
@@ -531,7 +531,7 @@ public static class DockUtil
         return dockPoi;
     }
 
-    public static T CreateBaseDestination<T>(CustomBaseDestination custom, Transform parent) where T : BaseDestination
+    internal static T CreateBaseDestination<T>(CustomBaseDestination custom, Transform parent) where T : BaseDestination
     {
         var destinationObject = new GameObject(custom.id);
         destinationObject.transform.SetParent(parent, false);
@@ -556,7 +556,7 @@ public static class DockUtil
         return destination;
     }
 
-    public static T CreateMarketDestination<T>(CustomMarketDestination custom, Transform parent) where T : MarketDestination
+    internal static T CreateMarketDestination<T>(CustomMarketDestination custom, Transform parent) where T : MarketDestination
     {
         var destination = CreateBaseDestination<T>(custom, parent);
         destination.itemTypesBought = custom.itemTypesBought;
@@ -575,7 +575,7 @@ public static class DockUtil
         return destination;
     }
 
-    public static void PostBaseDestination(CustomBaseDestination custom, BaseDestination destination, List<BaseDestination> all)
+    internal static void PostBaseDestination(CustomBaseDestination custom, BaseDestination destination, List<BaseDestination> all)
     {
         destination.selectOnLeft = all.FindAll(x => custom.selectOnLeft.Contains(x.id));
         destination.selectOnRight = all.FindAll(x => custom.selectOnRight.Contains(x.id));
@@ -583,13 +583,13 @@ public static class DockUtil
         destination.selectOnDown = all.FindAll(x => custom.selectOnDown.Contains(x.id));
     }
 
-    public static void PostConstructableDestination(CustomConstructableDestination custom, ConstructableDestination destination, List<BaseDestination> all)
+    internal static void PostConstructableDestination(CustomConstructableDestination custom, ConstructableDestination destination, List<BaseDestination> all)
     {
         PostBaseDestination(custom, destination, all);
         destination.useThisDestinationInsteadIfConstructed = all.Find(x => x.id == custom.useThisDestinationInsteadIfConstructed);
     }
 
-    public static CinemachineVirtualCamera CreateSpeakerVCam(string speaker, SpeakerVCam settings, Transform parent)
+    internal static CinemachineVirtualCamera CreateSpeakerVCam(string speaker, SpeakerVCam settings, Transform parent)
     {
         var speakerObject = new GameObject(speaker);
         speakerObject.transform.SetParent(parent, false);
@@ -598,7 +598,7 @@ public static class DockUtil
         return CreateDockVirtualCamera(settings.vCam, lookAt, speakerObject.transform);
     }
 
-    public static Transform CreateLookAtTarget(Vector3 position, Transform parent, string name = "LookAt")
+    internal static Transform CreateLookAtTarget(Vector3 position, Transform parent, string name = "LookAt")
     {
         var lookAt = new GameObject(name);
         lookAt.transform.SetParent(parent, false);
@@ -606,7 +606,7 @@ public static class DockUtil
         return lookAt.transform;
     }
 
-    public static BoatActionsDestination CreateBoatActions(Vector3 position, CinemachineVirtualCamera vCam, Transform parent)
+    internal static BoatActionsDestination CreateBoatActions(Vector3 position, CinemachineVirtualCamera vCam, Transform parent)
     {
         var boatActionsObject = new GameObject("BoatActions");
         boatActionsObject.transform.SetParent(parent, false);
@@ -656,7 +656,7 @@ public static class DockUtil
 
     private static readonly Vector3 storageOffset = new Vector3(-0.1f, 0.32f, 0.3f);
 
-    public static (StorageDestination, OverflowStorageDestination, GameObject) CreateStorage(CustomStorageDestination prebuilt, Transform parent)
+    internal static (StorageDestination, OverflowStorageDestination, GameObject) CreateStorage(CustomStorageDestination prebuilt, Transform parent)
     {
         var storageObject = new GameObject("Storage");
         storageObject.transform.SetParent(parent, false);
@@ -696,7 +696,7 @@ public static class DockUtil
         return (storageDestination, overflowStorageDestination, storageObject);
     }
 
-    public static SanityModifier CreateDockSanityModifier(DockSanityModifier dockSanityModifier, Transform parent)
+    internal static SanityModifier CreateDockSanityModifier(DockSanityModifier dockSanityModifier, Transform parent)
     {
         var dockSanityModifierObject = new GameObject(nameof(DockSanityModifier));
         dockSanityModifierObject.transform.SetParent(parent, false);
@@ -718,7 +718,7 @@ public static class DockUtil
         return sanityModifier;
     }
 
-    public static SphereCollider CreateDockSafeZone(DockSafeZone dockSafeZone, Transform parent)
+    internal static SphereCollider CreateDockSafeZone(DockSafeZone dockSafeZone, Transform parent)
     {
         var safeZone = GameObject.CreatePrimitive(PrimitiveType.Sphere).FixPrimitive(false);
         safeZone.name = nameof(Layer.SafeZone);
@@ -729,7 +729,7 @@ public static class DockUtil
         return safeZone.GetComponent<SphereCollider>();
     }
 
-    public static CinemachineVirtualCamera CreateDockVirtualCamera(Vector3 position, Transform lookAt, Transform parent, string name = "VCam", int priority = 13)
+    internal static CinemachineVirtualCamera CreateDockVirtualCamera(Vector3 position, Transform lookAt, Transform parent, string name = "VCam", int priority = 13)
     {
         var vcamObject = new GameObject(name);
         vcamObject.transform.SetParent(parent);

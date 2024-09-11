@@ -312,7 +312,7 @@ public static class ItemUtil
         }
     }
 
-    public static void AddModdedFishItemData(IList<FishItemData> list)
+    internal static void AddModdedFishItemData(IList<FishItemData> list)
     {
         foreach (var item in ModdedItemDataDict.Values.WhereType<ItemData, FishItemData>())
         {
