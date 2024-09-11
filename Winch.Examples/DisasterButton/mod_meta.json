@@ -2,8 +2,8 @@
 	"Name": "Disaster Button",
 	"Author": "Hacktix",
 	"ModGUID": "hacktix.disasterbutton",
-	"Version": "1.0",
+	"Version": "2.0.0",
 	"ModAssembly": "DisasterButton.dll",
 	"Entrypoint": "DisasterButton.Loader/Initialize",
-	"MinWinchVersion": "alpha-1.0"
+	"MinWinchVersion": "0.5.0"
 }

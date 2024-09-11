@@ -9,7 +9,7 @@
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<DebugType>portable</DebugType>
 		<OutputPath>./bin</OutputPath>
-		<VersionPrefix>$(Version)</VersionPrefix>
+		<VersionPrefix>2.0.0</VersionPrefix>
 		<Deterministic>False</Deterministic>
 	</PropertyGroup>
 
