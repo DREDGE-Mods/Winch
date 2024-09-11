@@ -13,7 +13,7 @@ public class CustomShipyardDestinationConverter : CustomMarketDestinationConvert
         { "itemTypesBought", new(ItemType.GENERAL | ItemType.EQUIPMENT, null) },
         { "itemSubtypesBought", new(ItemSubtype.ENGINE | ItemSubtype.ROD | ItemSubtype.GENERAL | ItemSubtype.MATERIAL | ItemSubtype.LIGHT | ItemSubtype.NET, null) },
         { "bulkItemTypesBought", new(ItemType.NONE, null) },
-        { "bulkItemSubtypesBought", new(ItemType.NONE, null) },
+        { "bulkItemSubtypesBought", new(ItemSubtype.NONE, null) },
         { "specificItemsBought", new(new List<string>(), null) },
         { "sellValueModifier", new( 0.5f, null) },
         { "allowSellIfGridFull", new( false, null) },
