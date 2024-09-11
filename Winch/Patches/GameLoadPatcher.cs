@@ -1,4 +1,5 @@
-﻿using Winch.Core;
+﻿using UnityEngine;
+using Winch.Core;
 
 namespace Winch.Patches;
 
@@ -18,7 +19,7 @@ internal static class GameLoadPatcher
 {
     public static void Postfix()
     {
-        WinchCore.Log.Info("Game loaded, initializing Winch...");
+        WinchCore.Log.Info($"Game loaded with version {Application.version}, initializing Winch...");
         Initializer.Initialize();
         WinchCore.Log.Info("Winch initialized successfully.");
     }

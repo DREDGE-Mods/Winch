@@ -10,7 +10,7 @@ public static class UnityInfo
 {
     private static readonly ManagerLookup[] ManagerVersionLookup =
     {
-        new("globalgamemanagers", 0x14, 0x30),
+        new("globalgamemanagers", 0x14, 0x30, 0x48),
         new("data.unity3d", 0x12),
         new("mainData", 0x14)
     };
