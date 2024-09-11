@@ -42,6 +42,24 @@ public static class MapMarkerUtil
 		return null;
 	}
 
+	internal static List<MapMarkerData> TryGetMapMarkers(List<string> ids)
+	{
+		List<MapMarkerData> mapMarkers = new List<MapMarkerData>();
+
+		if (ids == null)
+			return mapMarkers;
+
+		foreach (var mapMarker in ids)
+		{
+			if (!string.IsNullOrWhiteSpace(mapMarker) && AllMapMarkerDataDict.TryGetValue(mapMarker, out var mapMarkerData))
+			{
+				mapMarkers.Add(mapMarkerData);
+			}
+		}
+
+		return mapMarkers;
+	}
+
 	internal static void AddModdedMapMarkerData(IList<MapMarkerData> list)
 	{
 		foreach (var mapMarkerData in ModdedMapMarkerDataDict.Values)
