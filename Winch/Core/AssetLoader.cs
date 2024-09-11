@@ -62,6 +62,9 @@ internal static class AssetLoader
         string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
         string vibrationFolderpath = Path.Combine(path, "Vibrations");
         string mapMarkerFolderpath = Path.Combine(path, "MapMarkers");
+        string questFolderpath = Path.Combine(path, "Quests");
+        string questStepFolderpath = Path.Combine(questFolderpath, "Steps");
+        string questGridConfigFolderpath = Path.Combine(questFolderpath, "GridConfigs");
         string shopFolderpath = Path.Combine(path, "Shops");
         string dockFolderpath = Path.Combine(path, "Docks");
         string abilityFolderpath = Path.Combine(path, "Abilities");
@@ -77,6 +80,9 @@ internal static class AssetLoader
         if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
         if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
         if(Directory.Exists(mapMarkerFolderpath)) LoadMapMarkerFiles(mapMarkerFolderpath);
+        if(Directory.Exists(questStepFolderpath)) LoadQuestStepFiles(questStepFolderpath);
+        if(Directory.Exists(questFolderpath)) LoadQuestFiles(questFolderpath);
+        if(Directory.Exists(questFolderpath)) LoadQuestGridConfigFiles(questGridConfigFolderpath);
         if(Directory.Exists(shopFolderpath)) LoadShopFiles(shopFolderpath);
         if(Directory.Exists(dockFolderpath)) LoadDockFiles(dockFolderpath);
         if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
@@ -226,6 +232,54 @@ internal static class AssetLoader
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load map marker data from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadQuestFiles(string questFolderPath)
+    {
+        string[] questFiles = Directory.GetFiles(questFolderPath, "*.*", SearchOption.TopDirectoryOnly);
+        foreach (string file in questFiles)
+        {
+            try
+            {
+                QuestUtil.AddQuestDataFromMeta(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load quest data from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadQuestStepFiles(string questStepFolderPath)
+    {
+        string[] questStepFiles = Directory.GetFiles(questStepFolderPath);
+        foreach (string file in questStepFiles)
+        {
+            try
+            {
+                QuestUtil.AddQuestStepDataFromMeta(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load quest step data from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadQuestGridConfigFiles(string questGridConfigFolderPath)
+    {
+        string[] questGridConfigFiles = Directory.GetFiles(questGridConfigFolderPath);
+        foreach (string file in questGridConfigFiles)
+        {
+            try
+            {
+                QuestUtil.AddQuestGridConfigFromMeta(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load quest grid config from {file}: {ex}");
             }
         }
     }

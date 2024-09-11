@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Patches.API;
 
@@ -13,6 +14,7 @@ internal static class QuestGridLoadPatcher
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+        QuestUtil.AddModdedQuestGridConfigs(handle.Result);
         DredgeEvent.AddressableEvents.QuestGridConfigsLoaded.Trigger(__instance, handle, true);
     }
 
@@ -20,6 +22,7 @@ internal static class QuestGridLoadPatcher
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+        QuestUtil.PopulateQuestGridConfigs(handle.Result);
         DredgeEvent.AddressableEvents.QuestGridConfigsLoaded.Trigger(__instance, handle, false);
     }
 }

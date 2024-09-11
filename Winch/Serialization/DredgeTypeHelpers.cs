@@ -794,4 +794,8 @@ public static class DredgeTypeHelpers
         }
         return parsed;
     }
+
+    internal static SerializableGrid ParseSerializableGrid(object value)
+        => JsonConvert.DeserializeObject<SerializableGrid>(value.ToString())
+        ?? throw new InvalidOperationException("Unable to parse grid.");
 }

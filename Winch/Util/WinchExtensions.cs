@@ -33,11 +33,17 @@ using Winch.Data.Dock;
 using Winch.Data.GridConfig;
 using Winch.Data.Item;
 using Winch.Data.POI;
+using Winch.Data.Quest;
+using Winch.Data.Quest.Grid;
+using Winch.Data.Quest.Step;
+using Winch.Data.Shop;
 using Winch.Data.WorldEvent;
 using Winch.Patches.API;
 using Winch.Util;
 using static ActiveAbilityInfoPanel;
+using static ShopData;
 using static TrawlNetAbility;
+using static Winch.Data.Shop.ModdedShopData;
 
 public static class WinchExtensions
 {
@@ -67,6 +73,20 @@ public static class WinchExtensions
     public static bool IsModded(this DockData dockData) => dockData is DeferredDockData || DockUtil.ModdedDockDataDict.ContainsKey(dockData.id);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this Dock dock) => dock is ModdedDock || dock.dockData.IsModded();
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this VibrationData vibrationData) => VibrationUtil.ModdedVibrationDataDict.ContainsKey(vibrationData.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this MapMarkerData mapMarkerData) => MapMarkerUtil.ModdedMapMarkerDataDict.ContainsKey(mapMarkerData.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this ShopData shopData) => shopData is ModdedShopData || ShopUtil.ModdedShopDataDict.ContainsKey(shopData.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this ShopItemData shopItemData) => shopItemData is ModdedShopItemData || shopItemData.itemData.IsModded();
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this QuestData questData) => questData is DeferredQuestData || QuestUtil.ModdedQuestDataDict.ContainsKey(questData.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this QuestStepData questStepData) => questStepData is DeferredQuestStepData || QuestUtil.ModdedQuestStepDataDict.ContainsKey(questStepData.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this QuestGridConfig questGridConfig) => questGridConfig is DeferredQuestGridConfig || QuestUtil.ModdedQuestGridConfigDict.ContainsKey(questGridConfig.name);
 
     /// <summary>
     /// Check if the object is vanilla
@@ -93,6 +113,20 @@ public static class WinchExtensions
     public static bool IsVanilla(this DockData dockData) => !dockData.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this Dock dock) => !dock.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this VibrationData vibrationData) => !vibrationData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this MapMarkerData mapMarkerData) => !mapMarkerData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this ShopData shopData) => !shopData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this ShopItemData shopItemData) => !shopItemData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this QuestData questData) => !questData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this QuestStepData questStepData) => !questStepData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this QuestGridConfig questGridConfig) => !questGridConfig.IsModded();
 
     /// <summary>
     /// Check if the associated item data exists
