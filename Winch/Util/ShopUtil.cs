@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AeLa.EasyFeedback.APIs;
 using Winch.Core;
 using Winch.Data.Shop;
 using Winch.Serialization.Shop;
 using static ShopData;
 using static ShopRestocker;
-using static Winch.Data.Shop.ModdedShopData;
 
 namespace Winch.Util;
 
@@ -25,7 +20,7 @@ public static class ShopUtil
         return UtilHelpers.PopulateObjectFromMeta(data, meta, ShopDataConverter);
     }
 
-    internal static bool PopulateShopItemDataFromMetaWithConverter(ModdedShopData.ModdedShopItemData data, Dictionary<string, object> meta)
+    internal static bool PopulateShopItemDataFromMetaWithConverter(ModdedShopItemData data, Dictionary<string, object> meta)
     {
         return UtilHelpers.PopulateObjectFromMeta(data, meta, ShopItemDataConverter);
     }

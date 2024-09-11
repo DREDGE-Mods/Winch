@@ -43,7 +43,6 @@ using Winch.Util;
 using static ActiveAbilityInfoPanel;
 using static ShopData;
 using static TrawlNetAbility;
-using static Winch.Data.Shop.ModdedShopData;
 
 public static class WinchExtensions
 {

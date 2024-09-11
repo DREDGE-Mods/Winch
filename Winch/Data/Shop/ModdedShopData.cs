@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Winch.Util;
+﻿using System.Linq;
 
 namespace Winch.Data.Shop;
 
@@ -24,16 +22,4 @@ public class ModdedShopData : ShopData
         shopData = shopData,
         gridKey = shopData.gridKey,
     };
-
-    public class ModdedShopItemData : ShopItemData
-    {
-        public new string itemData = string.Empty;
-
-        public SpatialItemData ItemData => ItemUtil.GetSpatialItemData(itemData);
-
-        internal void Populate()
-        {
-            base.itemData = ItemData;
-        }
-    }
 }

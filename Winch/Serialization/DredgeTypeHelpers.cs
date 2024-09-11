@@ -739,9 +739,9 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    public static ModdedShopData.ModdedShopItemData ParseShopItemData(JToken shopItemData)
+    public static ModdedShopItemData ParseShopItemData(JToken shopItemData)
     {
-        var config = new ModdedShopData.ModdedShopItemData();
+        var config = new ModdedShopItemData();
         var meta = shopItemData.Type == JTokenType.String
             ? new Dictionary<string, object> { { "itemData", shopItemData.ToString() } }
             : shopItemData.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();

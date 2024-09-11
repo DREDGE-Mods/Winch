@@ -3,7 +3,7 @@ using Winch.Data.Shop;
 
 namespace Winch.Serialization.Shop;
 
-public class ShopItemDataConverter : DredgeTypeConverter<ModdedShopData.ModdedShopItemData>
+public class ShopItemDataConverter : DredgeTypeConverter<ModdedShopItemData>
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
