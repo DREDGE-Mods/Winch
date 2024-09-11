@@ -22,6 +22,9 @@ public class CustomItemPOI : CustomPOI
     [SerializeField]
     public List<string> items = new List<string>();
 
+    [SerializeField]
+    public bool cullable = true;
+
     /// <summary>
     /// <see cref="items"/> converted to actual items
     /// </summary>

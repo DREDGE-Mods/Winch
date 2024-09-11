@@ -20,6 +20,7 @@ public class CustomHarvestPOIConverter : CustomPOIConverter
         { "overriddenDaytimeSpecialChance", new( 0, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
         { "overrideDefaultNightSpecialChance", new( false, o => bool.Parse(o.ToString())) },
         { "overriddenNighttimeSpecialChance", new( 0, o => Mathf.Clamp01(float.Parse(o.ToString()))) },
+        { "cullable", new( true, o => bool.Parse(o.ToString())) }
     };
 
     public CustomHarvestPOIConverter()

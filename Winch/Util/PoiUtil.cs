@@ -284,11 +284,14 @@ public static class PoiUtil
 
         harvestPoi.poiCollider = sphereCollider;
 
-        // This needs to be added to the GameManager.Instance.CullingBrain
-        var cullable = customPoi.AddComponent<Cullable>();
-        cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
-        cullable.sphereRadius = 5;
-        GameManager.Instance.CullingBrain.AddCullable(cullable);
+        if (customHarvestPoi.cullable)
+        {
+            // This needs to be added to the GameManager.Instance.CullingBrain
+            var cullable = customPoi.AddComponent<Cullable>();
+            cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
+            cullable.sphereRadius = 5;
+            GameManager.Instance.CullingBrain.AddCullable(cullable);
+        }
 
         // No setup needed
         customPoi.AddComponent<SimpleBuoyantObject>();
@@ -324,11 +327,14 @@ public static class PoiUtil
         // No setup needed
         customPoi.AddComponent<SimpleBuoyantObject>();
 
-        // This needs to be added to the GameManager.Instance.CullingBrain
-        var cullable = customPoi.AddComponent<Cullable>();
-        cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
-        cullable.sphereRadius = 1;
-        GameManager.Instance.CullingBrain.AddCullable(cullable);
+        if (customItemPoi.cullable)
+        {
+            // This needs to be added to the GameManager.Instance.CullingBrain
+            var cullable = customPoi.AddComponent<Cullable>();
+            cullable.cullingGroupType = CullingGroupType.STATIC_SHORT_RANGE;
+            cullable.sphereRadius = 1;
+            GameManager.Instance.CullingBrain.AddCullable(cullable);
+        }
 
         var sfx = customPoi.AddComponent<IntermittentSFXPlayer>();
         sfx.assetReferences = new List<AssetReference>();

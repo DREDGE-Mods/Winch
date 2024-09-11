@@ -10,7 +10,8 @@ public class CustomItemPOIConverter : CustomPOIConverter
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "harvestableParticlePrefab", new( null, null) },
-        { "items", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) }
+        { "items", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
+        { "cullable", new( true, o => bool.Parse(o.ToString())) }
     };
     
     public CustomItemPOIConverter()

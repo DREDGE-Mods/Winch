@@ -80,6 +80,9 @@ public class CustomHarvestPOI : CustomPOI
     [SerializeField]
     public float overriddenNighttimeSpecialChance = 0;
 
+    [SerializeField]
+    public bool cullable = true;
+
     /// <summary>
     /// <see cref="items"/> converted to actual items
     /// </summary>
