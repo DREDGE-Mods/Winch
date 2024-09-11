@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Winch.Core.API;
 using Winch.Util;
 
@@ -58,11 +61,18 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
     private void OnGameStarted()
     {
         WinchCore.Log.Debug("[AssetLoaderObject] OnGameStarted()");
+        GameEvents.Instance.OnItemDestroyed -= OnItemDestroyed;
     }
 
     private void OnGameEnded()
     {
         WinchCore.Log.Debug("[AssetLoaderObject] OnGameEnded()");
+        GameEvents.Instance.OnItemDestroyed -= OnItemDestroyed;
+        Clear();
+    }
+
+    private static void Clear()
+    {
         VibrationUtil.ClearVibrationDatas();
         DockUtil.Clear();
         AbilityUtil.Clear();
@@ -74,5 +84,22 @@ internal class AssetLoaderObject : USingleton<AssetLoaderObject>
     private void OnGameUnloaded()
     {
         WinchCore.Log.Debug("[AssetLoaderObject] OnGameUnloaded()");
+    }
+
+    private void OnItemDestroyed(SpatialItemData spatialItemData, bool playerDestroyed)
+    {
+        if (spatialItemData is HarvestableItemData harvestableItemData && harvestableItemData.regenHarvestSpotOnDestroy)
+        {
+            StartCoroutine(FindAndRegenItemSpot(harvestableItemData));
+        }
+    }
+    private IEnumerator FindAndRegenItemSpot(ItemData itemData)
+    {
+        List<ItemPOI> itemPOIs = (from itemPOI in UnityEngine.Object.FindObjectsOfType<ItemPOI>(includeInactive: true).ToList()
+                                 where itemPOI.Harvestable.ContainsItem(itemData)
+                                 select itemPOI).ToList();
+        ItemPOI? targetPOI = itemPOIs.Reduce<ItemPOI, ItemPOI?>((targetPOI, p) => (targetPOI == null || (targetPOI != null && p.Stock < targetPOI.Stock)) ? p : targetPOI);
+        if (targetPOI != null) targetPOI.AddStock();
+        yield return null;
     }
 }
