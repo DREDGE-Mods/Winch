@@ -149,6 +149,8 @@ public static class WinchExtensions
     /// </summary>
     public static bool DoesItemDataNotExist(this SerializedCrabPotPOIData crabPotPOI) => !crabPotPOI.DoesItemDataExist();
 
+    public static void Reinit(this SerializableGrid grid) => grid.Init(grid.gridConfiguration, false);
+
     /// <summary>
     /// Converts a spatial item instances to a spatial item data.
     /// </summary>
