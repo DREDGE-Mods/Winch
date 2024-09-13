@@ -53,6 +53,7 @@ public static class CharacterUtil
             }
             var nameKey = speaker.id.ToUpperInvariant(); // must be uppercase because dredge looks for that
             lookupTable.SafeAdd(nameKey, speaker);
+            speaker.Populate();
         }
     }
 
@@ -96,7 +97,7 @@ public static class CharacterUtil
         if (PopulateSpeakerDataFromMetaWithConverter(speaker, meta))
         {
             ModdedSpeakerDataDict.Add(id, speaker);
-            speaker.Populate();
+            speaker.MakePortraitPrefabs();
         }
         else
         {

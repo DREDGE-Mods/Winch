@@ -132,9 +132,8 @@ public static class AbilityUtil
     {
         foreach (var modAbilityData in ModdedAbilityDataDict.Values)
         {
-            WinchCore.Log.Debug($"Adding ability {modAbilityData.id} to manager");
-            modAbilityData.Populate();
             abilityDatas.Add(modAbilityData.id, modAbilityData);
+            WinchCore.Log.Debug($"Added ability {modAbilityData.id} to manager");
         }
     }
 
@@ -144,6 +143,10 @@ public static class AbilityUtil
         {
             AllAbilityDataDict.Add(abilityDataByKey.Key, abilityDataByKey.Value);
             WinchCore.Log.Debug($"Added ability {abilityDataByKey.Key} to AllAbilityDataDict");
+        }
+        foreach (var modAbilityData in ModdedAbilityDataDict.Values)
+        {
+            modAbilityData.Populate();
         }
     }
 

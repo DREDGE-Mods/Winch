@@ -16,8 +16,8 @@ internal static class QuestLoadPatcher
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return false;
 
         var stepDatas = QuestUtil.GetQuestStepDatas(handle.Result);
-        QuestUtil.PopulateQuestStepData(stepDatas);
         QuestUtil.AddModdedQuestStepData(stepDatas);
+        QuestUtil.PopulateQuestStepData(stepDatas);
         __instance.allQuestSteps = stepDatas;
         DredgeEvent.AddressableEvents.QuestStepsLoaded.Trigger(__instance, stepDatas, true);
         QuestUtil.AddModdedQuestData(handle.Result);

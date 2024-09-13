@@ -80,7 +80,6 @@ public class AdvancedSpeakerData : SpeakerData
 
     internal void Populate()
     {
-        MakePortraitPrefabs();
-        base.loopSFX = AudioClipUtil.GetAudioClip(loopSFX); // TODO: maybe move to this to when game is loaded
+        base.loopSFX = AudioClipUtil.GetAudioClip(loopSFX);
     }
 }

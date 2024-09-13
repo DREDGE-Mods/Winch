@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using InControl;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Winch.Core;
@@ -196,10 +197,6 @@ public static class QuestUtil
         {
             list.SafeAdd(questData);
         }
-        foreach (var questData in ModdedQuestDataDict.Values)
-        {
-            questData.Populate();
-        }
     }
 
     internal static void PopulateQuestData(IList<QuestData> result)
@@ -208,6 +205,10 @@ public static class QuestUtil
         {
             AllQuestDataDict.SafeAdd(questData.name, questData);
             WinchCore.Log.Debug($"Added quest data {questData.name} to AllQuestDataDict");
+        }
+        foreach (var questData in ModdedQuestDataDict.Values)
+        {
+            questData.Populate();
         }
     }
 
@@ -247,11 +248,6 @@ public static class QuestUtil
         foreach (var questStepData in ModdedQuestStepDataDict)
         {
             result.SafeAdd(questStepData.Key, questStepData.Value);
-            PopulateQuestStepData(questStepData.Key, questStepData.Value);
-        }
-        foreach (var questStepData in ModdedQuestStepDataDict.Values)
-        {
-            questStepData.Populate();
         }
     }
 
@@ -266,6 +262,10 @@ public static class QuestUtil
         foreach (var questStepData in result)
         {
             PopulateQuestStepData(questStepData.Key, questStepData.Value);
+        }
+        foreach (var questStepData in ModdedQuestStepDataDict.Values)
+        {
+            questStepData.Populate();
         }
     }
 
@@ -286,20 +286,24 @@ public static class QuestUtil
         }
     }
 
+    internal static void PopulateQuestGridConfig(string key, QuestGridConfig value)
+    {
+        AllQuestGridConfigDict.SafeAdd(key, value);
+        WinchCore.Log.Debug($"Added quest grid config {key} to AllQuestGridConfigDict");
+    }
+
     internal static void PopulateQuestGridConfigs(IList<QuestGridConfig> result)
     {
         foreach (var questGridConfig in result)
         {
-            AllQuestGridConfigDict.SafeAdd(questGridConfig.name, questGridConfig);
-            WinchCore.Log.Debug($"Added quest grid config {questGridConfig.name} to AllQuestGridConfigDict");
+            PopulateQuestGridConfig(questGridConfig.name, questGridConfig);
         }
         foreach (var questGridConfig in Resources.FindObjectsOfTypeAll<QuestGridConfig>().Where(WinchExtensions.IsVanilla))
         {
             if (!result.TryGetValue(x => x != null && questGridConfig.name == x.name, out _))
             {
                 result.SafeAdd(questGridConfig);
-                AllQuestGridConfigDict.SafeAdd(questGridConfig.name, questGridConfig);
-                WinchCore.Log.Debug($"Added quest grid config {questGridConfig.name} to AllQuestGridConfigDict");
+                PopulateQuestGridConfig(questGridConfig.name, questGridConfig);
             }
         }
     }
