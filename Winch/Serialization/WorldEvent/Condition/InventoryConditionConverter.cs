@@ -1,6 +1,4 @@
-using Winch.Serialization;
-
-namespace Winch.Data.WorldEvent.Condition;
+namespace Winch.Serialization.WorldEvent.Condition;
 
 public class InventoryConditionConverter : DredgeTypeConverter<InventoryCondition>
 {

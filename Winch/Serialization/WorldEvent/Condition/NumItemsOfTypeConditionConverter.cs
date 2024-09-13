@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Winch.Serialization;
 
-namespace Winch.Data.WorldEvent.Condition;
+namespace Winch.Serialization.WorldEvent.Condition;
 
 public class NumItemsOfTypeConditionConverter : NumConditionConverter
 {

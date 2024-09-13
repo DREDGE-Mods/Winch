@@ -14,6 +14,7 @@ using Winch.Data.POI.Dock.Destinations;
 using Winch.Data.Shop;
 using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
+using Winch.Serialization.WorldEvent.Condition;
 using Winch.Util;
 using static ShopData;
 

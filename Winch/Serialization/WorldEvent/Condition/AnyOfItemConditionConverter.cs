@@ -1,16 +1,15 @@
 using System.Collections.Generic;
-using Winch.Serialization;
 
-namespace Winch.Data.WorldEvent.Condition;
+namespace Winch.Serialization.WorldEvent.Condition;
 
-public class NumOfItemConditionConverter : NumConditionConverter
+public class AnyOfItemConditionConverter : InventoryConditionConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new(string.Empty, null) }
     };
 
-    public NumOfItemConditionConverter()
+    public AnyOfItemConditionConverter()
     {
         AddDefinitions(_definitions);
     }
