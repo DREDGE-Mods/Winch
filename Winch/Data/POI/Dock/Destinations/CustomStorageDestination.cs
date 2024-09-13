@@ -37,6 +37,11 @@ public class CustomStorageDestination
     public float overflowHeight = 0.6f;
 
     /// <summary>
+    /// Whether this storage is inside a building
+    /// </summary>
+    public bool isIndoors = false;
+
+    /// <summary>
     /// Whether to enable the chest mesh
     /// </summary>
     public bool hasChest = true;

@@ -807,6 +807,7 @@ public static class DockUtil
         storageDestination.highlightConditions = new List<HighlightCondition>();
         storageDestination.speakerRootNodeOverride = string.Empty;
         storageDestination.visitSFX = visitSFX;
+        storageDestination.isIndoors = prebuilt.isIndoors;
         var overflowStorageDestinationObject = new GameObject("OverflowStorageDestination");
         overflowStorageDestinationObject.transform.SetParent(storageDestinationObject.transform, false);
         overflowStorageDestinationObject.transform.localPosition = new Vector3(0, prebuilt.overflowHeight, 0);
@@ -819,6 +820,7 @@ public static class DockUtil
         overflowStorageDestination.highlightConditions = new List<HighlightCondition> { new UnstructedHighlightCondition { alwaysHighlight = true } };
         overflowStorageDestination.speakerRootNodeOverride = string.Empty;
         overflowStorageDestination.visitSFX = visitSFX;
+        overflowStorageDestination.isIndoors = prebuilt.isIndoors;
         var box = StorageBox.Instantiate(storageObject.transform, false);
         box.transform.localPosition = Vector3.zero;
         box.transform.localEulerAngles = new Vector3(0, 360, 0);
