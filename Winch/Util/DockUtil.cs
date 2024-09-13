@@ -246,6 +246,7 @@ public static class DockUtil
     internal static Dictionary<string, DockData> AllDockDataDict = new();
     internal static Dictionary<string, ModdedDock> ModdedDockDict = new();
     internal static Dictionary<string, Dock> AllDockDict = new();
+    internal static Dictionary<string, IReadOnlyList<BaseDestination>> AllDestinationsDict = new();
 
     public static ModdedDock GetModdedDock(string id)
     {
@@ -304,6 +305,13 @@ public static class DockUtil
     internal static HighlightConditionExtraData ResearchTutorial;
     internal static HighlightConditionExtraData ResearchBottomlessLines;
 
+    internal static void PopulateDock(Dock dock)
+    {
+        AllDockDict.Add(dock.Data.Id, dock);
+        WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
+        AllDestinationsDict.Add(dock.Data.Id, dock.GetComponentsInChildren<BaseDestination>(true));
+    }
+
     internal static void Populate()
     {
         foreach (var dockData in Resources.FindObjectsOfTypeAll<DockData>())
@@ -314,8 +322,7 @@ public static class DockUtil
 
         foreach (var dock in Resources.FindObjectsOfTypeAll<Dock>())
         {
-            AllDockDict.Add(dock.Data.Id, dock);
-            WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
+            PopulateDock(dock);
         }
 
         Docks = AllDockDict["dock.outcast-isle"].transform.parent;
@@ -338,6 +345,7 @@ public static class DockUtil
     {
         AllDockDataDict.Clear();
         AllDockDict.Clear();
+        AllDestinationsDict.Clear();
         ModdedDockDict.Clear();
     }
 
@@ -381,7 +389,133 @@ public static class DockUtil
         return AllDockDict.Values.ToArray();
     }
 
-    public static GameObject GetDockPrefab(DockPrefab prefab)
+    private static IEnumerable<BaseDestination> GetAllDestinationsInternal()
+    {
+        return AllDestinationsDict.SelectMany(kvp => kvp.Value);
+    }
+
+    public static BaseDestination[] GetAllDestinations()
+    {
+        return GetAllDestinationsInternal().ToArray();
+    }
+
+    public static CharacterDestination[] GetAllCharacterDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<CharacterDestination>().ToArray();
+    }
+
+    public static MarketDestination[] GetAllMarketDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<MarketDestination>().ToArray();
+    }
+
+    public static ShipyardDestination[] GetAllShipyardDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<ShipyardDestination>().ToArray();
+    }
+
+    public static UpgradeDestination[] GetAllUpgradeDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<UpgradeDestination>().ToArray();
+    }
+
+    public static ConstructableDestination[] GetAllConstructableDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<ConstructableDestination>().ToArray();
+    }
+
+    public static StorageDestination[] GetAllStorageDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<StorageDestination>().ToArray();
+    }
+
+    public static OverflowStorageDestination[] GetAllOverflowStorageDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<OverflowStorageDestination>().ToArray();
+    }
+
+    public static ResearchDestination[] GetAllResearchDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<ResearchDestination>().ToArray();
+    }
+
+    public static RestDestination[] GetAllRestDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<RestDestination>().ToArray();
+    }
+
+    public static UndockDestination[] GetAllUndockDestinations()
+    {
+        return GetAllDestinationsInternal().OfType<UndockDestination>().ToArray();
+    }
+
+    public static IReadOnlyList<BaseDestination> GetAllDestinationsInternal(string dockID)
+    {
+        if (string.IsNullOrWhiteSpace(dockID))
+            return null;
+
+        if (AllDestinationsDict.TryGetValue(dockID, out var destinations))
+            return destinations;
+
+        return null;
+    }
+
+    public static BaseDestination[] GetAllDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).ToArray();
+    }
+
+    public static CharacterDestination[] GetAllCharacterDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<CharacterDestination>().ToArray();
+    }
+
+    public static MarketDestination[] GetAllMarketDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<MarketDestination>().ToArray();
+    }
+
+    public static ShipyardDestination[] GetAllShipyardDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<ShipyardDestination>().ToArray();
+    }
+
+    public static UpgradeDestination[] GetAllUpgradeDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<UpgradeDestination>().ToArray();
+    }
+
+    public static ConstructableDestination[] GetAllConstructableDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<ConstructableDestination>().ToArray();
+    }
+
+    public static StorageDestination[] GetAllStorageDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<StorageDestination>().ToArray();
+    }
+
+    public static OverflowStorageDestination[] GetAllOverflowStorageDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<OverflowStorageDestination>().ToArray();
+    }
+
+    public static ResearchDestination[] GetAllResearchDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<ResearchDestination>().ToArray();
+    }
+
+    public static RestDestination[] GetAllRestDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<RestDestination>().ToArray();
+    }
+
+    public static UndockDestination[] GetAllUndockDestinations(string dockID)
+    {
+        return GetAllDestinationsInternal(dockID).OfType<UndockDestination>().ToArray();
+    }
+
+    internal static GameObject GetDockPrefab(DockPrefab prefab)
     {
         if (DockPrefabs.TryGetValue(prefab, out var dockPrefab))
             return dockPrefab;
@@ -399,8 +533,6 @@ public static class DockUtil
         dock.id = customDockPoi.id;
         dock.dockData = DockUtil.GetDockData(customDockPoi.dockData);
         ModdedDockDict.Add(customDockPoi.id, dock);
-        AllDockDict.Add(dock.Data.Id, dock);
-        WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
 
         var cullableSettings = customDockPoi.cullable ?? (DockPrefabCullables.ContainsKey(customDockPoi.prefab) ? DockPrefabCullables[customDockPoi.prefab] : DockPrefabCullables[DockPrefab.NONE]);
         customDockPoi.cullable = cullableSettings;
@@ -523,6 +655,8 @@ public static class DockUtil
             speakerVCams.Add(speakerVCam.Key, CreateSpeakerVCam(speakerVCam.Key, speakerVCam.Value, dockObject.transform));
         }
         dock.speakerVCams = speakerVCams;
+
+        PopulateDock(dock);
 
         return dockPoi;
     }
