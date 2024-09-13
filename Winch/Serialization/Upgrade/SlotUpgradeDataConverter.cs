@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using UnityEngine.Localization;
-using Winch.Util;
 
 namespace Winch.Serialization.Upgrade;
 

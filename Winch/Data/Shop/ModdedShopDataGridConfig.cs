@@ -1,6 +1,4 @@
-﻿using Winch.Util;
-using static ShopData;
-using static ShopRestocker;
+﻿using static ShopRestocker;
 
 namespace Winch.Data.Shop;
 

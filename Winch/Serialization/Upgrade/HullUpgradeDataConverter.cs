@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine.Localization;
 using Winch.Util;
 
 namespace Winch.Serialization.Upgrade;
