@@ -36,9 +36,15 @@ public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridCon
         { "completeConditions", new(new List<CompletedGridCondition>{ new FullCondition() }, o=> DredgeTypeHelpers.ParseCompletedGridConditions((JArray)o)) },
     };
 
+    private readonly Dictionary<string, string> _reroutes = new()
+    {
+        { "gridConfiguration", "id" }
+    };
+
     public QuestGridConfigConverter()
     {
         AddDefinitions(_definitions);
+        AddReroutes(_reroutes);
     }
 
     protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(QuestGridConfigTableDefinition, value);
