@@ -460,19 +460,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private OnOffDropdownInput AddToggleInput(string modName, string key, JObject obj)
-    {
-        var clone = onOffDropdownPrefab.Instantiate(options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        clone.SetSelectedValue((bool)obj["value"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private OnOffDropdownInput AddToggleInput(string modName, string key, JObject obj) => AddToggleInput(modName, key, (bool)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
     private OnOffDropdownInput AddToggleInput(string modName, string key, bool value, string title, string tooltip)
     {
@@ -488,19 +476,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private SliderInput AddSliderInput(string modName, string key, JObject obj)
-    {
-        var clone = sliderPrefab.Instantiate(options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        clone.Initialize((float)obj["value"], (float)obj["min"], (float)obj["max"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private SliderInput AddSliderInput(string modName, string key, JObject obj) => AddSliderInput(modName, key, (float)obj["value"], (float)obj["min"], (float)obj["max"], (string)obj["title"], (string)obj["tooltip"]);
 
     private SliderInput AddSliderInput(string modName, string key, float value, float min, float max)
     {
@@ -529,32 +505,20 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DropdownInput AddDropdownInput(string modName, string key, JObject obj)
-    {
-        var clone = dropdownPrefab.Instantiate(this.options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        var options = obj["options"].ToObject<string[]>();
-        var optionStrings = obj["optionStrings"]?.ToObject<string[]>();
-        clone.Initialize((string)obj["value"], options, optionStrings);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private DropdownInput AddDropdownInput(string modName, string key, JObject obj) => AddDropdownInput(modName, key, (string)obj["value"], obj["options"].ToObject<string[]>(), obj["optionStrings"]?.ToObject<string[]>(), (string)obj["title"], (string)obj["tooltip"]);
 
-    private ColorDropdownInput AddColorDropdownInput(string modName, string key, JObject obj)
+    private ColorDropdownInput AddColorDropdownInput(string modName, string key, JObject obj) => AddColorDropdownInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+
+    private ColorDropdownInput AddColorDropdownInput(string modName, string key, string value, string title, string tooltip)
     {
         var clone = colorDropdownPrefab.Instantiate(this.options, false);
         modOptions.Add(clone.transform);
         clone.modName = modName;
         clone.key = key;
         clone.name = key;
-        clone.Initialize((string)obj["value"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
+        clone.Initialize(value);
+        SetupTitle(clone, title, key);
+        SetupInputTooltip(clone, tooltip);
         AddScrollMagnet(clone);
         return clone;
     }
@@ -599,19 +563,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private FieldInput AddTextInput(string modName, string key, JObject obj)
-    {
-        var clone = inputFieldPrefab.Instantiate(options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        clone.Initialize((string)obj["value"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private FieldInput AddTextInput(string modName, string key, JObject obj) => AddTextInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
     private FieldInput AddTextInput(string modName, string key, string value, string title, string tooltip)
     {
@@ -640,19 +592,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private IntegerFieldInput AddIntegerInput(string modName, string key, JObject obj)
-    {
-        var clone = integerInputFieldPrefab.Instantiate(options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        clone.Initialize((string)obj["value"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private IntegerFieldInput AddIntegerInput(string modName, string key, JObject obj) => AddIntegerInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
     private IntegerFieldInput AddIntegerInput(string modName, string key, object value, string title, string tooltip)
     {
@@ -681,19 +621,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DecimalFieldInput AddDecimalInput(string modName, string key, JObject obj)
-    {
-        var clone = decimalInputFieldPrefab.Instantiate(options, false);
-        modOptions.Add(clone.transform);
-        clone.modName = modName;
-        clone.key = key;
-        clone.name = key;
-        clone.Initialize((string)obj["value"]);
-        SetupTitle(clone, (string)obj["title"], key);
-        SetupInputTooltip(clone, (string)obj["tooltip"]);
-        AddScrollMagnet(clone);
-        return clone;
-    }
+    private DecimalFieldInput AddDecimalInput(string modName, string key, JObject obj) => AddDecimalInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
     private DecimalFieldInput AddDecimalInput(string modName, string key, object value, string title, string tooltip)
     {
