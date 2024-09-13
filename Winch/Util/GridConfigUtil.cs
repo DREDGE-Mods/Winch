@@ -75,17 +75,21 @@ public static class GridConfigUtil
         }
     }
 
+    internal static void PopulateGridConfiguration(GridConfiguration gridConfig)
+    {
+        AllGridConfigDict.SafeAdd(gridConfig.name, gridConfig);
+        WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
+    }
+
     internal static void PopulateGridConfigurations(IList<GridConfiguration> result)
     {
         foreach (var gridConfig in result)
         {
-            AllGridConfigDict.SafeAdd(gridConfig.name, gridConfig);
-            WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
+            PopulateGridConfiguration(gridConfig);
         }
         foreach (var gridConfig in GameManager.Instance.GameConfigData.gridConfigs.Values.Where(gridConfig => gridConfig != null && !AllGridConfigDict.ContainsKey(gridConfig.name)))
         {
-            AllGridConfigDict.SafeAdd(gridConfig.name, gridConfig);
-            WinchCore.Log.Debug($"Added grid configuration {gridConfig.name} to AllGridConfigDict");
+            PopulateGridConfiguration(gridConfig);
         }
         FixGridConfigurations();
     }

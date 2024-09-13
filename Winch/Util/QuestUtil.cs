@@ -47,7 +47,11 @@ public static class QuestUtil
                 VanillaQuestStepDataIDList.Add(kvp.Key);
         });
         Addressables.LoadAssetsAsync<QuestGridConfig>(AddressablesUtil.GetLocations<QuestGridConfig>("QuestGridConfig"),
-            questGridConfig => VanillaQuestGridConfigIDList.SafeAdd(questGridConfig.name));
+            questGridConfig =>
+            {
+                VanillaQuestGridConfigIDList.SafeAdd(questGridConfig.name);
+                GridConfigUtil.VanillaGridConfigIDList.SafeAdd(questGridConfig.gridConfiguration.name);
+            });
     }
 
     internal static Dictionary<string, DeferredQuestData> ModdedQuestDataDict = new();

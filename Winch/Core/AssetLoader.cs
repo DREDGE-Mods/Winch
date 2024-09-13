@@ -9,6 +9,7 @@ using Winch.Data.POI.Conversation;
 using Winch.Data.POI.Item;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Harvest;
+using Winch.Data.Upgrade;
 
 namespace Winch.Core;
 
@@ -24,6 +25,7 @@ internal static class AssetLoader
 
         try
         {
+            UpgradeUtil.Initialize();
             ItemUtil.Initialize();
             GridConfigUtil.Initialize();
             WorldEventUtil.Initialize();
@@ -67,6 +69,7 @@ internal static class AssetLoader
         string questFolderpath = Path.Combine(path, "Quests");
         string questStepFolderpath = Path.Combine(questFolderpath, "Steps");
         string questGridConfigFolderpath = Path.Combine(questFolderpath, "GridConfigs");
+        string upgradeFolderpath = Path.Combine(path, "Upgrades");
         string shopFolderpath = Path.Combine(path, "Shops");
         string dockFolderpath = Path.Combine(path, "Docks");
         string abilityFolderpath = Path.Combine(path, "Abilities");
@@ -85,6 +88,7 @@ internal static class AssetLoader
         if(Directory.Exists(questStepFolderpath)) LoadQuestStepFiles(questStepFolderpath);
         if(Directory.Exists(questFolderpath)) LoadQuestFiles(questFolderpath);
         if(Directory.Exists(questFolderpath)) LoadQuestGridConfigFiles(questGridConfigFolderpath);
+        if(Directory.Exists(upgradeFolderpath)) LoadUpgradeFiles(upgradeFolderpath);
         if(Directory.Exists(shopFolderpath)) LoadShopFiles(shopFolderpath);
         if(Directory.Exists(dockFolderpath)) LoadDockFiles(dockFolderpath);
         if(Directory.Exists(poiFolderpath)) LoadPoiFiles(poiFolderpath);
@@ -170,6 +174,26 @@ internal static class AssetLoader
             if (Directory.Exists(itemPath))
             {
                 genericMethod.Invoke(null, new object[] { itemPath });
+            }
+        }
+    }
+
+    private static Dictionary<Type, string> _upgradeDataPathData = new Dictionary<Type, string>()
+    {
+        { typeof(DeferredHullUpgradeData), "Hulls"},
+        { typeof(DeferredSlotUpgradeData), "Slots"}
+    };
+
+    private static void LoadUpgradeFiles(string upgradeFolderPath)
+    {
+        foreach (KeyValuePair<Type, string> upgrade in _upgradeDataPathData)
+        {
+            var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadUpgradeFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = baseMethod.MakeGenericMethod(upgrade.Key);
+            var upgradePath = Path.Combine(upgradeFolderPath, upgrade.Value);
+            if (Directory.Exists(upgradePath))
+            {
+                genericMethod.Invoke(null, new object[] { upgradePath });
             }
         }
     }
@@ -327,9 +351,25 @@ internal static class AssetLoader
             {
                 ItemUtil.AddItemFromMeta<T>(file);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load item from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadUpgradeFilesOfType<T>(string upgradeFolderPath) where T : UpgradeData, IDeferredUpgradeData
+    {
+        string[] upgradeFiles = Directory.GetFiles(upgradeFolderPath);
+        foreach (string file in upgradeFiles)
+        {
+            try
+            {
+                UpgradeUtil.AddUpgradeDataFromMeta<T>(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load upgrade data from {file}: {ex}");
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Core.API;
+using Winch.Util;
 
 namespace Winch.Patches.API;
 
@@ -13,6 +14,7 @@ internal static class UpgradeLoadPatcher
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+        UpgradeUtil.AddModdedUpgradeData(handle.Result);
         DredgeEvent.AddressableEvents.UpgradesLoaded.Trigger(__instance, handle, true);
     }
 
@@ -20,6 +22,7 @@ internal static class UpgradeLoadPatcher
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
 
+        UpgradeUtil.PopulateUpgradeData(handle.Result);
         DredgeEvent.AddressableEvents.UpgradesLoaded.Trigger(__instance, handle, false);
     }
 }

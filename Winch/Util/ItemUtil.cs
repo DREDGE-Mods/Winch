@@ -46,7 +46,12 @@ public static class ItemUtil
     internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<ItemData>(AddressablesUtil.GetLocations<ItemData>("ItemData"),
-            itemData => VanillaItemIDList.SafeAdd(itemData.id));
+            itemData =>
+            {
+                VanillaItemIDList.SafeAdd(itemData.id);
+                if (itemData is DeployableItemData deployable && deployable.gridConfig != null)
+                    GridConfigUtil.VanillaGridConfigIDList.SafeAdd(deployable.gridConfig.name);
+            });
     }
 
     internal static Dictionary<string, ItemData> AllItemDataDict = new();
@@ -466,6 +471,8 @@ public static class ItemUtil
                             PotItemDataDict.Add(item.id, deitem);
                             WinchCore.Log.Debug($"Added item {item.id} to PotItemDataDict");
                         }
+
+                        if (deitem.gridConfig != null) GridConfigUtil.PopulateGridConfiguration(deitem.gridConfig);
                     }
                     else if (hritem is DredgeItemData dritem)
                     {

@@ -37,6 +37,7 @@ using Winch.Data.Quest;
 using Winch.Data.Quest.Grid;
 using Winch.Data.Quest.Step;
 using Winch.Data.Shop;
+using Winch.Data.Upgrade;
 using Winch.Data.WorldEvent;
 using Winch.Patches.API;
 using Winch.Util;
@@ -89,6 +90,8 @@ public static class WinchExtensions
     public static bool IsModded(this QuestStepData questStepData) => questStepData is DeferredQuestStepData || QuestUtil.ModdedQuestStepDataDict.ContainsKey(questStepData.name) || !QuestUtil.VanillaQuestStepDataIDList.Contains(questStepData.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this QuestGridConfig questGridConfig) => questGridConfig is DeferredQuestGridConfig || QuestUtil.ModdedQuestGridConfigDict.ContainsKey(questGridConfig.name) || !QuestUtil.VanillaQuestGridConfigIDList.Contains(questGridConfig.name);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this UpgradeData upgradeData) => upgradeData is IDeferredUpgradeData || UpgradeUtil.ModdedUpgradeDataDict.ContainsKey(upgradeData.id) || !UpgradeUtil.VanillaUpgradeIDList.Contains(upgradeData.id);
 
     /// <summary>
     /// Check if the object is vanilla
@@ -131,6 +134,8 @@ public static class WinchExtensions
     public static bool IsVanilla(this QuestStepData questStepData) => !questStepData.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this QuestGridConfig questGridConfig) => !questGridConfig.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this UpgradeData upgradeData) => !upgradeData.IsModded();
 
     /// <summary>
     /// Check if the associated item data exists
