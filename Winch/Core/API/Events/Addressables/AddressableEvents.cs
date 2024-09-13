@@ -20,6 +20,8 @@ public class AddressableEvents
 
     public AddressablesLoadedHook<QuestGridConfig> QuestGridConfigsLoaded = new AddressablesLoadedHook<QuestGridConfig>();
 
+    public LookupTableLoadedHook<ShopData> ShopsLoaded = new LookupTableLoadedHook<ShopData>();
+
     public LookupTableLoadedHook<SpeakerData> SpeakersLoaded = new LookupTableLoadedHook<SpeakerData>();
 
     public AddressableLoadedHook<SupportedLocaleData> SupportedLocalesLoaded = new AddressableLoadedHook<SupportedLocaleData>();
