@@ -11,6 +11,7 @@ using Winch.Data.GridConfig;
 using Winch.Data.Item.Prerequisites;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Dock.Destinations;
+using Winch.Data.Quest.Grid.Condition;
 using Winch.Data.Shop;
 using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
@@ -800,4 +801,45 @@ public static class DredgeTypeHelpers
     internal static SerializableGrid ParseSerializableGrid(object value)
         => JsonConvert.DeserializeObject<SerializableGrid>(value.ToString())
         ?? throw new InvalidOperationException("Unable to parse grid.");
+
+    internal static CompletedGridCondition ParseCompletedGridCondition(JToken condition)
+    {
+        var meta = condition.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        var type = GetEnumValue<CompletedGridConditionType>(meta.GetValueOrDefault("type", string.Empty).ToString());
+        switch (type)
+        {
+            case CompletedGridConditionType.Full:
+            default:
+                return new FullCondition();
+            case CompletedGridConditionType.Empty:
+                return new EmptyCondition();
+            case CompletedGridConditionType.ItemCount:
+                DeferredItemCountCondition iccondition = new DeferredItemCountCondition();
+                UtilHelpers.PopulateObjectFromMeta(iccondition, meta, new ItemCountConditionConverter());
+                return iccondition;
+            case CompletedGridConditionType.AberrationCount:
+                AberrationCountCondition accondition = new AberrationCountCondition();
+                UtilHelpers.PopulateObjectFromMeta(accondition, meta, new AberrationCountConditionConverter());
+                return accondition;
+            case CompletedGridConditionType.ExactCountOfItemTypeAndSubtype:
+                ExactCountOfItemTypeAndSubtypeCondition eccondition = new ExactCountOfItemTypeAndSubtypeCondition();
+                UtilHelpers.PopulateObjectFromMeta(eccondition, meta, new ExactCountOfItemTypeAndSubtypeConditionConverter());
+                return eccondition;
+            case CompletedGridConditionType.CellCountOfItemTypeAndSubtype:
+                CellCountOfItemTypeAndSubtypeCondition cccondition = new CellCountOfItemTypeAndSubtypeCondition();
+                UtilHelpers.PopulateObjectFromMeta(cccondition, meta, new CellCountOfItemTypeAndSubtypeConditionConverter());
+                return cccondition;
+        }
+    }
+
+
+    internal static List<CompletedGridCondition> ParseCompletedGridConditions(JArray o)
+    {
+        var parsed = new List<CompletedGridCondition>();
+        foreach (var completedGridCondition in o)
+        {
+            parsed.Add(ParseCompletedGridCondition(completedGridCondition));
+        }
+        return parsed;
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Winch.Util;
 
 namespace Winch.Data.Upgrade;
@@ -18,6 +19,7 @@ public abstract class DeferredUpgradeData : UpgradeData, IDeferredUpgradeData
     {
         base.gridConfig = QuestUtil.GetQuestGridConfig(gridConfig);
         base.prerequisiteUpgrades = UpgradeUtil.TryGetUpgrades(prerequisiteUpgrades);
+        base.itemCost = ((IUpgradeCost)this).GetItemCost();
     }
 }
 

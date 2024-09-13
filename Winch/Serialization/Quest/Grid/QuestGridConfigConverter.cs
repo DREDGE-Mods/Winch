@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine.Localization;
 using Winch.Data.Quest.Grid;
+using Winch.Data.Quest.Grid.Condition;
 using Winch.Util;
 
 namespace Winch.Serialization.Quest.Grid;
@@ -31,7 +33,7 @@ public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridCon
         { "gridConfiguration", new(string.Empty, null) },
         { "presetGrid", new(new SerializableGrid(), o => DredgeTypeHelpers.ParseSerializableGrid(o)) }, //TODO: implement better
         { "presetGridMode", new(PresetGridMode.NONE, o => DredgeTypeHelpers.GetEnumValue<PresetGridMode>(o)) },
-        { "completeConditions", new(new List<CompletedGridCondition>(), null) }, //TODO: implement
+        { "completeConditions", new(new List<CompletedGridCondition>{ new FullCondition() }, o=> DredgeTypeHelpers.ParseCompletedGridConditions((JArray)o)) },
     };
 
     public QuestGridConfigConverter()
