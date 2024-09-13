@@ -56,6 +56,17 @@ public static class GridConfigUtil
         return null;
     }
 
+    public static GridConfiguration GetGridConfiguration(GridKey gridKey)
+    {
+        if (gridKey == GridKey.NONE)
+            return null;
+
+        if (GameManager.Instance.GameConfigData.gridConfigs.TryGetValue(gridKey, out GridConfiguration gridConfig))
+            return gridConfig;
+
+        return null;
+    }
+
     public static DeferredGridConfiguration GetModdedGridConfiguration(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
