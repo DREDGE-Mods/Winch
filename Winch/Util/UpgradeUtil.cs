@@ -122,6 +122,11 @@ public static class UpgradeUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaUpgradeIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Upgrade {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedUpgradeDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate upgrade data {id} at {metaPath} failed to load");

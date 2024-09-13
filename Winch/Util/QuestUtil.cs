@@ -327,6 +327,11 @@ public static class QuestUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaQuestDataIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Quest {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedQuestDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate quest data {id} at {metaPath} failed to load");
@@ -358,6 +363,11 @@ public static class QuestUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaQuestStepDataIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Quest step {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedQuestDataDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate quest step data {id} at {metaPath} failed to load");
@@ -388,6 +398,11 @@ public static class QuestUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaQuestGridConfigIDList.Contains(id))
+        {
+            WinchCore.Log.Error($"Quest grid config {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedQuestGridConfigDict.ContainsKey(id))
         {
             WinchCore.Log.Error($"Duplicate quest grid config {id} at {metaPath} failed to load");

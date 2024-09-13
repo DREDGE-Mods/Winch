@@ -106,6 +106,11 @@ public static class MapMarkerUtil
 			return;
 		}
 		var id = (string)meta["id"];
+		if (VanillaMapMarkerIDList.Contains(id))
+		{
+			WinchCore.Log.Error($"Map marker {id} already exists in vanilla.");
+			return;
+		}
 		if (ModdedMapMarkerDataDict.ContainsKey(id))
 		{
 			WinchCore.Log.Error($"Duplicate map marker data {id} at {metaPath} failed to load");
