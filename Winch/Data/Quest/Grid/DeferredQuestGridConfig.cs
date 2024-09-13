@@ -11,6 +11,19 @@ public class DeferredQuestGridConfig : QuestGridConfig
     [SerializeField]
     public new string gridConfiguration = string.Empty;
 
+    public GridConfiguration GridConfiguration
+    {
+        get
+        {
+            return base.gridConfiguration = GridConfigUtil.GetGridConfiguration(gridConfiguration);
+        }
+        set
+        {
+            gridConfiguration = value != null ? value.name : string.Empty;
+            base.gridConfiguration = value;
+        }
+    }
+
     internal void Populate()
     {
         base.gridConfiguration = GridConfigUtil.GetGridConfiguration(gridConfiguration);

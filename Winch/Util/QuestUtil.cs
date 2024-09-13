@@ -412,6 +412,9 @@ public static class QuestUtil
         {
             ModdedQuestGridConfigDict.Add(id, questGridConfig);
             AddressablesUtil.AddResourceAtLocation("QuestGridConfig", id, id, questGridConfig);
+            questGridConfig.Populate();
+            if (questGridConfig.gridKey != GridKey.NONE && questGridConfig.GridConfiguration != null)
+                GameManager.Instance.GameConfigData.gridConfigs.SafeAdd(questGridConfig.gridKey, questGridConfig.GridConfiguration);
         }
         else
         {
