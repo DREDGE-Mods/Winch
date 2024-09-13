@@ -11,7 +11,7 @@ namespace Winch.Util;
 
 public static class AssetBundleUtil
 {
-    private static Texture2D bump;
+    private static Texture2D? bump;
     public static Texture2D bumpTexture
     {
         get

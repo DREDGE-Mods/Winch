@@ -23,10 +23,8 @@ public class AdvancedSpeakerData : SpeakerData
     /// <summary>
     /// The image of the character. This will show up when you are talking to them.
     /// </summary>
-#pragma warning disable CS8618
     [SerializeField]
     public Sprite portraitSprite;
-#pragma warning restore CS8618
 
     /// <summary>
     /// Image overrides

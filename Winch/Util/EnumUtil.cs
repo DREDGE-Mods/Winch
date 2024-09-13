@@ -523,7 +523,7 @@ public static class EnumUtil
             result = value;
             return true;
         }
-        if (value is IConvertible)
+        if (value is IConvertible convertible)
         {
             if (type.IsEnum)
             {
@@ -531,7 +531,7 @@ public static class EnumUtil
                 return true;
             }
             var format = NumberFormatInfo.CurrentInfo;
-            result = (value as IConvertible).ToType(type, format);
+            result = convertible.ToType(type, format);
             return true;
         }
         return false;
@@ -1738,7 +1738,7 @@ public static class EnumUtil
     /// <param name="values"></param>
     /// <returns>All the flags values combined into one enum value.</returns>
     /// <exception cref="ArgumentException">When the enum doesn't have the flags attribute.</exception>
-    public static T CombineFlagsValues<T>(this T[] values) where T : Enum
+    public static T CombineFlagsValues<T>(this T[] values) where T : struct, Enum
     {
         if (!IsFlagsEnum<T>())
             throw new ArgumentException(string.Format("The type '{0}' must have an attribute '{1}'.", typeof(T), typeof(FlagsAttribute)));
@@ -1848,7 +1848,7 @@ public class CustomStringEnumConverter : StringEnumConverter
         {
             return "{null}";
         }
-        string text = value as string;
+        string? text = value as string;
         if (text == null)
         {
             return value.ToString();
@@ -1856,7 +1856,7 @@ public class CustomStringEnumConverter : StringEnumConverter
         return "\"" + text + "\"";
     }
 
-    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType != JsonToken.Null)
         {
@@ -1864,8 +1864,8 @@ public class CustomStringEnumConverter : StringEnumConverter
             Type type = (nullable ? Nullable.GetUnderlyingType(objectType) : objectType);
             try
             {
-                object value = reader.Value;
-                string svalue = value.ToString();
+                object? value = reader.Value;
+                string svalue = value?.ToString() ?? string.Empty;
                 if ((value == null || string.IsNullOrWhiteSpace(svalue)) && nullable) return null;
                 if (EnumUtil.TryParse(type, svalue, out object result)) return result;
             }
@@ -1882,7 +1882,7 @@ public class CustomStringEnumConverter : StringEnumConverter
         return null;
     }
 
-    internal static string FormatMessage(IJsonLineInfo lineInfo, string path, string message)
+    internal static string FormatMessage(IJsonLineInfo? lineInfo, string path, string message)
     {
         if (!message.EndsWith(Environment.NewLine, StringComparison.Ordinal))
         {
@@ -1906,9 +1906,9 @@ public class CustomStringEnumConverter : StringEnumConverter
 
     internal static JsonSerializationException Create(JsonReader reader, string message, Exception ex) => Create(reader as IJsonLineInfo, reader.Path, message, ex);
 
-    internal static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message) => Create(lineInfo, path, message, null);
+    internal static JsonSerializationException Create(IJsonLineInfo? lineInfo, string path, string message) => Create(lineInfo, path, message, null);
 
-    internal static JsonSerializationException Create(IJsonLineInfo lineInfo, string path, string message, Exception ex)
+    internal static JsonSerializationException Create(IJsonLineInfo? lineInfo, string path, string message, Exception? ex)
     {
         message = FormatMessage(lineInfo, path, message);
         int lineNumber;

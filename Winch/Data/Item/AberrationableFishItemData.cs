@@ -6,7 +6,7 @@ namespace Winch.Data.Item;
 public class AberrationableFishItemData : FishItemData
 {
     [SerializeField]
-    public new List<string> aberrations;
+    public new List<string> aberrations = new List<string>();
     [SerializeField]
-    public new string nonAberrationParent;
+    public new string nonAberrationParent = string.Empty;
 }

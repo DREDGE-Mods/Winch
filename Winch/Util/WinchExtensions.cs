@@ -930,9 +930,7 @@ public static class WinchExtensions
                 }
                 break;
         }
-#pragma warning disable CS8625
         paralinguistics = null;
-#pragma warning restore CS8625
         return false;
     }
 
@@ -1595,7 +1593,6 @@ public static class WinchExtensions
     public static HashSet<TResult> Cast<TSource, TResult>(this HashSet<TSource> source)
         => Enumerable.ToHashSet(source.Cast<TResult>());
 
-#pragma warning disable CS8601 // Possible null reference assignment.
     /// <summary>Applies an accumulator function over a sequence.</summary>
     /// <param name="source">An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to aggregate over.</param>
     /// <param name="func">An accumulator function to be invoked on each element.</param>
@@ -1626,7 +1623,7 @@ public static class WinchExtensions
     public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Predicate<TSource> predicate)
         => source.Where(new Func<TSource, bool>(predicate));
 
-    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default) => dictionary.ContainsKey(key) ? dictionary[key] : defaultValue;
+    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default) => dictionary.TryGetValue(key, out var value) ? value : defaultValue;
 
     public static TKey KeyByValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, TKey defaultValue = default) => KeyByValue(dictionary, value, defaultValue);
     public static TKey GetKeyOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TValue value, TKey defaultValue = default)
@@ -1649,7 +1646,6 @@ public static class WinchExtensions
         }
         return defaultValue;
     }
-#pragma warning restore CS8601 // Possible null reference assignment.
 
     public static bool SafeAdd<T>(this IList<T> list, T value)
     {
@@ -1703,9 +1699,7 @@ public static class WinchExtensions
             value = source[index];
             return true;
         }
-#pragma warning disable CS8601 // Possible null reference assignment.
         value = default(T);
-#pragma warning restore CS8601 // Possible null reference assignment.
         return false;
     }
 
@@ -1716,9 +1710,7 @@ public static class WinchExtensions
             value = source[index];
             return true;
         }
-#pragma warning disable CS8601 // Possible null reference assignment.
         value = default(T);
-#pragma warning restore CS8601 // Possible null reference assignment.
         return false;
     }
 
@@ -1732,9 +1724,7 @@ public static class WinchExtensions
                 return true;
             }
         }
-#pragma warning disable CS8601 // Possible null reference assignment.
         value = default(T);
-#pragma warning restore CS8601 // Possible null reference assignment.
         return false;
     }
 
@@ -1892,9 +1882,7 @@ public static class WinchExtensions
     }
 
     public static GameObject FindChild(this GameObject go, string childPath) =>
-#pragma warning disable CS8603 // Possible null reference return.
         go.transform.Find(childPath)?.gameObject;
-#pragma warning restore CS8603 // Possible null reference return.
 
     public static Component[] GetComponents(this GameObject go) => go.GetComponents<Component>().Where(c => c != null).ToArray();
 
@@ -2077,7 +2065,6 @@ public static class WinchExtensions
         go.transform.rotation = Quaternion.FromToRotation(Vector3.forward, direction);
     }
 
-#pragma warning disable CS8603 // Possible null reference return.
     public static GameObject FindChildWithExactName(this GameObject parent, string name)
     {
         var parentTransform = parent.transform;
@@ -2100,7 +2087,6 @@ public static class WinchExtensions
         }
         return null;
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     public static void DestroyAllComponents<T>(this GameObject obj) where T : Component
     {
@@ -2180,7 +2166,6 @@ public static class WinchExtensions
         return Quaternion.Inverse(t.rotation) * q;
     }
 
-#pragma warning disable CS8603 // Possible null reference return.
     public static StringTableEntry GetEntry(
       this StringTable stringTable,
       long keyId,
@@ -2193,7 +2178,6 @@ public static class WinchExtensions
 
         return null;
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     public static float[] ToArray(this Vector2 value) => new float[2] { value.x, value.y };
     public static float[] ToArray(this Vector3 value) => new float[3] { value.x, value.y, value.z };
@@ -2257,7 +2241,6 @@ public static class WinchExtensions
         return properties.ToArray();
     }
 
-#pragma warning disable CS8603 // Possible null reference return.
     public static MaterialProperty GetMaterialPropertyFromNameId(this Material mat, int nameID)
     {
         foreach (MaterialProperty prop in mat.GetMaterialProperties())
@@ -2874,7 +2857,6 @@ public static class WinchExtensions
         }
         return null;
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     public static Vector2 GetPropertyRangeLimits(this Material mat, string name)
     {

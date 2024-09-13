@@ -11,7 +11,7 @@ public abstract class StaticWorldEvent : WorldEvent
 {
     [SerializeField]
     /// <inheritdoc cref="ID"/>
-    internal string id;
+    internal string id = string.Empty;
 
     /// <summary>
     /// ID of the static world data

@@ -94,9 +94,7 @@ public class ModConfig : JSONConfig
         }
         catch
         {
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             config = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             return false;
         }
     }
@@ -118,9 +116,7 @@ public class ModConfig : JSONConfig
         {
         }
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
         config = null;
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         return false;
     }
 

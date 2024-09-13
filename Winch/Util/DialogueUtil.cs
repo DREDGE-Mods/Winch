@@ -250,7 +250,13 @@ public static class DialogueUtil
             var exportYarnProgram = WinchConfig.GetProperty("ExportYarnProgram", false);
 
             DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
-            DredgeLocalizedLineProvider lineProvider = runner.lineProvider as DredgeLocalizedLineProvider;
+            DredgeLocalizedLineProvider? lineProvider = runner.lineProvider as DredgeLocalizedLineProvider;
+
+            if (lineProvider == null)
+            {
+                WinchCore.Log.Error("Localized line provider is null");
+                return;
+            } 
 
             foreach (var line in lines)
             {
@@ -314,18 +320,18 @@ public static class DialogueUtil
 
     internal class LinesCSVRecord
     {
-        public string Character { get; set; }
-        public string Text { get; set; }
-        public string Id { get; set; }
+        public string Character { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
     }
 
     public class DredgeInstruction
     {
-        public string NodeID { get; set; }
+        public string NodeID { get; set; } = string.Empty;
         public int Index { get; set; }
         public string Label { get; set; } = string.Empty;
         public Yarn.Instruction.Types.OpCode OpCode { get; set; }
-        public object[] Operands { get; set; }
+        public object[] Operands { get; set; } = new object[0];
 
         /// <summary>
         /// Create an instruction

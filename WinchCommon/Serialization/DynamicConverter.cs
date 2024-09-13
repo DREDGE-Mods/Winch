@@ -31,11 +31,14 @@ internal class DynamicConverter : JsonConverter
 
 	public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
 	{
-		foreach (var property in ConvertersForType(value.GetType()))
-		{
-			property.WriteJson(writer, value, serializer);
-			return;
-		}
+        if (value != null)
+        {
+            foreach (var property in ConvertersForType(value.GetType()))
+            {
+                property.WriteJson(writer, value, serializer);
+                return;
+            }
+        }
 
 		writer.WriteNull();
 	}

@@ -8,9 +8,9 @@ public class DisasterButton : MonoBehaviour
 {
     private static System.Random rnd = new System.Random();
     private static ModConfig Config => ModConfig.GetConfig();
-    private static string DisasterKey => ModConfig.GetProperty("hacktix.disasterbutton", "DisasterButtonKey", "delete");
+    private static string DisasterKey => Config.GetProperty<string>("DisasterButtonKey");
 
-    private void Update()
+    public void Update()
     {
         if(Input.GetKeyDown(DisasterKey))
             OnPress();

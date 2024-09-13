@@ -116,7 +116,7 @@ public static class AudioClipUtil
 
                 while (!result.isDone) await Task.Yield();
 
-                if (www.isNetworkError || www.isHttpError)
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     WinchCore.Log.Error($"Couldn't load Audio at {path} : {www.error}");
                     return null;
@@ -137,7 +137,7 @@ public static class AudioClipUtil
 
                 while (!result.isDone) await Task.Yield();
 
-                if (www.isNetworkError || www.isHttpError)
+                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
                 {
                     WinchCore.Log.Error($"Couldn't load Audio at {path} : {www.error}");
                     return null;

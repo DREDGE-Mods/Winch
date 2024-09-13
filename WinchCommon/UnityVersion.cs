@@ -328,9 +328,7 @@ public readonly partial struct UnityVersion : IEquatable<UnityVersion>, ICompara
         }
         else
         {
-#pragma warning disable CS8625
             match = null;
-#pragma warning restore CS8625
             return false;
         }
     }
@@ -432,7 +430,7 @@ public readonly partial struct UnityVersion : IEquatable<UnityVersion>, ICompara
     /// <param name="left">A Unity version</param>
     /// <param name="right">A Unity version</param>
     /// <returns>
-    /// An ordinal number representing the distance between 2 versions. 
+    /// An ordinal number representing the distance between 2 versions.
     /// A value of zero means they're equal.
     /// </returns>
     public static ulong Distance(UnityVersion left, UnityVersion right)

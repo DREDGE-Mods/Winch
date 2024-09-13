@@ -19,8 +19,7 @@ internal class ModsTab : MonoBehaviour
     internal static LocalizedString footerList = LocalizationUtil.CreateReference("Strings", "settings.mods.footer.list");
     internal static LocalizedString footerOptions = LocalizationUtil.CreateReference("Strings", "settings.mods.footer.options");
 
-    private static ModsTab instance;
-    internal static ModsTab Instance => instance;
+    internal static ModsTab Instance { get; private set; }
 
     public bool isCurrentTab => Instance.settingsDialog.dialog.CurrentIndex == ModsButton.modsTabIndex;
     public static bool isActive => Instance.isCurrentTab;
@@ -64,7 +63,7 @@ internal class ModsTab : MonoBehaviour
 
     public void Awake()
     {
-        instance = this;
+        Instance = this;
     }
 
     public void Start()
@@ -340,28 +339,18 @@ internal class ModsTab : MonoBehaviour
             var settingType = (string)obj["type"];
             if (!string.IsNullOrWhiteSpace(settingType))
             {
-                switch (settingType)
+                return settingType switch
                 {
-                    case "separator":
-                        return AddSeparatorAndLabelInput(modName, key, obj);
-                    case "slider":
-                        return AddSliderInput(modName, key, obj);
-                    case "toggle":
-                        return AddToggleInput(modName, key, obj);
-                    case "dropdown":
-                        return AddDropdownInput(modName, key, obj);
-                    case "color":
-                        return AddColorDropdownInput(modName, key, obj);
-                    case "text":
-                        return AddTextInput(modName, key, obj);
-                    case "integer":
-                        return AddIntegerInput(modName, key, obj);
-                    case "decimal":
-                    case "number":
-                        return AddDecimalInput(modName, key, obj);
-                    default:
-                        throw new InvalidOperationException("Unrecognized complex setting type: " + settingType);
-                }
+                    "separator" => AddSeparatorAndLabelInput(modName, key, obj),
+                    "slider" => AddSliderInput(modName, key, obj),
+                    "toggle" => AddToggleInput(modName, key, obj),
+                    "dropdown" => AddDropdownInput(modName, key, obj),
+                    "color" => AddColorDropdownInput(modName, key, obj),
+                    "text" => AddTextInput(modName, key, obj),
+                    "integer" => AddIntegerInput(modName, key, obj),
+                    "decimal" or "number" => AddDecimalInput(modName, key, obj),
+                    _ => throw new InvalidOperationException("Unrecognized complex setting type: " + settingType),
+                };
             }
             else
             {

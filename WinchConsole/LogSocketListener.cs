@@ -16,7 +16,6 @@ public class LogSocketListener
     private const int BufferSize = 262144;
     private static int _port;
     private static TcpListener _server;
-    private bool _hasReceivedFatalMessage;
 
     public LogSocketListener()
     {

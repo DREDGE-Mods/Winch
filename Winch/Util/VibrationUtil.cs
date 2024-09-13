@@ -18,7 +18,6 @@ public static class VibrationUtil
     internal static Dictionary<string, VibrationData> ModdedVibrationDataDict = new();
     internal static Dictionary<string, VibrationData> AllVibrationDataDict = new();
 
-#pragma warning disable CS8603 // Possible null reference return.
     public static VibrationData GetModdedVibrationData(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -43,7 +42,6 @@ public static class VibrationUtil
 
         return null;
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     internal static void PopulateVibrationDatas()
     {

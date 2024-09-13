@@ -8,8 +8,8 @@ namespace Winch.Config;
 
 public class JSONConfig
 {
-    private static DynamicConverter dynamicConverter = new DynamicConverter();
-    private static DredgeContractResolver contractResolver = new DredgeContractResolver();
+    internal static readonly DynamicConverter dynamicConverter = new DynamicConverter();
+    internal static readonly DredgeContractResolver contractResolver = new DredgeContractResolver();
 
     public static JsonSerializerSettings CreateSerializerSettings()
     {
@@ -46,7 +46,7 @@ public class JSONConfig
         JsonConvert.DefaultSettings = CreateSerializerSettings;
     }
 
-    private static StringBuilder stringBuilder = new StringBuilder();
+    private static StringBuilder _stringBuilder = new StringBuilder();
 
     public event ConfigChangedEvent? OnConfigChanged;
 
@@ -66,7 +66,6 @@ public class JSONConfig
         return ParseConfig(File.ReadAllText(path));
     }
 
-#pragma warning disable CS8603 // Possible null reference return.
     public static T ReadConfig<T>(string path)
     {
         if (!File.Exists(path)) return default(T);
@@ -82,12 +81,11 @@ public class JSONConfig
     {
         return JsonConvert.DeserializeObject<T>(value, jsonSerializerSettings);
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     public static string ToSerializedJson(object? value)
     {
         string json = "{}";
-        using (StringWriter stringWriter = new StringWriter(stringBuilder))
+        using (StringWriter stringWriter = new StringWriter(_stringBuilder))
         {
             using (JsonTextWriter jsonTextWriter = new JsonTextWriter(stringWriter)
                    {
@@ -97,8 +95,8 @@ public class JSONConfig
                    })
             {
                 jsonSerializer.Serialize(jsonTextWriter, value);
-                json = stringBuilder.ToString();
-                stringBuilder.Clear();
+                json = _stringBuilder.ToString();
+                _stringBuilder.Clear();
             }
         }
         return json;
@@ -107,7 +105,7 @@ public class JSONConfig
     public static string ToSerializedJson(object? value, Type? type)
     {
         string json = "{}";
-        using (StringWriter stringWriter = new StringWriter(stringBuilder))
+        using (StringWriter stringWriter = new StringWriter(_stringBuilder))
         {
             using (JsonTextWriter jsonTextWriter = new JsonTextWriter(stringWriter)
                    {
@@ -117,8 +115,8 @@ public class JSONConfig
                    })
             {
                 jsonSerializer.Serialize(jsonTextWriter, value, type);
-                json = stringBuilder.ToString();
-                stringBuilder.Clear();
+                json = _stringBuilder.ToString();
+                _stringBuilder.Clear();
             }
         }
         return json;
@@ -265,12 +263,10 @@ public class JSONConfig
         return _config;
     }
 
-#pragma warning disable CS8603 // Possible null reference return.
     public T ToObject<T>()
     {
         return JsonConvert.DeserializeObject<T>(ToSerializedJson(GetProperties().ToDictionary(kvp => kvp.Key, kvp => GetProperty(_config, kvp.Key, _defaultConfig))));
     }
-#pragma warning restore CS8603 // Possible null reference return.
 
     public T? GetProperty<T>(string key)
     {
@@ -297,9 +293,7 @@ public class JSONConfig
 
     private static T ConvertToEnum<T>(object? value)
     {
-#pragma warning disable CS8603
         if (value == null) return default(T);
-#pragma warning restore CS8603
 
         if (value is float || value is double)
         {

@@ -5,5 +5,5 @@ namespace Winch.Data.POI.Conversation;
 public class CustomExplosivePOI : CustomConversationPOI
 {
     [SerializeField]
-    public string explodeVibration;
+    public string explodeVibration = string.Empty;
 }

@@ -337,7 +337,7 @@ public static class ItemUtil
         var container = encyclopedia.transform.parent.gameObject;
         container.SetActive(true);
         container.SetActive(false);
-        var zones = encyclopedia.dlc1ZoneButton.transform.parent as RectTransform;
+        var zones = (RectTransform)encyclopedia.dlc1ZoneButton.transform.parent;
         zones.sizeDelta = new Vector2(zones.sizeDelta.x, zones.sizeDelta.y + 50);
         var moddedButton = encyclopedia.dlc1ZoneButton.gameObject.InstantiateInactive();
         moddedButton.transform.SetParent(zones, false);

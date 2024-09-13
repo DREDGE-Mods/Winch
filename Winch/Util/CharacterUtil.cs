@@ -23,7 +23,7 @@ public static class CharacterUtil
         if (string.IsNullOrWhiteSpace(id))
             return null;
 
-        if (AllSpeakerDataDict.TryGetValue(id, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s.name == id, out speakerData))
+        if (AllSpeakerDataDict.TryGetValue(id, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s != null && s.name == id, out speakerData))
             return speakerData;
 
         if (ModdedSpeakerDataDict.TryGetValue(id, out AdvancedSpeakerData advancedSpeakerData))
@@ -113,7 +113,7 @@ public static class CharacterUtil
 
         foreach (var speaker in ids)
         {
-            if (!string.IsNullOrWhiteSpace(speaker) && (AllSpeakerDataDict.TryGetValue(speaker, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s.name == speaker, out speakerData)))
+            if (!string.IsNullOrWhiteSpace(speaker) && (AllSpeakerDataDict.TryGetValue(speaker, out var speakerData) || AllSpeakerDataDict.Values.TryGetValue(s => s != null && s.name == speaker, out speakerData)) && speakerData != null)
             {
                 speakers.Add(speakerData);
             }

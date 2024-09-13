@@ -14,7 +14,7 @@ namespace Winch.Core;
 
 public static class WinchCore
 {
-    internal static Harmony Harmony;
+    internal static Harmony Harmony = new Harmony("com.dredge.winch");
 
     public static Logger Log = new Logger();
 
@@ -89,8 +89,7 @@ public static class WinchCore
 
         try
         {
-            Harmony = new Harmony("com.dredge.winch");
-            Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
+            Log.Debug("Patching with Harmony Instance 'com.dredge.winch'...");
             EarlyPatcher.Initialize(WinchCore.Harmony);
             Log.Debug("Early Harmony Patching complete.");
         }

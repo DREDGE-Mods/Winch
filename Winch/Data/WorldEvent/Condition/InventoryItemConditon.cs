@@ -4,7 +4,7 @@ namespace Winch.Data.WorldEvent.Condition;
 
 public abstract class InventoryItemConditon : InventoryCondition
 {
-    public string id;
+    public string id = string.Empty;
 
     public ItemData ItemData
     {

@@ -37,7 +37,7 @@ public static class AddressablesUtil
             return locations;
         }
     }
-    internal static Dictionary<string, IList<IResourceLocation>> MapLocations => (Locators[1] as ResourceLocationMap).Locations.Select(kvp => new KeyValuePair<string, IList<IResourceLocation>>(kvp.Key.ToString(), kvp.Value)).ToDictionary(x => x.Key, x => x.Value);
+    internal static Dictionary<string, IList<IResourceLocation>> MapLocations => ResourceLocationMap.Locations.Select(kvp => new KeyValuePair<string, IList<IResourceLocation>>(kvp.Key.ToString(), kvp.Value)).ToDictionary(x => x.Key, x => x.Value);
     internal static Dictionary<string, IList<IResourceLocation>> Locations = new Dictionary<string, IList<IResourceLocation>>();
     internal static Dictionary<IResourceLocation, UnityEngine.Object> Resources = new Dictionary<IResourceLocation, UnityEngine.Object>();
 
@@ -168,6 +168,7 @@ public static class AddressablesUtil
     /// Searches the resource location map for a key with an identical location as the given <paramref name="key"/>
     /// </summary>
     /// <param name="key">The key to grab the location from and search for another with an identical location</param>
+    /// <param name="type"></param>
     /// <returns>A different key with an identical location as the given <paramref name="key"/></returns>
     public static string GetIdenticalLocationKey(string key, Type type)
     {
@@ -204,6 +205,7 @@ public static class AddressablesUtil
     /// Searches the resource location map for a key with an identical location as the given <paramref name="key"/>
     /// </summary>
     /// <param name="key">The key to grab the location from and search for another with an identical location</param>
+    /// <param name="type"></param>
     /// <param name="identical">If found, this will be a different key with an identical location as the given <paramref name="key"/></param>
     /// <returns><see langword="true"/> if found, <see langword="false"/> if not.</returns>
     public static bool TryGetIdenticalLocationKey(string key, Type type, out string identical)

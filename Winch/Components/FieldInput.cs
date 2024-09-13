@@ -69,7 +69,7 @@ public class FieldInput : Input, ISubmitHandler, IEventSystemHandler
 
     protected virtual void InitializePlaceholder()
     {
-        placeholder.LabelString = GetDefaultConfigValue<string>();
+        placeholder.LabelString = GetDefaultConfigValue<string>() ?? string.Empty;
     }
 
     private void OnSelect(string value)
@@ -145,7 +145,7 @@ public class FieldInput : Input, ISubmitHandler, IEventSystemHandler
     public override void OnForceRefresh()
     {
         InitializePlaceholder();
-        SetInputFieldTextWithNoNotify(GetConfigValue<string>());
+        SetInputFieldTextWithNoNotify(GetConfigValue<string>() ?? string.Empty);
     }
 
     protected internal virtual void Initialize(string value)

@@ -141,7 +141,7 @@ public static class ModAssemblyLoader
         catch (Exception ex)
         {
             WinchCore.Log.Error($"Unable to parse mod_list.json file: {ex}");
-            EnabledMods = null;
+            EnabledMods = _installedAssemblies.ToDictionary(kvp => kvp.Key, kvp => true);
         }
     }
 

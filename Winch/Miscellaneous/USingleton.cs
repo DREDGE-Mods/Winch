@@ -7,9 +7,7 @@
 public abstract class USingleton<T> : MonoBehaviour where T : USingleton<T>, new()
 {
     /// <summary>The instance of this singleton</summary>
-#pragma warning disable CS8618
     public static T Instance { get; protected set; }
-#pragma warning restore CS8618
 
     /// <summary>
     /// Whether this object should be <see cref="Object.DontDestroyOnLoad"/>

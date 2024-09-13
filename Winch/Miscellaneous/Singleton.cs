@@ -5,9 +5,7 @@
 public abstract class Singleton<T> where T : Singleton<T>
 {
     /// <summary>The instance of this singleton</summary>
-#pragma warning disable CS8618
     public static T Instance { get; protected set; }
-#pragma warning restore CS8618
 
     /// <summary>The constructor that sets the instance value</summary>
     protected Singleton()
