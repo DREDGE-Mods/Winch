@@ -36,6 +36,7 @@ public static class ShopUtil
     }
 
     internal static List<string> KeepInStockItems = new();
+    internal static Dictionary<GridKey, ModdedShopDataGridConfig> ModdedShopDataGridConfigDict = new();
     internal static Dictionary<GridKey, ShopDataGridConfig> AllShopDataGridConfigDict = new();
     internal static Dictionary<string, ModdedShopData> ModdedShopDataDict = new();
     internal static Dictionary<string, ShopData> AllShopDataDict = new();
@@ -67,13 +68,38 @@ public static class ShopUtil
         return null;
     }
 
+    public static ModdedShopDataGridConfig GetModdedShopDataGridConfig(GridKey gridKey)
+    {
+        if (gridKey == GridKey.NONE)
+            return null;
+
+        if (ModdedShopDataGridConfigDict.TryGetValue(gridKey, out ModdedShopDataGridConfig shop))
+            return shop;
+        else
+            return null;
+    }
+
+    public static ShopDataGridConfig GetShopDataGridConfig(GridKey gridKey)
+    {
+        if (gridKey == GridKey.NONE)
+            return null;
+
+        if (AllShopDataGridConfigDict.TryGetValue(gridKey, out var shop))
+            return shop;
+
+        if (ModdedShopDataGridConfigDict.TryGetValue(gridKey, out var moddedShop))
+            return moddedShop;
+
+        return null;
+    }
+
     internal static void AddModdedShopData(ShopRestocker restocker)
     {
         restocker.itemIdsToKeep.AddRange(KeepInStockItems);
         foreach (var shopData in ModdedShopDataDict.Values)
         {
             shopData.Populate();
-            restocker.shopDataGridConfigs.Add(shopData);
+            restocker.shopDataGridConfigs.Add(shopData.ToShopDataGridConfig());
         }
     }
 
@@ -117,6 +143,7 @@ public static class ShopUtil
         if (PopulateShopDataFromMetaWithConverter(shopData, meta))
         {
             ModdedShopDataDict.Add(id, shopData);
+            ModdedShopDataGridConfigDict.Add(shopData.gridKey, shopData.ToShopDataGridConfig());
         }
         else
         {

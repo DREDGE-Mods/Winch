@@ -17,5 +17,19 @@ public class ModdedShopData : ShopData
         }
     }
 
-    public static implicit operator ShopRestocker.ShopDataGridConfig(ModdedShopData shopData) => new ModdedShopDataGridConfig(shopData);
+    private ModdedShopDataGridConfig shopDataGridConfig;
+    public ModdedShopDataGridConfig ToShopDataGridConfig()
+    {
+        if (shopDataGridConfig == null)
+            shopDataGridConfig = new ModdedShopDataGridConfig(this);
+        else
+        {
+            shopDataGridConfig.gridKey = gridKey;
+            shopDataGridConfig.shopData = this;
+        }
+        return shopDataGridConfig;
+    }
+
+    public static implicit operator ShopRestocker.ShopDataGridConfig(ModdedShopData shopData) => shopData.ToShopDataGridConfig();
+    public static implicit operator ModdedShopDataGridConfig(ModdedShopData shopData) => shopData.ToShopDataGridConfig();
 }
