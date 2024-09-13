@@ -1,4 +1,7 @@
 ﻿﻿title: ExampleItems_Steve_Root
+tags: 
+colorID: 0
+position: 0,0
 ---
 <<if GetHasVisitedNode("ExampleItems_Steve_Intro") == false>>
 	<<jump ExampleItems_Steve_Intro>>
