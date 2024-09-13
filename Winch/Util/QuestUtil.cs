@@ -410,6 +410,11 @@ public static class QuestUtil
         }
         if (PopulateQuestGridConfigFromMetaWithConverter(questGridConfig, meta))
         {
+            if (questGridConfig.isSaved && questGridConfig.gridKey == GridKey.NONE)
+            {
+                WinchCore.Log.Error($"Savable quest grid config {id} at {metaPath} failed to load because \"gridKey\" is required");
+                return;
+            }
             ModdedQuestGridConfigDict.Add(id, questGridConfig);
             AddressablesUtil.AddResourceAtLocation("QuestGridConfig", id, id, questGridConfig);
             questGridConfig.Populate();
