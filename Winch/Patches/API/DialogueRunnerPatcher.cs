@@ -30,17 +30,17 @@ internal static class DialogueRunnerPatcher
 
     private static void LogInfo(this DredgeDialogueRunner dialogueRunner, string message)
     {
-        WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
+        WinchCore.Log.Info(message, dialogueRunner.CurrentNodeName);
     }
 
     private static void LogWarn(this DredgeDialogueRunner dialogueRunner, string message)
     {
-        WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
+        WinchCore.Log.Warn(message, dialogueRunner.CurrentNodeName);
     }
 
     private static void LogError(this DredgeDialogueRunner dialogueRunner, string message)
     {
-        WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
+        WinchCore.Log.Error(message, dialogueRunner.CurrentNodeName);
     }
 
     [HarmonyPrefix]
