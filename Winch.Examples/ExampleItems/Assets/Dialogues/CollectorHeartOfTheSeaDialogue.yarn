@@ -11,6 +11,7 @@ COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #chuckle #line:0da94
 	-> Heart of the Sea #line:ed1b9afe
 		<<set $exampleitems_named to true>>
 	-> I have absolutely no idea #line:7b2b9d89
+		<<set $exampleitems_named to false>>
 <<LogWarn {$exampleitems_named}>>
 COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:0986fhd
 	<<if $exampleitems_named is true>>
