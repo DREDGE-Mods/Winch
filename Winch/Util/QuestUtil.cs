@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Winch.Core;
+using Winch.Data.GridConfig;
 using Winch.Data.Quest;
 using Winch.Data.Quest.Grid;
 using Winch.Data.Quest.Step;
@@ -410,16 +411,24 @@ public static class QuestUtil
         }
         if (PopulateQuestGridConfigFromMetaWithConverter(questGridConfig, meta))
         {
+            questGridConfig.Populate();
+            var gridConfig = questGridConfig.GridConfiguration;
+            if (gridConfig != null)
+            {
+                if (questGridConfig.gridKey != GridKey.NONE)
+                    GameManager.Instance.GameConfigData.gridConfigs.SafeAdd(questGridConfig.gridKey, gridConfig);
+                else if (gridConfig is DeferredGridConfiguration deferredGridConfig)
+                    questGridConfig.gridKey = deferredGridConfig.gridKey;
+            }
+
             if (questGridConfig.isSaved && questGridConfig.gridKey == GridKey.NONE)
             {
                 WinchCore.Log.Error($"Savable quest grid config {id} at {metaPath} failed to load because \"gridKey\" is required");
                 return;
             }
+
             ModdedQuestGridConfigDict.Add(id, questGridConfig);
             AddressablesUtil.AddResourceAtLocation("QuestGridConfig", id, id, questGridConfig);
-            questGridConfig.Populate();
-            if (questGridConfig.gridKey != GridKey.NONE && questGridConfig.GridConfiguration != null)
-                GameManager.Instance.GameConfigData.gridConfigs.SafeAdd(questGridConfig.gridKey, questGridConfig.GridConfiguration);
         }
         else
         {
