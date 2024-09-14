@@ -34,6 +34,8 @@ public class ExtendedSaveData
     internal class ModdedSaveData
     {
         public List<string> mods = new List<string>();
+        public string dockId = string.Empty;
+        public int dockSlotIndex = 0;
         public Dictionary<string, SerializableGrid> grids = new Dictionary<string, SerializableGrid>();
         public List<SerializedCrabPotPOIData> serializedCrabPotPOIs = new List<SerializedCrabPotPOIData>();
         public Dictionary<string, Dictionary<string, JToken>> modData = new Dictionary<string, Dictionary<string, JToken>>();
@@ -70,6 +72,11 @@ public class ExtendedSaveData
 
     internal void ExtractModdedData()
     {
+        saveData.dockId = baseSaveData.dockId;
+        saveData.dockSlotIndex = baseSaveData.dockSlotIndex;
+        if (baseSaveData.dockId.IsDockModded())
+            DockUtil.ResetSaveData(baseSaveData);
+
         var gridsToRemove = new List<GridKey>();
         foreach (var gridByKey in baseSaveData.grids)
         {
@@ -127,6 +134,17 @@ public class ExtendedSaveData
 
     internal void InsertModdedData()
     {
+        if (!string.IsNullOrWhiteSpace(saveData.dockId))
+        {
+            if (saveData.dockId.DoesDockExist())
+            {
+                baseSaveData.dockId = saveData.dockId;
+                baseSaveData.dockSlotIndex = saveData.dockSlotIndex;
+            }
+            else
+                WinchCore.Log.Error($"Failed to find dock with id \"{saveData.dockId}\". Resetting to Blackstone Isle.");
+        }
+
         var gridsToRemove = new List<string>();
         foreach (var gridByKey in saveData.grids)
         {

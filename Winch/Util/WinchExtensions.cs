@@ -71,7 +71,7 @@ public static class WinchExtensions
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this WorldEventData worldEvent) => worldEvent is ModdedWorldEventData || !WorldEventUtil.VanillaWorldEventIDList.Contains(worldEvent.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
-    public static bool IsModded(this DockData dockData) => dockData is DeferredDockData || DockUtil.ModdedDockDataDict.ContainsKey(dockData.id);
+    public static bool IsModded(this DockData dockData) => dockData is DeferredDockData || DockUtil.ModdedDockDataDict.ContainsKey(dockData.id) || !DockUtil.VanillaDockIDList.Contains(dockData.id);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this Dock dock) => dock is ModdedDock || dock.dockData.IsModded();
     /// <inheritdoc cref="IsModded(ItemData)"/>
@@ -153,6 +153,18 @@ public static class WinchExtensions
     /// Opposite of <see cref="DoesItemDataExist(SerializedCrabPotPOIData)"/>
     /// </summary>
     public static bool DoesItemDataNotExist(this SerializedCrabPotPOIData crabPotPOI) => !crabPotPOI.DoesItemDataExist();
+
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    internal static bool IsDockModded(this string dockID) => DockUtil.ModdedDockDataDict.ContainsKey(dockID) || !DockUtil.VanillaDockIDList.Contains(dockID);
+    /// <summary>
+    /// Check if the associated dock data exists
+    /// </summary>
+    /// <returns>Whether the associated dock data exists or not</returns>
+    internal static bool DoesDockExist(this string dockID) => DockUtil.ModdedDockDataDict.ContainsKey(dockID) || DockUtil.VanillaDockIDList.Contains(dockID);
+    /// <summary>
+    /// Opposite of <see cref="DoesDockNotExist(string)"/>s
+    /// </summary>
+    internal static bool DoesDockNotExist(this string dockID) => !dockID.DoesDockExist();
 
     public static void Reinit(this SerializableGrid grid) => grid.Init(grid.gridConfiguration, false);
 

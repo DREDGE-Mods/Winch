@@ -241,6 +241,34 @@ public static class DockUtil
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, DestinationConverters);
     }
 
+    internal static List<string> VanillaDockIDList = new List<string> {
+        "dock.pontoon-tpr",
+        "dock.pontoon-ts",
+        "dock.pontoon-sb",
+        "dock.pontoon-ds",
+        "dock.old-mayor-sb",
+        "dock.old-mayor-gc",
+        "dock.old-fort",
+        "dock.photographer-camp",
+        "dock.pontoon-gc",
+        "dock.tpr-middle",
+        "dock.tpr-south",
+        "dock.tpr-west",
+        "dock.tpr-east",
+        "dock.steel-point",
+        "dock.research-pontoon",
+        "dock.greater-marrow",
+        "dock.ingfell",
+        "dock.old-mayor-ds",
+        "dock.old-mayor-ts",
+        "dock.ancient-ruins",
+        "dock.gale-cliffs",
+        "dock.soldier-camp",
+        "dock.outcast-isle",
+        "dock.little-marrow",
+        "dock.ds-temple",
+        "dock.the-iron-rig"
+    };
 
     internal static Dictionary<string, DeferredDockData> ModdedDockDataDict = new();
     internal static Dictionary<string, DockData> AllDockDataDict = new();
@@ -322,6 +350,7 @@ public static class DockUtil
 
         foreach (var dock in Resources.FindObjectsOfTypeAll<Dock>())
         {
+            if (!VanillaDockIDList.Contains(dock.Data.Id)) WinchCore.Log.Warn($"Possible missing dock ID \"{dock.Data.Id}\" from the vanilla list!");
             PopulateDock(dock);
         }
 
@@ -331,14 +360,10 @@ public static class DockUtil
         ResearchBottomlessLines = hceds.FirstOrDefault(hced => hced.name == "ResearchBottomlessLines");
     }
 
-    internal static void Fix()
+    internal static void ResetSaveData(SaveData saveData)
     {
-        var id = GameManager.Instance.SaveData.dockId;
-        if (!AllDockDict.ContainsKey(id) && !ModdedDockDict.Values.Any(dock => dock.Data.Id == id))
-        {
-            GameManager.Instance.SaveData.dockId = "dock.outcast-isle";
-            GameManager.Instance.SaveData.dockSlotIndex = 0;
-        }
+        saveData.dockId = "dock.outcast-isle";
+        saveData.dockSlotIndex = 0;
     }
 
     internal static void Clear()
