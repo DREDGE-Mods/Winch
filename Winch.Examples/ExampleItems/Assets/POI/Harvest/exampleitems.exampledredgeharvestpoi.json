@@ -1,8 +1,8 @@
 {
     "location": {
-        "x": 362.0,
+        "x": 373.0,
         "y": 0.0,
-        "z": -354.0
+        "z": -288.0
     },
     "harvestableParticlePrefab": "TrinketParticles",
     "items": [ "exampleitems.diamond" ],

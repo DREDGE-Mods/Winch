@@ -1,8 +1,8 @@
 {
 	"location": {
-		"x": 356.0,
+		"x": 372.0,
 		"y": 0.0,
-		"z": -354.0
+		"z": -242.0
 	},
 	"harvestableParticlePrefab": "MinecraftClownfishParticles",
 	"items": [],

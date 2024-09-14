@@ -1,8 +1,8 @@
 {
     "location": {
-        "x": 375,
+        "x": 370,
         "y": 0,
-        "z": -344
+        "z": -257
     },
     "conversationNodeName": "ExampleItems_Alex_Root",
     "isOneTimeOnly": "false",
@@ -13,7 +13,7 @@
     },
     "autoMoveRotation": {
         "x": 0,
-        "y": 45,
+        "y": 112.5,
         "z": 0
     },
     "includeRotation": "true"

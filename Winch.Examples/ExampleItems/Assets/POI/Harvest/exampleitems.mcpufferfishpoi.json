@@ -1,8 +1,8 @@
 {
 	"location": {
-		"x": 346.0,
+		"x": 340.5,
 		"y": 0.0,
-		"z": -354.0
+		"z": -265.0
 	},
 	"harvestableParticlePrefab": "MinecraftPufferfishParticles",
 	"items": [],

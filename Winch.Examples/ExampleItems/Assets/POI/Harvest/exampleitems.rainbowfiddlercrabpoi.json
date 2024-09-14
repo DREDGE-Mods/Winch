@@ -1,8 +1,8 @@
 {
 	"location": {
-		"x": 356.0,
+		"x": 385.0,
 		"y": 0.0,
-		"z": -344.0
+		"z": -274.0
 	},
 	"harvestableParticlePrefab": "MinecraftCrabParticles",
 	"items": [ "exampleitems.rainbowfiddlercrab" ],
