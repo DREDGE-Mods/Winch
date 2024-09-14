@@ -394,7 +394,7 @@ public static class DialogueUtil
             var operands = string.Join(" ", instruction.Operands.Select(operand => OperandToText(operand)));
             var labels = node.Labels.Where(label => label.Value == i).Select(label => label.Key);
             var stringifiedLabels = labels.Count() > 0 ? $" [{string.Join(", ", labels)}]" : string.Empty;
-            var metadata = instruction.Opcode == Instruction.Types.OpCode.RunLine ? (" (" + lineMetadata.GetValueOrDefault(instruction.Operands.FirstOrDefault().StringValue) + ")") : string.Empty;
+            var metadata = (instruction.Opcode == Instruction.Types.OpCode.RunLine || instruction.Opcode == Instruction.Types.OpCode.AddOption) ? (" (" + lineMetadata.GetValueOrDefault(instruction.Operands.FirstOrDefault().StringValue) + ")") : string.Empty;
             return $"   {i} {instruction.Opcode} {operands}{stringifiedLabels}{metadata}";
         }));
     }
