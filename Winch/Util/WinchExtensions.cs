@@ -1053,14 +1053,17 @@ public static class WinchExtensions
         return printStr;
     }
 
+    public static string ToIdentity(this SerializedCrabPotPOIData crabPotPOI)
+    {
+        return $"{crabPotPOI.deployableItemId}: ({crabPotPOI.x}, {crabPotPOI.z}), {crabPotPOI.lastUpdate}, {crabPotPOI.timeUntilNextCatchRoll}, {crabPotPOI.durability}, {crabPotPOI.hadDurabilityRemaining}";
+    }
+
     /// <summary>
     /// Checks if both crab pot POI datas have identical serializable data excluding <see cref="SerializedCrabPotPOIData.grid"/>
     /// </summary>
     public static bool Identical(this SerializedCrabPotPOIData a, SerializedCrabPotPOIData b)
     {
-        return a.deployableItemId == b.deployableItemId && a.x == b.x && a.z == b.z
-                    && a.lastUpdate == b.lastUpdate && a.timeUntilNextCatchRoll == b.timeUntilNextCatchRoll
-                    && a.durability == b.durability && a.hadDurabilityRemaining == b.hadDurabilityRemaining;
+        return a.ToIdentity() == b.ToIdentity();
     }
 
     /// <summary>
@@ -1078,6 +1081,36 @@ public static class WinchExtensions
         partialCrabPot.hadDurabilityRemaining = crabPotPOI.hadDurabilityRemaining;
         partialCrabPot.grid = new SerializableGrid();
         return partialCrabPot;
+    }
+
+    public static List<SerializedCrabPotPOIData> MergeIdenticals(this List<SerializedCrabPotPOIData> list)
+    {
+        var rootDict = new Dictionary<string, SerializedCrabPotPOIData>();
+        var duplicatesDict = new Dictionary<string, List<SerializedCrabPotPOIData>>();
+        foreach (var crabPotPOI in list)
+        {
+            var identity = crabPotPOI.ToIdentity();
+            if (!rootDict.ContainsKey(identity))
+            {
+                rootDict.Add(identity, crabPotPOI);
+                duplicatesDict.Add(identity, new List<SerializedCrabPotPOIData>());
+            }
+            else
+                duplicatesDict[identity].Add(crabPotPOI);
+        }
+
+        foreach (var identity in duplicatesDict.Keys)
+        {
+            var root = rootDict[identity];
+            var duplicates = duplicatesDict[identity];
+            foreach (var duplicate in duplicates)
+            {
+                root.grid.spatialItems.AddRange(duplicate.grid.spatialItems);
+                root.grid.spatialUnderlayItems.AddRange(duplicate.grid.spatialUnderlayItems);
+            }
+        }
+
+        return rootDict.Values.ToList();
     }
 
     public static IEnumerator CheckIsSaveAllowedToBeLoaded(this TitleController titleController, int slotNum, SaveData s, Selectable selectable, Action<bool> callback)

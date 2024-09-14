@@ -106,6 +106,8 @@ public class ExtendedSaveData
             }
         }
 
+        baseSaveData.serializedCrabPotPOIs = baseSaveData.serializedCrabPotPOIs.MergeIdenticals();
+
         var potsToRemove = new List<SerializedCrabPotPOIData>();
         foreach (var crabPotPOI in baseSaveData.serializedCrabPotPOIs)
         {
@@ -185,6 +187,8 @@ public class ExtendedSaveData
             }
         }
 
+        saveData.serializedCrabPotPOIs = saveData.serializedCrabPotPOIs.MergeIdenticals();
+
         var potsToRemove = new List<SerializedCrabPotPOIData>();
         foreach (var crabPotPOI in saveData.serializedCrabPotPOIs)
         {
@@ -213,7 +217,7 @@ public class ExtendedSaveData
                 crabPotPOI.grid.spatialUnderlayItems = existingUnderlayItems;
             }
 
-            if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot => pot.Identical(crabPotPOI), out var baseCrabPotPOI))
+            if (baseSaveData.serializedCrabPotPOIs.TryGetValue(pot => pot.Identical(crabPotPOI) && pot != crabPotPOI, out var baseCrabPotPOI))
             {
                 baseCrabPotPOI.grid.spatialItems.AddRange(existingItems);
                 baseCrabPotPOI.grid.spatialUnderlayItems.AddRange(existingUnderlayItems);
