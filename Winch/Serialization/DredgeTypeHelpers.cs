@@ -842,4 +842,28 @@ public static class DredgeTypeHelpers
         }
         return parsed;
     }
+
+    //TODO: implement
+    internal static QuestStepCondition ParseQuestStepCondition(JToken questStepCondition) => throw new NotImplementedException();
+    internal static List<QuestStepCondition> ParseQuestStepConditions(JArray o)
+    {
+        var parsed = new List<QuestStepCondition>();
+        foreach (var questStepCondition in o)
+        {
+            parsed.Add(ParseQuestStepCondition(questStepCondition));
+        }
+        return parsed;
+    }
+
+    //TODO: implement
+    internal static QuestStepEvent ParseQuestStepEvent(JToken questStepEvent) => throw new NotImplementedException();
+    internal static List<QuestStepEvent> ParseQuestStepEvents(JArray o)
+    {
+        var parsed = new List<QuestStepEvent>();
+        foreach (var questStepEvent in o)
+        {
+            parsed.Add(ParseQuestStepEvent(questStepEvent));
+        }
+        return parsed;
+    }
 }

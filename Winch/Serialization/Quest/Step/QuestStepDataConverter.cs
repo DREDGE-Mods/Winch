@@ -26,12 +26,12 @@ public class QuestStepDataConverter : DredgeTypeConverter<DeferredQuestStepData>
         { "showAtSpeaker", new(false, o=> bool.Parse(o.ToString())) },
         { "stepSpeaker", new(string.Empty, null) },
         { "yarnRootNode", new(string.Empty, null) },
-        { "showConditions", new(new List<QuestStepCondition>(), null) }, //TODO: implement
+        { "showConditions", new(new List<QuestStepCondition>(), o=>DredgeTypeHelpers.ParseQuestStepConditions((JArray)o)) },
         { "canBeFailed", new(false, o=> bool.Parse(o.ToString())) },
-        { "failureEvents", new(new List<QuestStepEvent>(), null) }, //TODO: implement
+        { "failureEvents", new(new List<QuestStepEvent>(), o=>DredgeTypeHelpers.ParseQuestStepEvents((JArray)o)) },
         { "allowAutomaticCompletion", new(false, o=> bool.Parse(o.ToString())) },
         { "conditionMode", new(ConditionMode.NULL, o => DredgeTypeHelpers.GetEnumValue<ConditionMode>(o)) },
-        { "completeConditions", new(new List<QuestStepCondition>(), null) }, //TODO: implement
+        { "completeConditions", new(new List<QuestStepCondition>(), o=>DredgeTypeHelpers.ParseQuestStepConditions((JArray)o)) },
     };
 
     public QuestStepDataConverter()

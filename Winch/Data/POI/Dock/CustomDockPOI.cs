@@ -4,7 +4,6 @@ using Winch.Data.POI.Dock.Destinations;
 
 namespace Winch.Data.POI.Dock;
 
-// TODO: actually implement this
 public class CustomDockPOI : CustomPOI
 {
     /// <summary>

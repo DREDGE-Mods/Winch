@@ -31,7 +31,7 @@ public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridCon
         { "createWithDurabilityValue", new(false, o=> bool.Parse(o.ToString())) },
         { "startingDurabilityProportion", new(0f, o=> float.Parse(o.ToString())) },
         { "gridConfiguration", new(string.Empty, null) },
-        { "presetGrid", new(new SerializableGrid(), o => DredgeTypeHelpers.ParseSerializableGrid(o)) }, //TODO: implement better
+        { "presetGrid", new(new SerializableGrid(), o => DredgeTypeHelpers.ParseSerializableGrid(o)) },
         { "presetGridMode", new(PresetGridMode.NONE, o => DredgeTypeHelpers.GetEnumValue<PresetGridMode>(o)) },
         { "completeConditions", new(new List<CompletedGridCondition>{ new FullCondition() }, o=> DredgeTypeHelpers.ParseCompletedGridConditions((JArray)o)) },
     };
