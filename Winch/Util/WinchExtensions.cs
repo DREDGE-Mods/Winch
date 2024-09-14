@@ -2138,6 +2138,20 @@ public static class WinchExtensions
         return null;
     }
 
+    public static Transform[] GetChildren(this Transform parent, bool dive = false)
+    {
+        List<Transform> childList = new List<Transform>();
+        int count = parent.childCount;
+        for (int i = 0; i < count; i++)
+        {
+            Transform child = parent.GetChild(i);
+            childList.Add(child);
+            if (child.childCount > 0 && dive)
+                childList.AddRange(child.GetChildren(dive));
+        }
+        return childList.ToArray();
+    }
+
     public static void DestroyAllComponents<T>(this GameObject obj) where T : Component
     {
         foreach (var component in obj.GetComponents<T>())
