@@ -1,6 +1,8 @@
 ﻿{
 	"itemNameKey": "exampleitems.milk.name",
 	"itemDescriptionKey": "exampleitems.milk.desc",
+	"itemType": "GENERAL",
+	"itemSubtype": "EXAMPLE",
 	"sprite": "exampleitems.milk",
 	"itemColor": {
 		"r": 58,
