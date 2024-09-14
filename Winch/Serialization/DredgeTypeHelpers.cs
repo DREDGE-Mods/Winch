@@ -564,7 +564,7 @@ public static class DredgeTypeHelpers
         return new AdvancedPortraitOverride
         {
             portraitSprite = jsonDict.TryGetValue("portraitSprite", out object portraitSprite) ? TextureUtil.GetSprite(portraitSprite.ToString()) : TextureUtil.GetSprite("EmptyPortrait"),
-            smallPortraitSprite = jsonDict.TryGetValue("smallPortraitSprite", out object smallPortraitSprite) ? TextureUtil.GetSprite(smallPortraitSprite.ToString()) : TextureUtil.GetSprite("EmptySmallPortrait"),
+            smallPortraitSprite = jsonDict.TryGetValue("smallPortraitSprite", out object smallPortraitSprite) ? TextureUtil.GetSprite(smallPortraitSprite.ToString()) : null,
             useManualState = jsonDict.TryGetValue("useManualState", out object useManualState) ? bool.Parse(useManualState.ToString()) : false,
             stateName = jsonDict.TryGetValue("stateName", out object stateName) ? stateName.ToString() : string.Empty,
             stateValue = jsonDict.TryGetValue("stateValue", out object stateValue) ? int.Parse(stateValue.ToString()) : 0,
