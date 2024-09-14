@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Serialization;
 using UnityEngine.AddressableAssets;
 using Winch.Core;
 using Winch.Data.GridConfig;
@@ -147,6 +148,31 @@ public static class GridConfigUtil
         }
         if (PopulateGridConfigFromMetaWithConverter(gridConfig, meta))
         {
+            if (gridConfig.cellGroupConfigs != null && gridConfig.cellGroupConfigs.Count > 0)
+            {
+                var cells = gridConfig.cellGroupConfigs.SelectMany(cgc => cgc.cells).ToArray();
+                if (cells.Length > 0)
+                {
+                    var errored = false;
+
+                    var cellColumns = cells.Select(v => v.x).Max() + 1;
+                    var cellRows = cells.Select(v => v.y).Max() + 1;
+
+                    if (cellColumns > gridConfig.columns)
+                    {
+                        errored = true;
+                        WinchCore.Log.Error($"Grid configuration {id} at {metaPath} failed to load!\nHorizontal cell count in one of the cell group configs is greater than the grid config's columns.");
+                    }
+                    if (cellRows > gridConfig.rows)
+                    {
+                        errored = true;
+                        WinchCore.Log.Error($"Grid configuration {id} at {metaPath} failed to load!\nVertical cell count in one of the cell group configs is greater than the grid config's rows.");
+                    }
+
+                    if (errored) return;
+                }
+            }
+
             ModdedGridConfigDict.Add(id, gridConfig);
             AddressablesUtil.AddResourceAtLocation("GridConfigData", id, id, gridConfig);
             if (gridConfig.gridKey != GridKey.NONE) GameManager.Instance.GameConfigData.gridConfigs.SafeAdd(gridConfig.gridKey, gridConfig);
