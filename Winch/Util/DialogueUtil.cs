@@ -272,10 +272,11 @@ public static class DialogueUtil
             var newProgram = new Program();
 
             Program oldProgram = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
+            var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
 
             if (exportYarnProgram)
             {
-                WriteYarnProgramToText("YarnProgramVanilla", oldProgram);
+                WriteYarnProgramToText("YarnProgramVanilla", oldProgram, _lineMetadata);
             }
 
             foreach (var nodeName in oldProgram.Nodes)
@@ -295,11 +296,11 @@ public static class DialogueUtil
 
             runner.Dialogue.SetProgram(newProgram);
 
-            var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
-
             foreach (var metadataEntry in metadata)
             {
-                _lineMetadata.Add(metadataEntry.Key, string.Join(" ", metadataEntry.Value));
+                var metadataValue = string.Join(" ", metadataEntry.Value);
+                if (!string.IsNullOrWhiteSpace(metadataValue))
+                    _lineMetadata.Add(metadataEntry.Key, metadataValue);
             }
 
             foreach (var instruction in instructions)
@@ -309,7 +310,7 @@ public static class DialogueUtil
 
             if (exportYarnProgram)
             {
-                WriteYarnProgramToText("YarnProgramModded", newProgram);
+                WriteYarnProgramToText("YarnProgramModded", newProgram, _lineMetadata);
             }
         }
         catch (Exception ex)
@@ -368,32 +369,33 @@ public static class DialogueUtil
 
     internal static string GetProgramFileLocation(string fileName) => Path.Combine(WinchCore.WinchInstallLocation, $"{fileName}.txt");
 
-    internal static void WriteYarnProgramToText(string fileName, Program program)
+    internal static void WriteYarnProgramToText(string fileName, Program program, SerializedDictionary<string, string> lineMetadata)
     {
         var path = GetProgramFileLocation(fileName);
-        File.WriteAllText(path, YarnProgramToText(program));
+        File.WriteAllText(path, YarnProgramToText(program, lineMetadata));
         WinchCore.Log.Debug("Yarn program written to " + path);
     }
 
-    internal static string YarnProgramToText(Program program)
+    internal static string YarnProgramToText(Program program, SerializedDictionary<string, string> lineMetadata)
     {
         var stringified = $"Program {program.Name}:";
         foreach (var nodePair in program.Nodes)
         {
             var node = nodePair.Value;
-            stringified += $"\n\n  Node {nodePair.Key} {node.SourceTextStringID}:\n\n{InstructionsToText(node)}";
+            stringified += $"\n\n  Node {nodePair.Key} {node.SourceTextStringID}:\n\n{InstructionsToText(node, lineMetadata)}";
         }
         return stringified;
     }
 
-    internal static string InstructionsToText(this Yarn.Node node)
+    internal static string InstructionsToText(this Yarn.Node node, SerializedDictionary<string, string> lineMetadata)
     {
         return string.Join("\n", node.Instructions.Select((instruction, i) =>
         {
             var operands = string.Join(" ", instruction.Operands.Select(operand => OperandToText(operand)));
             var labels = node.Labels.Where(label => label.Value == i).Select(label => label.Key);
             var stringifiedLabels = labels.Count() > 0 ? $" [{string.Join(", ", labels)}]" : string.Empty;
-            return $"   {i} {instruction.Opcode} {operands}{stringifiedLabels}";
+            var metadata = instruction.Opcode == Instruction.Types.OpCode.RunLine ? (" (" + lineMetadata.GetValueOrDefault(instruction.Operands.FirstOrDefault().StringValue) + ")") : string.Empty;
+            return $"   {i} {instruction.Opcode} {operands}{stringifiedLabels}{metadata}";
         }));
     }
 
@@ -417,7 +419,8 @@ public static class DialogueUtil
     {
         DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
         Program program = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
-        WriteYarnProgramToText("YarnProgram", program);
+        var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
+        WriteYarnProgramToText("YarnProgram", program, _lineMetadata);
         Terminal.Buffer.HandleLog("Yarn program written to " + GetProgramFileLocation("YarnProgram"), TerminalLogType.Message);
     }
 }
