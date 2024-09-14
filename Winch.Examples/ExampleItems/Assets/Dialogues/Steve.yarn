@@ -1,7 +1,5 @@
 ﻿﻿title: ExampleItems_Steve_Root
 tags: 
-colorID: 0
-position: 0,0
 ---
 <<if GetHasVisitedNode("ExampleItems_Steve_Intro") == false>>
 	<<jump ExampleItems_Steve_Intro>>
@@ -9,14 +7,14 @@ position: 0,0
 ===
 ﻿title: ExampleItems_Steve_Intro
 ---
-exampleitems.steve: Hi #gasp #line:ex43556 
+exampleitems.steve: Hi #gasp #line:exampleitems.steve.intro 
 <<AddMapMarker exampleitems.mapmarker false>>
 ===
 ﻿title: ExampleItems_Steve_Chat
 ---
-exampleitems.steve: Test #gasp #line:ex78383 
-	-> Old #line:ex653246
+exampleitems.steve: Test #gasp #line:exampleitems.steve.test 
+	-> Old #line:exampleitems.steve.old
 		<<SetIntVariable exampleitems.steve.portrait-state 0>>
-	-> New #line:ex639673
+	-> New #quest #line:exampleitems.steve.new
 		<<SetIntVariable exampleitems.steve.portrait-state 1>>
 ===

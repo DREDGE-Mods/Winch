@@ -5,32 +5,32 @@
 <<RecordRelicHandedIn>>
 <<AdjustIntVariable relics-handed-in 1>>
 <<ShowPortrait COLLECTOR_NAME_KEY>>
-You walk in and place the Heart of the Sea on a table by the Collector. #line:0cz83c6 
+You walk in and place the Heart of the Sea on a table by the Collector. #line:exampleitems.collector.walk
 <<AutoResolveNextLine>>
-COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #chuckle #line:0da94d7 
-	-> Heart of the Sea #line:ed1b9afe
+COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #chuckle #line:exampleitems.collector.hand
+	-> Heart of the Sea #line:exampleitems.collector.heart
 		<<set $exampleitems_named to true>>
-	-> I have absolutely no idea #line:7b2b9d89
+	-> I have absolutely no idea #line:exampleitems.collector.noidea
 		<<set $exampleitems_named to false>>
 <<LogWarn {$exampleitems_named}>>
-COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:0986fhd
+COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:exampleitems.collector.blockysphere
 	<<if $exampleitems_named is true>>
-		COLLECTOR_NAME_KEY: I wonder what "heart" means. #grunt #line:0ur729j 
+		COLLECTOR_NAME_KEY: I wonder what "heart" means. #grunt #line:exampleitems.collector.wonder
 	<<else>>
-		COLLECTOR_NAME_KEY: You found it, but have no idea what it is? #sigh #line:0p21oau 
+		COLLECTOR_NAME_KEY: You found it, but have no idea what it is? #sigh #line:exampleitems.collector.what
 	<<endif>>
-COLLECTOR_NAME_KEY: I sense some power eminating from it. #line:05ajy58
+COLLECTOR_NAME_KEY: I sense some power eminating from it. #line:exampleitems.collector.eminating
 <<jump Collector_ExampleItemsHeartOfTheSea_Award>>
 ===
 title: Collector_ExampleItemsHeartOfTheSea_Award
 ---
-COLLECTOR_NAME_KEY: I'm not sure what I should give you for this... #line:04636c1 
+COLLECTOR_NAME_KEY: I'm not sure what I should give you for this... #line:exampleitems.collector.notsure
 <<PlayClip collector-page-turn>>
-COLLECTOR_NAME_KEY: Hmmm... #hmm #line:0a1543c
-COLLECTOR_NAME_KEY: Actually, how about this. #aah #line:03ec055 
+COLLECTOR_NAME_KEY: Hmmm... #hmm #line:exampleitems.collector.hmmm
+COLLECTOR_NAME_KEY: Actually, how about this. #aah #line:exampleitems.collector.this
 <<UnlockAbility exampleitems.testability>>
 <<TogglePortraitVFX true>>
 <<PlayClip collector-ability-unlock>>
-He closes the crimson book. #line:05ge277
-COLLECTOR_NAME_KEY: Ok you can leave now. #annoyed #line:04fd166
+He closes the crimson book. #line:exampleitems.collector.book
+COLLECTOR_NAME_KEY: Ok you can leave now. #annoyed #line:exampleitems.collector.leave
 ===

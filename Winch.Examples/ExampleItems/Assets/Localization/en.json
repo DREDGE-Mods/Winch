@@ -92,4 +92,25 @@
 	"line:exampleitems.rock": "A rock",
 	"line:exampleitems.input": "Opening quest input grid",
 	"line:exampleitems.output": "Opening quest output grid",
+
+	"line:exampleitems.steve.test": "exampleitems.steve: Test",
+	"line:exampleitems.steve.intro": "exampleitems.steve: Hi",
+	"line:exampleitems.steve.old": "Old",
+	"line:exampleitems.steve.new": "New",
+
+	"line:exampleitems.alex.test": "exampleitems.alex: Test",
+
+	"line:exampleitems.collector.walk": "You walk in and place the Heart of the Sea on a table by the Collector.",
+	"line:exampleitems.collector.hand": "COLLECTOR_NAME_KEY: Oh? What is that you have in your hand?",
+	"line:exampleitems.collector.heart": "Heart of the Sea",
+	"line:exampleitems.collector.noidea": "I have absolutely no idea",
+	"line:exampleitems.collector.blockysphere": "COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky.",
+	"line:exampleitems.collector.wonder": "COLLECTOR_NAME_KEY: I wonder what \"heart\" means.",
+	"line:exampleitems.collector.what": "COLLECTOR_NAME_KEY: You found it, but have no idea what it is?",
+	"line:exampleitems.collector.eminating": "COLLECTOR_NAME_KEY: I sense some power eminating from it.",
+	"line:exampleitems.collector.notsure": "COLLECTOR_NAME_KEY: I'm not sure what I should give you for this...",
+	"line:exampleitems.collector.hmmm": "COLLECTOR_NAME_KEY: Hmmm...",
+	"line:exampleitems.collector.this": "COLLECTOR_NAME_KEY: Actually, how about this.",
+	"line:exampleitems.collector.book": "He closes the crimson book.",
+	"line:exampleitems.collector.leave": "COLLECTOR_NAME_KEY: Ok you can leave now."
 }
