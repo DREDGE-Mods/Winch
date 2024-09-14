@@ -84,5 +84,12 @@
 	"exampleconfig.dropdown.option.two": "Second",
 	"exampleconfig.dropdown.option.three": "Third",
 	"exampleconfig.color.title": "Color",
-	"exampleconfig.color.tooltip": "A dropdown menu with stock colors"
+	"exampleconfig.color.tooltip": "A dropdown menu with stock colors",
+
+	"exampleconfig.input": "Input",
+	"exampleconfig.output": "Output",
+
+	"line:exampleitems.rock": "A rock",
+	"line:exampleitems.input": "Opening quest input grid",
+	"line:exampleitems.output": "Opening quest output grid",
 }
