@@ -29,7 +29,7 @@ public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridCon
         { "allowManualExit", new(false, o=> bool.Parse(o.ToString())) },
         { "allowEquipmentInstallation", new(false, o=> bool.Parse(o.ToString())) },
         { "createWithDurabilityValue", new(false, o=> bool.Parse(o.ToString())) },
-        { "startingDurabilityProportion", new(0f, o=> float.Parse(o.ToString())) },
+        { "startingDurabilityProportion", new(1f, o=> float.Parse(o.ToString())) },
         { "gridConfiguration", new(string.Empty, null) },
         { "presetGrid", new(new SerializableGrid(), o => DredgeTypeHelpers.ParseSerializableGrid(o)) },
         { "presetGridMode", new(PresetGridMode.NONE, o => DredgeTypeHelpers.GetEnumValue<PresetGridMode>(o)) },
