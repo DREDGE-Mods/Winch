@@ -31,7 +31,7 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         { "flattenParticleShape", new(false, o=> bool.Parse(o.ToString())) },
         { "availableInDemo", new(false, null) },
         { "linkedDialogueNode", new("", null) },
-        { "entitlementsRequired ", new(new List<Entitlement>(), o=>DredgeTypeHelpers.GetEnumValues<Entitlement>(o)) },
+        { "entitlementsRequired ", new(new List<Entitlement>{ Entitlement.NONE }, o=>DredgeTypeHelpers.GetEnumValues<Entitlement>(o)) },
     };
 
     private readonly Dictionary<string, string> _reroutes = new()
