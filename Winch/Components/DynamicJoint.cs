@@ -5,23 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+[UsedInUnityProject]
+[RequireComponent(typeof(Joint))]
+public class DynamicJoint : MonoBehaviour
 {
-    [UsedInUnityProject]
-    [RequireComponent(typeof(Joint))]
-    public class DynamicJoint : MonoBehaviour
+    [SerializeField]
+    public Joint joint;
+
+    public void Awake()
     {
-        [SerializeField]
-        public Joint joint;
+        joint.connectedBody = transform.parent.GetComponentInParent<Rigidbody>();
+    }
 
-        public void Awake()
-        {
-            joint.connectedBody = transform.parent.GetComponentInParent<Rigidbody>();
-        }
-
-        public void OnValidate()
-        {
-            joint = GetComponent<Joint>();
-        }
+    public void OnValidate()
+    {
+        joint = GetComponent<Joint>();
     }
 }

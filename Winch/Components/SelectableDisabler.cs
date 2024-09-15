@@ -4,65 +4,64 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+public class SelectableDisabler : MonoBehaviour, ISubmitHandler, IEventSystemHandler, IDeselectHandler, ISelectHandler
 {
-    public class SelectableDisabler : MonoBehaviour, ISubmitHandler, IEventSystemHandler, IDeselectHandler, ISelectHandler
+    [SerializeField]
+    private Button parentSelectable;
+
+    [SerializeField]
+    private Selectable selectable;
+
+    [HideInInspector]
+    public Action OnDeselected;
+
+    [HideInInspector]
+    public Action OnSubmitted;
+
+    private void Awake()
     {
-        [SerializeField]
-        private Button parentSelectable;
+        selectable = GetComponent<Selectable>();
+        parentSelectable = GetComponentInParent<Button>();
+    }
 
-        [SerializeField]
-        private Selectable selectable;
+    private void OnEnable()
+    {
+        RefreshInteractionState();
+        GameManager.Instance.Input.OnInputChanged += OnInputChanged;
+    }
 
-        [HideInInspector]
-        public Action OnDeselected;
+    private void OnDisable()
+    {
+        GameManager.Instance.Input.OnInputChanged -= OnInputChanged;
+    }
 
-        [HideInInspector]
-        public Action OnSubmitted;
+    private void OnInputChanged(BindingSourceType bindingSourceType, InputDeviceStyle inputDeviceStyle)
+    {
+        RefreshInteractionState();
+    }
 
-        private void Awake()
-        {
-            selectable = GetComponent<Selectable>();
-            parentSelectable = GetComponentInParent<Button>();
-        }
+    private void RefreshInteractionState()
+    {
+        selectable.interactable = !GameManager.Instance.Input.IsUsingController;
+    }
 
-        private void OnEnable()
-        {
-            RefreshInteractionState();
-            GameManager.Instance.Input.OnInputChanged += OnInputChanged;
-        }
+    public void OnSelect(BaseEventData eventData)
+    {
+        ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: true);
+    }
 
-        private void OnDisable()
-        {
-            GameManager.Instance.Input.OnInputChanged -= OnInputChanged;
-        }
+    public void OnDeselect(BaseEventData eventData)
+    {
+        OnDeselected?.Invoke();
+        RefreshInteractionState();
+        ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: false);
+    }
 
-        private void OnInputChanged(BindingSourceType bindingSourceType, InputDeviceStyle inputDeviceStyle)
-        {
-            RefreshInteractionState();
-        }
-
-        private void RefreshInteractionState()
-        {
-            selectable.interactable = !GameManager.Instance.Input.IsUsingController;
-        }
-
-        public void OnSelect(BaseEventData eventData)
-        {
-            ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: true);
-        }
-
-        public void OnDeselect(BaseEventData eventData)
-        {
-            OnDeselected?.Invoke();
-            RefreshInteractionState();
-            ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: false);
-        }
-
-        public void OnSubmit(BaseEventData eventData)
-        {
-            OnSubmitted?.Invoke();
-            ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: false);
-        }
+    public void OnSubmit(BaseEventData eventData)
+    {
+        OnSubmitted?.Invoke();
+        ApplicationEvents.Instance.TriggerSliderFocusToggled(hasFocus: false);
     }
 }

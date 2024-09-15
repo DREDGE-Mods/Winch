@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class ThawableItemData : DurableItemData
 {
-    public class ThawableItemData : DurableItemData
-    {
-    }
 }

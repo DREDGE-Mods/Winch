@@ -7,51 +7,50 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using Winch.Core;
 using Winch.Util;
 
-namespace Winch.Core
+namespace Winch.Core;
+
+internal class ModdedResourceLocator : IResourceLocator
 {
-    internal class ModdedResourceLocator : IResourceLocator
+    public string LocatorId => "WinchModdedResourceLocator";
+    public IEnumerable<object> Keys => AddressablesUtil.Locations.Keys;
+
+    public bool Locate(object key, Type type, out IList<IResourceLocation> locations)
     {
-        public string LocatorId => "WinchModdedResourceLocator";
-        public IEnumerable<object> Keys => AddressablesUtil.Locations.Keys;
+        var skey = key.ToString();
+        //WinchCore.Log.Debug(type != null ? $"{skey} [{type.FullName}]" : skey);
 
-        public bool Locate(object key, Type type, out IList<IResourceLocation> locations)
-        {
-            var skey = key.ToString();
-            //WinchCore.Log.Debug(type != null ? $"{skey} [{type.FullName}]" : skey);
+        if (!AddressablesUtil.Locations.ContainsKey(skey))
+            goto failed;
 
-            if (!AddressablesUtil.Locations.ContainsKey(skey))
-                goto failed;
+        var list = AddressablesUtil.Locations[skey];
+        if (type == null)
+            goto success;
 
-            var list = AddressablesUtil.Locations[skey];
-            if (type == null)
-                goto success;
-
-            int assignable = list.Count(location => type.IsAssignableFrom(location.ResourceType));
-            if (assignable == 0)
-                goto failed;
-            else if (assignable == list.Count)
-                goto success;
-            else
-                goto successTyped;
+        int assignable = list.Count(location => type.IsAssignableFrom(location.ResourceType));
+        if (assignable == 0)
+            goto failed;
+        else if (assignable == list.Count)
+            goto success;
+        else
+            goto successTyped;
 
         success:
-            locations = list;
-            return true;
+        locations = list;
+        return true;
 
         successTyped:
-            locations = new List<IResourceLocation>();
-            foreach (IResourceLocation location in list)
+        locations = new List<IResourceLocation>();
+        foreach (IResourceLocation location in list)
+        {
+            if (type.IsAssignableFrom(location.ResourceType))
             {
-                if (type.IsAssignableFrom(location.ResourceType))
-                {
-                    locations.Add(location);
-                }
+                locations.Add(location);
             }
-            return true;
+        }
+        return true;
 
         failed:
-            locations = null;
-            return false;
-        }
+        locations = null;
+        return false;
     }
 }

@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class AberrationableFishItemData : FishItemData
 {
-    public class AberrationableFishItemData : FishItemData
-    {
-        [SerializeField]
-        public new List<string> aberrations;
-        [SerializeField]
-        public new string nonAberrationParent;
-    }
+    [SerializeField]
+    public new List<string> aberrations;
+    [SerializeField]
+    public new string nonAberrationParent;
 }

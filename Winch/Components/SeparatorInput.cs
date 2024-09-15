@@ -1,9 +1,8 @@
-﻿namespace Winch.Components
+﻿namespace Winch.Components;
+
+internal class SeparatorInput : Input
 {
-	internal class SeparatorInput : Input
+	public override void OnForceRefresh()
 	{
-		public override void OnForceRefresh()
-		{
-		}
 	}
 }

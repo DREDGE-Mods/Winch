@@ -1,27 +1,26 @@
 ﻿using UnityEngine;
 using static ActiveAbilityInfoPanel;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class CrabPotItemData : GridConfigDeployableItemData, IAbilityItemData
 {
-    public class CrabPotItemData : GridConfigDeployableItemData, IAbilityItemData
-    {
-        [SerializeField]
-        public AbilityMode abilityMode = AbilityMode.POT;
+    [SerializeField]
+    public AbilityMode abilityMode = AbilityMode.POT;
 
-        [SerializeField]
-        public PotType potType = PotType.CRAB;
+    [SerializeField]
+    public PotType potType = PotType.CRAB;
 
-        [SerializeField]
-        public Sprite qualityIcon;
+    [SerializeField]
+    public Sprite qualityIcon;
 
-        public AbilityMode AbilityMode => abilityMode;
+    public AbilityMode AbilityMode => abilityMode;
 
-        public Sprite QualityIcon => qualityIcon;
-    }
+    public Sprite QualityIcon => qualityIcon;
+}
 
-    public enum PotType
-    {
-        CRAB,
-        MATERIAL
-    }
+public enum PotType
+{
+    CRAB,
+    MATERIAL
 }

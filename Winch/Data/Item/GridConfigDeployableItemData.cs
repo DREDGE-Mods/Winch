@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class GridConfigDeployableItemData : DeployableItemData
 {
-    public class GridConfigDeployableItemData : DeployableItemData
-    {
-        [SerializeField]
-        public string gridConfiguration;
-    }
+    [SerializeField]
+    public string gridConfiguration;
 }

@@ -11,171 +11,170 @@ using Winch.Config;
 using Winch.Core;
 using Winch.Util;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+public abstract class Input : MonoBehaviour, ISettingsRefreshable
 {
-    public abstract class Input : MonoBehaviour, ISettingsRefreshable
+    [SerializeField]
+    internal bool isWinch => modName == WinchCore.GUID;
+
+    [SerializeField]
+    protected internal string modName = string.Empty;
+
+    [SerializeField]
+    protected internal string key = string.Empty;
+
+    [SerializeField]
+    protected internal LocalizeStringEvent localizedStringField;
+
+    [SerializeField]
+    protected internal TextTooltipRequester textTooltipRequester;
+
+    [SerializeField]
+    protected LocalizedString localizedString = LocalizationUtil.Unknown;
+
+    [SerializeField]
+    protected LocalizedString tooltipDescriptionString = LocalizationUtil.Empty;
+
+    public LocalizedString TitleString
     {
-        [SerializeField]
-        internal bool isWinch => modName == WinchCore.GUID;
-
-        [SerializeField]
-        protected internal string modName = string.Empty;
-
-        [SerializeField]
-        protected internal string key = string.Empty;
-
-        [SerializeField]
-        protected internal LocalizeStringEvent localizedStringField;
-
-        [SerializeField]
-        protected internal TextTooltipRequester textTooltipRequester;
-
-        [SerializeField]
-        protected LocalizedString localizedString = LocalizationUtil.Unknown;
-
-        [SerializeField]
-        protected LocalizedString tooltipDescriptionString = LocalizationUtil.Empty;
-
-        public LocalizedString TitleString
+        get => localizedString;
+        set
         {
-            get => localizedString;
-            set
-            {
-                localizedString = value;
-                if (localizedStringField != null)
-                {
-                    localizedStringField.StringReference = value;
-                }
-                if (textTooltipRequester != null)
-                {
-                    textTooltipRequester.LocalizedTitleKey = value;
-                }
-            }
-        }
-
-        public LocalizedString TooltipDescriptionString
-        {
-            get => tooltipDescriptionString;
-            set
-            {
-                tooltipDescriptionString = value;
-                if (textTooltipRequester != null)
-                {
-                    if (value.IsEmpty)
-                    {
-                        textTooltipRequester.enabled = false;
-                    }
-                    else
-                    {
-                        textTooltipRequester.LocalizedDescriptionKey = value;
-                        textTooltipRequester.enabled = true;
-                    }
-                }
-            }
-        }
-
-        protected virtual void Start()
-        {
+            localizedString = value;
             if (localizedStringField != null)
             {
-                localizedStringField.OnUpdateString.Invoke(string.Empty);
-                localizedStringField.StringReference = localizedString;
+                localizedStringField.StringReference = value;
             }
             if (textTooltipRequester != null)
             {
-                textTooltipRequester.LocalizedTitleKey = localizedString;
-                if (tooltipDescriptionString.IsEmpty)
+                textTooltipRequester.LocalizedTitleKey = value;
+            }
+        }
+    }
+
+    public LocalizedString TooltipDescriptionString
+    {
+        get => tooltipDescriptionString;
+        set
+        {
+            tooltipDescriptionString = value;
+            if (textTooltipRequester != null)
+            {
+                if (value.IsEmpty)
                 {
                     textTooltipRequester.enabled = false;
                 }
                 else
                 {
-                    textTooltipRequester.LocalizedDescriptionKey = tooltipDescriptionString;
+                    textTooltipRequester.LocalizedDescriptionKey = value;
                     textTooltipRequester.enabled = true;
                 }
             }
         }
+    }
 
-        public void ForceRefresh()
+    protected virtual void Start()
+    {
+        if (localizedStringField != null)
         {
-            try
+            localizedStringField.OnUpdateString.Invoke(string.Empty);
+            localizedStringField.StringReference = localizedString;
+        }
+        if (textTooltipRequester != null)
+        {
+            textTooltipRequester.LocalizedTitleKey = localizedString;
+            if (tooltipDescriptionString.IsEmpty)
             {
-                OnForceRefresh();
-                gameObject.Activate();
+                textTooltipRequester.enabled = false;
             }
-            catch
+            else
             {
-                gameObject.Deactivate();
+                textTooltipRequester.LocalizedDescriptionKey = tooltipDescriptionString;
+                textTooltipRequester.enabled = true;
             }
         }
+    }
 
-        public abstract void OnForceRefresh();
+    public void ForceRefresh()
+    {
+        try
+        {
+            OnForceRefresh();
+            gameObject.Activate();
+        }
+        catch
+        {
+            gameObject.Deactivate();
+        }
+    }
 
-        protected internal virtual T? GetConfigValue<T>()
+    public abstract void OnForceRefresh();
+
+    protected internal virtual T? GetConfigValue<T>()
+    {
+        if (isWinch)
+        {
+            return WinchConfig.GetProperty<T>(key);
+        }
+
+        if (ModConfig.TryGetConfig(modName, out var config))
+        {
+            return config.GetProperty<T>(key, default(T));
+        }
+
+        return default(T);
+    }
+
+    protected internal virtual T? GetDefaultConfigValue<T>()
+    {
+        try
         {
             if (isWinch)
             {
-                return WinchConfig.GetProperty<T>(key);
+                return WinchConfig.GetDefaultProperty<T>(key);
             }
 
             if (ModConfig.TryGetConfig(modName, out var config))
             {
-                return config.GetProperty<T>(key, default(T));
-            }
-
-            return default(T);
-        }
-
-        protected internal virtual T? GetDefaultConfigValue<T>()
-        {
-            try
-            {
-                if (isWinch)
-                {
-                    return WinchConfig.GetDefaultProperty<T>(key);
-                }
-
-                if (ModConfig.TryGetConfig(modName, out var config))
-                {
-                    return config.GetDefaultProperty<T>(key);
-                }
-            }
-            catch (Exception ex)
-            {
-                WinchCore.Log.Error(ex.Message);
-            }
-            return default(T);
-        }
-
-        protected internal virtual void SetConfigValue(string value) => SetConfigValue<string>(value ?? string.Empty);
-        protected internal virtual void SetConfigValue<T>(T value)
-        {
-            if (isWinch)
-            {
-                WinchConfig.SetProperty<T>(key, value);
-                return;
-            }
-
-            if (ModConfig.TryGetConfig(modName, out var config))
-            {
-                config.SetProperty<T>(key, value);
+                return config.GetDefaultProperty<T>(key);
             }
         }
-
-        protected internal virtual void ResetConfigValueToDefault()
+        catch (Exception ex)
         {
-            if (isWinch)
-            {
-                WinchConfig.ResetPropertyToDefault(key);
-                ForceRefresh();
-                return;
-            }
+            WinchCore.Log.Error(ex.Message);
+        }
+        return default(T);
+    }
 
-            if (ModConfig.TryGetConfig(modName, out var config))
-            {
-                config.ResetPropertyToDefault(key);
-                ForceRefresh();
-            }
+    protected internal virtual void SetConfigValue(string value) => SetConfigValue<string>(value ?? string.Empty);
+    protected internal virtual void SetConfigValue<T>(T value)
+    {
+        if (isWinch)
+        {
+            WinchConfig.SetProperty<T>(key, value);
+            return;
+        }
+
+        if (ModConfig.TryGetConfig(modName, out var config))
+        {
+            config.SetProperty<T>(key, value);
+        }
+    }
+
+    protected internal virtual void ResetConfigValueToDefault()
+    {
+        if (isWinch)
+        {
+            WinchConfig.ResetPropertyToDefault(key);
+            ForceRefresh();
+            return;
+        }
+
+        if (ModConfig.TryGetConfig(modName, out var config))
+        {
+            config.ResetPropertyToDefault(key);
+            ForceRefresh();
         }
     }
 }

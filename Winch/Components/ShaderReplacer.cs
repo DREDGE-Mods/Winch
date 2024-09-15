@@ -1,20 +1,19 @@
 ﻿using UnityEngine;
 using Winch.Util;
 
-namespace Winch.Components
+namespace Winch.Components;
+
+[UsedInUnityProject]
+public class ShaderReplacer : MonoBehaviour
 {
-    [UsedInUnityProject]
-    public class ShaderReplacer : MonoBehaviour
+    private void Awake() => ReplaceShaders();
+
+    private void Start() => ReplaceShaders();
+
+    private void OnEnable() => ReplaceShaders();
+
+    public void ReplaceShaders()
     {
-        private void Awake() => ReplaceShaders();
-
-        private void Start() => ReplaceShaders();
-
-        private void OnEnable() => ReplaceShaders();
-
-        public void ReplaceShaders()
-        {
-            gameObject.ReplaceShaders();
-        }
+        gameObject.ReplaceShaders();
     }
 }

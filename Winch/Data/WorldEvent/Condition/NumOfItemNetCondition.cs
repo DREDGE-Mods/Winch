@@ -2,10 +2,9 @@
 using System.Linq;
 using Winch.Util;
 
-namespace Winch.Data.WorldEvent.Condition
+namespace Winch.Data.WorldEvent.Condition;
+
+public class NumOfItemNetCondition : NumOfItemCondition
 {
-    public class NumOfItemNetCondition : NumOfItemCondition
-    {
-        public override bool Evaluate() => GameManager.Instance.SaveData.TrawlNet.spatialItems.Where(EvaluateItemInstance).Count() >= minNumber;
-    }
+    public override bool Evaluate() => GameManager.Instance.SaveData.TrawlNet.spatialItems.Where(EvaluateItemInstance).Count() >= minNumber;
 }

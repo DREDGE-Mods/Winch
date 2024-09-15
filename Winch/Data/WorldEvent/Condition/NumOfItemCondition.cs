@@ -2,12 +2,11 @@
 using System.Linq;
 using Winch.Util;
 
-namespace Winch.Data.WorldEvent.Condition
-{
-    public class NumOfItemCondition : InventoryItemConditon
-    {
-        public override bool Evaluate() => GameManager.Instance.SaveData.Inventory.spatialItems.Where(EvaluateItemInstance).Count() >= minNumber;
+namespace Winch.Data.WorldEvent.Condition;
 
-        public int minNumber;
-    }
+public class NumOfItemCondition : InventoryItemConditon
+{
+    public override bool Evaluate() => GameManager.Instance.SaveData.Inventory.spatialItems.Where(EvaluateItemInstance).Count() >= minNumber;
+
+    public int minNumber;
 }

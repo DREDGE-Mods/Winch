@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Winch.Data.WorldEvent.Condition
+namespace Winch.Data.WorldEvent.Condition;
+
+public enum InventoryConditionType
 {
-    public enum InventoryConditionType
-    {
-        AnyOfItem,
-        NumOfItem,
-        NumItemsOfType,
-        NumItemsOfSizeAndType,
-    }
+    AnyOfItem,
+    NumOfItem,
+    NumItemsOfType,
+    NumItemsOfSizeAndType,
 }

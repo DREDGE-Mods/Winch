@@ -9,32 +9,31 @@ using UnityEngine.Localization;
 using Winch.Util;
 using TMPro;
 
-namespace Winch.Components
-{
-    public class LocalizedLabel : MonoBehaviour
-    {
-        [SerializeField]
-        private LocalizedString labelString = LocalizationUtil.Unknown;
-        public LocalizedString LabelString
-        {
-            get => labelString;
-            set
-            {
-                labelString = value;
-                UpdateLabel();
-            }
-        }
-        public LocalizeStringEvent LocalizedStringEvent => GetComponentInChildren<LocalizeStringEvent>(true);
+namespace Winch.Components;
 
-        public void OnEnable()
+public class LocalizedLabel : MonoBehaviour
+{
+    [SerializeField]
+    private LocalizedString labelString = LocalizationUtil.Unknown;
+    public LocalizedString LabelString
+    {
+        get => labelString;
+        set
         {
-            LocalizedStringEvent.OnUpdateString.Invoke(string.Empty);
+            labelString = value;
             UpdateLabel();
         }
+    }
+    public LocalizeStringEvent LocalizedStringEvent => GetComponentInChildren<LocalizeStringEvent>(true);
 
-        public void UpdateLabel()
-        {
-            LocalizedStringEvent.StringReference = LabelString;
-        }
+    public void OnEnable()
+    {
+        LocalizedStringEvent.OnUpdateString.Invoke(string.Empty);
+        UpdateLabel();
+    }
+
+    public void UpdateLabel()
+    {
+        LocalizedStringEvent.StringReference = LabelString;
     }
 }

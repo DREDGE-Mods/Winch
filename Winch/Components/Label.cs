@@ -8,32 +8,31 @@ using UnityEngine.Localization.Components;
 using UnityEngine.Localization;
 using TMPro;
 
-namespace Winch.Components
-{
-    public class Label : MonoBehaviour
-    {
-        [SerializeField]
-        private string labelString = "Unknown";
-        public string LabelString
-        {
-            get => labelString;
-            set
-            {
-                labelString = value;
-                UpdateLabel();
-            }
-        }
-        public TextMeshProUGUI textField => GetComponentInChildren<TextMeshProUGUI>(true);
+namespace Winch.Components;
 
-        public void OnEnable()
+public class Label : MonoBehaviour
+{
+    [SerializeField]
+    private string labelString = "Unknown";
+    public string LabelString
+    {
+        get => labelString;
+        set
         {
-            textField.text = string.Empty;
+            labelString = value;
             UpdateLabel();
         }
+    }
+    public TextMeshProUGUI textField => GetComponentInChildren<TextMeshProUGUI>(true);
 
-        public void UpdateLabel()
-        {
-            textField.text = LabelString;
-        }
+    public void OnEnable()
+    {
+        textField.text = string.Empty;
+        UpdateLabel();
+    }
+
+    public void UpdateLabel()
+    {
+        textField.text = LabelString;
     }
 }

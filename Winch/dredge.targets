@@ -1,0 +1,181 @@
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="UpdateNuget" AfterTargets="Pack" Condition="Exists('$(TargetDir)$(TargetName).dll')">
+        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.core" ContinueOnError="true"/>
+        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.items" ContinueOnError="true"/>
+        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.abilities" ContinueOnError="true"/>
+        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.worldevents" ContinueOnError="true"/>
+    </Target>
+
+    <PropertyGroup>
+        <Dredge>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</Dredge>
+        <ManagedFolder>$(Dredge)\DREDGE_Data\Managed</ManagedFolder>
+        <OutputFolder Condition="'$(OutputFolder)' == ''">Mods</OutputFolder>
+        <RestoreAdditionalProjectSources>
+            https://api.nuget.org/v3/index.json;
+            https://nuget.bepinex.dev/v3/index.json;
+            https://nuget.samboy.dev/v3/index.json
+        </RestoreAdditionalProjectSources>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(DontUseDredgeLibs)' == 'true'">
+        <NoWarn>$(NoWarn);CS0436</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(UseDredgeGameLibs)' != 'true'">
+        <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.*" PrivateAssets="all"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\AeLa.EasyFeedback.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\AeLa.EasyFeedback.Demo.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Antlr4.Runtime.Standard.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Assembly-CSharp-firstpass.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Cinemachine.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Coffee.UIParticle.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\CommandsInAnAssemblyDefinition.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\CsvHelper.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\DemiLib.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\DOTween.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\DOTweenPro.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Assembly-CSharp.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Febucci.TextAnimator.Runtime.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\GalaxyCSharp.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Google.Protobuf.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\InControl.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Ionic.Zip.Unity.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Microsoft.CSharp.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Mono.Security.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Newtonsoft.Json.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\ObjectScatter.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.OdinInspector.Attributes.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.OdinInspector.CompatibilityLayer.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.OdinInspector.Modules.UnityLocalization.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.Serialization.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.Serialization.Config.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Sirenix.Utilities.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Addressables.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.AI.Navigation.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.InternalAPIEngineBridge.013.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Localization.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Mathematics.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.MemoryProfiler.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Polybrush.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Postprocessing.Runtime.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipeline.Universal.ShaderLibrary.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipelines.Core.ShaderLibrary.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipelines.Universal.Runtime.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.RenderPipelines.Universal.Shaders.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.ResourceManager.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.ScriptableBuildPipeline.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Analytics.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Configuration.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Device.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Environments.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Environments.Internal.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Internal.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Networking.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Registration.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Scheduler.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Telemetry.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Services.Core.Threading.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.TerrainTools.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.TextMeshPro.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\Unity.Timeline.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AccessibilityModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AIModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AndroidJNIModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AnimationModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ARModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AssetBundleModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.AudioModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ClothModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ClusterInputModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ClusterRendererModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.CoreModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.CrashReportingModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.DirectorModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.DSPGraphModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.GameCenterModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.GIModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.GridModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.HotReloadModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ImageConversionModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.IMGUIModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.InputLegacyModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.InputModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.JSONSerializeModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.LocalizationModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.NVIDIAModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ParticleSystemModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.PerformanceReportingModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.Physics2DModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.PhysicsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ProfilerModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.ScreenCaptureModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.SharedInternalsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.SpriteMaskModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.SpriteShapeModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.StreamingModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.SubstanceModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.SubsystemsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TerrainModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TerrainPhysicsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TextCoreFontEngineModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TextCoreTextEngineModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TextRenderingModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TilemapModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.TLSModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UI.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UIElementsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UIElementsNativeModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UIModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UmbraModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UNETModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityAnalyticsModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityConnectModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityCurlModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityTestProtocolModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityWebRequestAssetBundleModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityWebRequestAudioModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityWebRequestModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityWebRequestTextureModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.UnityWebRequestWWWModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.VehiclesModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.VFXModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.VideoModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.VirtualTexturingModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.VRModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.WindModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\UnityEngine.XRModule.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\YarnSpinner.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\YarnSpinner.Compiler.dll" Private="false" Publicize="true"/>
+        <Reference Include="$(Dredge)\DREDGE_Data\Managed\YarnSpinner.Unity.dll" Private="false" Publicize="true"   />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(UseDredgeGameLibs)' == 'true'">
+        <PackageReference Include="DredgeGameLibs" Version="1.*"/>
+    </ItemGroup>
+
+    <!--Automatic embeds-->
+    <ItemGroup Condition="'$(AutoEmbed)' != 'false'">
+        <EmbeddedResource Include="**/*.png"/>
+        <EmbeddedResource Include="**/*.jpg"/>
+        <EmbeddedResource Include="**/*.bundle"/>
+        <EmbeddedResource Include="**/*.bytes"/>
+    </ItemGroup>
+
+    <Target Name="MoveDllToPlugins" AfterTargets="Build" Condition="Exists('$(TargetDir)$(TargetName).dll')">
+        <Message Text="Copying $(ProjectName).dll to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
+
+        <Copy SourceFiles="$(TargetDir)$(TargetName).dll"
+              DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).dll"/>
+    </Target>
+    <Target Name="MoveXmlToPlugins" AfterTargets="Build" Condition="Exists('$(TargetDir)$(ProjectName).xml')">
+        <Message Text="Copying $(ProjectName).xml to $(OutputFolder) Folder..." Importance="High"/>
+
+        <Copy SourceFiles="$(TargetDir)$(ProjectName).xml"
+              DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).xml"/>
+    </Target>
+</Project>

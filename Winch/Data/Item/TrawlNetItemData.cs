@@ -2,29 +2,28 @@
 using static ActiveAbilityInfoPanel;
 using static TrawlNetAbility;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class TrawlNetItemData : GridConfigDeployableItemData, IAbilityItemData
 {
-    public class TrawlNetItemData : GridConfigDeployableItemData, IAbilityItemData
-    {
-        [SerializeField]
-        public AbilityMode abilityMode = AbilityMode.TRAWL;
+    [SerializeField]
+    public AbilityMode abilityMode = AbilityMode.TRAWL;
 
-        [SerializeField]
-        public TrawlMode trawlMode = TrawlMode.TRAWL;
+    [SerializeField]
+    public TrawlMode trawlMode = TrawlMode.TRAWL;
 
-        [SerializeField]
-        public NetType netType = NetType.REGULAR;
+    [SerializeField]
+    public NetType netType = NetType.REGULAR;
 
-        [SerializeField]
-        public Sprite qualityIcon;
+    [SerializeField]
+    public Sprite qualityIcon;
 
-        [SerializeField]
-        public Sprite counterIcon;
+    [SerializeField]
+    public Sprite counterIcon;
 
-        public AbilityMode AbilityMode => abilityMode;
+    public AbilityMode AbilityMode => abilityMode;
 
-        public Sprite QualityIcon => qualityIcon;
+    public Sprite QualityIcon => qualityIcon;
 
-        public Sprite CounterIcon => counterIcon;
-    }
+    public Sprite CounterIcon => counterIcon;
 }

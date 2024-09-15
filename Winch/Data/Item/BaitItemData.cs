@@ -1,30 +1,29 @@
 ﻿using UnityEngine;
 using static ActiveAbilityInfoPanel;
 
-namespace Winch.Data.Item
+namespace Winch.Data.Item;
+
+public class BaitItemData : SpatialItemData, IAbilityItemData
 {
-    public class BaitItemData : SpatialItemData, IAbilityItemData
-    {
-        [SerializeField]
-        public AbilityMode abilityMode = AbilityMode.BAIT;
+    [SerializeField]
+    public AbilityMode abilityMode = AbilityMode.BAIT;
 
-        [SerializeField]
-        public BaitType baitType = BaitType.FISH;
+    [SerializeField]
+    public BaitType baitType = BaitType.FISH;
 
-        [SerializeField]
-        public Sprite qualityIcon;
+    [SerializeField]
+    public Sprite qualityIcon;
 
-        public AbilityMode AbilityMode => abilityMode;
+    public AbilityMode AbilityMode => abilityMode;
 
-        public Sprite QualityIcon => qualityIcon;
-    }
+    public Sprite QualityIcon => qualityIcon;
+}
 
-    public enum BaitType
-    {
-        FISH,
-        ABERRATED,
-        EXOTIC,
-        CRAB,
-        MATERIAL
-    }
+public enum BaitType
+{
+    FISH,
+    ABERRATED,
+    EXOTIC,
+    CRAB,
+    MATERIAL
 }
