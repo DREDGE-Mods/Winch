@@ -1197,6 +1197,28 @@ public static class WinchExtensions
         WinchCore.Log.Debug("[HarvestValidator] RestockHarvestSpots()");
         harvestValidator.allHarvestPOIs.ForEach(harvestPOI => harvestPOI.AddStock(harvestPOI.MaxStock));
     }
+
+    public static int GetWidth(this IEnumerable<Vector2Int> cells)
+    {
+        int xMax = 0;
+        cells.ForEach((Vector2Int cell) =>
+        {
+            if (cell.x > xMax)
+                xMax = cell.x;
+        });
+        return xMax + 1;
+    }
+
+    public static int GetHeight(this IEnumerable<Vector2Int> cells)
+    {
+        int yMax = 0;
+        cells.ForEach((Vector2Int cell) =>
+        {
+            if (cell.y > yMax)
+                yMax = cell.y;
+        });
+        return yMax + 1;
+    }
     #endregion
 
     #region Reflection

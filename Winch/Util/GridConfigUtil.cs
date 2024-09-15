@@ -150,13 +150,13 @@ public static class GridConfigUtil
         {
             if (gridConfig.cellGroupConfigs != null && gridConfig.cellGroupConfigs.Count > 0)
             {
-                var cells = gridConfig.cellGroupConfigs.SelectMany(cgc => cgc.cells).ToArray();
-                if (cells.Length > 0)
+                var cells = gridConfig.cellGroupConfigs.SelectMany(cgc => cgc.cells).ToList();
+                if (cells.Count > 0)
                 {
                     var errored = false;
 
-                    var cellColumns = cells.Select(v => v.x).Max() + 1;
-                    var cellRows = cells.Select(v => v.y).Max() + 1;
+                    var cellColumns = cells.GetWidth();
+                    var cellRows = cells.GetHeight();
 
                     if (cellColumns > gridConfig.columns)
                     {
