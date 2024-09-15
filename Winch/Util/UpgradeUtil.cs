@@ -37,6 +37,8 @@ public static class UpgradeUtil
 
     internal static Dictionary<string, UpgradeData> ModdedUpgradeDataDict = new();
     internal static Dictionary<string, UpgradeData> AllUpgradeDataDict = new();
+    internal static Dictionary<string, HullUpgradeData> AllHullUpgradeDataDict = new();
+    internal static Dictionary<string, SlotUpgradeData> AllSlotUpgradeDataDict = new();
 
     public static UpgradeData GetModdedUpgradeData(string id)
     {
@@ -59,6 +61,28 @@ public static class UpgradeUtil
 
         if (ModdedUpgradeDataDict.TryGetValue(id, out var moddedUpgrade))
             return moddedUpgrade;
+
+        return null;
+    }
+
+    public static HullUpgradeData GetHullUpgradeData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllHullUpgradeDataDict.TryGetValue(id, out var upgrade))
+            return upgrade;
+
+        return null;
+    }
+
+    public static SlotUpgradeData GetSlotUpgradeData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllSlotUpgradeDataDict.TryGetValue(id, out var upgrade))
+            return upgrade;
 
         return null;
     }
@@ -95,6 +119,16 @@ public static class UpgradeUtil
         {
             AllUpgradeDataDict.SafeAdd(upgradeData.id, upgradeData);
             WinchCore.Log.Debug($"Added upgrade data {upgradeData.id} to AllUpgradeDataDict");
+            if (upgradeData is HullUpgradeData hullUpgradeData)
+            {
+                AllHullUpgradeDataDict.SafeAdd(hullUpgradeData.id, hullUpgradeData);
+                WinchCore.Log.Debug($"Added upgrade data {hullUpgradeData.id} to AllHullUpgradeDataDict");
+            }
+            if (upgradeData is SlotUpgradeData slotUpgradeData)
+            {
+                AllSlotUpgradeDataDict.SafeAdd(slotUpgradeData.id, slotUpgradeData);
+                WinchCore.Log.Debug($"Added upgrade data {slotUpgradeData.id} to AllSlotUpgradeDataDict");
+            }
         }
         foreach (var upgradeData in ModdedUpgradeDataDict.Values.OfType<IDeferredUpgradeData>())
         {
@@ -105,6 +139,8 @@ public static class UpgradeUtil
     internal static void ClearUpgradeData()
     {
         AllUpgradeDataDict.Clear();
+        AllHullUpgradeDataDict.Clear();
+        AllSlotUpgradeDataDict.Clear();
     }
 
     internal static void AddUpgradeDataFromMeta<T>(string metaPath) where T : UpgradeData, IDeferredUpgradeData
@@ -146,5 +182,15 @@ public static class UpgradeUtil
     public static UpgradeData[] GetAllUpgradeData()
     {
         return AllUpgradeDataDict.Values.ToArray();
+    }
+
+    public static HullUpgradeData[] GetAllHullUpgradeData()
+    {
+        return AllHullUpgradeDataDict.Values.ToArray();
+    }
+
+    public static SlotUpgradeData[] GetAllSlotUpgradeData()
+    {
+        return AllSlotUpgradeDataDict.Values.ToArray();
     }
 }
