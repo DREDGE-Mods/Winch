@@ -20,6 +20,7 @@ internal static class AbilityPatcher
         DredgeEvent.AddressableEvents.AbilitiesLoaded.Trigger(__instance, __state, true);
         AbilityUtil.PopulateAbilityData(__state);
         __instance.abilityDatas = __state.Values.ToList();
+        RecipeUtil.PopulateRecipeData();
     }
 
     [HarmonyPostfix]

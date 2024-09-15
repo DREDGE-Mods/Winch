@@ -10,5 +10,5 @@ public class CustomConstructableDestination : CustomBaseDestination
     public string useThisDestinationInsteadIfConstructed = null;
 
     [SerializeField]
-    public ConstructableDestinationData constructableDestinationData;
+    public CustomConstructableDestinationData constructableDestinationData;
 }

@@ -10,6 +10,7 @@ using Winch.Data.POI.Item;
 using Winch.Data.POI.Dock;
 using Winch.Data.POI.Harvest;
 using Winch.Data.Upgrade;
+using Winch.Data.Recipe;
 
 namespace Winch.Core;
 
@@ -65,6 +66,7 @@ internal static class AssetLoader
         string poiFolderpath = Path.Combine(path, "POI");
         string harvestZoneFolderpath = Path.Combine(path, "HarvestZones");
         string vibrationFolderpath = Path.Combine(path, "Vibrations");
+        string buildingFolderpath = Path.Combine(path, "Buildings");
         string mapMarkerFolderpath = Path.Combine(path, "MapMarkers");
         string questFolderpath = Path.Combine(path, "Quests");
         string questStepFolderpath = Path.Combine(questFolderpath, "Steps");
@@ -74,6 +76,7 @@ internal static class AssetLoader
         string dockFolderpath = Path.Combine(path, "Docks");
         string abilityFolderpath = Path.Combine(path, "Abilities");
         string worldEventFolderpath = Path.Combine(path, "WorldEvents");
+        string recipeFolderpath = Path.Combine(path, "Recipes");
         string dialogueFolderpath = Path.Combine(path, "Dialogues");
         string characterFolderpath = Path.Combine(path, "Characters");
 
@@ -84,10 +87,11 @@ internal static class AssetLoader
         if(Directory.Exists(gridConfigFolderpath)) LoadGridConfigFiles(gridConfigFolderpath);
         if(Directory.Exists(itemFolderPath)) LoadItemFiles(itemFolderPath);
         if(Directory.Exists(vibrationFolderpath)) LoadVibrationFiles(vibrationFolderpath);
+        if(Directory.Exists(buildingFolderpath)) LoadBuildingFiles(buildingFolderpath);
         if(Directory.Exists(mapMarkerFolderpath)) LoadMapMarkerFiles(mapMarkerFolderpath);
         if(Directory.Exists(questStepFolderpath)) LoadQuestStepFiles(questStepFolderpath);
         if(Directory.Exists(questFolderpath)) LoadQuestFiles(questFolderpath);
-        if(Directory.Exists(questFolderpath)) LoadQuestGridConfigFiles(questGridConfigFolderpath);
+        if(Directory.Exists(questGridConfigFolderpath)) LoadQuestGridConfigFiles(questGridConfigFolderpath);
         if(Directory.Exists(upgradeFolderpath)) LoadUpgradeFiles(upgradeFolderpath);
         if(Directory.Exists(shopFolderpath)) LoadShopFiles(shopFolderpath);
         if(Directory.Exists(dockFolderpath)) LoadDockFiles(dockFolderpath);
@@ -95,6 +99,7 @@ internal static class AssetLoader
         if(Directory.Exists(harvestZoneFolderpath)) LoadHarvestZoneFiles(harvestZoneFolderpath);
         if(Directory.Exists(abilityFolderpath)) LoadAbilityFiles(abilityFolderpath);
         if(Directory.Exists(worldEventFolderpath)) LoadWorldEventFiles(worldEventFolderpath);
+        if(Directory.Exists(recipeFolderpath)) LoadRecipeFiles(recipeFolderpath);
         if(Directory.Exists(dialogueFolderpath)) LoadDialogueFiles(dialogueFolderpath);
         if(Directory.Exists(characterFolderpath)) LoadCharacterFiles(characterFolderpath);
     }
@@ -199,6 +204,28 @@ internal static class AssetLoader
         }
     }
 
+    private static Dictionary<Type, string> _recipeDataPathData = new Dictionary<Type, string>()
+    {
+        { typeof(DeferredAbilityRecipeData), "Abilities"},
+        { typeof(DeferredBuildingRecipeData), "Buildings"},
+        { typeof(DeferredHullRecipeData), "Hulls"},
+        { typeof(DeferredItemRecipeData), "Items"}
+    };
+
+    private static void LoadRecipeFiles(string recipeFolderPath)
+    {
+        foreach (KeyValuePair<Type, string> recipe in _recipeDataPathData)
+        {
+            var baseMethod = typeof(AssetLoader).GetMethod(nameof(AssetLoader.LoadRecipeFilesOfType), BindingFlags.NonPublic | BindingFlags.Static);
+            var genericMethod = baseMethod.MakeGenericMethod(recipe.Key);
+            var recipePath = Path.Combine(recipeFolderPath, recipe.Value);
+            if (Directory.Exists(recipePath))
+            {
+                genericMethod.Invoke(null, new object[] { recipePath });
+            }
+        }
+    }
+
     private static void LoadGridConfigFiles(string gridConfigFolderPath)
     {
         string[] gridConfigFiles = Directory.GetFiles(gridConfigFolderPath);
@@ -227,6 +254,22 @@ internal static class AssetLoader
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load vibration from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadBuildingFiles(string buildingFolderPath)
+    {
+        string[] buildingFiles = Directory.GetFiles(buildingFolderPath);
+        foreach (string file in buildingFiles)
+        {
+            try
+            {
+                ConstructableBuildingUtil.AddConstructableBuildingDependencyDataFromMeta(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load constructable building dependency data from {file}: {ex}");
             }
         }
     }
@@ -371,6 +414,22 @@ internal static class AssetLoader
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load upgrade data from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadRecipeFilesOfType<T>(string recipeFolderPath) where T : RecipeData, IDeferredRecipeData
+    {
+        string[] recipeFiles = Directory.GetFiles(recipeFolderPath);
+        foreach (string file in recipeFiles)
+        {
+            try
+            {
+                RecipeUtil.AddRecipeDataFromMeta<T>(file);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load recipe data from {file}: {ex}");
             }
         }
     }

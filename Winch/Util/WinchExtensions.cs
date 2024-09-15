@@ -36,6 +36,7 @@ using Winch.Data.POI;
 using Winch.Data.Quest;
 using Winch.Data.Quest.Grid;
 using Winch.Data.Quest.Step;
+using Winch.Data.Recipe;
 using Winch.Data.Shop;
 using Winch.Data.Upgrade;
 using Winch.Data.WorldEvent;
@@ -92,6 +93,8 @@ public static class WinchExtensions
     public static bool IsModded(this QuestGridConfig questGridConfig) => questGridConfig is DeferredQuestGridConfig || QuestUtil.ModdedQuestGridConfigDict.ContainsKey(questGridConfig.name) || !QuestUtil.VanillaQuestGridConfigIDList.Contains(questGridConfig.name);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this UpgradeData upgradeData) => upgradeData is IDeferredUpgradeData || UpgradeUtil.ModdedUpgradeDataDict.ContainsKey(upgradeData.id) || !UpgradeUtil.VanillaUpgradeIDList.Contains(upgradeData.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this RecipeData recipeData) => recipeData is IDeferredRecipeData || RecipeUtil.ModdedRecipeDataDict.ContainsKey(recipeData.recipeId) || !RecipeUtil.VanillaRecipeIDList.Contains(recipeData.recipeId);
 
     /// <summary>
     /// Check if the object is vanilla
@@ -136,6 +139,8 @@ public static class WinchExtensions
     public static bool IsVanilla(this QuestGridConfig questGridConfig) => !questGridConfig.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this UpgradeData upgradeData) => !upgradeData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this RecipeData recipeData) => !recipeData.IsModded();
 
     /// <summary>
     /// Check if the associated item data exists
@@ -1218,6 +1223,26 @@ public static class WinchExtensions
                 yMax = cell.y;
         });
         return yMax + 1;
+    }
+
+    public static BaseDestinationTier GetTier(this List<BaseDestinationTier> tiers, BuildingTierId tierId)
+    {
+        return tiers.FirstOrDefault(tier => tier.tierId == tierId);
+    }
+
+    public static BaseDestinationTier GetTier(this ConstructableDestinationData constructableDestinationData, BuildingTierId tierId)
+    {
+        return constructableDestinationData.tiers.GetTier(tierId);
+    }
+
+    public static RecipeListDestinationTier GetRecipeListTier(this List<BaseDestinationTier> tiers, BuildingTierId tierId)
+    {
+        return tiers.OfType<RecipeListDestinationTier>().FirstOrDefault(tier => tier.tierId == tierId);
+    }
+
+    public static RecipeListDestinationTier GetRecipeListTier(this ConstructableDestinationData constructableDestinationData, BuildingTierId tierId)
+    {
+        return constructableDestinationData.tiers.GetRecipeListTier(tierId);
     }
     #endregion
 

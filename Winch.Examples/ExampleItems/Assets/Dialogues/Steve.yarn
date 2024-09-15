@@ -18,3 +18,11 @@ exampleitems.steve: Test #gasp #line:exampleitems.steve.test
 	-> New #quest #line:exampleitems.steve.new
 		<<SetIntVariable exampleitems.steve.portrait-state 1>>
 ===
+﻿title: ExampleItems_Steve_RecipeShown
+---
+exampleitems.steve: Shown #gasp #line:exampleitems.steve.recipeshown
+===
+﻿title: ExampleItems_Steve_RecipeBuilt
+---
+exampleitems.steve: Built #gasp #line:exampleitems.steve.recipebuilt
+===

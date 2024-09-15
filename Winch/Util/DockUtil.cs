@@ -13,6 +13,7 @@ using Winch.Serialization.Dock;
 using Winch.Serialization.POI.Dock.Destinations;
 using Winch.Components;
 using Cinemachine;
+using MonoMod.Utils;
 
 namespace Winch.Util;
 
@@ -241,6 +242,10 @@ public static class DockUtil
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, DestinationConverters);
     }
 
+    internal static CustomConstructableDestinationDataConverter ConstructableDestinationDataConverter = new CustomConstructableDestinationDataConverter();
+    internal static CustomBaseDestinationTierConverter BaseDestinationTierConverter = new CustomBaseDestinationTierConverter();
+    internal static CustomRecipeListDestinationTierConverter RecipeListDestinationTierConverter = new CustomRecipeListDestinationTierConverter();
+
     internal static List<string> VanillaDockIDList = new List<string> {
         "dock.pontoon-tpr",
         "dock.pontoon-ts",
@@ -275,6 +280,8 @@ public static class DockUtil
     internal static Dictionary<string, ModdedDock> ModdedDockDict = new();
     internal static Dictionary<string, Dock> AllDockDict = new();
     internal static Dictionary<string, IReadOnlyList<BaseDestination>> AllDestinationsDict = new();
+    internal static Dictionary<string, ConstructableDestinationData> ModdedConstructableDestinationDataDict = new();
+    internal static Dictionary<string, ConstructableDestinationData> AllConstructableDestinationDataDict = new();
 
     public static ModdedDock GetModdedDock(string id)
     {
@@ -329,6 +336,17 @@ public static class DockUtil
         return null;
     }
 
+    public static ConstructableDestinationData GetConstructableDestinationData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllConstructableDestinationDataDict.TryGetValue(id, out var constructableDestinationData))
+            return constructableDestinationData;
+
+        return null;
+    }
+
     internal static Transform Docks;
     internal static HighlightConditionExtraData ResearchTutorial;
     internal static HighlightConditionExtraData ResearchBottomlessLines;
@@ -337,7 +355,13 @@ public static class DockUtil
     {
         AllDockDict.Add(dock.Data.Id, dock);
         WinchCore.Log.Debug($"Added dock \"{dock.Data.Id}\" to AllDockDict");
-        AllDestinationsDict.Add(dock.Data.Id, dock.GetComponentsInChildren<BaseDestination>(true));
+        var destinations = dock.GetComponentsInChildren<BaseDestination>(true);
+        AllDestinationsDict.Add(dock.Data.Id, destinations);
+        foreach (var cd in destinations.OfType<ConstructableDestination>())
+        {
+            var cdd = cd.constructableDestinationData;
+            if (!string.IsNullOrWhiteSpace(cd.id) && cdd != null) AllConstructableDestinationDataDict.SafeAdd(cd.id, cdd);
+        }
     }
 
     internal static void Populate()
@@ -372,6 +396,7 @@ public static class DockUtil
         AllDockDict.Clear();
         AllDestinationsDict.Clear();
         ModdedDockDict.Clear();
+        AllConstructableDestinationDataDict.Clear();
     }
 
     internal static void AddDockDataFromMeta(string metaPath)
@@ -412,6 +437,11 @@ public static class DockUtil
     public static Dock[] GetAllDocks()
     {
         return AllDockDict.Values.ToArray();
+    }
+
+    public static ConstructableDestinationData[] GetAllConstructableDestinationData()
+    {
+        return AllConstructableDestinationDataDict.Values.ToArray();
     }
 
     private static IEnumerable<BaseDestination> GetAllDestinationsInternal()
@@ -659,7 +689,7 @@ public static class DockUtil
         }
         foreach (var destination in customDockPoi.constructables)
         {
-            destinations.Add(destination, CreateBaseDestination<ConstructableDestination>(destination, dockObject.transform));
+            destinations.Add(destination, CreateConstructableDestination<ConstructableDestination>(destination, dockObject.transform));
         }
         var destinationsList = destinations.Values.ToList();
         foreach (var kvp in destinations)
@@ -697,6 +727,7 @@ public static class DockUtil
         destination.id = custom.id;
         destination.vCam = vCam;
         destination.alwaysShow = custom.alwaysShow;
+        destination.isIndoors = custom.isIndoors;
         destination.icon = custom.icon;
         destination.titleKey = custom.titleKey;
         destination.playerInventoryTabIndexesToShow = custom.playerInventoryTabIndexesToShow;
@@ -727,6 +758,20 @@ public static class DockUtil
         destination.bulkSellPromptString = custom.bulkSellPromptString;
         destination.bulkSellNotificationString = custom.bulkSellNotificationString;
         destination.marketTabs = custom.marketTabs;
+        return destination;
+    }
+
+    internal static T CreateConstructableDestination<T>(CustomConstructableDestination custom, Transform parent) where T : ConstructableDestination
+    {
+        var destination = CreateBaseDestination<T>(custom, parent);
+        var customConstructableDestinationData = custom.constructableDestinationData;
+        var constructableDestinationData = ScriptableObject.CreateInstance<ConstructableDestinationData>();
+        constructableDestinationData.name = custom.id;
+        constructableDestinationData.itemProductPickupReminderDialogueNodeName = customConstructableDestinationData.itemProductPickupReminderDialogueNodeName;
+        constructableDestinationData.productQuestGrid = customConstructableDestinationData.ProductQuestGrid;
+        constructableDestinationData.tiers = customConstructableDestinationData.Tiers;
+        ModdedConstructableDestinationDataDict.SafeAdd(custom.id, constructableDestinationData);
+        destination.constructableDestinationData = constructableDestinationData;
         return destination;
     }
 
@@ -827,7 +872,7 @@ public static class DockUtil
         storageDestination.id = "destination.storage";
         storageDestination.vCam = vCam;
         storageDestination.icon = TextureUtil.GetSprite("StorageIcon");
-        storageDestination.titleKey = LocalizationUtil.CreateReference("Strings", "title.storage");
+        storageDestination.titleKey = LocalizationUtil.CreateStringsReference("title.storage");
         storageDestination.playerInventoryTabIndexesToShow = new List<int> { 0, 1, 2 };
         storageDestination.highlightConditions = new List<HighlightCondition>();
         storageDestination.speakerRootNodeOverride = string.Empty;
@@ -840,7 +885,7 @@ public static class DockUtil
         overflowStorageDestination.id = "destination.overflow-storage";
         overflowStorageDestination.vCam = vCam;
         overflowStorageDestination.icon = TextureUtil.GetSprite("StorageIcon");
-        overflowStorageDestination.titleKey = LocalizationUtil.CreateReference("Strings", "title.overflow-storage");
+        overflowStorageDestination.titleKey = LocalizationUtil.CreateStringsReference("title.overflow-storage");
         overflowStorageDestination.playerInventoryTabIndexesToShow = new List<int> { 1 };
         overflowStorageDestination.highlightConditions = new List<HighlightCondition> { new UnstructedHighlightCondition { alwaysHighlight = true } };
         overflowStorageDestination.speakerRootNodeOverride = string.Empty;

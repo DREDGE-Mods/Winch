@@ -1,0 +1,11 @@
+{
+    "columns": 4,
+    "rows": 2,
+    "mainItemData": "exampleitems.diamond",
+    "mainItemType": "GENERAL",
+    "mainItemSubtype": "TRINKET",
+    "itemsInThisBelongToPlayer": false,
+    "canAddItemsInQuestMode": true,
+    "hasUnderlay": false,
+    "gridKey": "EXAMPLE_RECIPE"
+}

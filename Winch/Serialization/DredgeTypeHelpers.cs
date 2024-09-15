@@ -17,6 +17,7 @@ using Winch.Data.WorldEvent.Condition;
 using Winch.Serialization.Vibration;
 using Winch.Serialization.WorldEvent.Condition;
 using Winch.Util;
+using static FluffyUnderware.DevTools.ConditionalAttribute;
 using static ShopData;
 
 namespace Winch.Serialization;
@@ -865,5 +866,41 @@ public static class DredgeTypeHelpers
             parsed.Add(ParseQuestStepEvent(questStepEvent));
         }
         return parsed;
+    }
+
+    private static CustomBaseDestinationTier ParseDestinationTier(JToken destinationTier)
+    {
+        var meta = destinationTier.ToObject<Dictionary<string, object>>() ?? new Dictionary<string, object>();
+        var type = GetEnumValue<DestinationTierType>(meta.GetValueOrDefault("type", string.Empty).ToString());
+        switch (type)
+        {
+            case DestinationTierType.Base:
+            default:
+                CustomBaseDestinationTier baseDestinationTier = new CustomBaseDestinationTier();
+                UtilHelpers.PopulateObjectFromMeta(baseDestinationTier, meta, DockUtil.BaseDestinationTierConverter);
+                return baseDestinationTier;
+            case DestinationTierType.RecipeList:
+                CustomRecipeListDestinationTier recipeListDestinationTier = new CustomRecipeListDestinationTier();
+                UtilHelpers.PopulateObjectFromMeta(recipeListDestinationTier, meta, DockUtil.RecipeListDestinationTierConverter);
+                return recipeListDestinationTier;
+        }
+    }
+
+    internal static List<CustomBaseDestinationTier> ParseDestinationTiers(JArray o)
+    {
+        var parsed = new List<CustomBaseDestinationTier>();
+        foreach (var destinationTier in o)
+        {
+            parsed.Add(ParseDestinationTier(destinationTier));
+        }
+        return parsed;
+    }
+
+    internal static CustomConstructableDestinationData ParseConstructableDestinationData(object value)
+    {
+        var meta = JsonConvert.DeserializeObject<Dictionary<string, object>>(value.ToString()) ?? throw new InvalidOperationException("Unable to parse constructable destination data.");
+        var destinationData = new CustomConstructableDestinationData();
+        UtilHelpers.PopulateObjectFromMeta(destinationData, meta, DockUtil.ConstructableDestinationDataConverter);
+        return destinationData;
     }
 }

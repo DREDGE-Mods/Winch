@@ -9,7 +9,7 @@ namespace Winch.Serialization.Quest.Grid;
 
 public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridConfig>
 {
-    internal const string QuestGridConfigTableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
@@ -47,5 +47,5 @@ public class QuestGridConfigConverter : DredgeTypeConverter<DeferredQuestGridCon
         AddReroutes(_reroutes);
     }
 
-    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(QuestGridConfigTableDefinition, value);
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(TableDefinition, value);
 }

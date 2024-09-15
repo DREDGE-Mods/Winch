@@ -77,10 +77,12 @@ internal class WinchBehaviour : USingleton<WinchBehaviour>
         VibrationUtil.ClearVibrationDatas();
         DockUtil.Clear();
         AbilityUtil.Clear();
+        RecipeUtil.ClearRecipeData();
         PoiUtil.Clear();
         HarvestZoneUtil.Clear();
         CharacterUtil.ClearSpeakerData();
         ShopUtil.ClearShopData();
+        ConstructableBuildingUtil.Clear();
     }
 
     private void OnGameUnloaded()

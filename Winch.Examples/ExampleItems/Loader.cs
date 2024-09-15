@@ -13,6 +13,8 @@ public static class Loader
 
     public static ExampleSaveParticipant Participant = new ExampleSaveParticipant();
 
+    public static ExampleRecipeData exampleRecipeData;
+
     public static ItemData MilkBucket => ItemUtil.GetModdedItemData("exampleitems.milk");
     public static VibrationData MilkBucketVibrationData => VibrationUtil.GetModdedVibrationData("exampleitems.milk");
 
@@ -20,6 +22,8 @@ public static class Loader
     {
         SaveUtil.RegisterDataParticipant(Participant);
         new GameObject(nameof(ExampleSaveBehaviour)).AddComponent<ExampleSaveBehaviour>();
+
+        exampleRecipeData = ScriptableObject.CreateInstance<ExampleRecipeData>().DontDestroyOnLoad();
 
         PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftClownfishParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftClownfishParticles"));
         PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCodParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCodParticles"));
@@ -99,6 +103,11 @@ public static class Loader
         var pontoonSpeakers = DockUtil.GetDockData("dock.pontoon-gc").Speakers;
         pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.alex"));
         pontoonSpeakers.SafeAdd(CharacterUtil.GetModdedSpeakerData("exampleitems.steve"));
+
+        var rnd = DockUtil.GetConstructableDestinationData("destination.tir-rnd");
+        rnd.GetRecipeListTier(BuildingTierId.RND_TIER_1).recipes.Add(exampleRecipeData);
+        var factory = DockUtil.GetConstructableDestinationData("destination.tir-factory");
+        factory.GetRecipeListTier(BuildingTierId.FACTORY_TIER_3).recipes.Add(RecipeUtil.GetItemRecipeData("exampleitems.recipeitem"));
     }
 
     private static void OnGameStarted()

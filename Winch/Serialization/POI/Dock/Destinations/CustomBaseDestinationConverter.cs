@@ -9,7 +9,7 @@ namespace Winch.Serialization.POI.Dock.Destinations;
 
 public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDestination>
 {
-    internal const string DestinationTableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
@@ -41,5 +41,5 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
         AddDefinitions(_definitions);
     }
 
-    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(DestinationTableDefinition, value);
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(TableDefinition, value);
 }
