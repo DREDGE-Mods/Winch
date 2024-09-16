@@ -1,27 +1,28 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="UpdateNuget" AfterTargets="Pack" Condition="Exists('$(TargetDir)$(TargetName).dll')">
-        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.core" ContinueOnError="true"/>
-        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.items" ContinueOnError="true"/>
-        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.abilities" ContinueOnError="true"/>
-        <RemoveDir Directories="C:\Users\gjguz\.nuget\packages\abyss.worldevents" ContinueOnError="true"/>
-    </Target>
 
     <PropertyGroup>
         <Dredge>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</Dredge>
         <ManagedFolder>$(Dredge)\DREDGE_Data\Managed</ManagedFolder>
-        <OutputFolder Condition="'$(OutputFolder)' == ''">Mods</OutputFolder>
-        <RestoreAdditionalProjectSources>
-            https://api.nuget.org/v3/index.json;
-            https://nuget.bepinex.dev/v3/index.json;
-            https://nuget.samboy.dev/v3/index.json
-        </RestoreAdditionalProjectSources>
+        <OutputFolder Condition="'$(OutputFolder)' == ''">Mods\</OutputFolder>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(DontUseDredgeLibs)' == 'true'">
         <NoWarn>$(NoWarn);CS0436</NoWarn>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(UseDredgeGameLibs)' != 'true'">
+    <ItemGroup>
+        <None Include="mod_meta.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="Assets\**\*.*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(DontUseDredgeGameLibs)' == 'true'">
         <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.*" PrivateAssets="all"/>
         <Reference Include="$(Dredge)\DREDGE_Data\Managed\AeLa.EasyFeedback.dll" Private="false" Publicize="true"/>
         <Reference Include="$(Dredge)\DREDGE_Data\Managed\AeLa.EasyFeedback.Demo.dll" Private="false" Publicize="true"/>
@@ -154,8 +155,16 @@
         <Reference Include="$(Dredge)\DREDGE_Data\Managed\YarnSpinner.Unity.dll" Private="false" Publicize="true"   />
     </ItemGroup>
 
-    <ItemGroup Condition="'$(UseDredgeGameLibs)' == 'true'">
+    <ItemGroup Condition="'$(DontUseDredgeGameLibs)' != 'true'">
         <PackageReference Include="DredgeGameLibs" Version="1.*"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(DontReferenceWinch)' != 'true'">
+        <PackageReference Include="Winch" Version="0.*"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(DontReferenceHarmonyX)' != 'true'">
+        <PackageReference Include="HarmonyX" Version="2.13.0"/>
     </ItemGroup>
 
     <!--Automatic embeds-->
@@ -173,9 +182,8 @@
               DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).dll"/>
     </Target>
     <Target Name="MoveXmlToPlugins" AfterTargets="Build" Condition="Exists('$(TargetDir)$(ProjectName).xml')">
-        <Message Text="Copying $(ProjectName).xml to $(OutputFolder) Folder..." Importance="High"/>
+        <Message Text="Copying $(ProjectName).xml to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
 
-        <Copy SourceFiles="$(TargetDir)$(ProjectName).xml"
-              DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).xml"/>
+        <Copy SourceFiles="$(TargetDir)$(ProjectName).xml" DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).xml"/>
     </Target>
 </Project>

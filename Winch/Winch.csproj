@@ -11,8 +11,8 @@
 		<NuspecFile>Winch.nuspec</NuspecFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
-		<VersionPrefix>$(Version)</VersionPrefix>
-		<OutputFolder>Winch</OutputFolder>
+		<VersionPrefix>$(Version)</VersionPrefix>szq
+		<DontReferenceWinch>true</DontReferenceWinch>
 	</PropertyGroup>
 
 	<ItemGroup>
