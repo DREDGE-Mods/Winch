@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Winch.Data;
+namespace UnityEngine;
 
 public class UnityObjectComparer : IEqualityComparer<UnityEngine.Object>, IComparer<UnityEngine.Object>
 {

@@ -97,6 +97,7 @@ public class ExtendedSaveData
                 });
             }
         }
+
         foreach (var key in gridsToRemove)
         {
             if (baseSaveData.grids.TryGetValue(key, out var grid))
