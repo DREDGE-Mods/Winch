@@ -36,38 +36,6 @@ internal static class RecipePatcher
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnRecipeGridPanelExitEvent))]
-    public static void ConstructableDestinationUI_OnRecipeGridPanelExitEvent_Postfix(ConstructableDestinationUI __instance, RecipeData recipeData)
-    {
-        if (recipeData == null) return;
-
-        if (recipeData is ModdedRecipeData moddedRecipeData)
-        {
-            moddedRecipeData.OnRecipeCompleted();
-            __instance.OnBuildingTabChanged(__instance.buildingTabbedPanel.CurrentIndex);
-        }
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.Awake))]
-    public static void RecipeEntry_Awake_Prefix(RecipeEntry __instance)
-    {
-        __instance.spatialItemTooltipRequester.GetOrAddComponent<ModdedRecipeTooltipRequester>().enabled = false;
-    }
-
-    [HarmonyPrefix]
-    [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.OnRecipeEntryClicked))]
-    public static bool RecipeEntry_OnRecipeEntryClicked_Prefix(RecipeEntry __instance)
-    {
-        if (__instance.recipeData is ModdedRecipeData moddedRecipeData && moddedRecipeData.IsOneTimeAndAlreadyOwned())
-        {
-            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", moddedRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS));
-            return false;
-        }
-        return true;
-    }
-
-    [HarmonyPostfix]
     [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnBuildingTabChanged))]
     public static void ConstructableDestinationUI_OnBuildingTabChanged_Postfix(ConstructableDestinationUI __instance, int tabIndex)
     {
@@ -132,6 +100,38 @@ internal static class RecipePatcher
     }
 
     #region Modded Recipes
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnRecipeGridPanelExitEvent))]
+    public static void ConstructableDestinationUI_OnRecipeGridPanelExitEvent_Postfix(ConstructableDestinationUI __instance, RecipeData recipeData)
+    {
+        if (recipeData == null) return;
+
+        if (recipeData is ModdedRecipeData moddedRecipeData)
+        {
+            moddedRecipeData.OnRecipeCompleted();
+            __instance.OnBuildingTabChanged(__instance.buildingTabbedPanel.CurrentIndex);
+        }
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.Awake))]
+    public static void RecipeEntry_Awake_Prefix(RecipeEntry __instance)
+    {
+        __instance.spatialItemTooltipRequester.GetOrAddComponent<ModdedRecipeTooltipRequester>().enabled = false;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.OnRecipeEntryClicked))]
+    public static bool RecipeEntry_OnRecipeEntryClicked_Prefix(RecipeEntry __instance)
+    {
+        if (__instance.recipeData is ModdedRecipeData moddedRecipeData && moddedRecipeData.IsOneTimeAndAlreadyOwned())
+        {
+            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", moddedRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS));
+            return false;
+        }
+        return true;
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(TooltipUI), nameof(TooltipUI.ConstructTextTooltip))]
     public static bool TooltipUI_ConstructTextTooltip_Prefix(TooltipUI __instance, TextTooltipRequester tooltipRequester, TooltipMode tooltipMode)
