@@ -1,7 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Localization;
 using Winch.Data.POI.Dock.Destinations;
 using Winch.Util;
 

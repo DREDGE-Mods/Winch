@@ -1,11 +1,7 @@
-﻿using System;
-using HarmonyLib;
-using InControl;
+﻿using HarmonyLib;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
-using UnityEngine.UIElements;
-using Winch.Core;
 using Winch.Util;
 using Yarn;
 using Yarn.Unity;
