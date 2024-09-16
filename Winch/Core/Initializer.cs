@@ -88,6 +88,17 @@ class Initializer
         WinchCore.Log.Info($"Game version is {GameManager.Instance.BuildInfo.VersionMajor}.{GameManager.Instance.BuildInfo.VersionMinor}.{GameManager.Instance.BuildInfo.VersionRevision}");
 
         InitializeVersionLabel();
+
+        foreach (GridKey gridKey in EnumUtil.GetValues<GridKey>())
+        {
+            if (gridKey != GridKey.NONE && gridKey != GridKey.INVENTORY)
+            {
+                if (!GameManager.Instance.GameConfigData.TryGetGridConfigForKey(gridKey, out _))
+                {
+                    WinchCore.Log.Error($"Could not find gridConfiguration for gridKey: {gridKey}. Every grid key enum value is REQUIRED to be associated with a grid configuration in the GameConfigData or else the game will not initialize!");
+                }
+            }
+        }
     }
 
     private static void InitializeWinchBehaviour()

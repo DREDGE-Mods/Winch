@@ -1244,6 +1244,11 @@ public static class WinchExtensions
     {
         return constructableDestinationData.tiers.GetRecipeListTier(tierId);
     }
+
+    public static bool TryGetGridConfigForKey(this GameConfigData gameConfigData, GridKey key, out GridConfiguration gridConfig)
+    {
+        return gameConfigData.gridConfigs.TryGetValue(key, out gridConfig) && gridConfig != null;
+    }
     #endregion
 
     #region Reflection
