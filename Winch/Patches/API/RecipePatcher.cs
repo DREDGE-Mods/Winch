@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
-using System.Text.RegularExpressions;
 using HarmonyLib;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using Winch.Components;
-using Winch.Core.API;
 using Winch.Data.Recipe;
 using Winch.Util;
-using static Febucci.UI.TextAnimator;
 using static TooltipUI;
 using Label = System.Reflection.Emit.Label;
 
@@ -17,7 +13,6 @@ namespace Winch.Patches.API;
 [HarmonyPatch]
 internal static class RecipePatcher
 {
-
     [HarmonyTranspiler]
     [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnRecipeGridPanelExitEvent))]
     public static IEnumerable<CodeInstruction> ConstructableDestinationUI_OnRecipeGridPanelExitEvent_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
@@ -72,6 +67,24 @@ internal static class RecipePatcher
         return true;
     }
 
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnBuildingTabChanged))]
+    public static void ConstructableDestinationUI_OnBuildingTabChanged_Postfix(ConstructableDestinationUI __instance, int tabIndex)
+    {
+        if (__instance.currentViewState == ConstructableDestinationUI.ConstructionViewState.BUILDING_CONSTRUCTION_COMPLETE)
+        {
+            // Fix soft lock that happens when there is no dialogue
+            if (string.IsNullOrEmpty(__instance.dialogueNodeName) || !GameManager.Instance.DialogueRunner.NodeExists(__instance.dialogueNodeName))
+            {
+                __instance.FireInNUpdates(
+                    __instance.currentTier.viewAfterConstruction == ConstructableDestinationUI.ConstructionViewState.NONE
+                        ? __instance.OnLeavePressComplete
+                        : __instance.OnPostConstructionDialogueComplete,
+                        100); // Needs to be a lot of frames later for some reason
+            }
+        }
+    }
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(TooltipSectionHeader), nameof(TooltipSectionHeader.Init), new System.Type[1] { typeof(TextTooltipRequester) })]
     public static void TooltipSectionHeader_Init_Prefix(TooltipSectionHeader __instance, TextTooltipRequester textTooltipRequester)
@@ -79,6 +92,7 @@ internal static class RecipePatcher
         __instance.isLayedOut = false;
         if (__instance.iconImage != null)
         {
+            // for whatever reason, the icon field exists but is never used
             var icon = textTooltipRequester.Icon;
             if (icon == null)
             {
@@ -96,6 +110,7 @@ internal static class RecipePatcher
     [HarmonyPatch(typeof(TooltipSectionHeader), nameof(TooltipSectionHeader.Init), new System.Type[1] { typeof(UpgradeData) })]
     public static void TooltipSectionHeader_Init_Prefix(TooltipSectionHeader __instance, UpgradeData upgradeData)
     {
+        // reset color because they forgot to do that here
         __instance.isLayedOut = false;
         __instance.headerTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEUTRAL);
     }
@@ -104,16 +119,19 @@ internal static class RecipePatcher
     [HarmonyPatch(typeof(TooltipSectionHeader), nameof(TooltipSectionHeader.RefreshString))]
     public static void TooltipSectionHeader_RefreshString_Prefix(TooltipSectionHeader __instance)
     {
+        // reset color because they forgot to do that here
         __instance.headerTextField.color = GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.NEUTRAL);
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(TooltipUpgradeCostIcon), nameof(TooltipUpgradeCostIcon.Init))]
-    public static void TooltipUpgradeCostIcon_Init_Prefix(TooltipUpgradeCostIcon __instance, ref ItemData itemData, int addedCount, int totalCount)
+    public static void TooltipUpgradeCostIcon_Init_Prefix(ref ItemData itemData)
     {
+        // null check just in case
         if (itemData == null) itemData = ItemUtil.GetItemData("dmg");
     }
 
+    #region Modded Recipes
     [HarmonyPrefix]
     [HarmonyPatch(typeof(TooltipUI), nameof(TooltipUI.ConstructTextTooltip))]
     public static bool TooltipUI_ConstructTextTooltip_Prefix(TooltipUI __instance, TextTooltipRequester tooltipRequester, TooltipMode tooltipMode)
@@ -268,4 +286,5 @@ internal static class RecipePatcher
 
         return matcher.InstructionEnumeration();
     }
+    #endregion
 }
