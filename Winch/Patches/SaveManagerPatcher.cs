@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using Winch.Components;
 using Winch.Core;
 using Winch.Util;
 using static ContinueOrNewButton;
@@ -165,5 +166,22 @@ internal static class SaveManagerPatcher
             __instance.DoContinueOrNew(canCreateNew: true);
         }
         return false;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(SaveData), nameof(SaveData.Init))]
+    public static void SaveData_Init_Prefix(SaveData __instance)
+    {
+        foreach (GridKey gridKey in EnumUtil.GetValues<GridKey>())
+        {
+            if (gridKey != GridKey.NONE)
+            {
+                GridConfiguration gridConfiguration = gridKey == GridKey.INVENTORY ? GameManager.Instance.GameConfigData.GetGridConfigForHullTier(__instance.HullTier) : GameManager.Instance.GameConfigData.GetGridConfigForKey(gridKey);
+                if (gridConfiguration == null)
+                {
+                    WinchCore.Log.Error($"Could not find gridConfiguration for gridKey: {gridKey}. Every grid key enum value is REQUIRED to be associated with a grid configuration in the GameConfigData or else the game will not initialize!");
+                }
+            }
+        }
     }
 }
