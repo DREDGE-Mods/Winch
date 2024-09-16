@@ -3052,13 +3052,46 @@ public static class WinchExtensions
 
     #region Coroutines
     public static void FireOnNextUpdate(this MonoBehaviour component, Action action) =>
-        component.FireInNUpdates(action, 1);
+        component.StartCoroutine(WaitForFrame(action));
 
     public static void FireInNUpdates(this MonoBehaviour component, Action action, int n) =>
         component.StartCoroutine(WaitForFrames(action, n));
 
+    public static void FireOnNextFixedUpdate(this MonoBehaviour component, Action action) =>
+        component.StartCoroutine(WaitForFixedUpdate(action));
+
+    public static void FireInNFixedUpdates(this MonoBehaviour component, Action action, int n) =>
+        component.StartCoroutine(WaitForFixedUpdates(action, n));
+
+    public static void RunOnNextUpdate(this MonoBehaviour component, Action action) =>
+        component.FireOnNextUpdate(action);
+
+    public static void RunInNUpdates(this MonoBehaviour component, Action action, int n) =>
+        component.FireInNUpdates(action, n);
+
+    public static void RunOnNextFixedUpdate(this MonoBehaviour component, Action action) =>
+        component.FireOnNextFixedUpdate(action);
+
+    public static void RunInNFixedUpdates(this MonoBehaviour component, Action action, int n) =>
+        component.FireInNFixedUpdates(action, n);
+
     public static void RunWhen(this MonoBehaviour component, Func<bool> predicate, Action action) =>
         component.StartCoroutine(WaitUntil(predicate, action));
+
+    public static void RunWhenNot(this MonoBehaviour component, Func<bool> predicate, Action action) =>
+        component.StartCoroutine(WaitWhile(predicate, action));
+
+    public static void RunInSeconds(this MonoBehaviour component, Action action, float seconds) =>
+        component.StartCoroutine(WaitForSeconds(action, seconds));
+
+    public static void RunInSecondsRealtime(this MonoBehaviour component, Action action, float time) =>
+        component.StartCoroutine(WaitForSecondsRealtime(action, time));
+
+    private static IEnumerator WaitForFrame(Action action)
+    {
+        yield return new WaitForEndOfFrame();
+        action.Invoke();
+    }
 
     private static IEnumerator WaitForFrames(Action action, int n)
     {
@@ -3072,6 +3105,54 @@ public static class WinchExtensions
     private static IEnumerator WaitUntil(Func<bool> predicate, Action action)
     {
         yield return new WaitUntil(predicate);
+        action();
+    }
+
+    private static IEnumerator WaitForUpdate(Action action)
+    {
+        yield return new WaitForUpdate();
+        action.Invoke();
+    }
+
+    private static IEnumerator WaitForUpdates(Action action, int n)
+    {
+        for (var i = 0; i < n; i++)
+        {
+            yield return new WaitForUpdate();
+        }
+        action.Invoke();
+    }
+
+    private static IEnumerator WaitForFixedUpdate(Action action)
+    {
+        yield return new WaitForFixedUpdate();
+        action();
+    }
+
+    private static IEnumerator WaitForFixedUpdates(Action action, int n)
+    {
+        for (var i = 0; i < n; i++)
+        {
+            yield return new WaitForFixedUpdate();
+        }
+        action.Invoke();
+    }
+
+    private static IEnumerator WaitForSeconds(Action action, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        action();
+    }
+
+    private static IEnumerator WaitForSecondsRealtime(Action action, float time)
+    {
+        yield return new WaitForSecondsRealtime(time);
+        action();
+    }
+
+    private static IEnumerator WaitWhile(Func<bool> predicate, Action action)
+    {
+        yield return new WaitWhile(predicate);
         action();
     }
     #endregion
