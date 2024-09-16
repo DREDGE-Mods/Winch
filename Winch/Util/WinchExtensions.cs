@@ -1142,7 +1142,7 @@ public static class WinchExtensions
             string localizationKey = "popup.incompatible-dlc";
             yield return titleController.ShowLoadFailedWithIssueDialog(selectable, localizationKey);
         }
-        else if (SaveUtil.GetInMemorySaveDataForSlot(slotNum).IsSaveNotAllowedToBeLoaded())
+        else if (SaveUtil.GetInMemorySaveDataForSlot(slotNum).HasLoadFailed())
         {
             result = false;
             yield return ExtendedSaveData.ShowLoadFailedWithIssueDialog(titleController, selectable, callback);

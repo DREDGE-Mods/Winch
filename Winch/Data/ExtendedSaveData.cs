@@ -15,10 +15,8 @@ namespace Winch.Data;
 
 public class ExtendedSaveData
 {
-    [JsonIgnore]
     private int slot = -1;
 
-    [JsonIgnore]
     public int Slot => slot == -1 ? GameManager.Instance.SaveManager.activeSaveSlot : slot;
 
     internal ExtendedSaveData(int slot)
@@ -26,7 +24,6 @@ public class ExtendedSaveData
         this.slot = slot;
     }
 
-    [JsonIgnore]
     private SaveData baseSaveData => slot == -1 ? GameManager.Instance.SaveManager.activeSaveData : GameManager.Instance.SaveManager.GetInMemorySaveDataForSlot(slot);
 
     private ModdedSaveData saveData = new ModdedSaveData();
@@ -41,20 +38,20 @@ public class ExtendedSaveData
         public Dictionary<string, Dictionary<string, JToken>> modData = new Dictionary<string, Dictionary<string, JToken>>();
     }
 
-    [JsonIgnore]
     internal string Path => GameManager.Instance.SaveManager.saveStrategy.GetFilePath(Slot).Replace(WindowsSaveStrategy.fileExtension, ".json");
 
-    [NonSerialized]
-    private static string VAR_MOD_PREFIX = "using-mod";
+    private bool loadFailed = false;
 
     internal void Reset()
     {
         saveData = new ModdedSaveData();
+        ResetLoadFailed();
     }
 
     internal void Read()
     {
         saveData = JSONConfig.ReadConfig<ModdedSaveData>(Path) ?? new ModdedSaveData();
+        ResetLoadFailed();
     }
 
     internal void Write()
@@ -238,6 +235,7 @@ public class ExtendedSaveData
     internal void LoadIntoMemory()
     {
         Read();
+        InsertModdedData();
     }
 
     internal void Load()
@@ -318,22 +316,6 @@ public class ExtendedSaveData
 
     public void SetData(ModAssembly mod, string key, object value) => SetData(mod.GUID, key, value);
 
-    public bool GetSaveUsesMod(string modGUID)
-    {
-        string key = $"{VAR_MOD_PREFIX}-{modGUID}";
-        return baseSaveData.GetBoolVariable(key);
-    }
-
-    public void SetSaveUsesMod(string modGUID, bool value)
-    {
-        string key = $"{VAR_MOD_PREFIX}-{modGUID}";
-        baseSaveData.SetBoolVariable(key, value);
-    }
-
-    public bool GetSaveUsesMod(ModAssembly mod) => GetSaveUsesMod(mod.GUID);
-
-    public void SetSaveUsesMod(ModAssembly mod, bool value) => SetSaveUsesMod(mod.GUID, value);
-
     public static IEnumerator ShowLoadFailedWithIssueDialog(TitleController titleController, UnityEngine.UI.Selectable selectable, Action<bool> callback)
     {
         string localizationKey = "prompt.incompatible-mods";
@@ -378,6 +360,16 @@ public class ExtendedSaveData
             callback(result);
         });
         yield return new WaitUntil(() => responded);
+    }
+
+    public bool HasLoadFailed()
+    {
+        return loadFailed;
+    }
+
+    private void ResetLoadFailed()
+    {
+        loadFailed = IsSaveNotAllowedToBeLoaded();
     }
 
     public bool IsSaveNotAllowedToBeLoaded()
