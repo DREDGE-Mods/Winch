@@ -8,13 +8,13 @@ namespace ExampleItems;
 /// </summary>
 public class ExampleSaveParticipant : ExtendedSaveData.Participant
 {
-    public ExampleItemsSaveData saveData;
+    public ExampleItemsSaveDataTwo saveData;
 
     public string Key => "class";
 
     public void Load(JToken token)
     {
-        saveData = token.ToObject<ExampleItemsSaveData>();
+        saveData = token.ToObject<ExampleItemsSaveDataTwo>();
     }
 
     public object Save()
@@ -24,6 +24,6 @@ public class ExampleSaveParticipant : ExtendedSaveData.Participant
 
     public object Create()
     {
-        return new ExampleItemsSaveData();
+        return new ExampleItemsSaveDataTwo();
     }
 }

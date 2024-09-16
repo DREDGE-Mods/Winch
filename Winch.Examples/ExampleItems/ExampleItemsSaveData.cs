@@ -16,4 +16,6 @@ public class ExampleItemsSaveData
     [JsonProperty("property")] // Must have this or else this property will act as non serialized automatically
     [DefaultValue("Test")]
     public string Property { get; set; } = "Test";
+
+    public bool recipeCrafted = false;
 }

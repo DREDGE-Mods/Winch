@@ -19,7 +19,7 @@ public static class Loader
     public static void Initialize()
     {
         SaveUtil.RegisterDataParticipant(Participant);
-        new GameObject(nameof(ExampleSaveBehaviour), typeof(ExampleSaveBehaviour)).DontDestroyOnLoad();
+        new GameObject(nameof(ExampleSaveBehaviour)).AddComponent<ExampleSaveBehaviour>();
 
         PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftClownfishParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftClownfishParticles"));
         PoiUtil.AddModdedHarvestableParticlePrefab("MinecraftCodParticles", AssetBundleUtil.GetPrefab("exampleitems.bundle", "MinecraftCodParticles"));
