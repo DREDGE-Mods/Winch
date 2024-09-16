@@ -85,6 +85,8 @@ class Initializer
 
     internal static void InitializePostUnityLoad()
     {
+        WinchCore.Log.Info($"Game version is {GameManager.Instance.BuildInfo.VersionMajor}.{GameManager.Instance.BuildInfo.VersionMinor}.{GameManager.Instance.BuildInfo.VersionRevision}");
+
         InitializeVersionLabel();
     }
 
