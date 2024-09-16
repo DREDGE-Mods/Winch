@@ -66,7 +66,7 @@ internal static class ModsButtonPatcher
             var footerText = footerRoot.Find("Text").gameObject.AddComponent<LocalizedLabel>();
             var footerButton = footerRoot.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>(); // TODO: Make it so you can go back to mod options from this button with a controller
             footerButton.GetComponent<RectTransform>().sizeDelta = new Vector2(225, 50);
-            footerButton.gameObject.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", "prompt.leave");
+            footerButton.gameObject.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("prompt.leave");
             var modsList = modsListScroller.transform.Find("ControlList");
             modsList.transform.DestroyAllChildrenImmediate();
             var modOptionsScroller = modsListScroller.Instantiate(modsPanel.container.transform, false).Rename("ModOptions");
@@ -343,7 +343,7 @@ internal static class ModsButtonPatcher
         {
             var modsButton = __instance.gameObject.InstantiateInactive(__instance.transform.parent, false).Rename("Mods");
             modsButton.RemoveComponentImmediate<SettingsButton>();
-            modsButton.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", "menu.mods");
+            modsButton.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("menu.mods");
             modsButton.AddComponent<ModsButton>();
             modsButton.transform.SetSiblingIndex(3);
             modsButton.Activate();

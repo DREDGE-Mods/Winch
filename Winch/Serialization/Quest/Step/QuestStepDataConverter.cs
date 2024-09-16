@@ -8,7 +8,7 @@ namespace Winch.Serialization.Quest.Step;
 
 public class QuestStepDataConverter : DredgeTypeConverter<DeferredQuestStepData>
 {
-    internal const string QuestStepDataTableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
@@ -39,5 +39,5 @@ public class QuestStepDataConverter : DredgeTypeConverter<DeferredQuestStepData>
         AddDefinitions(_definitions);
     }
 
-    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(QuestStepDataTableDefinition, value);
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(TableDefinition, value);
 }

@@ -8,7 +8,7 @@ namespace Winch.Serialization.Ability;
 
 public class AbilityDataConverter : DredgeTypeConverter<ModdedAbilityData>
 {
-    internal const string TableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {

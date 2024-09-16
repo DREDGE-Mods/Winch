@@ -11,7 +11,7 @@ public class AddressableDestination : MonoBehaviour
     public BaseDestination destination;
 
     [SerializeField]
-    public string titleTable = "Strings";
+    public string titleTable = LanguageManager.STRING_TABLE;
 
     [SerializeField]
     public string titleKey = "title.";

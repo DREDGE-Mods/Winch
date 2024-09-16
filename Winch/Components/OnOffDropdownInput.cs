@@ -10,8 +10,8 @@ public class OnOffDropdownInput : DropdownInput
     {
         optionStrings = new List<LocalizedString>
         {
-            LocalizationUtil.CreateReference("Strings", "settings.dropdown.disabled"),
-            LocalizationUtil.CreateReference("Strings", "settings.dropdown.enabled")
+            LocalizationUtil.CreateStringsReference("settings.dropdown.disabled"),
+            LocalizationUtil.CreateStringsReference("settings.dropdown.enabled")
         };
         options = new List<string>
         {

@@ -8,7 +8,7 @@ namespace Winch.Serialization.Dock;
 
 public class DockDataConverter : DredgeTypeConverter<DeferredDockData>
 {
-    internal const string DockTableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
@@ -35,5 +35,5 @@ public class DockDataConverter : DredgeTypeConverter<DeferredDockData>
         AddDefinitions(_definitions);
     }
 
-    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(DockTableDefinition, value);
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(TableDefinition, value);
 }

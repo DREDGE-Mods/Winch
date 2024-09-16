@@ -158,7 +158,7 @@ public class DropdownInput : Input
         {
             foreach (var optionString in optionStrings)
             {
-                newOptionStrings.Add(LocalizationUtil.CreateReference("Strings", optionString));
+                newOptionStrings.Add(LocalizationUtil.CreateStringsReference(optionString));
             }
         }
         for (int i = 0; i < options.Length; i++)
@@ -172,7 +172,7 @@ public class DropdownInput : Input
             {
                 var optionKey = modName + "." + key + "." + option;
                 LocalizationUtil.AddLocalizedString("en", optionKey, option);
-                newOptionStrings.Add(LocalizationUtil.CreateReference("Strings", optionKey));
+                newOptionStrings.Add(LocalizationUtil.CreateStringsReference(optionKey));
             }
         }
         this.optionStrings = newOptionStrings;

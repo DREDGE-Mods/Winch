@@ -14,7 +14,7 @@ public class ColorDropdownInput : DropdownInput
     internal TextMeshProUGUI textField;
 
     [SerializeField]
-    private LocalizedString labelLocalizedString = LocalizationUtil.CreateReference("Strings", "settings.dropdown.color");
+    private LocalizedString labelLocalizedString = LocalizationUtil.CreateStringsReference("settings.dropdown.color");
 
     [SerializeField]
     internal int columns;

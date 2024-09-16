@@ -14,10 +14,10 @@ namespace Winch.Components;
 
 internal class ModsTab : MonoBehaviour
 {
-    internal static LocalizedString winchHeader = LocalizationUtil.CreateReference("Strings", "winch.name");
-    internal static LocalizedString tabHeader = LocalizationUtil.CreateReference("Strings", "settings.tab.mods");
-    internal static LocalizedString footerList = LocalizationUtil.CreateReference("Strings", "settings.mods.footer.list");
-    internal static LocalizedString footerOptions = LocalizationUtil.CreateReference("Strings", "settings.mods.footer.options");
+    internal static LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
+    internal static LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
+    internal static LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
+    internal static LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
 
     internal static ModsTab Instance { get; private set; }
 
@@ -421,11 +421,11 @@ internal class ModsTab : MonoBehaviour
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", key);
+            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference(key);
         }
         else
         {
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference("Strings", title);
+            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference(title);
         }
         modOptions.Add(clone.transform);
         clone.modName = modName;
@@ -641,7 +641,7 @@ internal class ModsTab : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(tooltip))
         {
-            input.TooltipDescriptionString = LocalizationUtil.CreateReference("Strings", tooltip);
+            input.TooltipDescriptionString = LocalizationUtil.CreateStringsReference(tooltip);
         }
     }
 
@@ -650,11 +650,11 @@ internal class ModsTab : MonoBehaviour
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
-            input.TitleString = LocalizationUtil.CreateReference("Strings", key);
+            input.TitleString = LocalizationUtil.CreateStringsReference(key);
         }
         else
         {
-            input.TitleString = LocalizationUtil.CreateReference("Strings", title);
+            input.TitleString = LocalizationUtil.CreateStringsReference(title);
         }
     }
 

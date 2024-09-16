@@ -9,7 +9,7 @@ namespace Winch.Serialization.Character;
 
 public class AdvancedSpeakerDataConverter : DredgeTypeConverter<AdvancedSpeakerData>
 {
-    internal const string CharacterTableDefinition = "Characters";
+    internal static readonly string CharacterTableDefinition = LanguageManager.CHARACTER_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {

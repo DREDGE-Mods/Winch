@@ -8,7 +8,7 @@ namespace Winch.Serialization.Item;
 
 public class ItemDataConverter : DredgeTypeConverter<ItemData>
 {
-    internal const string ItemTableDefinition = "Items";
+    internal static readonly string ItemTableDefinition = LanguageManager.ITEM_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {

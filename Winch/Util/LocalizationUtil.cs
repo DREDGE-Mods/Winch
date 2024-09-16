@@ -11,8 +11,12 @@ public static class LocalizationUtil
     private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
 
     public static LocalizedString CreateReference(string table, string entry) => new LocalizedString(table, entry);
+    public static LocalizedString CreateStringsReference(string entry) => CreateReference(LanguageManager.STRING_TABLE, entry);
+    public static LocalizedString CreateItemsReference(string entry) => CreateReference(LanguageManager.ITEM_TABLE, entry);
+    public static LocalizedString CreateCharactersReference(string entry) => CreateReference(LanguageManager.CHARACTER_TABLE, entry);
+    public static LocalizedString CreateYarnReference(string entry) => CreateReference(LanguageManager.YARN_TABLE, entry);
     public static LocalizedString Empty => LocalizationUtil.CreateReference(string.Empty, string.Empty);
-    public static LocalizedString Unknown => LocalizationUtil.CreateReference("Strings", "label.unknown");
+    public static LocalizedString Unknown => LocalizationUtil.CreateReference(LanguageManager.STRING_TABLE, "label.unknown");
 
     public static void AddLocalizedString(string locale, string key, string value)
     {

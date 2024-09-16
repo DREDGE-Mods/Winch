@@ -6,7 +6,7 @@ namespace Winch.Serialization.Upgrade;
 
 public class UpgradeDataConverter : DredgeTypeConverter<UpgradeData>
 {
-    internal const string UpgradeStepDataTableDefinition = "Strings";
+    internal static readonly string TableDefinition = LanguageManager.STRING_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
@@ -25,5 +25,5 @@ public class UpgradeDataConverter : DredgeTypeConverter<UpgradeData>
         AddDefinitions(_definitions);
     }
 
-    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(UpgradeStepDataTableDefinition, value);
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(TableDefinition, value);
 }
