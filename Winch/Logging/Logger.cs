@@ -19,10 +19,9 @@ public class Logger
     private bool _writeLogsToFile = true;
     private bool _writeLogsToConsole = false;
 
-    private LogSocket? _logSocket;
+    private LogConsole? _logConsole;
 
     public LogLevel minLogLevel => EnumUtil.Parse<LogLevel>(WinchConfig.GetProperty("LogLevel", "DEBUG"), true, LogLevel.DEBUG);
-    public string LogConsoleExe => Path.Combine(WinchCore.WinchInstallLocation, "WinchConsole.exe");
 
     public Logger()
     {
@@ -38,23 +37,10 @@ public class Logger
 
         if (_writeLogsToConsole)
         {
-            // Find an avialable port for the logs
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
-            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-
-            // Console exe will get the port from the WinchConfig file
-            WinchConfig.SetProperty("LogPort", $"{port}");
-
-            Info($"Writing logs to port {port}");
-
             try
             {
-                Info($"Starting console at path {LogConsoleExe}");
-                Process.Start(LogConsoleExe);
+                _logConsole = new LogConsole();
 
-                _logSocket = new LogSocket(this, port);
             }
             catch (Exception e)
             {
@@ -102,19 +88,15 @@ public class Logger
         if (level < minLogLevel)
             return;
 
+        var logMessage = $"[{GetLogTimestamp()}] [{source}] [{level}] : {message}";
+
         if (_writeLogsToConsole)
         {
-            _logSocket?.WriteToSocket(new LogMessage()
-            {
-                Level = level,
-                Message = message,
-                Source = source
-            });
+            _logConsole?.WriteToConsole(logMessage);
         }
 
         if (_writeLogsToFile)
         {
-            string logMessage = $"[{GetLogTimestamp()}] [{source}] [{level}] : {message}";
             _log?.Write(logMessage);
             _latestLog?.Write(logMessage);
         }

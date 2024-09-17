@@ -4,19 +4,17 @@
 		<TargetFramework>net48</TargetFramework>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
-		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<Nullable>enable</Nullable>
 		<NuspecFile>Winch.nuspec</NuspecFile>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<NoWarn>1591</NoWarn>
-		<VersionPrefix>$(Version)</VersionPrefix>szq
+		<VersionPrefix>$(Version)</VersionPrefix>
 		<DontReferenceWinch>true</DontReferenceWinch>
+		<OutputFolder>$(Dredge)Winch</OutputFolder>
+		<DontCopyBuiltFiles>true</DontCopyBuiltFiles>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="HarmonyX" Version="2.10.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	</ItemGroup>
@@ -34,23 +32,28 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<DLLs Include="$(ProjectDir)lib\*.*"></DLLs>
+		<Libs Include="$(ProjectDir)lib\*.*"></Libs>
 		<OutputFiles Include="$(OutputPath)\*.*"></OutputFiles>
 	</ItemGroup>
 
 	<Target Name="CopyDLLs" AfterTargets="Build">
 		<Copy SourceFiles="@(DLLs)" DestinationFolder="$(OutputPath)" />
-		<Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(Dredge)Winch" />
+		<Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(Dredge)\Winch" />
 	</Target>
 
 	<ItemGroup>
-		<ProjectReference Include="..\WinchCommon\WinchCommon.csproj">
-		</ProjectReference>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DependentUpon>Resources.resx</DependentUpon>
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="AbyssApi\GameReferences\" />
-	  <Folder Include="bin\" />
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	    <Generator>ResXFileCodeGenerator</Generator>
+	  </EmbeddedResource>
 	</ItemGroup>
 	
 	<Import Condition="Exists('..\..\dredge.targets')" Project="..\..\dredge.targets"/>

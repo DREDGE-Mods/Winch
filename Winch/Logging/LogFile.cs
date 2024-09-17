@@ -19,7 +19,7 @@ public class LogFile
 
     public LogFile(string filename)
     {
-        string logBasePath = Path.Combine(Paths.WinchRootPath, WinchConfig.GetProperty("LogsFolder", "Logs"));
+        string logBasePath = Path.Combine(Paths.GameRootPath, WinchConfig.GetProperty("LogsFolder", "Logs"));
         string logPath = Path.Combine(logBasePath, filename);
 
         if(!Directory.Exists(logBasePath))

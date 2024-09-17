@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Dredge>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</Dredge>
         <ManagedFolder>$(Dredge)\DREDGE_Data\Managed</ManagedFolder>
-        <OutputFolder Condition="'$(OutputFolder)' == ''">Mods\</OutputFolder>
+        <OutputFolder Condition="'$(OutputFolder)' == ''">Mods\$(MSBuildProjectName)</OutputFolder>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
@@ -164,26 +164,22 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(DontReferenceHarmonyX)' != 'true'">
-        <PackageReference Include="HarmonyX" Version="2.13.0"/>
+        <PackageReference Include="HarmonyX" Version="2.13.0" />
     </ItemGroup>
+
 
     <!--Automatic embeds-->
     <ItemGroup Condition="'$(AutoEmbed)' != 'false'">
         <EmbeddedResource Include="**/*.png"/>
         <EmbeddedResource Include="**/*.jpg"/>
         <EmbeddedResource Include="**/*.bundle"/>
-        <EmbeddedResource Include="**/*.bytes"/>
     </ItemGroup>
 
-    <Target Name="MoveDllToPlugins" AfterTargets="Build" Condition="Exists('$(TargetDir)$(TargetName).dll')">
-        <Message Text="Copying $(ProjectName).dll to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
+    <Target Name="CopyModToModsFolder" AfterTargets="Build" Condition="'$(DontCopyBuiltFiles)' != 'true'">
+        <Message Text="Copying $(MSBuildProjectDirectory)\$(OutputPath) to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
 
-        <Copy SourceFiles="$(TargetDir)$(TargetName).dll"
-              DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).dll"/>
-    </Target>
-    <Target Name="MoveXmlToPlugins" AfterTargets="Build" Condition="Exists('$(TargetDir)$(ProjectName).xml')">
-        <Message Text="Copying $(ProjectName).xml to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
+        <Exec Command='if not exist "$(Dredge)\$(OutputFolder)" mkdir "$(Dredge)\$(OutputFolder)"' ContinueOnError="true"/>
 
-        <Copy SourceFiles="$(TargetDir)$(ProjectName).xml" DestinationFiles="$(Dredge)\$(OutputFolder)\$(ProjectName).xml"/>
+        <Exec Command='robocopy "$(MSBuildProjectDirectory)\$(OutputPath)" "$(Dredge)\$(OutputFolder)" /mir /copyall /dcopy:dat' ContinueOnError="true" />
     </Target>
 </Project>

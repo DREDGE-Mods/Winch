@@ -84,9 +84,9 @@ public static class Paths
 
         ManagedPath = managedPath ?? Path.Combine(GameDataPath, "Managed");
 
-        ModsPath = Path.Combine(WinchRootPath, "Mods");
+        ModsPath = Path.Combine(GameRootPath, "Mods");
 
-        DllSearchPaths = (dllSearchPath ?? new string[0]).Concat(new[] { ManagedPath }).Distinct().ToArray();
+        DllSearchPaths = (dllSearchPath).Concat(new[] { ManagedPath }).Distinct().ToArray();
 
         UnityInfo.Initialize(ExecutablePath, GameDataPath);
     }
