@@ -1,5 +1,4 @@
 <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
     <PropertyGroup>
         <Dredge>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</Dredge>
         <ManagedFolder>$(Dredge)\DREDGE_Data\Managed</ManagedFolder>
@@ -167,7 +166,6 @@
         <PackageReference Include="HarmonyX" Version="2.13.0" />
     </ItemGroup>
 
-
     <!--Automatic embeds-->
     <ItemGroup Condition="'$(AutoEmbed)' != 'false'">
         <EmbeddedResource Include="**/*.png"/>
@@ -178,8 +176,11 @@
     <Target Name="CopyModToModsFolder" AfterTargets="Build" Condition="'$(DontCopyBuiltFiles)' != 'true'">
         <Message Text="Copying $(MSBuildProjectDirectory)\$(OutputPath) to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
 
-        <Exec Command='if not exist "$(Dredge)\$(OutputFolder)" mkdir "$(Dredge)\$(OutputFolder)"' ContinueOnError="true"/>
+        <Exec Command='if not exist "$(Dredge)\$(OutputFolder)" mkdir "$(Dredge)\$(OutputFolder)"' ContinueOnError="false"/>
 
-        <Exec Command='robocopy "$(MSBuildProjectDirectory)\$(OutputPath)" "$(Dredge)\$(OutputFolder)" /mir /copyall /dcopy:dat' ContinueOnError="true" />
+        <ItemGroup>
+            <ModOutput Include="$(MSBuildProjectDirectory)\$(OutputPath)\**\*.*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(ModOutput)" DestinationFolder="$(Dredge)\$(OutputFolder)" SkipUnchangedFiles="false"/>
     </Target>
 </Project>
