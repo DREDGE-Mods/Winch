@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DREDGE": {
+      "commandName": "Executable",
+      "executablePath": "$(Dredge)/DREDGE.exe",
+      "workingDirectory": "$(Dredge)",
+      "commandLineArgs": ""
+    }
+  }
+}
