@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <Nullable>enable</Nullable>
+        <Dredge>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</Dredge>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+    
+    <Target Name="CopyDLLs" AfterTargets="Build">
+        <ItemGroup>
+            <OutputFiles Include="$(MSBuildProjectDirectory)\$(OutputPath)\*.*"></OutputFiles>
+        </ItemGroup>
+        
+        <Message Text="Copying @(OutputFiles) to $(Dredge)\Winch" Importance="high"/>
+        <Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(Dredge)\Winch" SkipUnchangedFiles="false"/>
+    </Target>
+</Project>

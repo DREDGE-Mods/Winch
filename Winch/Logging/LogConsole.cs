@@ -18,16 +18,6 @@ public class LogConsole
 		BepInEx.ConsoleManager.SetConsoleTitle("Winch Console");
 	}
 
-	[DllImport("kernel32.dll")]
-	static extern bool SetConsoleMode(IntPtr hConsoleHandle, int mode);
-
-	[DllImport("kernel32.dll")]
-	static extern bool GetConsoleMode(IntPtr hConsoleHandle, out int mode);
-
-	[DllImport("kernel32.dll")]
-	static extern IntPtr GetStdHandle(int handle);
-
-
 	public void WriteToConsole(string logMessage)
 	{
 		if (BepInEx.ConsoleManager.ConsoleActive)

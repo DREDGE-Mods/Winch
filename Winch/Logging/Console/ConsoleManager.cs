@@ -27,36 +27,13 @@ namespace BepInEx
 		/// </summary>
 		public static TextWriter ConsoleStream => Driver?.ConsoleOut;
 
-		private static readonly bool? EnableConsoleArgOverride;
-
-		private const string ENABLE_CONSOLE_ARG = "--enable-console";
-
-		static ConsoleManager()
-		{
-			// Ensure GetCommandLineArgs failing (e.g. on unix) does not kill bepin
-			try
-			{
-				string[] args = Environment.GetCommandLineArgs();
-				for (var i = 0; i < args.Length; i++)
-				{
-					string res = args[i];
-					if (res == ENABLE_CONSOLE_ARG && i + 1 < args.Length && bool.TryParse(args[i + 1], out bool enable))
-						EnableConsoleArgOverride = enable;
-				}
-			}
-			catch (Exception)
-			{
-				// Skip
-			}
-		}
-
 		public static void Initialize(bool alreadyActive)
 		{
-			if (PlatformDetection.OS.Is(OSKind.Linux))
+			/*if (PlatformDetection.OS.Is(OSKind.Linux))
 			{
 				//Driver = new LinuxConsoleDriver();
 			}
-			else if (PlatformDetection.OS.Is(OSKind.Windows))
+			else if (PlatformDetection.OS.Is(OSKind.Windows))*/
 				Driver = new WindowsConsoleDriver();
 
 			Driver?.Initialize(alreadyActive);
@@ -111,7 +88,6 @@ namespace BepInEx
 			Driver.SetConsoleColor(color);
 		}
 
-		public static bool ConsoleEnabled => EnableConsoleArgOverride ?? ConfigConsoleEnabled;
 
 		/*public static readonly ConfigEntry<bool> oldConfigConsoleEnabled = ConfigFile.CoreConfig.Bind(
 			"Logging.Console", "Enabled",
