@@ -20,15 +20,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Assets\**\*.*">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="mod_meta.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-		<None Include="doorstop_config.ini">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		<None Include="bin\**\*.*"></None>
+		<Content Include="Assets\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="mod_meta.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Include="doorstop_config.ini">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<Target Name="CopyDLLs" AfterTargets="Build">
@@ -40,7 +41,7 @@
 		<Copy SourceFiles="@(Libs)" DestinationFolder="$(MSBuildProjectDirectory)\$(OutputPath)" SkipUnchangedFiles="false" />
 		
 		<Message Text="Copying @(OutputFiles) to $(Dredge)\Winch" Importance="high" />
-		<Copy SourceFiles="@(OutputFiles)" DestinationFolder="$(Dredge)\Winch" SkipUnchangedFiles="false" />
+		<Exec Command='xcopy "$(MSBuildProjectDirectory)\$(OutputPath)" "$(Dredge)\Winch" /e /y /i ' StandardOutputImportance="low"/>
 	</Target>
 
 	<ItemGroup>

@@ -13,12 +13,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="mod_meta.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-        <None Include="Assets\**\*.*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <Content Include="mod_meta.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="Assets\**\*.*">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup Condition="'$(DontUseDredgeGameLibs)' == 'true'">
@@ -176,11 +176,6 @@
     <Target Name="CopyModToModsFolder" AfterTargets="Build" Condition="'$(DontCopyBuiltFiles)' != 'true'">
         <Message Text="Copying $(MSBuildProjectDirectory)\$(OutputPath) to $(Dredge)\$(OutputFolder) Folder..." Importance="High"/>
 
-        <Exec Command='if not exist "$(Dredge)\$(OutputFolder)" mkdir "$(Dredge)\$(OutputFolder)"' ContinueOnError="false"/>
-
-        <ItemGroup>
-            <ModOutput Include="$(MSBuildProjectDirectory)\$(OutputPath)\**\*.*"/>
-        </ItemGroup>
-        <Copy SourceFiles="@(ModOutput)" DestinationFolder="$(Dredge)\$(OutputFolder)" SkipUnchangedFiles="false"/>
+        <Exec Command='xcopy "$(MSBuildProjectDirectory)\$(OutputPath)" "$(Dredge)\$(OutputFolder)" /e /y /i ' StandardOutputImportance="low"/>
     </Target>
 </Project>
