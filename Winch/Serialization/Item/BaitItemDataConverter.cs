@@ -14,7 +14,7 @@ public class BaitItemDataConverter : SpatialItemDataConverter
         { "value", new(50m, null) },
         { "hasSellOverride", new(true, null) },
         { "sellOverrideValue", new(10m, null) },
-        { "itemColor", new(new Color(0.2275f, 0.1569f, 0.1255f, 255), null) }, // default game uses
+        { "itemColor", new(new Color(0.2275f, 0.1569f, 0.1255f, 1f), null) }, // default game uses
         { "itemTypeIcon", new(TextureUtil.GetSprite("BaitIcon"), null) },
         { "abilityMode", new(AbilityMode.BAIT, o => DredgeTypeHelpers.GetEnumValue<AbilityMode>(o)) },
         { "baitType", new(BaitType.FISH, o => DredgeTypeHelpers.GetEnumValue<BaitType>(o)) },

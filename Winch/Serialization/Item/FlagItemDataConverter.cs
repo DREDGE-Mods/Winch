@@ -16,7 +16,7 @@ public class FlagItemDataConverter : HarvestableItemDataConverter
         { "canBeDiscardedDuringQuestPickup", new(true, null) },
         { "canBeSoldByPlayer", new(false, null) },
         { "canBeSoldInBulkAction", new(false, null) },
-        { "itemColor", new(new Color(0.2275f, 0.1569f, 0.1255f, 255f), null)},
+        { "itemColor", new(new Color(0.2275f, 0.1569f, 0.1255f, 1f), null)},
         { "damageMode", new(DamageMode.DESTROY, null) },
         { "harvestMinigameType", new( HarvestMinigameType.DREDGE_RADIAL, null) },
         { "harvestPOICategory", new(HarvestPOICategory.TRINKET, null) },

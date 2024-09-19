@@ -19,7 +19,7 @@ public class SpatialItemDataConverter : ItemDataConverter
         { "sellOverrideValue", new(decimal.Zero, o => decimal.Parse(o.ToString())) },
         { "sprite", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "platformSpecificSpriteOverrides", new(null, null) },
-        { "itemColor", new(new Color(0.1922f, 0.1922f, 0.1922f, 255), o=> DredgeTypeHelpers.GetColorFromJsonObject(o)) }, // default game uses
+        { "itemColor", new(new Color(0.1922f, 0.1922f, 0.1922f, 1f), o=> DredgeTypeHelpers.GetColorFromJsonObject(o)) }, // default game uses
         { "canBeDiscardedByPlayer", new(true, o => bool.Parse(o.ToString())) },
         { "canBeDiscardedDuringQuestPickup", new(true, o => bool.Parse(o.ToString())) },
         { "hasSpecialDiscardAction", new(false, o => bool.Parse(o.ToString())) },
