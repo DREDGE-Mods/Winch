@@ -520,7 +520,7 @@ public static class PoiUtil
 
     public static IReadOnlyDictionary<string, POI> GetAllPOI()
     {
-        return AllPOIDict.Concat(CreatedModdedPOIDict).ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+        return AllPOIDict.Concat(CreatedModdedPOIDict).ToDictionary();
     }
 
     public static IHarvestable[] GetAllHarvestables()

@@ -1500,6 +1500,27 @@ public static class WinchExtensions
     }
 
     /// <summary>
+    /// Creates a dictionary from a key value pair sequence.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys.</typeparam>
+    /// <typeparam name="TValue">The type of the values.</typeparam>
+    /// <param name="pairs">The key value pairs to convert to a dictionary.</param>
+    /// <returns>A dictionary with keys and values from the input sequence.</returns>
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs)
+        => pairs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+    /// <summary>
+    /// Creates a dictionary with an equality comparer from a key value pair sequence.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys.</typeparam>
+    /// <typeparam name="TValue">The type of the values.</typeparam>
+    /// <param name="pairs">The key value pairs to convert to a dictionary.</param>
+    /// <param name="comparer">An equality comparer to compare keys.</param>
+    /// <returns>A dictionary with keys and values from the input sequence.</returns>
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs, IEqualityComparer<TKey> comparer)
+        => pairs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, comparer);
+
+    /// <summary>
     /// Add an item to an array
     /// </summary>
     /// <param name="array">The array to add to.</param>

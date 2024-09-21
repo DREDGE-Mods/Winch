@@ -37,7 +37,7 @@ public static class AddressablesUtil
             return locations;
         }
     }
-    internal static Dictionary<string, IList<IResourceLocation>> MapLocations => ResourceLocationMap.Locations.Select(kvp => new KeyValuePair<string, IList<IResourceLocation>>(kvp.Key.ToString(), kvp.Value)).ToDictionary(x => x.Key, x => x.Value);
+    internal static Dictionary<string, IList<IResourceLocation>> MapLocations => ResourceLocationMap.Locations.Select(kvp => new KeyValuePair<string, IList<IResourceLocation>>(kvp.Key.ToString(), kvp.Value)).ToDictionary();
     internal static Dictionary<string, IList<IResourceLocation>> Locations = new Dictionary<string, IList<IResourceLocation>>();
     internal static Dictionary<IResourceLocation, UnityEngine.Object> Resources = new Dictionary<IResourceLocation, UnityEngine.Object>();
 

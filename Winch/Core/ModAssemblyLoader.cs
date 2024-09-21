@@ -41,7 +41,7 @@ public static class ModAssemblyLoader
 
         EnabledModAssemblies = EnabledMods == null ? _installedAssemblies
             : _installedAssemblies.Where(x => EnabledMods[x.Value.GUID])
-                .ToDictionary(x => x.Key, x => x.Value);
+                .ToDictionary();
     }
 
     private static void RegisterModAssembly(string path)
