@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine.Rendering.Universal;
 using Winch.Core;
 using Winch.Core.API;
 using Winch.Util;
@@ -9,38 +10,53 @@ namespace Winch.Patches.API;
 [HarmonyPatch(typeof(DredgeDialogueRunner))]
 internal static class DialogueRunnerPatcher
 {
+    public static void Placeholder()
+    {
+
+    }
+
     [HarmonyPostfix]
     [HarmonyPriority(Priority.First)]
     [HarmonyPatch(nameof(DredgeDialogueRunner.Awake))]
     public static void Awake_Postfix(DredgeDialogueRunner __instance)
     {
-#pragma warning disable IDE0200
-        __instance.AddCommandHandler<string>("LogDebug", message => __instance.LogDebug(message));
-        __instance.AddCommandHandler<string>("LogInfo", message => __instance.LogInfo(message));
-        __instance.AddCommandHandler<string>("LogWarn", message => __instance.LogWarn(message));
-        __instance.AddCommandHandler<string>("LogError", message => __instance.LogError(message));
-#pragma warning restore IDE0200
+        __instance.AddCommandHandler("Placeholder", Placeholder);
+        new DialogueLogger(__instance);
         DredgeEvent.TriggerDialogueRunnerLoaded(__instance);
     }
 
-    private static void LogDebug(this DredgeDialogueRunner dialogueRunner, string message)
+    private class DialogueLogger
     {
-        WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
-    }
+        private readonly DredgeDialogueRunner dialogueRunner;
 
-    private static void LogInfo(this DredgeDialogueRunner dialogueRunner, string message)
-    {
-        WinchCore.Log.Info(message, dialogueRunner.CurrentNodeName);
-    }
+        public DialogueLogger(DredgeDialogueRunner dialogueRunner)
+        {
+            this.dialogueRunner = dialogueRunner;
+            dialogueRunner.AddCommandHandler<string>("LogDebug", LogDebug);
+            dialogueRunner.AddCommandHandler<string>("LogInfo", LogInfo);
+            dialogueRunner.AddCommandHandler<string>("LogWarn", LogWarn);
+            dialogueRunner.AddCommandHandler<string>("LogError", LogError);
+        }
 
-    private static void LogWarn(this DredgeDialogueRunner dialogueRunner, string message)
-    {
-        WinchCore.Log.Warn(message, dialogueRunner.CurrentNodeName);
-    }
+        private void LogDebug(string message)
+        {
+            WinchCore.Log.Debug(message, dialogueRunner.CurrentNodeName);
+        }
 
-    private static void LogError(this DredgeDialogueRunner dialogueRunner, string message)
-    {
-        WinchCore.Log.Error(message, dialogueRunner.CurrentNodeName);
+        private void LogInfo(string message)
+        {
+            WinchCore.Log.Info(message, dialogueRunner.CurrentNodeName);
+        }
+
+        private void LogWarn(string message)
+        {
+            WinchCore.Log.Warn(message, dialogueRunner.CurrentNodeName);
+        }
+
+        private void LogError(string message)
+        {
+            WinchCore.Log.Error(message, dialogueRunner.CurrentNodeName);
+        }
     }
 
     [HarmonyPrefix]

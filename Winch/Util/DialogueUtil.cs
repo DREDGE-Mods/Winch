@@ -13,6 +13,8 @@ using System.Globalization;
 using System.Text;
 using Winch.Config;
 using CommandTerminal;
+using Sirenix.Utilities;
+using Google.Protobuf;
 
 namespace Winch.Util;
 
@@ -48,9 +50,22 @@ public static class DialogueUtil
     /// </summary>
     internal static Dictionary<string, Program> programs = new();
 
+    /// <summary>
+    /// Fix yarn files to use spaces instead of tabs
+    /// </summary>
+    private static void FixDialogueFiles(string[] yarnFiles)
+    {
+        foreach (var yarnFile in yarnFiles)
+        {
+            File.WriteAllText(yarnFile, File.ReadAllText(yarnFile).Replace("\t", "    "));
+        }
+    }
+
     internal static void LoadDialogueFiles(string dialogueFolderPath)
     {
         string[] yarnFiles = Directory.GetFiles(dialogueFolderPath).Where(f => f.EndsWith(".yarn")).ToArray();
+
+        FixDialogueFiles(yarnFiles);
 
         CompilationResult compilationResult = CompileProgram(yarnFiles);
         programCompilationResults.Add(dialogueFolderPath, compilationResult);
@@ -154,6 +169,31 @@ public static class DialogueUtil
         DialogueUtil.instructions.AddRange(instructions);
     }
 
+    /// <summary>
+    /// Register line metadata to insert later
+    /// </summary>
+    /// <param name="line">The line to add the metadata to.</param>
+    /// <param name="metadata">The metadata that will be added to the line.</param>
+    public static void AddLineMetadata(string line, params string[] metadata)
+    {
+        DialogueUtil.metadata.Add(line, metadata);
+    }
+
+    /// <summary>
+    /// Manually set the line metadata
+    /// </summary>
+    /// <param name="line">The line to add the metadata to.</param>
+    /// <param name="metadata">The metadata that will be added to the line.</param>
+    internal static void SetLineMetadata(string line, params string[] metadata)
+    {
+        var _lineMetadata = Traverse.Create(GameManager.Instance.DialogueRunner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
+        var metadataValue = string.Join(" ", metadata);
+        if (!string.IsNullOrWhiteSpace(metadataValue))
+            _lineMetadata[line] = metadataValue;
+        else
+            _lineMetadata.Remove(line);
+    }
+
     internal static void InsertInstruction(DredgeInstruction dredgeInstruction)
     {
         Yarn.Instruction instruction = new Instruction();
@@ -161,13 +201,13 @@ public static class DialogueUtil
 
         foreach (var operand in dredgeInstruction.Operands)
         {
-            if (operand is string)
+            if (operand is string stringOperand)
             {
-                instruction.Operands.Add(new Operand((string)operand));
+                instruction.Operands.Add(new Operand(stringOperand));
             }
-            else if (operand is bool)
+            else if (operand is bool boolOperand)
             {
-                instruction.Operands.Add(new Operand((bool)operand));
+                instruction.Operands.Add(new Operand(boolOperand));
             }
             else if (operand is float || operand is int)
             {
@@ -177,19 +217,30 @@ public static class DialogueUtil
 
         DredgeDialogueRunner runner = GameManager.Instance.DialogueRunner;
         Program program = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
-        Node node = program.Nodes[dredgeInstruction.NodeID];
-
-        node.Instructions.Insert(dredgeInstruction.Index, instruction);
-
-        foreach (var label in node.Labels)
+        if (program.Nodes.TryGetValue(dredgeInstruction.NodeID, out Node node))
         {
-            if (label.Value >= dredgeInstruction.Index)
-            {
-                node.Labels[label.Key] += 1;
-            }
-        }
+            int index = dredgeInstruction.Index;
 
-        if (!string.IsNullOrWhiteSpace(dredgeInstruction.Label)) node.Labels[dredgeInstruction.Label] = dredgeInstruction.Index;
+            if (index != -1)
+                node.Instructions.Insert(index, instruction);
+            else
+            {
+                index = node.Instructions.Count;
+                node.Instructions.Add(instruction);
+            }
+
+            foreach (var label in node.Labels)
+            {
+                if (label.Value >= index)
+                {
+                    node.Labels[label.Key] += 1;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(dredgeInstruction.Label)) node.Labels[dredgeInstruction.Label] = index;
+        }
+        else
+            WinchCore.Log.Error($"Failed to insert instruction into missing node \"{dredgeInstruction.NodeID}\"");
     }
 
     private static Dictionary<string, string> GetLinesForLocale(string localeId)
@@ -274,6 +325,8 @@ public static class DialogueUtil
             Program oldProgram = Traverse.Create(runner.Dialogue).Field("program").GetValue<Program>();
             var _lineMetadata = Traverse.Create(runner.yarnProject.lineMetadata).Field("_lineMetadata").GetValue<SerializedDictionary<string, string>>();
 
+            newProgram.Name = oldProgram.Name;
+
             if (exportYarnProgram)
             {
                 WriteYarnProgramToText("YarnProgramVanilla", oldProgram, _lineMetadata);
@@ -291,7 +344,10 @@ public static class DialogueUtil
                 {
                     newProgram.Nodes[nodeName.Key] = nodeName.Value.Clone();
                 }
-                newProgram.InitialValues.Add(modProgram.InitialValues);
+                foreach (var initialValue in modProgram.InitialValues)
+                {
+                    newProgram.InitialValues[initialValue.Key] = initialValue.Value.Clone();
+                }
             }
 
             runner.Dialogue.SetProgram(newProgram);
@@ -300,9 +356,9 @@ public static class DialogueUtil
             {
                 var metadataValue = string.Join(" ", metadataEntry.Value);
                 if (!string.IsNullOrWhiteSpace(metadataValue))
-                    _lineMetadata.Add(metadataEntry.Key, metadataValue);
+                    _lineMetadata.SafeAdd(metadataEntry.Key, metadataValue);
             }
-
+            
             foreach (var instruction in instructions)
             {
                 InsertInstruction(instruction);
@@ -365,6 +421,31 @@ public static class DialogueUtil
             OpCode = opCode;
             Operands = operands;
         }
+    }
+
+    internal class DredgeOption(Line line, string destination, bool enabled)
+    {
+        public Line Line { get; set; } = line;
+        public string Destination { get; set; } = destination;
+        public bool Enabled { get; set; } = enabled;
+
+        public DredgeOption(Line line, string destination) : this(line, destination, true)
+        {
+
+        }
+
+        public DredgeOption(string lineID, string destination, bool enabled) : this(new Line { ID = lineID, Substitutions = new string[0] }, destination, enabled)
+        {
+
+        }
+
+        public DredgeOption(string lineID, string destination) : this(lineID, destination, true)
+        {
+
+        }
+
+        public static implicit operator ValueTuple<Line, string, bool>(DredgeOption option)
+            => (option.Line, option.Destination, option.Enabled);
     }
 
     internal static string GetProgramFileLocation(string fileName) => Path.Combine(WinchCore.WinchInstallLocation, $"{fileName}.txt");
