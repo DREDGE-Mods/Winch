@@ -89,6 +89,11 @@
     "exampleitems.recipe.name": "Recipe Name",
     "exampleitems.recipe.description": "Recipe Description",
 
+    "exampleitems.flag.name": "White Flag",
+    "exampleitems.flag.desc": "A flag with nothing on it.",
+    "exampleitems.flag.option": "White flag.",
+    "exampleitems.color.option": "Salmon Pink.",
+
     "exampleconfig.input": "Input",
     "exampleconfig.output": "Output",
 

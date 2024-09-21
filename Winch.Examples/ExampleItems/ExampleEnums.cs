@@ -5,8 +5,18 @@ namespace ExampleItems;
 [EnumHolder]
 public static class ExampleEnums
 {
-    public static readonly ItemSubtype EXAMPLE;
-    public static readonly GridKey EXAMPLE_INPUT;
-    public static readonly GridKey EXAMPLE_OUTPUT;
-    public static readonly GridKey EXAMPLE_RECIPE;
+    [EnumHolder]
+    public static class ItemSubtypes
+    {
+        public static readonly ItemSubtype EXAMPLE;
+    }
+
+    [EnumHolder]
+    public static class GridKeys
+    {
+        public static readonly GridKey EXAMPLE_INPUT;
+        public static readonly GridKey EXAMPLE_OUTPUT;
+        public static readonly GridKey EXAMPLE_RECIPE;
+        public static readonly GridKey EXAMPLE_COLOR_CRABS;
+    }
 }

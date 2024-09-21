@@ -1,0 +1,30 @@
+﻿{
+    "titleString": "quest-grid.deliver-crabs",
+    "isSaved": true,
+    "allowManualExit": true,
+    "allowStorageAccess": true,
+    "gridConfiguration": "exampleitems.color.crabs",
+    "gridKey": "EXAMPLE_COLOR_CRABS",
+    "overrideGridCellColor": true,
+    "gridCellColor": "CRITICAL",
+    "presetGrid": {
+        "spatialItems": [
+            {
+                "id": "exampleitems.rainbowfiddlercrab",
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        ]
+    },
+    "presetGridMode": "SILHOUETTE",
+    "questGridExitMode": "REVISITABLE",
+    "startingDurabilityProportion": 1.0,
+    "completeConditions": [
+        {
+            "type": "ItemCount",
+            "item": "exampleitems.rainbowfiddlercrab",
+            "count": 1
+        }
+    ]
+}

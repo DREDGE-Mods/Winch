@@ -1,5 +1,5 @@
 {
-    "columns": 4,
+    "columns": 3,
     "rows": 2,
     "cellGroupConfigs": [
         {
@@ -10,11 +10,11 @@
             "damageImmune": true
         }
     ],
-    "mainItemData": "exampleitems.diamond",
+    "mainItemData": "exampleitems.rainbowfiddlercrab",
     "mainItemType": "GENERAL",
-    "mainItemSubtype": "TRINKET",
+    "mainItemSubtype": "FISH",
     "itemsInThisBelongToPlayer": false,
     "canAddItemsInQuestMode": true,
     "hasUnderlay": false,
-    "gridKey": "EXAMPLE_INPUT"
+    "gridKey": "EXAMPLE_COLOR_CRABS"
 }

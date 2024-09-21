@@ -1,0 +1,11 @@
+﻿{
+    "color": {
+        "r": 255,
+        "g": 150,
+        "b": 150,
+        "a": 255
+    },
+    "localizedNameKey": "exampleitems.color.option",
+    "questGridConfig": "exampleitems.color.crabs"
+}
+

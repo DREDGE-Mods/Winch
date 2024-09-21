@@ -1,6 +1,15 @@
 {
     "columns": 1,
     "rows": 1,
+    "cellGroupConfigs": [
+        {
+            "cells": [],
+            "itemType": "NONE",
+            "itemSubtype": "NONE",
+            "isHidden": true,
+            "damageImmune": true
+        }
+    ],
     "mainItemData": "exampleitems.milk",
     "mainItemType": "GENERAL",
     "mainItemSubtype": "GENERAL",

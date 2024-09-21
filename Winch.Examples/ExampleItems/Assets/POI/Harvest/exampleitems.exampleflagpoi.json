@@ -1,0 +1,13 @@
+{
+    "location": {
+        "x": 400.0,
+        "y": 0.0,
+        "z": -290.0
+    },
+    "harvestableParticlePrefab": "ImportantDredgeParticles",
+    "items": [ "exampleitems.flag" ],
+    "startStock": 1,
+    "maxStock": 1,
+    "doesRestock": false,
+    "usesTimeSpecificStock": false
+}

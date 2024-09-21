@@ -8,10 +8,16 @@ namespace Winch.Data.Boat;
 public class BoatFlagData : SerializedScriptableObject
 {
     [SerializeField]
+    public string id = string.Empty;
+
+    [SerializeField]
     public string flagItem = string.Empty;
-    public FlagItemData FlagItem => ItemUtil.GetFlagItemData(flagItem) as FlagItemData;
+    public virtual HarvestableItemData FlagItem => ItemUtil.GetFlagItemData(flagItem);
 
     [SerializeField]
     public Texture2D flagTexture = TextureUtil.GetTexture("FlagMaterialTemplate");
-    public Material FlagMaterial => AssetBundleUtil.CreateLitCutoutMaterial(flagTexture.name, flagTexture);
+    public virtual Material FlagMaterial => AssetBundleUtil.CreateLitCutoutMaterial(flagTexture.name, flagTexture);
+
+    [SerializeField]
+    public string localizedNameKey = null;
 }

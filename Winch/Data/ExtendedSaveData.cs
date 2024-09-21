@@ -33,6 +33,9 @@ public class ExtendedSaveData
         public List<string> mods = new List<string>();
         public string dockId = string.Empty;
         public int dockSlotIndex = 0;
+        public string boatRoofColor = string.Empty;
+        public string boatHullColor = string.Empty;
+        public string boatFlagStyle = string.Empty;
         public Dictionary<string, SerializableGrid> grids = new Dictionary<string, SerializableGrid>();
         public List<SerializedCrabPotPOIData> serializedCrabPotPOIs = new List<SerializedCrabPotPOIData>();
         public Dictionary<string, Dictionary<string, JToken>> modData = new Dictionary<string, Dictionary<string, JToken>>();
@@ -391,6 +394,34 @@ public class ExtendedSaveData
             }
         }
         return false;
+    }
+
+    public bool TryGetBoatRoofColor(out string boatRoofColor)
+    {
+        boatRoofColor = saveData.boatRoofColor;
+        return !string.IsNullOrWhiteSpace(boatRoofColor);
+    }
+    public void SetBoatRoofColor(string boatRoofColor)
+    {
+        saveData.boatRoofColor = boatRoofColor;
+    }
+    public bool TryGetBoatHullColor(out string boatHullColor)
+    {
+        boatHullColor = saveData.boatHullColor;
+        return !string.IsNullOrWhiteSpace(boatHullColor);
+    }
+    public void SetBoatHullColor(string boatHullColor)
+    {
+        saveData.boatHullColor = boatHullColor;
+    }
+    public bool TryGetBoatFlagStyle(out string boatFlagStyle)
+    {
+        boatFlagStyle = saveData.boatFlagStyle;
+        return !string.IsNullOrWhiteSpace(boatFlagStyle);
+    }
+    public void SetBoatFlagStyle(string boatFlagStyle)
+    {
+        saveData.boatFlagStyle = boatFlagStyle;
     }
 
     /// <summary>

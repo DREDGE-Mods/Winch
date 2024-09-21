@@ -32,6 +32,7 @@ internal static class AssetLoader
             WorldEventUtil.Initialize();
             MapMarkerUtil.Initialize();
             QuestUtil.Initialize();
+            BoatUtil.Initialize();
         }
         catch (Exception ex)
         {
@@ -52,6 +53,15 @@ internal static class AssetLoader
                 WinchCore.Log.Error($"Error loading assets for {modAssembly.GUID}: {ex}");
             }
             ModAssemblyLoader.ClearModContext();
+        }
+
+        try
+        {
+            BoatUtil.PostInitialize();
+        }
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error($"Failed to post initialize winch utils: {ex}");
         }
     }
 
@@ -79,6 +89,9 @@ internal static class AssetLoader
         string recipeFolderpath = Path.Combine(path, "Recipes");
         string dialogueFolderpath = Path.Combine(path, "Dialogues");
         string characterFolderpath = Path.Combine(path, "Characters");
+        string boatFolderpath = Path.Combine(path, "Boat");
+        string paintFolderpath = Path.Combine(boatFolderpath, "Paints");
+        string flagFolderpath = Path.Combine(boatFolderpath, "Flags");
 
         if(Directory.Exists(bundlesFolderpath)) LoadAssetBundleFiles(bundlesFolderpath);
         if(Directory.Exists(localizationFolderPath)) LoadLocalizationFiles(localizationFolderPath);
@@ -102,6 +115,8 @@ internal static class AssetLoader
         if(Directory.Exists(recipeFolderpath)) LoadRecipeFiles(recipeFolderpath);
         if(Directory.Exists(dialogueFolderpath)) LoadDialogueFiles(dialogueFolderpath);
         if(Directory.Exists(characterFolderpath)) LoadCharacterFiles(characterFolderpath);
+        if(Directory.Exists(paintFolderpath)) LoadBoatPaintFiles(paintFolderpath);
+        if(Directory.Exists(flagFolderpath)) LoadBoatFlagFiles(flagFolderpath);
     }
 
     private static void LoadAssetBundleFiles(string bundlesFolderpath)
@@ -583,6 +598,38 @@ internal static class AssetLoader
             catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load character from {file}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadBoatPaintFiles(string paintFolderpath)
+    {
+        string[] paintFiles = Directory.GetFiles(paintFolderpath);
+        foreach (string paintFile in paintFiles)
+        {
+            try
+            {
+                BoatUtil.AddBoatPaintDataFromMeta(paintFile);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load boat paint data from {paintFile}: {ex}");
+            }
+        }
+    }
+
+    private static void LoadBoatFlagFiles(string flagFolderpath)
+    {
+        string[] flagFiles = Directory.GetFiles(flagFolderpath);
+        foreach (string flagFile in flagFiles)
+        {
+            try
+            {
+                BoatUtil.AddBoatFlagDataFromMeta(flagFile);
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Failed to load boat flag data from {flagFile}: {ex}");
             }
         }
     }

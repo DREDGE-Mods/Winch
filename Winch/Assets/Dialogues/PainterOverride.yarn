@@ -1,0 +1,149 @@
+﻿﻿title: Painter_Customize
+---
+<<declare $flag_inventory_id = "">>
+<<declare $boat_customization_return_path = "Painter_Customize">>
+<<ShowUnavailableOptions false>>
+<<set $flag_inventory_id to GetIdOfFlagInInventoryAndStorage()>>
+PAINTER_NAME_KEY: What can I help you with today? #lastline #line:0c88abb
+<<AutoResolveNextLine>>
+    -> Deliver Flag. <<if $flag_inventory_id != "">> #repeat #quest #line:05e56b6
+        <<jump Painter_Deliver_Flag_Success>>
+    -> Deliver Flag. <<if $flag_inventory_id == "">> #repeat #line:059dc76
+        <<jump Painter_Deliver_Flag_Fail>>
+    -> Paint boat. #repeat #line:00c5c0a
+        <<jump Painter_Customize_Color_Area>>
+    -> Change flag. #repeat #line:082a9c7
+        <<jump Painter_Customize_Flag1>>
+    -> Adjust bunting. #repeat #line:0fd9656
+        <<jump Painter_Customize_Bunting>>
+    -> What do you do here? #line:0b2844b
+        <<jump Painter_Explain>>
+    -> \\[Leave.\\] #exit #line:0969466
+===
+﻿title: Painter_Customize_Bunting_Selected
+---
+<<declare $boat_bunting_index = 0>>
+<<if $boat_bunting_index == 0>>
+    <<PlayClip Adjust_Bunting_Off>>
+<<else>>
+    <<PlayClip Adjust_Bunting_On>>
+<<endif>>
+<<ChangeBoatBunting {$boat_bunting_index}>>
+PAINTER_NAME_KEY: As you wish... #mm #line:09dffaf
+<<jump Painter_Customize>>
+===
+title: Painter_Customize_Color_Incomplete
+---
+<<declare $boat_customization_color_index = "">>
+<<AutoResolveNextLine>>
+PAINTER_NAME_KEY: I don't have the right pigment to make that color. You'll need to bring me these [C3]crabs[/C3]: #sigh #line:08add0d
+<<ShowPaintGrid {$boat_customization_color_index}>>
+<<if GetLastQuestGridResult() == 1>>
+    PAINTER_NAME_KEY: That should be all we need...let me grind them together... #line:03c9fd7
+    <<PlayClip Grind_Crabs>>
+    <<SetHasPaint {$boat_customization_color_index} true>>
+    <<jump Painter_Customize_Color_Complete>>
+<<else>>
+    <<AutoResolveNextLine>>
+    PAINTER_NAME_KEY: A different color, perhaps? #hmm #line:03949a5
+    <<jump {$boat_customization_return_path}>>
+<<endif>>
+===
+﻿title: Painter_Deliver_Flag_Success
+---
+<<declare $boat_flag_index = "">>
+PAINTER_NAME_KEY: So, you've found a scrap of fabric eh? Let me see... #hmm #line:0a67ffb
+<<set $boat_flag_index to $flag_inventory_id>>
+<<TakeFlag {$boat_flag_index}>>
+<<AutoResolveNextLine>>
+PAINTER_NAME_KEY: A unique design. Do you want to attach it now? #lastline #line:0d160cf
+    -> Yes. #line:0fc6f52
+        <<set $boat_customization_return_path to "Painter_Customize">>
+            <<jump Painter_Customize_Flag_Selected>>
+    -> No. #line:075f7ba
+        <<jump Painter_Customize>>
+
+===
+﻿title: Painter_Deliver_Flag_Fail
+---
+PAINTER_NAME_KEY: You don't seem to have any new flags with you. Come back when you find some. #annoyed #line:078f808
+<<if GetHasFlag(6) == false>>
+    PAINTER_NAME_KEY: Have you tried searching to the [C0]North[/C0] of [C0]The Marrows[/C0]? #hmm #line:04c240d
+<<elseif GetHasFlag(7) == false>>
+    PAINTER_NAME_KEY: Have you tried searching to the [C0]South[/C0] of [C0]The Marrows[/C0]? #hmm #line:08f58e6
+<<elseif GetHasFlag(4) == false>>
+    PAINTER_NAME_KEY: Have you tried searching around [C0]Gale Cliffs[/C0]? #hmm #line:08a461c
+<<elseif GetHasFlag(2) == false>>
+    PAINTER_NAME_KEY: Have you tried searching around [C0]Stellar Basin[/C0]? #hmm #line:03c25cd
+<<elseif GetHasFlag(1) == false>>
+    PAINTER_NAME_KEY: Have you tried searching around [C0]Twisted Strand[/C0]? #hmm #line:0554f08
+<<elseif GetHasFlag(5) == false>>
+    PAINTER_NAME_KEY: Have you tried searching around [C0]Devil's Spine[/C0]? #hmm #line:02765dd
+<<else>>
+    PAINTER_NAME_KEY: Although...you already have so many - I'm not sure there are any more out there... #hmm #line:032c7ba
+<<endif>>
+<<jump Painter_Customize>>
+===
+title: Painter_Customize_FlagModded
+---
+<<declare $modded_flag_page_number = 1>>
+<<set $boat_customization_return_path to "Painter_Customize_FlagModded">>
+<<AutoResolveNextLine>>
+<<ShowUnavailableOptions true>>
+<<LogDebug "Modded flag page number: {$modded_flag_page_number}">>
+<<AddModdedFlagPageOptions {$modded_flag_page_number}>>
+    -> \\[Previous page.\\] #repeat #line:0509ef6
+        <<jump Painter_Customize_FlagModded_Previous>>
+    -> \\[Next page.\\] <<if $modded_flag_page_number < GetModdedFlagPages()>> #repeat #line:00f9f4c
+        <<jump Painter_Customize_FlagModded_Next>>
+    -> \\[Back.\\] #exit #line:0e2c03d
+        <<set $modded_flag_page_number to 1>>
+            <<jump Painter_Customize>>
+===
+title: Painter_Customize_FlagModded_Previous
+---
+<<if $modded_flag_page_number <= 1>>
+    <<jump Painter_Customize_Flag2>>
+<<else>>
+    <<set $modded_flag_page_number to $modded_flag_page_number - 1>>
+    <<jump Painter_Customize_FlagModded>>
+<<endif>>
+===
+title: Painter_Customize_FlagModded_Next
+---
+<<set $modded_flag_page_number to $modded_flag_page_number + 1>>
+<<jump Painter_Customize_FlagModded>>
+===
+title: Painter_Customize_Color_Page_Modded
+---
+<<declare $modded_color_page_number = 1>>
+<<ShowUnavailableOptions false>>
+<<set $boat_customization_return_path to "Painter_Customize_Color_Page_Modded">>
+<<AutoResolveNextLine>>
+<<LogDebug "Modded paint page number: {$modded_color_page_number}">>
+<<AddModdedPaintPageOptions {$modded_color_page_number}>>
+    -> \\[Previous page.\\] #repeat #line:062a122
+        <<jump Painter_Customize_Color_Page_Modded_Previous>>
+    -> \\[Next page.\\] <<if $modded_color_page_number < GetModdedPaintPages()>> #repeat #line:01b7c6c
+        <<jump Painter_Customize_Color_Page_Modded_Next>>
+    -> \\[Back.\\] #exit #line:03f37d3
+        <<set $modded_color_page_number to 1>>
+            <<jump Painter_Customize_Color_Area>>
+===
+title: Painter_Customize_Color_Page_Modded_Previous
+---
+<<if $modded_color_page_number <= 1>>
+    <<set $boat_customization_return_path to "Painter_Customize_Color_Page_2">>
+    <<jump Painter_Customize_Color_Pre>>
+<<else>>
+    <<set $modded_color_page_number to $modded_color_page_number - 1>>
+    <<set $boat_customization_return_path to "Painter_Customize_Color_Page_Modded">>
+    <<jump Painter_Customize_Color_Pre>>
+<<endif>>
+===
+title: Painter_Customize_Color_Page_Modded_Next
+---
+<<set $modded_color_page_number to $modded_color_page_number + 1>>
+<<set $boat_customization_return_path to "Painter_Customize_Color_Page_Modded">>
+<<jump Painter_Customize_Color_Pre>>
+===

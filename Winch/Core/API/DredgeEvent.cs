@@ -60,4 +60,18 @@ public static class DredgeEvent
         WinchCore.Log.Debug($"Triggered OnFishCaught({itemInstance.id}) event");
         OnFishCaught?.Invoke(itemInstance);
     }
+
+    public static event Action<BoatArea, string> OnBoatColorsChanged;
+    public static void TriggerBoatColorsChanged(BoatArea area, string paintId)
+    {
+        WinchCore.Log.Debug($"Triggered OnBoatColorsChanged({area},{paintId}) event");
+        OnBoatColorsChanged?.Invoke(area, paintId);
+    }
+
+    public static event Action<string> OnBoatFlagChanged;
+    public static void TriggerBoatFlagChanged(string flagId)
+    {
+        WinchCore.Log.Debug($"Triggered OnBoatFlagChanged({flagId}) event");
+        OnBoatFlagChanged?.Invoke(flagId);
+    }
 }
