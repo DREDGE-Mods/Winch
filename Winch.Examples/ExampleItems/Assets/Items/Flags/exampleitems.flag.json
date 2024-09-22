@@ -1,6 +1,7 @@
 ﻿{
     "itemNameKey": "exampleitems.flag.name",
     "itemDescriptionKey": "exampleitems.flag.desc",
+    "sprite": "exampleitems.flag",
     "dimensions": [
         "X"
     ]
