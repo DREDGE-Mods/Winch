@@ -275,7 +275,7 @@ public class ExtendedSaveData
 
     public Dictionary<string, JToken> GetData(ModAssembly mod) => GetData(mod.GUID);
 
-    public bool HasData(string modGUID, string key) => GetData(modGUID).ContainsKey(key);
+    public bool HasData(string modGUID, string key) => GetData(modGUID).ContainsKey(key) && !GetData(modGUID, key).IsNullOrEmpty();
 
     public bool HasData(ModAssembly mod, string key) => HasData(mod.GUID, key);
 
