@@ -1,0 +1,20 @@
+{
+    "columns": 2,
+    "rows": 2,
+    "cellGroupConfigs": [
+        {
+            "cells": [],
+            "itemType": "NONE",
+            "itemSubtype": "NONE",
+            "isHidden": true,
+            "damageImmune": true
+        }
+    ],
+    "mainItemData": "crate",
+    "mainItemType": "ALL",
+    "mainItemSubtype": "ALL",
+    "itemsInThisBelongToPlayer": false,
+    "canAddItemsInQuestMode": true,
+    "hasUnderlay": false,
+    "gridKey": "EXAMPLE_TIER_3"
+}

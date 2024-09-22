@@ -8,7 +8,15 @@ namespace ExampleItems;
 /// </summary>
 public class ExampleSaveParticipant : ExtendedSaveData.Participant
 {
-    public ExampleItemsSaveDataTwo saveData;
+    private ExampleItemsSaveDataTwo saveData;
+    public ExampleItemsSaveDataTwo SaveData
+    {
+        get
+        {
+            if (saveData == null) saveData = new ExampleItemsSaveDataTwo();
+            return saveData;
+        }
+    }
 
     public string Key => "class";
 

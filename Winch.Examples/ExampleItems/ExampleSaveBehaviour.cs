@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Winch.Components;
+using Winch.Core;
 
 namespace ExampleItems;
 
@@ -9,7 +10,15 @@ namespace ExampleItems;
 /// </summary>
 public class ExampleSaveBehaviour : ExtendedSaveSingleton<ExampleSaveBehaviour>
 {
-    public ExampleItemsSaveData saveData;
+    private ExampleItemsSaveData saveData;
+    public ExampleItemsSaveData SaveData
+    {
+        get
+        {
+            if (saveData == null) saveData = new ExampleItemsSaveData();
+            return saveData;
+        }
+    }
 
     protected override bool ShouldNotDestroyOnLoad => true;
 
@@ -17,16 +26,19 @@ public class ExampleSaveBehaviour : ExtendedSaveSingleton<ExampleSaveBehaviour>
 
     public override void Load(JToken token)
     {
+        WinchCore.Log.Debug("Load");
         saveData = token.ToObject<ExampleItemsSaveData>();
     }
 
     public override object Save()
     {
+        WinchCore.Log.Debug("Save");
         return saveData;
     }
 
     public override object Create()
     {
+        WinchCore.Log.Debug("Create");
         return new ExampleItemsSaveData();
     }
 }

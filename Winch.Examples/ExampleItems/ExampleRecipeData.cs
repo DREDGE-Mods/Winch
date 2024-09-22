@@ -23,13 +23,28 @@ public class ExampleRecipeData : ModdedRecipeData
     public override bool IsOneTimeAndAlreadyOwned()
     {
         WinchCore.Log.Warn("IsOneTimeAndAlreadyOwned");
-        return ExampleSaveBehaviour.Instance.saveData.recipeCrafted;
+        try
+        {
+            return ExampleSaveBehaviour.Instance.SaveData.recipeCrafted;
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+            return false;
+        }
     }
 
     public override void OnRecipeCompleted()
     {
         WinchCore.Log.Warn("OnRecipeCompleted");
-        ExampleSaveBehaviour.Instance.saveData.recipeCrafted = true;
+        try
+        {
+            ExampleSaveBehaviour.Instance.SaveData.recipeCrafted = true;
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
     }
 
     public ExampleRecipeData()

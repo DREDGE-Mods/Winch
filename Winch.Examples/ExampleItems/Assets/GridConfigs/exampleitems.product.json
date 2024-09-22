@@ -1,0 +1,10 @@
+{
+    "columns": 4,
+    "rows": 4,
+    "mainItemType": "ALL",
+    "mainItemSubtype": "ALL",
+    "itemsInThisBelongToPlayer": true,
+    "canAddItemsInQuestMode": false,
+    "hasUnderlay": false,
+    "gridKey": "EXAMPLE_PRODUCT"
+}

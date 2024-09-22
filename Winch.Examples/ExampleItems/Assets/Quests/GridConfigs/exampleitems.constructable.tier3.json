@@ -1,0 +1,28 @@
+{
+    "titleString": "quest-grid.deliver-materials",
+    "isSaved": true,
+    "allowManualExit": true,
+    "allowStorageAccess": true,
+    "gridConfiguration": "exampleitems.constructable.tier3",
+    "gridKey": "EXAMPLE_TIER_3",
+    "presetGrid": {
+        "spatialItems": [
+            {
+                "id": "crate",
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        ]
+    },
+    "presetGridMode": "SILHOUETTE",
+    "questGridExitMode": "REVISITABLE",
+    "startingDurabilityProportion": 1.0,
+    "completeConditions": [
+        {
+            "type": "ItemCount",
+            "item": "crate",
+            "count": 1
+        }
+    ]
+}

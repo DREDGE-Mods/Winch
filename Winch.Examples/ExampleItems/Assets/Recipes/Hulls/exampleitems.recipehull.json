@@ -1,6 +1,6 @@
 ﻿{
     "questGridConfig": "exampleitems.recipe",
-    "itemProduced": "exampleitems.milk",
+    "hullUpgradeData": "tier-4-hull",
     "onRecipeShownDialogueNodeName": "ExampleItems_Steve_RecipeShown",
     "onRecipeBuiltDialogueNodeName": "ExampleItems_Steve_RecipeBuilt",
     "quantityProduced": 1,

@@ -1,6 +1,6 @@
 ﻿{
     "questGridConfig": "exampleitems.recipe",
-    "itemProduced": "exampleitems.milk",
+    "abilityData": "exampleitems.testability",
     "onRecipeShownDialogueNodeName": "ExampleItems_Steve_RecipeShown",
     "onRecipeBuiltDialogueNodeName": "ExampleItems_Steve_RecipeBuilt",
     "quantityProduced": 1,

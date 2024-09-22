@@ -1,0 +1,78 @@
+﻿title: ExampleItems_Recipe_Root
+---
+<<if GetHasVisitedNode("ExampleItems_Recipe_Intro") == false>>
+    <<jump ExampleItems_Recipe_Intro>>
+<<endif>>
+===
+title: ExampleItems_Recipe_Intro
+---
+exampleitems.alex: Intro #line:exampleitems.intro
+===
+title: ExampleItems_Recipe_Tier1
+---
+<<AutoResolveNextLine>>
+exampleitems.alex: Tier 1 #line:exampleitems.tier1
+===
+title: ExampleItems_Recipe_Tier1_Description
+---
+<<if GetIsBuildingTierConstructed("EXAMPLE_TIER_1") == true>>
+    exampleitems.alex: Tier 1 Description #line:exampleitems.tier1desc
+<<else>>
+    exampleitems.alex: Tier 1 Unbuilt #line:exampleitems.tier1unbuilt
+<<endif>>
+===
+title: ExampleItems_Recipe_Tier1_Constructed
+---
+exampleitems.alex: Tier 1 Built #line:exampleitems.tier1built
+===
+title: ExampleItems_Recipe_Tier2
+---
+<<AutoResolveNextLine>>
+exampleitems.alex: Tier 2 #line:exampleitems.tier2
+===
+title: ExampleItems_Recipe_Tier2_Description
+---
+<<if GetIsBuildingTierConstructed("EXAMPLE_TIER_2") == true>>
+    exampleitems.alex: Tier 2 Description #line:exampleitems.tier2desc
+<<else>>
+    exampleitems.alex: Tier 2 Unbuilt #line:exampleitems.tier2unbuilt
+<<endif>>
+===
+title: ExampleItems_Recipe_Tier2_Constructed
+---
+exampleitems.alex: Tier 2 Built #line:exampleitems.tier2built
+===
+title: ExampleItems_Recipe_Tier3
+---
+<<AutoResolveNextLine>>
+exampleitems.alex: Tier 3 #line:exampleitems.tier3
+===
+title: ExampleItems_Recipe_Tier3_Description
+---
+<<if GetIsBuildingTierConstructed("EXAMPLE_TIER_3") == true>>
+    exampleitems.alex: Tier 3 Description #line:exampleitems.tier3desc
+<<else>>
+    exampleitems.alex: Tier 3 Unbuilt #line:exampleitems.tier3unbuilt
+<<endif>>
+===
+title: ExampleItems_Recipe_Tier3_Constructed
+---
+exampleitems.alex: Tier 3 Built #line:exampleitems.tier3built
+===
+title: ExampleItems_Recipe_Tier4
+---
+<<AutoResolveNextLine>>
+exampleitems.alex: Tier 4 #line:exampleitems.tier4
+===
+title: ExampleItems_Recipe_Tier4_Description
+---
+<<if GetIsBuildingTierConstructed("EXAMPLE_TIER_4") == true>>
+    exampleitems.alex: Tier 4 Description #line:exampleitems.tier4desc
+<<else>>
+    exampleitems.alex: Tier 4 Unbuilt #line:exampleitems.tier4unbuilt
+<<endif>>
+===
+title: ExampleItems_Recipe_Tier4_Constructed
+---
+exampleitems.alex: Tier 4 Built #line:exampleitems.tier4built
+===

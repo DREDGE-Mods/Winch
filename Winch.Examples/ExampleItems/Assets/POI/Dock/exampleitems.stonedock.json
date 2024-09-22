@@ -49,7 +49,85 @@
 		},
 		"overflowHeight": 0.65
 	},
-	"destinations": [],
+	"constructables": [
+		{
+			"id": "exampleitems.constructable",
+			"titleKey": "exampleitems.constructable",
+			"alwaysShow": true,
+			"isIndoors": true,
+			"speakerData": "exampleitems.alex",
+			"speakerRootNodeOverride": "ExampleItems_Recipe_Root",
+			"position": {
+				"x": -1.825,
+				"y": 0,
+				"z": 0.125
+			},
+			"vCam": {
+				"x": -2,
+				"y": 12.5,
+				"z": -8
+			},
+			"useFixedScreenPosition": true,
+			"screenPosition": {
+				"x": -675,
+				"y": 0
+			},
+			"playerInventoryTabIndexesToShow": [ 0, 1, 3 ],
+			"constructableDestinationData": {
+				"productQuestGrid": "exampleitems.product",
+				"tiers": [
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_1",
+						"tierNameKey": "tab.tier-1",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier1",
+						"recipeListStringKey": "exampleitems.constructable.tier1.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier1",
+						"recipes": [
+							"exampleitems.recipeitem"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_2",
+						"tierNameKey": "tab.tier-2",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier2",
+						"recipeListStringKey": "exampleitems.constructable.tier2.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier2",
+						"recipes": [
+							"exampleitems.recipeability"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_3",
+						"tierNameKey": "tab.tier-3",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier3",
+						"recipeListStringKey": "exampleitems.constructable.tier3.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier3",
+						"recipes": [
+							"exampleitems.recipehull"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_4",
+						"tierNameKey": "tab.tier-4",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier4",
+						"recipeListStringKey": "exampleitems.constructable.tier4.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier4",
+						"recipes": [
+							"exampleitems.recipe"
+						]
+					}
+				]
+			}
+		}
+	],
 	"dockSlots": [
 		{
 			"position": {
