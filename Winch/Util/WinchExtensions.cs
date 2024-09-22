@@ -28,6 +28,7 @@ using Winch.Core;
 using Winch.Core.API;
 using Winch.Data;
 using Winch.Data.Abilities;
+using Winch.Data.Boat;
 using Winch.Data.Character;
 using Winch.Data.Dock;
 using Winch.Data.GridConfig;
@@ -95,6 +96,10 @@ public static class WinchExtensions
     public static bool IsModded(this UpgradeData upgradeData) => upgradeData is IDeferredUpgradeData || UpgradeUtil.ModdedUpgradeDataDict.ContainsKey(upgradeData.id) || !UpgradeUtil.VanillaUpgradeIDList.Contains(upgradeData.id);
     /// <inheritdoc cref="IsModded(ItemData)"/>
     public static bool IsModded(this RecipeData recipeData) => recipeData is IDeferredRecipeData || RecipeUtil.ModdedRecipeDataDict.ContainsKey(recipeData.recipeId) || !RecipeUtil.VanillaRecipeIDList.Contains(recipeData.recipeId);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this BoatFlagData boatFlagData) => boatFlagData is not VanillaBoatFlagData || BoatUtil.ModdedBoatFlagDataDict.ContainsKey(boatFlagData.id);
+    /// <inheritdoc cref="IsModded(ItemData)"/>
+    public static bool IsModded(this BoatPaintData boatPaintData) => boatPaintData is not VanillaBoatPaintData || BoatUtil.ModdedBoatPaintDataDict.ContainsKey(boatPaintData.id);
 
     /// <summary>
     /// Check if the object is vanilla
@@ -141,6 +146,10 @@ public static class WinchExtensions
     public static bool IsVanilla(this UpgradeData upgradeData) => !upgradeData.IsModded();
     /// <inheritdoc cref="IsVanilla(ItemData)"/>
     public static bool IsVanilla(this RecipeData recipeData) => !recipeData.IsModded();
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this BoatFlagData boatFlagData) => boatFlagData is VanillaBoatFlagData || BoatUtil.VanillaBoatFlagDataDict.ContainsKey(boatFlagData.id);
+    /// <inheritdoc cref="IsVanilla(ItemData)"/>
+    public static bool IsVanilla(this BoatPaintData boatPaintData) => boatPaintData is VanillaBoatPaintData || BoatUtil.VanillaBoatPaintDataDict.ContainsKey(boatPaintData.id);
 
     /// <summary>
     /// Check if the associated item data exists
