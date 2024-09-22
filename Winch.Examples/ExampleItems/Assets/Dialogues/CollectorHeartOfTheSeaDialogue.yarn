@@ -8,17 +8,17 @@
 You walk in and place the Heart of the Sea on a table by the Collector. #line:exampleitems.collector.walk
 <<AutoResolveNextLine>>
 COLLECTOR_NAME_KEY: Oh? What is that you have in your hand? #chuckle #line:exampleitems.collector.hand
-	-> Heart of the Sea #line:exampleitems.collector.heart
-		<<set $exampleitems_named to true>>
-	-> I have absolutely no idea #line:exampleitems.collector.noidea
-		<<set $exampleitems_named to false>>
+    -> Heart of the Sea #line:exampleitems.collector.heart
+        <<set $exampleitems_named to true>>
+    -> I have absolutely no idea #line:exampleitems.collector.noidea
+        <<set $exampleitems_named to false>>
 <<LogWarn "Named: {$exampleitems_named}">>
 COLLECTOR_NAME_KEY: It looks like a sphere but it is blocky. #line:exampleitems.collector.blockysphere
-	<<if $exampleitems_named is true>>
-		COLLECTOR_NAME_KEY: I wonder what "heart" means. #grunt #line:exampleitems.collector.wonder
-	<<else>>
-		COLLECTOR_NAME_KEY: You found it, but have no idea what it is? #sigh #line:exampleitems.collector.what
-	<<endif>>
+    <<if $exampleitems_named is true>>
+        COLLECTOR_NAME_KEY: I wonder what "heart" means. #grunt #line:exampleitems.collector.wonder
+    <<else>>
+        COLLECTOR_NAME_KEY: You found it, but have no idea what it is? #sigh #line:exampleitems.collector.what
+    <<endif>>
 COLLECTOR_NAME_KEY: I sense some power eminating from it. #line:exampleitems.collector.eminating
 <<jump Collector_ExampleItemsHeartOfTheSea_Award>>
 ===

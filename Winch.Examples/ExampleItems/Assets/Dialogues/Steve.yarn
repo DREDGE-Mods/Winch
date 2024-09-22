@@ -2,7 +2,7 @@
 tags: 
 ---
 <<if GetHasVisitedNode("ExampleItems_Steve_Intro") == false>>
-	<<jump ExampleItems_Steve_Intro>>
+    <<jump ExampleItems_Steve_Intro>>
 <<endif>>
 ===
 ﻿title: ExampleItems_Steve_Intro
@@ -13,10 +13,10 @@ exampleitems.steve: Hi #gasp #line:exampleitems.steve.intro
 ﻿title: ExampleItems_Steve_Chat
 ---
 exampleitems.steve: Test #gasp #line:exampleitems.steve.test 
-	-> Old #line:exampleitems.steve.old
-		<<SetIntVariable exampleitems.steve.portrait-state 0>>
-	-> New #quest #line:exampleitems.steve.new
-		<<SetIntVariable exampleitems.steve.portrait-state 1>>
+    -> Old #line:exampleitems.steve.old
+        <<SetIntVariable exampleitems.steve.portrait-state 0>>
+    -> New #quest #line:exampleitems.steve.new
+        <<SetIntVariable exampleitems.steve.portrait-state 1>>
 ===
 ﻿title: ExampleItems_Steve_RecipeShown
 ---
