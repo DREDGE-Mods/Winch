@@ -423,7 +423,7 @@ public static class DialogueUtil
         }
     }
 
-    internal class DredgeOption(Line line, string destination, bool enabled)
+    public class DredgeOption(Line line, string destination, bool enabled)
     {
         public Line Line { get; set; } = line;
         public string Destination { get; set; } = destination;

@@ -43,6 +43,7 @@ using Winch.Data.Upgrade;
 using Winch.Data.WorldEvent;
 using Winch.Patches.API;
 using Winch.Util;
+using Yarn;
 using static ActiveAbilityInfoPanel;
 using static ShopData;
 using static ShopRestocker;
@@ -1257,6 +1258,20 @@ public static class WinchExtensions
     public static bool TryGetGridConfigForKey(this GameConfigData gameConfigData, GridKey key, out GridConfiguration gridConfig)
     {
         return gameConfigData.gridConfigs.TryGetValue(key, out gridConfig) && gridConfig != null;
+    }
+
+    public static void AddOption(this Yarn.Dialogue dialogue, DialogueUtil.DredgeOption option)
+    {
+        List<ValueTuple<Line, string, bool>> currentOptions = Traverse.Create(dialogue)
+            .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
+        currentOptions.Add(option);
+    }
+
+    public static void AddOptions(this Yarn.Dialogue dialogue, params DialogueUtil.DredgeOption[] options)
+    {
+        List<ValueTuple<Line, string, bool>> currentOptions = Traverse.Create(dialogue)
+            .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
+        currentOptions.AddRange(options.Select(option => (ValueTuple<Line, string, bool>)option));
     }
     #endregion
 

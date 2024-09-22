@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Google.Protobuf.WellKnownTypes;
-using HarmonyLib;
-using Sirenix.Utilities;
 using UnityEngine;
 using Winch.Core;
 using Winch.Core.API;
 using Winch.Data.Boat;
-using Winch.Data.GridConfig;
 using Winch.Serialization.Boat;
-using Winch.Serialization.GridConfig;
-using Yarn;
 
 namespace Winch.Util;
 
@@ -297,18 +291,18 @@ public static class BoatUtil
     internal static void AddModdedFlagPageOptions(int moddedFlagPageNumber)
     {
         WinchCore.Log.Error("AddModdedFlagPageOptions " + moddedFlagPageNumber);
-        List<ValueTuple<Line, string, bool>> currentOptions = Traverse.Create(GameManager.Instance.DialogueRunner.Dialogue)
-            .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
+        List<DialogueUtil.DredgeOption> options = new List<DialogueUtil.DredgeOption>();
         foreach (BoatFlagData flagData in GetFlagsForModdedPage(moddedFlagPageNumber))
         {
-            currentOptions.Add(new DialogueUtil.DredgeOption(flagData.localizedNameKey, flagData.id, GetHasFlag(flagData.id)));
+            options.Add(new DialogueUtil.DredgeOption(flagData.localizedNameKey, flagData.id, GetHasFlag(flagData.id)));
         }
+        GameManager.Instance.DialogueRunner.Dialogue.AddOptions(options.ToArray());
     }
 
     public static bool GetHasPaint(string paintId) => GameManager.Instance.SaveData.GetBoolVariable($"has-paint-{paintId}");
     public static void SetHasPaint(string paintId, bool hasPaint) => GameManager.Instance.SaveData.SetBoolVariable($"has-paint-{paintId}", hasPaint);
 
-    private static Coroutine ShowPaintGrid(string paintId)
+    public static Coroutine ShowPaintGrid(string paintId)
     {
         WinchCore.Log.Debug($"ShowPaintGrid({paintId})");
         if (TryGetBoatPaintData(paintId, out BoatPaintData boatPaintData))
@@ -344,16 +338,16 @@ public static class BoatUtil
     internal static void AddModdedPaintPageOptions(int moddedColorPageNumber)
     {
         WinchCore.Log.Error("AddModdedPaintPageOptions " + moddedColorPageNumber);
-        List<ValueTuple<Line, string, bool>> currentOptions = Traverse.Create(GameManager.Instance.DialogueRunner.Dialogue)
-            .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
+        List<DialogueUtil.DredgeOption> options = new List<DialogueUtil.DredgeOption>();
         foreach (BoatPaintData paintData in GetPaintsForModdedPage(moddedColorPageNumber))
         {
-            currentOptions.Add(new DialogueUtil.DredgeOption(paintData.localizedNameKey, paintData.id, true));
+            options.Add(new DialogueUtil.DredgeOption(paintData.localizedNameKey, paintData.id, true));
             if (GetHasPaint(paintData.id))
                 DialogueUtil.SetLineMetadata(paintData.localizedNameKey, "repeat", "paint");
             else
                 DialogueUtil.SetLineMetadata(paintData.localizedNameKey, "quest", "repeat");
         }
+        GameManager.Instance.DialogueRunner.Dialogue.AddOptions(options.ToArray());
     }
 
     public static string GetIdOfFlagInInventoryAndStorage()
