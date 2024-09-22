@@ -368,18 +368,25 @@ public static class BoatUtil
 
     public static void ChangeBoatFlag(string flagId)
     {
-        WinchCore.Log.Debug($"ChangeBoatFlag({flagId})");
-        if (TryGetBoatFlagData(flagId, out BoatFlagData boatFlagData))
+        try
         {
-            bool isVanilla = boatFlagData is VanillaBoatFlagData;
-            int flagIndex = boatFlagData is VanillaBoatFlagData vanilla ? vanilla.Index : -1;
-            GameManager.Instance.SaveData.BoatFlagStyle = flagIndex;
-            SaveUtil.ActiveSaveData.SetBoatFlagStyle(isVanilla ? string.Empty : flagId);
-            GameEvents.Instance.TriggerBoatFlagChanged(flagIndex);
-            DredgeEvent.TriggerBoatFlagChanged(flagId);
+            WinchCore.Log.Debug($"ChangeBoatFlag({flagId})");
+            if (TryGetBoatFlagData(flagId, out BoatFlagData boatFlagData))
+            {
+                bool isVanilla = boatFlagData is VanillaBoatFlagData;
+                int flagIndex = boatFlagData is VanillaBoatFlagData vanilla ? vanilla.Index : -1;
+                GameManager.Instance.SaveData.BoatFlagStyle = flagIndex;
+                SaveUtil.ActiveSaveData.SetBoatFlagStyle(isVanilla ? string.Empty : flagId);
+                GameEvents.Instance.TriggerBoatFlagChanged(flagIndex);
+                DredgeEvent.TriggerBoatFlagChanged(flagId);
+            }
+            else
+                WinchCore.Log.Error($"{flagId} is an invalid flag ID!");
         }
-        else
-            WinchCore.Log.Error($"{flagId} is an invalid flag ID!");
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
     }
 
     public static void ChangeBoatColor(BoatArea area, string paintId)
