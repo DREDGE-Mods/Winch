@@ -118,18 +118,91 @@ internal static class RecipePatcher
     public static void RecipeEntry_Awake_Prefix(RecipeEntry __instance)
     {
         __instance.spatialItemTooltipRequester.GetOrAddComponent<ModdedRecipeTooltipRequester>().enabled = false;
+        var upgrade = __instance.upgradeTooltipRequester;
+        var upgradeRecipe = upgrade.GetOrAddComponent<UpgradeRecipeTooltipRequester>();
+        upgradeRecipe.enabled = false;
+        __instance.upgradeTooltipRequester = upgradeRecipe;
+        upgrade.DestroyImmediate();
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.OnRecipeEntryClicked))]
     public static bool RecipeEntry_OnRecipeEntryClicked_Prefix(RecipeEntry __instance)
     {
+        if (__instance.recipeData is HullRecipeData hullRecipeData && GameManager.Instance.SaveData.GetIsUpgradeOwned(hullRecipeData.hullUpgradeData))
+        {
+            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", hullRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), hullRecipeData.hullUpgradeData.tier);
+            return false;
+        }
         if (__instance.recipeData is ModdedRecipeData moddedRecipeData && moddedRecipeData.IsOneTimeAndAlreadyOwned())
         {
             GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", moddedRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS));
             return false;
         }
         return true;
+    }
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(BannerUI), nameof(BannerUI.ShowUpgrade))]
+    public static IEnumerable<CodeInstruction> BannerUI_ShowUpgrade_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        var matcher = new CodeMatcher(instructions, generator);
+
+        matcher.Start().MatchEndForward(
+            new CodeMatch(OpCodes.Ldarg_1),
+            new CodeMatch(OpCodes.Isinst, typeof(HullUpgradeData)), 
+            new CodeMatch(OpCodes.Brfalse),
+            new CodeMatch(OpCodes.Ldarg_0),
+            new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(BannerUI), nameof(BannerUI.image)))
+        ).Advance(1);
+        var hullStart = matcher.Pos;
+        matcher.MatchEndForward(
+            new CodeMatch(OpCodes.Ldarg_1),
+            new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(UpgradeData), nameof(UpgradeData.tier))),
+            new CodeMatch(OpCodes.Ldc_I4_2),
+            new CodeMatch(OpCodes.Sub)
+        ).Advance(1);
+        var hullEnd = matcher.Pos;
+        matcher.Start().RemoveInstructionsWithOffsets(hullStart, hullEnd).Advance(hullStart).Insert(
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(HullUpgradeData)),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(HullUpgradeData), nameof(HullUpgradeData.hullSprite)))
+        );
+
+        return matcher.InstructionEnumeration();
+    }
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(TooltipUI), nameof(TooltipUI.OnUITooltipRequested))]
+    public static IEnumerable<CodeInstruction> TooltipUI_OnUITooltipRequested_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        var matcher = new CodeMatcher(instructions, generator);
+
+        matcher.Start().MatchStartForward(
+            new CodeMatch(OpCodes.Ldarg_1),
+            new CodeMatch(OpCodes.Isinst, typeof(UpgradeTooltipRequester)),
+            new CodeMatch(OpCodes.Brfalse)
+        ).CreateLabel(out Label notUpgradeRecipe);
+
+        matcher.Insert(
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(UpgradeRecipeTooltipRequester)),
+            new CodeInstruction(OpCodes.Brfalse_S, notUpgradeRecipe),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(UpgradeRecipeTooltipRequester)),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(WinchExtensions), nameof(WinchExtensions.ConstructUpgradeTooltip),
+                new System.Type[2] { typeof(TooltipUI), typeof(UpgradeRecipeTooltipRequester) })),
+            new CodeInstruction(OpCodes.Ret)
+        ).CreateLabel(out Label toUpgradeRecipe);
+
+        matcher.MatchEndBackwards(
+            new CodeMatch(OpCodes.Ldarg_1),
+            new CodeMatch(OpCodes.Isinst),
+            new CodeMatch(OpCodes.Brfalse)
+        ).Operand = toUpgradeRecipe;
+
+        return matcher.InstructionEnumeration();
     }
 
     [HarmonyPrefix]
@@ -176,6 +249,30 @@ internal static class RecipePatcher
     public static IEnumerable<CodeInstruction> RecipeEntry_RefreshUI_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions, generator);
+
+        matcher.Start().MatchStartForward(
+            new CodeMatch(OpCodes.Ldarg_0),
+            new CodeMatch(OpCodes.Ldsfld, AccessTools.Field(typeof(GameManager), nameof(GameManager.Instance))),
+            new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(GameManager), nameof(GameManager.SaveData))),
+            new CodeMatch(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(SaveData), nameof(SaveData.HullTier)))
+        );
+        var hullStart = matcher.Pos;
+        matcher.MatchEndForward(
+            new CodeMatch(OpCodes.Clt),
+            new CodeMatch(OpCodes.Ldc_I4_0),
+            new CodeMatch(OpCodes.Ceq)
+        );
+        var hullEnd = matcher.Pos;
+        matcher.Start().RemoveInstructionsWithOffsets(hullStart, hullEnd).Advance(hullStart).Insert(
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(GameManager), nameof(GameManager.Instance))),
+            new CodeInstruction(OpCodes.Callvirt, AccessTools.PropertyGetter(typeof(GameManager), nameof(GameManager.SaveData))),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.recipeData))),
+            new CodeInstruction(OpCodes.Isinst, typeof(HullRecipeData)),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(HullRecipeData), nameof(HullRecipeData.hullUpgradeData))),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(SaveData), nameof(SaveData.GetIsUpgradeOwned)))
+        );
 
         matcher.Start().MatchStartForward(
             new CodeMatch(OpCodes.Ldarg_0),
@@ -238,12 +335,24 @@ internal static class RecipePatcher
         moddedRecipeTooltipRequester.RecipeData = recipeData;
     }
 
+    internal static void EnableHullRecipeTooltipRequester(RecipeEntry entry, HullRecipeData recipeData)
+    {
+        entry.spatialItemTooltipRequester.enabled = false;
+        entry.abilityTooltipRequester.enabled = false;
+        var upgradeRecipe = entry.upgradeTooltipRequester as UpgradeRecipeTooltipRequester;
+        upgradeRecipe.recipeData = recipeData;
+        upgradeRecipe.upgradeData = recipeData.hullUpgradeData;
+        upgradeRecipe.enabled = true;
+        DisableModdedRecipeTooltipRequester(entry);
+    }
+
     [HarmonyTranspiler]
     [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.Init), new System.Type[1] { typeof(RecipeData) })]
     public static IEnumerable<CodeInstruction> RecipeEntry_Init_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
     {
         var matcher = new CodeMatcher(instructions, generator);
 
+        var notUpgrade = generator.DefineLabel();
         var notModded = generator.DefineLabel();
         matcher.Start().MatchStartForward(
             new CodeMatch(OpCodes.Ldarg_0),
@@ -272,6 +381,19 @@ internal static class RecipePatcher
             new CodeInstruction(OpCodes.Ldarg_1)
         ).Advance(-1);
         matcher.Labels = new List<Label> { notAbility };
+        matcher.Advance(1).InsertAndAdvance(
+            new CodeInstruction(OpCodes.Isinst, typeof(HullRecipeData)),
+            new CodeInstruction(OpCodes.Brfalse_S, notUpgrade),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(HullRecipeData)),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RecipePatcher), nameof(EnableHullRecipeTooltipRequester)))
+        );
+        matcher.InsertAndAdvance(
+            new CodeInstruction(OpCodes.Br_S, end),
+            new CodeInstruction(OpCodes.Ldarg_1)
+        ).Advance(-1);
+        matcher.Labels = new List<Label> { notUpgrade };
         matcher.Advance(1).InsertAndAdvance(
             new CodeInstruction(OpCodes.Isinst, typeof(ModdedRecipeData)),
             new CodeInstruction(OpCodes.Brfalse_S, notModded),

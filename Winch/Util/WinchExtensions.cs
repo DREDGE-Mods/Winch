@@ -352,19 +352,25 @@ public static class WinchExtensions
     }
 
     public static void ShowNotificationWithItemName(this UIController UI, NotificationType notificationType, string notificationKey, LocalizedString itemNameKey, DredgeColorTypeEnum itemNameColor)
+        => UI.ShowNotificationWithItemName(notificationType, notificationKey, itemNameKey, itemNameColor.GetColor());
+
+    public static void ShowNotificationWithItemName(this UIController UI, NotificationType notificationType, string notificationKey, LocalizedString itemNameKey, Color itemNameColor, params object[] arguments)
     {
-        LocalizationSettings.StringDatabase.GetLocalizedStringAsync(itemNameKey.TableReference, itemNameKey.TableEntryReference, null, FallbackBehavior.UseProjectSettings, Array.Empty<object>()).Completed += delegate (AsyncOperationHandle<string> op)
+        AsyncOperationHandle<string> localizedStringAsync = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(itemNameKey.TableReference, itemNameKey.TableEntryReference, null, FallbackBehavior.UseProjectSettings, arguments);
+        localizedStringAsync.Completed += delegate (AsyncOperationHandle<string> op)
+        {
+            UI.ShowNotification(notificationType, notificationKey, new object[1] { "<color=#" + ColorUtility.ToHtmlStringRGB(itemNameColor) + ">" + op.Result + "</color>" });
+        };
+    }
+
+    public static void ShowNotification(this UIController UI, NotificationType notificationType, string table, string key, params object[] arguments)
+    {
+        AsyncOperationHandle<string> localizedStringAsync = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(table, key, null, FallbackBehavior.UseProjectSettings, arguments);
+        localizedStringAsync.Completed += delegate (AsyncOperationHandle<string> op)
         {
             if (op.Status == AsyncOperationStatus.Succeeded)
             {
-                GameManager.Instance.UI.ShowNotification(notificationType, notificationKey, new object[] { string.Concat(new string[]
-                {
-                    "<color=#",
-                    GameManager.Instance.LanguageManager.GetColorCode(itemNameColor),
-                    ">",
-                    op.Result,
-                    "</color>"
-                }) });
+                GameEvents.Instance.TriggerNotification(notificationType, op.Result);
             }
         };
     }
@@ -1253,6 +1259,30 @@ public static class WinchExtensions
     public static RecipeListDestinationTier GetRecipeListTier(this ConstructableDestinationData constructableDestinationData, BuildingTierId tierId)
     {
         return constructableDestinationData.tiers.GetRecipeListTier(tierId);
+    }
+
+    public static void ConstructUpgradeTooltip(this TooltipUI tooltipUI, UpgradeRecipeTooltipRequester tooltipRequester)
+        => tooltipUI.ConstructUpgradeTooltip(tooltipRequester.upgradeData, tooltipRequester.recipeData);
+
+    public static void ConstructUpgradeTooltip(this TooltipUI tooltipUI, UpgradeData upgradeData, RecipeData recipeData)
+    {
+        tooltipUI.PrepareForTooltipShow();
+        tooltipUI.activeTooltipSections.Add(tooltipUI.itemHeaderWithIcon);
+        tooltipUI.itemHeaderWithIcon.Init(upgradeData);
+        tooltipUI.activeTooltipSections.Add(tooltipUI.description);
+        tooltipUI.description.Init(upgradeData);
+        if (recipeData != null && !GameManager.Instance.SaveData.GetIsUpgradeOwned(upgradeData))
+        {
+            tooltipUI.activeTooltipSections.Add(tooltipUI.upgradeCost);
+            tooltipUI.upgradeCost.Init(recipeData);
+        }
+        tooltipUI.activeTooltipSections.Add(tooltipUI.controlPrompts);
+        tooltipUI.controlPrompts.Init();
+        if (tooltipUI.layoutCoroutine != null)
+        {
+            tooltipUI.StopCoroutine(tooltipUI.layoutCoroutine);
+        }
+        tooltipUI.layoutCoroutine = tooltipUI.StartCoroutine(tooltipUI.DoUpdateLayoutGroups());
     }
 
     public static bool TryGetGridConfigForKey(this GameConfigData gameConfigData, GridKey key, out GridConfiguration gridConfig)

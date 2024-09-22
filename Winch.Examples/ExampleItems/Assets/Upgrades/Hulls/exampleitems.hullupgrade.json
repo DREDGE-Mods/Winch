@@ -1,2 +1,5 @@
 ﻿{
+    //WIP,
+    "titleKey": "upgrades.hull-upgrade-title",
+    "descriptionKey": "upgrades.hull-upgrade-description.no-hp"
 }

@@ -7,6 +7,8 @@ public class HullUpgradeDataConverter : UpgradeDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "titleKey", new(LocalizationUtil.CreateStringsReference("upgrades.hull-upgrade-title"), null) },
+        { "descriptionKey", new(LocalizationUtil.CreateStringsReference("upgrades.hull-upgrade-description.no-hp"), null) },
         { "hullGridConfiguration", new( string.Empty, null) },
         { "engineAudioClip", new(AddressablesUtil.EmptyAssetReference, o=>DredgeTypeHelpers.ParseAudioReference(o.ToString())) },
         { "newCellCount", new(0, o=>int.Parse(o.ToString())) },
