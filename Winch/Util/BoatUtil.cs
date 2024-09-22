@@ -519,4 +519,14 @@ public static class BoatUtil
             WinchCore.Log.Error($"No boat flag data converter found");
         }
     }
+
+    public static BoatPaintData[] GetAllBoatPaintData()
+    {
+        return VanillaBoatPaintDataDict.Values.Concat(ModdedBoatPaintDataDict.Values).ToArray();
+    }
+
+    public static BoatFlagData[] GetAllBoatFlagData()
+    {
+        return VanillaBoatFlagDataDict.Values.Concat(ModdedBoatFlagDataDict.Values).ToArray();
+    }
 }
