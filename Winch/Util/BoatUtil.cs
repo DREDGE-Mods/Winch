@@ -195,26 +195,34 @@ public static class BoatUtil
             VanillaBoatFlagDataDict.Add(flagData.id, flagData);
             VanillaBoatFlagDataIndexDict.Add(index, flagData);
         }
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", 49, Yarn.Instruction.Types.OpCode.AddOption, "line:01b7c6c", "JumpToModdedPaintPage", 0, false);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, "JumpToModdedPaintPage", Yarn.Instruction.Types.OpCode.PushFloat, 1);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$modded_color_page_number");
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Page_Modded");
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_customization_return_path");
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Pre");
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.RunNode);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop);
-        DialogueUtil.AddInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Stop);
+        DialogueUtil.AddInstructions(
+            // insert at 49 which is the back option
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", 49, Yarn.Instruction.Types.OpCode.AddOption, "line:01b7c6c", "JumpToModdedPaintPage", 0, false),
+            // use -1 to insert at end
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, "JumpToModdedPaintPage", Yarn.Instruction.Types.OpCode.PushFloat, 1),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$modded_flag_page_number"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Page_Modded"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_customization_return_path"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Pre"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.RunNode),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Pop),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_2", -1, Yarn.Instruction.Types.OpCode.Stop)
+        );
 
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", 23, Yarn.Instruction.Types.OpCode.AddOption, "line:0f9e0dd", "JumpToModdedFlagPage", 0, false);
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, "JumpToModdedFlagPage", Yarn.Instruction.Types.OpCode.PushFloat, 1);
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$modded_flag_page_number");
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Pop);
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_FlagModded");
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.RunNode);
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Pop);
-        DialogueUtil.AddInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Stop);
+        DialogueUtil.AddInstructions(
+            // insert at 23 which is the back option
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", 23, Yarn.Instruction.Types.OpCode.AddOption, "line:0f9e0dd", "JumpToModdedFlagPage", 0, false),
+            // use -1 to insert at end
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, "JumpToModdedFlagPage", Yarn.Instruction.Types.OpCode.PushFloat, 1),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$modded_flag_page_number"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Pop),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_FlagModded"),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.RunNode),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Pop),
+            new DialogueUtil.DredgeInstruction("Painter_Customize_Flag2", -1, Yarn.Instruction.Types.OpCode.Stop)
+        );
         DredgeEvent.OnDialogueRunnerLoaded += OnDialogueRunnerLoaded;
     }
 
@@ -222,24 +230,30 @@ public static class BoatUtil
     {
         foreach (var (id, paintData) in ModdedBoatPaintDataDict)
         {
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, id, Yarn.Instruction.Types.OpCode.PushString, id);
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_customization_color_index");
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Pop);
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Selected");
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.RunNode);
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Pop);
-            DialogueUtil.AddInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Stop);
+            DialogueUtil.AddInstructions(
+                // use -1 to insert at end
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, id, Yarn.Instruction.Types.OpCode.PushString, id),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_customization_color_index"),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Pop),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Color_Selected"),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.RunNode),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Pop),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_Color_Page_Modded", -1, Yarn.Instruction.Types.OpCode.Stop)
+            );
             DialogueUtil.AddLineMetadata(paintData.localizedNameKey, "quest", "repeat");
         }
         foreach (var (id, flagData) in ModdedBoatFlagDataDict)
         {
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, id, Yarn.Instruction.Types.OpCode.PushString, id);
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_flag_index");
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Pop);
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Flag_Selected");
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.RunNode);
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Pop);
-            DialogueUtil.AddInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Stop);
+            DialogueUtil.AddInstructions(
+                // use -1 to insert at end
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, id, Yarn.Instruction.Types.OpCode.PushString, id),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.StoreVariable, "$boat_flag_index"),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Pop),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.PushString, "Painter_Customize_Flag_Selected"),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.RunNode),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Pop),
+                new DialogueUtil.DredgeInstruction("Painter_Customize_FlagModded", -1, Yarn.Instruction.Types.OpCode.Stop)
+            );
             DialogueUtil.AddLineMetadata(flagData.localizedNameKey, "repeat");
         }
     }
