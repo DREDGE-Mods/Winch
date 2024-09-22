@@ -10,7 +10,7 @@
             "damageImmune": true
         }
     ],
-    "mainItemData": "crate",
+    "mainItemData": "exampleitems.diamond",
     "mainItemType": "ALL",
     "mainItemSubtype": "ALL",
     "itemsInThisBelongToPlayer": false,

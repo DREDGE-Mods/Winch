@@ -8,7 +8,7 @@
     "presetGrid": {
         "spatialItems": [
             {
-                "id": "crate",
+                "id": "exampleitems.diamond",
                 "x": 0,
                 "y": 0,
                 "z": 0
@@ -21,7 +21,7 @@
     "completeConditions": [
         {
             "type": "ItemCount",
-            "item": "crate",
+            "item": "exampleitems.diamond",
             "count": 1
         }
     ]
