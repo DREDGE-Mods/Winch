@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
+using UnityEngine;
 using Winch.Components;
 using Winch.Data.Recipe;
 using Winch.Util;
@@ -13,6 +14,20 @@ namespace Winch.Patches.API;
 [HarmonyPatch]
 internal static class RecipePatcher
 {
+    /// <summary>
+    /// Resize golden outline based on grid config size
+    /// </summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(ItemProductPanel), nameof(ItemProductPanel.Show))]
+    public static void ItemProductPanel_Show_Postfix(ItemProductPanel __instance)
+    {
+        var gridConfig = __instance.questGridConfig.gridConfiguration;
+        var width = gridConfig.columns / 4f;
+        var height = gridConfig.rows / 4f;
+        var goldenSquareOutline = (RectTransform)(__instance.gridUI.transform.Find("BackgroundImage"));
+        goldenSquareOutline.localScale = new Vector3(width, height, 1);
+    }
+
     [HarmonyTranspiler]
     [HarmonyPatch(typeof(ConstructableDestinationUI), nameof(ConstructableDestinationUI.OnRecipeGridPanelExitEvent))]
     public static IEnumerable<CodeInstruction> ConstructableDestinationUI_OnRecipeGridPanelExitEvent_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
