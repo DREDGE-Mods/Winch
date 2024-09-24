@@ -14,18 +14,22 @@ namespace Winch.Patches.API;
 [HarmonyPatch]
 internal static class RecipePatcher
 {
-    /// <summary>
-    /// Resize golden outline based on grid config size
-    /// </summary>
     [HarmonyPostfix]
     [HarmonyPatch(typeof(ItemProductPanel), nameof(ItemProductPanel.Show))]
     public static void ItemProductPanel_Show_Postfix(ItemProductPanel __instance)
     {
+        // Resize golden outline based on grid config size.
         var gridConfig = __instance.questGridConfig.gridConfiguration;
         var width = gridConfig.columns / 4f;
         var height = gridConfig.rows / 4f;
         var goldenSquareOutline = (RectTransform)(__instance.gridUI.transform.Find("BackgroundImage"));
         goldenSquareOutline.localScale = new Vector3(width, height, 1);
+
+        // Change y position of header based on grid config height.
+        var diff = Mathf.Max(0, gridConfig.rows - 4f);
+        var header = (RectTransform)(__instance.container.transform.Find("ItemProductHeaderText"));
+        header.SetAnchoredPosY(250f + ((50 / 3f) * diff));
+
     }
 
     [HarmonyTranspiler]
