@@ -62,7 +62,7 @@ internal class WinchBehaviour : USingleton<WinchBehaviour>
     private void OnGameStarted()
     {
         WinchCore.Log.Debug("[WinchBehaviour] OnGameStarted()");
-        GameEvents.Instance.OnItemDestroyed -= OnItemDestroyed;
+        GameEvents.Instance.OnItemDestroyed += OnItemDestroyed;
     }
 
     private void OnGameEnded()
@@ -97,6 +97,7 @@ internal class WinchBehaviour : USingleton<WinchBehaviour>
             StartCoroutine(FindAndRegenItemSpot(spatialItemData));
         }
     }
+
     private IEnumerator FindAndRegenItemSpot(ItemData itemData)
     {
         List<ItemPOI> itemPOIs = (from itemPOI in UnityEngine.Object.FindObjectsOfType<ItemPOI>(includeInactive: true).ToList()
