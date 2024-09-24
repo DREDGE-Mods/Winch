@@ -277,6 +277,26 @@ public static class WinchExtensions
         }
     }
 
+    public static IEnumerator FindAndRegenHarvestAndItemSpots(this ItemManager itemManager, ItemData itemData)
+    {
+        List<HarvestPOI> harvestPOIs = (from harvestPOI in UnityEngine.Object.FindObjectsOfType<HarvestPOI>(includeInactive: true).ToList()
+                                        where harvestPOI.Harvestable.ContainsItem(itemData)
+                                        select harvestPOI).ToList();
+        HarvestPOI? targetHarvestPOI = harvestPOIs.Reduce<HarvestPOI, HarvestPOI?>((targetPOI, p) => (targetPOI == null || (targetPOI != null && p.Stock < targetPOI.Stock)) ? p : targetPOI);
+        if (targetHarvestPOI != null)
+            targetHarvestPOI.AddStock(1);
+        else
+        {
+            List<ItemPOI> itemPOIs = (from itemPOI in UnityEngine.Object.FindObjectsOfType<ItemPOI>(includeInactive: true).ToList()
+                                      where itemPOI.Harvestable.ContainsItem(itemData)
+                                      select itemPOI).ToList();
+            ItemPOI? targetItemPOI = itemPOIs.Reduce<ItemPOI, ItemPOI?>((targetPOI, p) => (targetPOI == null || (targetPOI != null && p.Stock < targetPOI.Stock)) ? p : targetPOI);
+            if (targetItemPOI != null)
+                targetItemPOI.AddStock();
+        }
+        yield return null;
+    }
+
     /// <summary>
     /// Retrieves the color currently selected for this enum by the player in their settings.
     /// </summary>

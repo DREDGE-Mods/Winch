@@ -1,12 +1,14 @@
-﻿using HarmonyLib;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using HarmonyLib;
 using Winch.Core;
 using Winch.Core.API;
 
 namespace Winch.Patches.API;
 
-[HarmonyPatch(typeof(ItemPOIHandler))]
-[HarmonyPatch(nameof(ItemPOIHandler.OnPressComplete))]
-public static class ItemPOIHandlerPatcher
+[HarmonyPatch]
+internal static class ItemPOIPatcher
 {
     public static bool SpatialItemFixer(ItemInstance itemInstance)
     {
@@ -22,7 +24,9 @@ public static class ItemPOIHandlerPatcher
     /// I made a transpiler for this but it ended up never working. It was fine when I did the exact thing in dnSpy but for whatever reason Harmony just spat out "Invalid IL Code".
     /// So I gave in and just went for the prefix instead.
     /// </summary>
-    public static bool Prefix(ItemPOIHandler __instance)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ItemPOIHandler), nameof(ItemPOIHandler.OnPressComplete))]
+    public static bool ItemPOIHandler_OnPressComplete_Prefix(ItemPOIHandler __instance)
     {
         WinchCore.Log.Debug("[ItemPOIHandler] OnPressComplete()");
 
@@ -69,6 +73,23 @@ public static class ItemPOIHandlerPatcher
         else
             GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.quick-move-failed");
 
+        return false;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ItemManager), nameof(ItemManager.OnItemDestroyed))]
+    public static bool ItemManager_OnItemDestroyed_Prefix(ItemManager __instance, ItemData itemData, bool playerDestroyed)
+    {
+        if ((itemData is HarvestableItemData harvestableItemData && harvestableItemData.regenHarvestSpotOnDestroy) || itemData is not HarvestableItemData)
+            __instance.StartCoroutine(__instance.FindAndRegenHarvestSpot(itemData));
+        return false;
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(ItemManager), nameof(ItemManager.FindAndRegenHarvestSpot))]
+    public static bool ItemManager_FindAndRegenHarvestSpot_Postfix(ItemManager __instance, ItemData itemData, ref IEnumerator __result)
+    {
+        __result = __instance.FindAndRegenHarvestAndItemSpots(itemData);
         return false;
     }
 }
