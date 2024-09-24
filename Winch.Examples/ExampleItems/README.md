@@ -2,13 +2,27 @@
 
 An example of using Winch to add items and points of interest (POIs) to the game.
 
-### All The Items
+##### This mod is ONLY made for other modders to reference.
+
+## Features
+
+### Items
 Example items include a cod (+ its aberrations salmon and tropical), diamond, heart of the sea, nautilus shell, torch, furnace, pot, cobweb, rod, and other random items from Minecraft.
 
 ![Inventory](https://github.com/user-attachments/assets/fe08b9d6-fec5-421a-8aaf-4021c035c4a1)
 
-### Location
+### Points of Interest
 You can find the POIs right by Gale Cliff's Merchant Pontoon.
+
+### Docks
+![Circle Island](https://github.com/user-attachments/assets/c35424ae-1986-4191-9cc7-6026e22b193e)
+- Characters
+- Market
+- Constructable with Recipes
+
+### Boat Customization
+- Example white flag
+- Example white paint
 
 ### Encyclopedia
 The four things in the encyclopedia.

@@ -92,7 +92,7 @@
     "exampleitems.flag.name": "White Flag",
     "exampleitems.flag.desc": "A flag with nothing on it.",
     "exampleitems.flag.option": "White flag.",
-    "exampleitems.color.option": "Salmon Pink.",
+    "exampleitems.color.option": "White paint.",
 
     "exampleconfig.input": "Input",
     "exampleconfig.output": "Output",
@@ -147,5 +147,7 @@
     "line:exampleitems.tier4": "Tier 4",
     "line:exampleitems.tier4desc": "Tier 4 Description",
     "line:exampleitems.tier4unbuilt": "Tier 4 Unbuilt",
-    "line:exampleitems.tier4built": "Tier 4 Built"
+    "line:exampleitems.tier4built": "Tier 4 Built",
+
+    "line:exampleitems.whatwasthisplace": "I have no idea."
 }
