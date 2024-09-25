@@ -325,7 +325,7 @@ public static class EnumUtil
 
         if (!TryGetRawPatch(enumType, out var patch))
         {
-            patch = new EnumPatch();
+            patch = new EnumPatch(enumType);
             patches.Add(enumType, patch);
         }
 
@@ -425,7 +425,7 @@ public static class EnumUtil
     public static bool IsDynamic<T>(object value) where T : Enum => IsDynamic(typeof(T), value);
 
     /// <summary>
-    /// Check if it is a custom enum value
+    /// Check if it is a custom enum name
     /// </summary>
     /// <param name="enumType">Type of the enum</param>
     /// <param name="name">Name of the enum value</param>
@@ -454,7 +454,7 @@ public static class EnumUtil
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
 
         ulong uvalue = value.ToFriendlyValue();
-        return TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasValue(uvalue);
+        return TryGetRawPatch(enumType, out EnumPatch patch) && !patch.HasOriginalValue(uvalue);
     }
 
     /// <summary>
@@ -482,7 +482,7 @@ public static class EnumUtil
     public static bool IsStatic<T>(object value) where T : Enum => IsStatic(typeof(T), value);
 
     /// <summary>
-    /// Check if it is <b>not</b> a custom enum value
+    /// Check if it is <b>not</b> a custom enum name
     /// </summary>
     /// <param name="enumType">Type of the enum</param>
     /// <param name="name">Name of the enum value</param>
@@ -494,7 +494,7 @@ public static class EnumUtil
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
 
-        return !IsDynamic(enumType, name);
+        return TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasOriginalName(name);
     }
 
     /// <summary>
@@ -510,7 +510,8 @@ public static class EnumUtil
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
 
-        return !IsDynamic(enumType, value);
+        ulong uvalue = value.ToFriendlyValue();
+        return TryGetRawPatch(enumType, out EnumPatch patch) && patch.HasOriginalValue(uvalue);
     }
 
     private static bool TryAsNumber(this object value, Type type, out object result)
@@ -645,7 +646,15 @@ public static class EnumUtil
 
     private class EnumPatch
     {
+        private Dictionary<ulong, string[]> originalValues = new Dictionary<ulong, string[]>();
         private Dictionary<ulong, List<string>> values = new Dictionary<ulong, List<string>>();
+
+        public EnumPatch(Type enumType)
+        {
+            if (enumType == null) throw new ArgumentNullException("enumType");
+            if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+            originalValues = GetValues(enumType).ToDictionary(value => value.ToFriendlyValue(), value => GetSynonyms(enumType, value));
+        }
 
         public List<KeyValuePair<ulong, string>> GetPairs()
         {
@@ -658,9 +667,24 @@ public static class EnumUtil
             return pairs;
         }
 
+        public bool HasOriginalValue(ulong value)
+        {
+            return originalValues.Keys.Contains(value);
+        }
+
         public bool HasValue(ulong value)
         {
             return values.Keys.Contains(value);
+        }
+
+        public bool HasOriginalName(string name)
+        {
+            foreach (string enumName in this.originalValues.Values.SelectMany(l => l))
+            {
+                if (name.Equals(enumName))
+                    return true;
+            }
+            return false;
         }
 
         public bool HasName(string name)
@@ -1002,7 +1026,22 @@ public static class EnumUtil
     {
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
-        return System.Enum.GetValues(enumType).Cast<object>().ToArray();
+        return System.Enum.GetValues(enumType).Cast<object>().Distinct().ToArray();
+    }
+
+    /// <summary>
+    /// Gets all names of all values that are the equal to the given value.
+    /// </summary>
+    /// <param name="enumType">Type of the enum</param>
+    /// <param name="value">The value to search for synonyms of</param>
+    /// <returns>The list of names that have the same value as <paramref name="value"/>. (the list includes <paramref name="value"/>)</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="enumType"/> is <see langword="null"/></exception>
+    /// <exception cref="NotAnEnumException"><paramref name="enumType"/> is not an enum</exception>
+    public static string[] GetSynonyms(Type enumType, object value)
+    {
+        if (enumType == null) throw new ArgumentNullException("enumType");
+        if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
+        return GetNames(enumType).Where(n => Parse(enumType, n).Equals(value)).ToArray();
     }
 
     /// <summary>
@@ -1016,7 +1055,7 @@ public static class EnumUtil
     {
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
-        return Enum.GetValues(enumType).Length;
+        return GetValues(enumType).Length;
     }
 
     /// <summary>
@@ -1184,7 +1223,7 @@ public static class EnumUtil
         if (enumType == null) throw new ArgumentNullException("enumType");
         if (!enumType.IsEnum) throw new NotAnEnumException(enumType);
         if (excluded == null) throw new ArgumentNullException("excluded");
-        var values = Enum.GetValues(enumType).Cast<object>().Where(v => !excluded.Contains(v)).ToArray();
+        var values = GetValues(enumType).Where(v => !excluded.Contains(v)).ToArray();
         var item = Rng.Next(0, values.Length);
         return values.GetValue(item);
     }
@@ -1385,14 +1424,14 @@ public static class EnumUtil
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The list of all values in the enum</returns>
-    public static T[] GetValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+    public static T[] GetValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Distinct().ToArray();
 
     /// <summary>
     /// Gets all enum values in an enum, skipping the first (usually default,none) value
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The list of all values (excluding the first value) in the enum</returns>
-    public static T[] GetValuesWithoutFirst<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Skip(1).ToArray();
+    public static T[] GetValuesWithoutFirst<T>() where T : Enum => GetValues<T>().Skip(1).ToArray();
 
     /// <summary>
     /// Gets all enum values in an enum with exclusions
@@ -1400,28 +1439,36 @@ public static class EnumUtil
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <param name="excluded">Enums to exclude from the randomization</param>
     /// <returns>The list of all values in the enum</returns>
-    public static T[] GetValues<T>(params T[] excluded) where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(v => !excluded.Contains(v)).ToArray();
+    public static T[] GetValues<T>(params T[] excluded) where T : Enum => GetValues<T>().Where(v => !excluded.Contains(v)).ToArray();
 
     /// <summary>
     /// Gets all dynamic (custom) enum values in an enum
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The list of all dynamic values in the enum</returns>
-    public static T[] GetDynamicValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(IsDynamic).ToArray();
+    public static T[] GetDynamicValues<T>() where T : Enum => GetValues<T>().Where(IsDynamic).ToArray();
 
     /// <summary>
     /// Gets all static (non-custom) enum values in an enum
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The list of all static values in the enum</returns>
-    public static T[] GetStaticValues<T>() where T : Enum => Enum.GetValues(typeof(T)).Cast<T>().Where(IsStatic).ToArray();
+    public static T[] GetStaticValues<T>() where T : Enum => GetValues<T>().Where(IsStatic).ToArray();
+
+    /// <summary>
+    /// Gets all names of all values that are the equal to the given value.
+    /// </summary>
+    /// <typeparam name="T">Type of the enum</typeparam>
+    /// <param name="value">The value to search for synonyms of</param>
+    /// <returns>The list of names that have the same value as <paramref name="value"/>. (the list includes <paramref name="value"/>)</returns>
+    public static string[] GetSynonyms<T>(this T value) where T : Enum => GetNames<T>().Where(n => Parse<T>(n).Equals(value)).ToArray();
 
     /// <summary>
     /// Counts the number of enums values contained in a given enum type.
     /// </summary>
     /// <typeparam name="T">Type of the enum</typeparam>
     /// <returns>The number of enum values.</returns>
-    public static int Count<T>() where T : Enum => Enum.GetValues(typeof(T)).Length;
+    public static int Count<T>() where T : Enum => GetValues<T>().Length;
 
     /// <summary>
     /// Checks if an enum is defined.
