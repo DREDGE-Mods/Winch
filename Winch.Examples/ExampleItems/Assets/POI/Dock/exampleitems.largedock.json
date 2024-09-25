@@ -84,7 +84,7 @@
             "allowSellIfGridFull": false,
             "allowRepairs": false,
             "allowStorageAccess": true,
-            "sellValueModifier": 1.0,
+            "sellValueModifier": 0.5,
             "visitSFX": "Fishmonger - Visit",
             "marketTabs": [
                 {
