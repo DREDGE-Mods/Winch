@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using Winch.Config;
 using Winch.Core;
 using Winch.Util;
+using System.Linq;
 
 namespace Winch.Logging;
 
@@ -67,13 +68,14 @@ public class Logger
 
     private static void SetMinLogLevel(LogLevel level)
     {
+        WinchConfig.SetProperty("LogLevel", level);
     }
 
     private static void CleanupLogs()
     {
         Regex logFileRegex = new Regex(@"\d{4}-\d{2}-\d{2}-\d{2}_\d{2}\.log");
         string logBasePath = WinchConfig.GetProperty("LogsFolder", "Logs");
-        string[] allFiles = Directory.GetFiles(logBasePath);
+        string[] allFiles = AssetLoader.GetSortedFiles(logBasePath);
 
         Array.Sort(allFiles);
         List<string> logFiles = new List<string>();

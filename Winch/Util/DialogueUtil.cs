@@ -63,7 +63,7 @@ public static class DialogueUtil
 
     internal static void LoadDialogueFiles(string dialogueFolderPath)
     {
-        string[] yarnFiles = Directory.GetFiles(dialogueFolderPath).Where(f => f.EndsWith(".yarn")).ToArray();
+        string[] yarnFiles = AssetLoader.GetSortedFiles(dialogueFolderPath, "*.yarn");
 
         FixDialogueFiles(yarnFiles);
 
@@ -260,7 +260,7 @@ public static class DialogueUtil
     /// </summary>
     internal static void LoadLocalizedLines(string dialogueFolderPath)
     {
-        string[] csvFiles = Directory.GetFiles(dialogueFolderPath).Where(f => f.EndsWith(".csv")).ToArray();
+        string[] csvFiles = AssetLoader.GetSortedFiles(dialogueFolderPath, "*.csv");
 
         foreach (var linesPath in csvFiles)
         {

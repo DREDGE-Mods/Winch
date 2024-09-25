@@ -11,6 +11,7 @@ using Winch.Data.POI.Dock;
 using Winch.Data.POI.Harvest;
 using Winch.Data.Upgrade;
 using Winch.Data.Recipe;
+using System.Linq;
 
 namespace Winch.Core;
 
@@ -119,9 +120,35 @@ internal static class AssetLoader
         if(Directory.Exists(flagFolderpath)) LoadBoatFlagFiles(flagFolderpath);
     }
 
+    /// <summary>
+    /// <see cref="AlphanumComparer"/>
+    /// </summary>
+    public static string[] GetSortedFiles(IEnumerable<string> files)
+    {
+        return files.OrderBy(file => Path.GetFileNameWithoutExtension(file), AlphanumComparer.Instance).ToArray();
+    }
+
+    /// <inheritdoc cref="Directory.GetFiles(string)"/>
+    public static string[] GetSortedFiles(string path)
+    {
+        return GetSortedFiles(Directory.GetFiles(path));
+    }
+
+    /// <inheritdoc cref="Directory.GetFiles(string, string)"/>
+    public static string[] GetSortedFiles(string path, string searchPattern)
+    {
+        return GetSortedFiles(Directory.GetFiles(path, searchPattern));
+    }
+
+    /// <inheritdoc cref="Directory.GetFiles(string, string, SearchOption)"/>
+    public static string[] GetSortedFiles(string path, string searchPattern, SearchOption searchOption)
+    {
+        return GetSortedFiles(Directory.GetFiles(path, searchPattern, searchOption));
+    }
+
     private static void LoadAssetBundleFiles(string bundlesFolderpath)
     {
-        string[] bundleFiles = Directory.GetFiles(bundlesFolderpath);
+        string[] bundleFiles = GetSortedFiles(bundlesFolderpath);
         foreach (string file in bundleFiles)
         {
             try
@@ -243,7 +270,7 @@ internal static class AssetLoader
 
     private static void LoadGridConfigFiles(string gridConfigFolderPath)
     {
-        string[] gridConfigFiles = Directory.GetFiles(gridConfigFolderPath);
+        string[] gridConfigFiles = GetSortedFiles(gridConfigFolderPath);
         foreach(string file in gridConfigFiles)
         {
             try
@@ -259,7 +286,7 @@ internal static class AssetLoader
 
     private static void LoadVibrationFiles(string vibrationFolderPath)
     {
-        string[] vibrationFiles = Directory.GetFiles(vibrationFolderPath);
+        string[] vibrationFiles = GetSortedFiles(vibrationFolderPath);
         foreach (string file in vibrationFiles)
         {
             try
@@ -275,7 +302,7 @@ internal static class AssetLoader
 
     private static void LoadBuildingFiles(string buildingFolderPath)
     {
-        string[] buildingFiles = Directory.GetFiles(buildingFolderPath);
+        string[] buildingFiles = GetSortedFiles(buildingFolderPath);
         foreach (string file in buildingFiles)
         {
             try
@@ -291,7 +318,7 @@ internal static class AssetLoader
 
     private static void LoadDockFiles(string dockFolderPath)
     {
-        string[] dockFiles = Directory.GetFiles(dockFolderPath);
+        string[] dockFiles = GetSortedFiles(dockFolderPath);
         foreach (string file in dockFiles)
         {
             try
@@ -307,7 +334,7 @@ internal static class AssetLoader
 
     private static void LoadMapMarkerFiles(string mapMarkerFolderPath)
     {
-        string[] mapMarkerFiles = Directory.GetFiles(mapMarkerFolderPath);
+        string[] mapMarkerFiles = GetSortedFiles(mapMarkerFolderPath);
         foreach (string file in mapMarkerFiles)
         {
             try
@@ -323,7 +350,7 @@ internal static class AssetLoader
 
     private static void LoadQuestFiles(string questFolderPath)
     {
-        string[] questFiles = Directory.GetFiles(questFolderPath, "*.*", SearchOption.TopDirectoryOnly);
+        string[] questFiles = GetSortedFiles(questFolderPath, "*.*", SearchOption.TopDirectoryOnly);
         foreach (string file in questFiles)
         {
             try
@@ -339,7 +366,7 @@ internal static class AssetLoader
 
     private static void LoadQuestStepFiles(string questStepFolderPath)
     {
-        string[] questStepFiles = Directory.GetFiles(questStepFolderPath);
+        string[] questStepFiles = GetSortedFiles(questStepFolderPath);
         foreach (string file in questStepFiles)
         {
             try
@@ -355,7 +382,7 @@ internal static class AssetLoader
 
     private static void LoadQuestGridConfigFiles(string questGridConfigFolderPath)
     {
-        string[] questGridConfigFiles = Directory.GetFiles(questGridConfigFolderPath);
+        string[] questGridConfigFiles = GetSortedFiles(questGridConfigFolderPath);
         foreach (string file in questGridConfigFiles)
         {
             try
@@ -371,7 +398,7 @@ internal static class AssetLoader
 
     private static void LoadShopFiles(string shopFolderPath)
     {
-        string[] shopFolderFiles = Directory.GetFiles(shopFolderPath);
+        string[] shopFolderFiles = GetSortedFiles(shopFolderPath);
         foreach (string file in shopFolderFiles)
         {
             try
@@ -387,7 +414,7 @@ internal static class AssetLoader
 
     private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : CustomPOI
     {
-        string[] poiFiles = Directory.GetFiles(poiFolderPath);
+        string[] poiFiles = GetSortedFiles(poiFolderPath);
         foreach(string file in poiFiles)
         {
             try
@@ -403,7 +430,7 @@ internal static class AssetLoader
 
     private static void LoadItemFilesOfType<T>(string itemFolderPath) where T : ItemData
     {
-        string[] itemFiles = Directory.GetFiles(itemFolderPath);
+        string[] itemFiles = GetSortedFiles(itemFolderPath);
         foreach (string file in itemFiles)
         {
             try
@@ -419,7 +446,7 @@ internal static class AssetLoader
 
     private static void LoadUpgradeFilesOfType<T>(string upgradeFolderPath) where T : UpgradeData, IDeferredUpgradeData
     {
-        string[] upgradeFiles = Directory.GetFiles(upgradeFolderPath);
+        string[] upgradeFiles = GetSortedFiles(upgradeFolderPath);
         foreach (string file in upgradeFiles)
         {
             try
@@ -435,7 +462,7 @@ internal static class AssetLoader
 
     private static void LoadRecipeFilesOfType<T>(string recipeFolderPath) where T : RecipeData, IDeferredRecipeData
     {
-        string[] recipeFiles = Directory.GetFiles(recipeFolderPath);
+        string[] recipeFiles = GetSortedFiles(recipeFolderPath);
         foreach (string file in recipeFiles)
         {
             try
@@ -451,7 +478,7 @@ internal static class AssetLoader
 
     private static void LoadLocalizationFiles(string localizationFolderPath)
     {
-        string[] localizationFiles = Directory.GetFiles(localizationFolderPath, "*.*", SearchOption.TopDirectoryOnly);
+        string[] localizationFiles = GetSortedFiles(localizationFolderPath, "*.*", SearchOption.TopDirectoryOnly);
         foreach (string file in localizationFiles)
         {
             try
@@ -467,7 +494,7 @@ internal static class AssetLoader
 
     private static void LoadTextureFiles(string textureFolderPath)
     {
-        string[] textureFiles = Directory.GetFiles(textureFolderPath);
+        string[] textureFiles = GetSortedFiles(textureFolderPath);
         foreach (string file in textureFiles)
         {
             try
@@ -483,7 +510,7 @@ internal static class AssetLoader
 
     private static void LoadAudioFiles(string audioFolderPath)
     {
-        string[] audioFiles = Directory.GetFiles(audioFolderPath);
+        string[] audioFiles = GetSortedFiles(audioFolderPath);
         foreach (string file in audioFiles)
         {
             try
@@ -499,7 +526,7 @@ internal static class AssetLoader
 
     private static void LoadHarvestZoneFiles(string harvestZoneFolderPath)
     {
-        string[] harvestZoneFiles = Directory.GetFiles(harvestZoneFolderPath);
+        string[] harvestZoneFiles = GetSortedFiles(harvestZoneFolderPath);
         foreach (string file in harvestZoneFiles)
         {
             try
@@ -515,7 +542,7 @@ internal static class AssetLoader
 
     private static void LoadAbilityFiles(string abilityFolderPath)
     {
-        string[] abilityFiles = Directory.GetFiles(abilityFolderPath);
+        string[] abilityFiles = GetSortedFiles(abilityFolderPath);
         foreach (string file in abilityFiles)
         {
             try
@@ -534,7 +561,7 @@ internal static class AssetLoader
         var dynamicPath = Path.Combine(worldEventFolderPath, "Dynamic");
         if (Directory.Exists(dynamicPath))
         {
-            string[] worldEventFiles = Directory.GetFiles(dynamicPath);
+            string[] worldEventFiles = GetSortedFiles(dynamicPath);
             foreach (string file in worldEventFiles)
             {
                 try
@@ -550,7 +577,7 @@ internal static class AssetLoader
         var staticPath = Path.Combine(worldEventFolderPath, "Static");
         if (Directory.Exists(staticPath))
         {
-            string[] staticWorldEventFiles = Directory.GetFiles(staticPath);
+            string[] staticWorldEventFiles = GetSortedFiles(staticPath);
             foreach (string file in staticWorldEventFiles)
             {
                 try
@@ -588,7 +615,7 @@ internal static class AssetLoader
 
     private static void LoadCharacterFiles(string charactersFolderPath)
     {
-        string[] charactersFiles = Directory.GetFiles(charactersFolderPath);
+        string[] charactersFiles = GetSortedFiles(charactersFolderPath);
         foreach (string file in charactersFiles)
         {
             try
@@ -604,7 +631,7 @@ internal static class AssetLoader
 
     private static void LoadBoatPaintFiles(string paintFolderpath)
     {
-        string[] paintFiles = Directory.GetFiles(paintFolderpath);
+        string[] paintFiles = GetSortedFiles(paintFolderpath);
         foreach (string paintFile in paintFiles)
         {
             try
@@ -620,7 +647,7 @@ internal static class AssetLoader
 
     private static void LoadBoatFlagFiles(string flagFolderpath)
     {
-        string[] flagFiles = Directory.GetFiles(flagFolderpath);
+        string[] flagFiles = GetSortedFiles(flagFolderpath);
         foreach (string flagFile in flagFiles)
         {
             try
