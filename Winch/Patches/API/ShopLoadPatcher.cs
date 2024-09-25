@@ -14,7 +14,7 @@ internal static class ShopLoadPatcher
         ShopUtil.AddModdedShopData(__instance);
         var dict = __instance.shopDataGridConfigs.ToDictionary(kvp => kvp.shopData.name, kvp => kvp.shopData);
         DredgeEvent.AddressableEvents.ShopsLoaded.Trigger(__instance, dict, true);
-        ShopUtil.PopulateShopData(__instance.shopDataGridConfigs);
+        ShopUtil.Populate(__instance);
         DredgeEvent.AddressableEvents.ShopsLoaded.Trigger(__instance, dict, false);
     }
 }

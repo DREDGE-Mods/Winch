@@ -79,7 +79,7 @@ internal class WinchBehaviour : USingleton<WinchBehaviour>
         PoiUtil.Clear();
         HarvestZoneUtil.Clear();
         CharacterUtil.ClearSpeakerData();
-        ShopUtil.ClearShopData();
+        ShopUtil.Clear();
         ConstructableBuildingUtil.Clear();
     }
 

@@ -35,13 +35,19 @@ public static class ShopUtil
         return UtilHelpers.PopulateObjectFromMeta(data, meta, DialogueLinkedShopDataConverter);
     }
 
+    private static ShopRestocker _shopRestocker;
     internal static List<string> KeepInStockItems = new();
     internal static Dictionary<GridKey, ModdedShopDataGridConfig> ModdedShopDataGridConfigDict = new();
     internal static Dictionary<GridKey, ShopDataGridConfig> AllShopDataGridConfigDict = new();
     internal static Dictionary<string, ModdedShopData> ModdedShopDataDict = new();
     internal static Dictionary<string, ShopData> AllShopDataDict = new();
 
-    public static void RegisterKeepInStockItem(string itemID) => KeepInStockItems.Add(itemID);
+    public static void RegisterKeepInStockItem(string itemID)
+    {
+        KeepInStockItems.SafeAdd(itemID);
+        if (_shopRestocker != null)
+            _shopRestocker.itemIdsToKeep.SafeAdd(itemID);
+    }
 
     public static ModdedShopData GetModdedShopData(string id)
     {
@@ -95,12 +101,20 @@ public static class ShopUtil
 
     internal static void AddModdedShopData(ShopRestocker restocker)
     {
-        restocker.itemIdsToKeep.AddRange(KeepInStockItems);
+        foreach (string itemID in KeepInStockItems)
+            restocker.itemIdsToKeep.SafeAdd(itemID);
+
         foreach (var shopData in ModdedShopDataDict.Values)
         {
             shopData.Populate();
             restocker.shopDataGridConfigs.Add(shopData.ToShopDataGridConfig());
         }
+    }
+
+    internal static void Populate(ShopRestocker restocker)
+    {
+        _shopRestocker = restocker;
+        PopulateShopData(restocker.shopDataGridConfigs);
     }
 
     internal static void PopulateShopData(IEnumerable<ShopDataGridConfig> result)
@@ -114,8 +128,9 @@ public static class ShopUtil
         }
     }
 
-    internal static void ClearShopData()
+    internal static void Clear()
     {
+        _shopRestocker = null;
         AllShopDataGridConfigDict.Clear();
         AllShopDataDict.Clear();
     }
