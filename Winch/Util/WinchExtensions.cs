@@ -1239,6 +1239,12 @@ public static class WinchExtensions
         harvestValidator.allHarvestPOIs.ForEach(harvestPOI => harvestPOI.AddStock(harvestPOI.MaxStock));
     }
 
+    public static void RestockItemSpots(this HarvestValidator harvestValidator)
+    {
+        WinchCore.Log.Debug("[HarvestValidator] RestockItemSpots()");
+        harvestValidator.allItemPOIs.ForEach(AddStock);
+    }
+
     public static int GetWidth(this IEnumerable<Vector2Int> cells)
     {
         int xMax = 0;
@@ -1611,6 +1617,12 @@ public static class WinchExtensions
     /// <returns>A dictionary with keys and values from the input sequence.</returns>
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs, IEqualityComparer<TKey> comparer)
         => pairs.ToDictionary(kvp => kvp.Key, kvp => kvp.Value, comparer);
+
+    /// <inheritdoc cref="Enumerable.OrderBy{TSource, TKey}(IEnumerable{TSource}, Func{TSource, TKey}, IComparer{TKey})"/>
+    public static IOrderedEnumerable<T> OrderBy<T>(this IEnumerable<T> source, IComparer<T> comparer) => source.OrderBy(k => k, comparer);
+
+    /// <inheritdoc cref="Enumerable.OrderByDescending{TSource, TKey}(IEnumerable{TSource}, Func{TSource, TKey}, IComparer{TKey})"/>
+    public static IOrderedEnumerable<T> OrderByDescending<T>(this IEnumerable<T> source, IComparer<T> comparer) => source.OrderByDescending(k => k, comparer);
 
     /// <summary>
     /// Add an item to an array
