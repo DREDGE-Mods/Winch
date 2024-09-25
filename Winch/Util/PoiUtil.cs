@@ -37,6 +37,9 @@ public static class PoiUtil
         return UtilHelpers.PopulateObjectFromMeta<T>(item, meta, Converters);
     }
 
+    private static readonly int harvestAndItemPOIs = 1069;
+    private static readonly string[] VanillaPOIs = new string[harvestAndItemPOIs + 1].Select((_,i) => i.ToString()).ToArray();
+
     internal static Dictionary<string, CustomPOI> ModdedPOIDict = new();
     internal static Dictionary<string, POI> CreatedModdedPOIDict = new();
     internal static Dictionary<string, POI> AllPOIDict = new();
@@ -503,9 +506,14 @@ public static class PoiUtil
             return;
         }
         var id = (string)meta["id"];
+        if (VanillaPOIs.Contains(id))
+        {
+            WinchCore.Log.Error($"POI {id} already exists in vanilla.");
+            return;
+        }
         if (ModdedPOIDict.ContainsKey(id))
         {
-            WinchCore.Log.Error($"Duplicate poi {id} at {metaPath} failed to load");
+            WinchCore.Log.Error($"Duplicate POI {id} at {metaPath} failed to load");
             return;
         }
         if (PopulateObjectFromMetaWithConverters<T>(poi, meta))
