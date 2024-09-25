@@ -1,4 +1,6 @@
 using System;
+using Google.Protobuf.WellKnownTypes;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using Winch.Core;
@@ -147,8 +149,22 @@ public static class Loader
         travellingMerchantPots.alwaysInStock.Add(pot);
 
         var ice = new ModdedShopItemData("exampleitems.ice");
+        var milk = new ModdedShopItemData("exampleitems.milk");
         var travellingMerchantJunk = Winch.Util.ShopUtil.GetShopData("TM_Junk");
         travellingMerchantJunk.alwaysInStock.Add(ice);
+        travellingMerchantJunk.alwaysInStock.Add(milk);
+
+        // Add a subtype to a grid
+        var gridShopJunk = GameManager.Instance.SaveData.GetGridByKey(GridKey.TRAVELLING_MERCHANT_MATERIALS);
+        gridShopJunk.gridConfiguration.mainItemSubtype |= ExampleEnums.ItemSubtypes.EXAMPLE;
+        gridShopJunk.Reinit();
+
+        // Add a subtype to a market/shipyard
+        var junkShipyards = DockUtil.GetAllShipyardDestinations().Where(shipyard => shipyard.marketTabs.Any(marketTab => marketTab.gridKey == GridKey.TRAVELLING_MERCHANT_MATERIALS));
+        foreach (var junkShipyard in junkShipyards)
+        {
+            junkShipyard.itemSubtypesBought |= ExampleEnums.ItemSubtypes.EXAMPLE;
+        }
 
         // Add recipes to iron rig
         var rnd = DockUtil.GetConstructableDestinationData("destination.tir-rnd");

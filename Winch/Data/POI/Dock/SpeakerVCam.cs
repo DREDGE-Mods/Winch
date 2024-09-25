@@ -10,17 +10,17 @@ public class SpeakerVCam
     /// Relative root position of this object.
     /// </summary>
     [SerializeField]
-    public Vector3 position = new Vector3(-1.825f, 3, 0.125f);
+    public Vector3 position = Vector3.zero;
 
     /// <summary>
     /// Relative position of the camera from the root.
     /// </summary>
     [SerializeField]
-    public Vector3 vCam = new Vector3(13, 2.5f, 9);
+    public Vector3 vCam = Vector3.one;
 
     /// <summary>
     /// The relative position of the camera's look at target from the root.
     /// </summary>
     [SerializeField]
-    public Vector3 lookAtTarget = new Vector3(-0.7f, -2f, -0.25f);
+    public Vector3 lookAtTarget = Vector3.zero;
 }

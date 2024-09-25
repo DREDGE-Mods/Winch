@@ -11,12 +11,24 @@ public class ModdedShopItemData : ShopItemData
 
     internal ModdedShopItemData()
     {
+        count = 1;
+        chance = 1;
     }
 
-    public ModdedShopItemData(string itemID)
+    public ModdedShopItemData(string itemID) : this()
     {
         itemData = itemID;
         Populate();
+    }
+
+    public ModdedShopItemData(string itemID, int count) : this(itemID)
+    {
+        this.count = count;
+    }
+
+    public ModdedShopItemData(string itemID, int count, float chance) : this(itemID, count)
+    {
+        this.chance = chance;
     }
 
     internal void Populate()

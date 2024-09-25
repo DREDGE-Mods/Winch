@@ -15,9 +15,9 @@ public class CustomBaseDestinationConverter : DredgeTypeConverter<CustomBaseDest
     {
         { "id", new( string.Empty, null) },
         { "titleKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
-        { "position", new( new Vector3(-1.825f, 3, 0.125f), o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "vCam", new( new Vector3(10, 2, 6.675f), o=> DredgeTypeHelpers.ParseVector3(o)) },
-        { "lookAtTarget", new(new Vector3(-0.7f, -2f, -0.25f), o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "position", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "vCam", new(Vector3.one, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "lookAtTarget", new(Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
         { "alwaysShow", new( true, o=> bool.Parse(o.ToString())) },
         { "speakerData", new( string.Empty, null) },
         { "speakerRootNodeOverride", new( string.Empty, null) },

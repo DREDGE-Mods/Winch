@@ -1,91 +1,237 @@
 ﻿{
-	"prefab": "LARGE",
-	"dockData": "exampleitems.largedock",
-	"location": {
-		"x": 368.5,
-		"y": 0,
-		"z": -278
-	},
-	"rotation": {
-		"x": 0,
-		"y": 90,
-		"z": 0
-	},
-	"poiOffset": {
-		"x": 0,
-		"y": 0,
-		"z": 0
-	},
-	"collider": {
-		"colliderType": "SPHERE",
-		"radius": 3.54
-	},
-	"vCam": {
-		"x": 18.57,
-		"y": 6.59,
-		"z": 6.04
-	},
-	"lookAtTarget": {
-		"x": -2,
-		"y": 0,
-		"z": 0
-	},
-	"boatActions": {
-		"x": 0.4,
-		"y": 1.14,
-		"z": -0.08
-	},
-	"storage": {
-		"enabled": true,
-		"position": {
-			"x": -5.8,
-			"y": 0.68,
-			"z": -7.1
-		},
-		"yRotation": 90,
-		"vCam": {
-			"x": 7.2,
-			"y": 3.72,
-			"z": 4.8
-		},
-		"overflowHeight": 0.6
-	},
-	"dockSlots": [
-		{
-			"position": {
-				"x": 2.5,
-				"y": 0,
-				"z": 0
-			},
-			"rotation": {
-				"x": 0,
-				"y": 0,
-				"z": 0
-			}
-		},
-		{
-			"position": {
-				"x": -1,
-				"y": 0,
-				"z": -2
-			},
-			"rotation": {
-				"x": 0,
-				"y": -90,
-				"z": 0
-			}
-		},
-		{
-			"position": {
-				"x": -1,
-				"y": 0,
-				"z": 2
-			},
-			"rotation": {
-				"x": 0,
-				"y": -90,
-				"z": 0
-			}
-		}
-	]
+    "prefab": "LARGE",
+    "dockData": "exampleitems.largedock",
+    "location": {
+        "x": 368.5,
+        "y": 0,
+        "z": -278
+    },
+    "rotation": {
+        "x": 0,
+        "y": 90,
+        "z": 0
+    },
+    "poiOffset": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+    },
+    "collider": {
+        "colliderType": "SPHERE",
+        "radius": 3.54
+    },
+    "vCam": {
+        "x": 18.57,
+        "y": 6.59,
+        "z": 6.04
+    },
+    "lookAtTarget": {
+        "x": -2,
+        "y": 0,
+        "z": 0
+    },
+    "boatActions": {
+        "x": 0.4,
+        "y": 1.14,
+        "z": -0.08
+    },
+    "storage": {
+        "enabled": true,
+        "position": {
+            "x": -5.8,
+            "y": 0.68,
+            "z": -7.1
+        },
+        "yRotation": 90,
+        "vCam": {
+            "x": 7.2,
+            "y": 3.72,
+            "z": 4.8
+        },
+        "overflowHeight": 0.6
+    },
+    "markets": [
+        {
+            "id": "exampleitems.fishmarket",
+            "titleKey": "exampleitems.fishmarket",
+            "icon": "FishIcon",
+            "alwaysShow": true,
+            "isIndoors": true,
+            "speakerData": "exampleitems.steve",
+            "speakerRootNodeOverride": "ExampleItems_Shop_Root",
+            "position": {
+                "x": -6,
+                "y": 3.5,
+                "z": -10
+            },
+            "vCam": {
+                "x": 12.5,
+                "y": 5,
+                "z": 0
+            },
+            "lookAtTarget": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "itemTypesBought": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtypesBought": [ "FISH", "POT" ],
+            "allowBulkSell": true,
+            "bulkItemTypesBought": [ "GENERAL" ],
+            "bulkItemSubtypesBought": [ "FISH" ],
+            "bulkSellNotificationString": "notification.sell-fish-bulk",
+            "bulkSellPromptString": "prompt.sell-all-fish",
+            "allowSellIfGridFull": false,
+            "allowRepairs": false,
+            "allowStorageAccess": true,
+            "sellValueModifier": 1.0,
+            "visitSFX": "Fishmonger - Visit",
+            "marketTabs": [
+                {
+                    "gridKey": "EXAMPLE_FISH_MARKET",
+                    "tabSprite": "CrabPotIcon",
+                    "titleKey": "exampleitems.fishmarket",
+                    "isUnlockedBasedOnDialogue": false,
+                    "unlockDialogueNodes": []
+                }
+            ]
+        },
+        {
+            "id": "exampleitems.trinkets",
+            "titleKey": "exampleitems.trinkets",
+            "icon": "TrinketIcon",
+            "alwaysShow": true,
+            "isIndoors": true,
+            "speakerData": "exampleitems.steve",
+            "speakerRootNodeOverride": "ExampleItems_Shop_Root",
+            "position": {
+                "x": -6,
+                "y": 2.5,
+                "z": -6
+            },
+            "vCam": {
+                "x": 12.5,
+                "y": 5,
+                "z": 0
+            },
+            "lookAtTarget": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "itemTypesBought": [ "GENERAL" ],
+            "itemSubtypesBought": [ "TRINKET" ],
+            "allowBulkSell": true,
+            "bulkItemTypesBought": [ "GENERAL" ],
+            "bulkItemSubtypesBought": [ "TRINKET" ],
+            "bulkSellNotificationString": "notification.sell-trinkets-bulk",
+            "bulkSellPromptString": "prompt.sell-all-trinkets",
+            "allowSellIfGridFull": false,
+            "allowRepairs": false,
+            "allowStorageAccess": true,
+            "sellValueModifier": 1.0,
+            "visitSFX": "Trader - Visit",
+            "marketTabs": [
+                {
+                    "gridKey": "NONE",
+                    "tabSprite": "TrinketIcon",
+                    "titleKey": "exampleitems.shop.one",
+                    "isUnlockedBasedOnDialogue": false,
+                    "unlockDialogueNodes": []
+                }
+            ]
+        }
+    ],
+    "shipyards": [
+        {
+            "id": "exampleitems.shop",
+            "titleKey": "exampleitems.shop",
+            "icon": "WheelIcon",
+            "alwaysShow": true,
+            "isIndoors": true,
+            "speakerData": "exampleitems.steve",
+            "speakerRootNodeOverride": "ExampleItems_Shop_Root",
+            "position": {
+                "x": -6,
+                "y": 2.5,
+                "z": 0
+            },
+            "vCam": {
+                "x": 12.5,
+                "y": 5,
+                "z": 0
+            },
+            "lookAtTarget": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "itemTypesBought": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtypesBought": [ "ENGINE", "ROD", "GENERAL", "LIGHT", "NET", "MATERIAL", "EXAMPLE" ],
+            "allowBulkSell": false,
+            "bulkItemTypesBought": [ "NONE" ],
+            "bulkItemSubtypesBought": [ "NONE" ],
+            "bulkSellNotificationString": "",
+            "bulkSellPromptString": "",
+            "allowSellIfGridFull": false,
+            "allowRepairs": true,
+            "allowStorageAccess": true,
+            "sellValueModifier": 0.5,
+            "visitSFX": "Shipwright - Visit",
+            "marketTabs": [
+                {
+                    "gridKey": "EXAMPLE_SHOP_2",
+                    "tabSprite": "UnknownIcon",
+                    "titleKey": "exampleitems.shop.two",
+                    "isUnlockedBasedOnDialogue": false,
+                    "unlockDialogueNodes": []
+                },
+                {
+                    "gridKey": "EXAMPLE_SHOP_1",
+                    "tabSprite": "exampleitems.milk",
+                    "titleKey": "exampleitems.shop.one",
+                    "isUnlockedBasedOnDialogue": false,
+                    "unlockDialogueNodes": []
+                }
+            ]
+        }
+    ],
+    "dockSlots": [
+        {
+            "position": {
+                "x": 2.5,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            }
+        },
+        {
+            "position": {
+                "x": -1,
+                "y": 0,
+                "z": -2
+            },
+            "rotation": {
+                "x": 0,
+                "y": -90,
+                "z": 0
+            }
+        },
+        {
+            "position": {
+                "x": -1,
+                "y": 0,
+                "z": 2
+            },
+            "rotation": {
+                "x": 0,
+                "y": -90,
+                "z": 0
+            }
+        }
+    ]
 }

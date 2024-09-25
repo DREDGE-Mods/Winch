@@ -1,0 +1,13 @@
+﻿{
+    "gridKey": "EXAMPLE_SHOP_2",
+    "alwaysInStock": [
+        "exampleitems.furnace",
+        "exampleitems.torch",
+        "exampleitems.rod",
+        "exampleitems.ice",
+        "exampleitems.cobweb",
+        "exampleitems.cobwebmaterial",
+        "exampleitems.bucket",
+        "exampleitems.nautilus"
+    ]
+}

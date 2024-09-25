@@ -23,6 +23,7 @@
 	"gridKey": "TIR_NET_1",
 	"gridConfiguration": "exampleitems.bucket",
 	"itemOwnPrerequisites": [ "canister" ],
-	"researchPrerequisites": [ "tir-net1" ]
+    "researchPrerequisites": [ "tir-net1" ],
+    "entitlementsRequired": [ "DLC_2" ]
 }
 
