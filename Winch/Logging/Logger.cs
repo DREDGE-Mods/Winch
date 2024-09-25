@@ -135,7 +135,7 @@ public class Logger
         for(int i = 1; i < frames?.Length; i++)
         {
             callingMethod = frames[i].GetMethod().Name;
-            callingClass = frames[i].GetMethod().ReflectedType?.Name;
+            callingClass = frames[i].GetMethod().ReflectedType?.GetFormattedName();
             callingAssembly = frames[i].GetMethod().ReflectedType?.Assembly.GetName().Name;
             if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)) && callingMethod != "Log" && callingMethod != "LogInfo" && callingMethod != "LogWarning" && callingMethod != "LogError" && callingMethod != "LogDebug")
                 break;
