@@ -6,7 +6,7 @@ namespace ExampleItems;
 /// <summary>
 /// Example extended save data participant
 /// </summary>
-public class ExampleSaveParticipant : ExtendedSaveData.Participant
+public class ExampleSaveParticipant : Singleton<ExampleSaveParticipant>, ExtendedSaveData.Participant
 {
     private ExampleItemsSaveDataTwo saveData;
     public ExampleItemsSaveDataTwo SaveData

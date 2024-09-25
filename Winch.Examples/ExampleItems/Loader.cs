@@ -14,7 +14,7 @@ public static class Loader
 {
     public static string BasePath => ModAssemblyLoader.GetCurrentMod().BasePath;
 
-    public static ExampleSaveParticipant Participant = new ExampleSaveParticipant();
+    public static ExampleSaveParticipant Participant = ExampleSaveParticipant.Instance;
 
     public static ExampleRecipeData exampleRecipeData;
 

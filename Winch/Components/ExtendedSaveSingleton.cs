@@ -22,7 +22,7 @@ public abstract class ExtendedSaveSingleton<T> : ExtendedSaveBehaviour where T :
     {
         if (ExtendedSaveSingleton<T>.Instance != null)
         {
-            WinchCore.Log.Warn(string.Format("Trying to create a new instance of {0} while there can only be one!", GetType()));
+            WinchCore.Log.Warn(string.Format("Trying to create a new instance of {0} while there can only be one {1}!", GetType(), typeof(T)));
             this.Destroy();
         }
         else
