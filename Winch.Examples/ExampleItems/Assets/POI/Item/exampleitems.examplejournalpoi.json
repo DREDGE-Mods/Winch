@@ -2,7 +2,7 @@
   "location": {
     "x": 390.0,
     "y": 0.0,
-    "z": -355.0
+    "z": -290.0
   },
   "harvestableParticlePrefab" : "MessageItem",
   "items": ["exampleitems.journal"]
