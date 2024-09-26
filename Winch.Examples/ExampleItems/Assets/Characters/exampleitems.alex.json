@@ -1,8 +1,8 @@
 ﻿{
 	"speakerNameKey": "exampleitems.alex.name",
 	"paralinguisticsNameKey": "TRAVELLING_MERCHANT",
-	"portraitSprite": "Alex",
-	"smallPortraitSprite": "AlexSmall",
+	"portraitSprite": "exampleitems.alex",
+	"smallPortraitSprite": "exampleitems.alex.small",
 	"alwaysAvailable": true,
 	"yarnRootNode": "ExampleItems_Alex_Root"
 }
