@@ -111,6 +111,7 @@
     "line:exampleitems.steve.intro": "exampleitems.steve: Hi",
     "line:exampleitems.steve.old": "Old",
     "line:exampleitems.steve.new": "New",
+    "line:exampleitems.steve.exit": "Exit",
     "line:exampleitems.steve.shop": "exampleitems.steve: Shop",
 
     "line:exampleitems.alex.test": "exampleitems.alex: Test",
