@@ -1,0 +1,29 @@
+﻿{
+	"itemNameKey": "exampleitems.bucket.name",
+	"itemDescriptionKey": "exampleitems.bucket.desc",
+	"sprite": "exampleitems.bucket",
+	"itemColor": {
+		"r": 49,
+		"g": 49,
+		"b": 49,
+		"a": 255
+	},
+	"value": 5,
+	"dimensions": [
+		"X"
+	],
+	"harvestableTypes": [],
+	"abilityMode": "TRAWL_OOZE",
+	"trawlMode": "TRAWL_OOZE",
+	"netType": "SIPHON",
+	"catchRate": 1,
+	"maxDurabilityDays": 7,
+	"timeBetweenCatchRolls": 0.01,
+	"aberrationBonus": 0.1,
+	"gridKey": "TIR_NET_1",
+	"gridConfiguration": "exampleitems.bucket",
+	"itemOwnPrerequisites": [ "canister" ],
+    "researchPrerequisites": [ "tir-net1" ],
+    "entitlementsRequired": [ "DLC_2" ]
+}
+

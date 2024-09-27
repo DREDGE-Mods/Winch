@@ -5,17 +5,15 @@ using Winch.Util;
 
 namespace Winch.Patches.API;
 
-[HarmonyPatch(typeof(Player))]
-[HarmonyPatch("OnEnable")]
-public class PlayerPatch
+[HarmonyPriority(Priority.First)]
+[HarmonyPatch(typeof(Player), nameof(Player.Awake))]
+internal static class PlayerPatch
 {
     public static void Postfix(Player __instance)
     {
         try
         {
-            PoiUtil.PopulateHarvestablesAndHarvestParticlePrefabs();
-            PoiUtil.CreateModdedPois();
-            ItemUtil.Encyclopedia();
+            AbilityUtil.AddModdedAbilitiesToPlayer(__instance.transform.Find("Abilities"));
         }
         catch (Exception ex)
         {

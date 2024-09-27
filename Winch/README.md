@@ -18,3 +18,6 @@ Authors:
 Contributors:
 - [bdlm-dev](https://github.com/bdlm-dev)
 - [SloopyNoSleep](https://github.com/SloopyNoSleep)
+
+Other:
+- [YarnSpinner Console](https://github.com/YarnSpinnerTool/YarnSpinner-Console) - for dialogue compilation code

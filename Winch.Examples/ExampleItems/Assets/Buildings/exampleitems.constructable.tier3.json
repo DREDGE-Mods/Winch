@@ -1,0 +1,4 @@
+{
+    "tierId": "EXAMPLE_TIER_3",
+    "dependentTierIds": [ "EXAMPLE_TIER_1", "EXAMPLE_TIER_2" ]
+}

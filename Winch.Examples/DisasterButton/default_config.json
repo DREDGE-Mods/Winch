@@ -1,0 +1,8 @@
+{
+	"DisasterButtonKey": {
+		"type": "text",
+		"title": "disasterbutton.key.title",
+		"tooltip": "disasterbutton.key.tooltip",
+		"value": "delete"
+	}
+}

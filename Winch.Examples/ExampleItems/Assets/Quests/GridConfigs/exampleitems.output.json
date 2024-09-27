@@ -1,0 +1,26 @@
+﻿{
+	"titleString": "exampleitems.output",
+	"isSaved": false,
+	"allowManualExit": false,
+	"allowStorageAccess": true,
+	"gridConfiguration": "exampleitems.output",
+	"gridKey": "EXAMPLE_OUTPUT",
+	"presetGrid": {
+		"spatialItems": [
+			{
+				"id": "exampleitems.milk",
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		]
+	},
+	"presetGridMode": "CREATE",
+	"questGridExitMode": "CANNOT_EXIT_MANUALLY",
+	"startingDurabilityProportion": 1.0,
+	"completeConditions": [
+		{
+			"type": "Empty"
+		}
+	]
+}

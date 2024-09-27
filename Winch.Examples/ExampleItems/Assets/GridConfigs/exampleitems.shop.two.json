@@ -1,0 +1,7 @@
+{
+    "gridKey": "EXAMPLE_SHOP_2",
+    "columns": 8,
+    "rows": 9,
+    "mainItemType": [ "GENERAL", "EQUIPMENT" ],
+    "mainItemSubtype": [ "ENGINE", "ROD", "GENERAL", "LIGHT", "NET", "MATERIAL" ]
+}

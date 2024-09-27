@@ -1,17 +1,13 @@
 {
     "location": {
-        "x": 382.0,
+        "x": 367.0,
         "y": 0.0,
-        "z": -354.0
+        "z": -292.0
     },
-    "harvestableParticlePrefab": "SquidParticles",
-    "items": [ "catfish", "exampleitems.mccod", "exampleitems.diamond" ],
-    "startStock": 30,
-    "maxStock": 50,
+    "harvestableParticlePrefab": "MinecraftCodParticlesOriginal",
+    "items": [ "exampleitems.mccod" ],
+    "startStock": 5,
+    "maxStock": 10,
     "doesRestock": true,
-    "usesTimeSpecificStock": false,
-    "overrideDefaultDaySpecialChance": true,
-    "overriddenDaytimeSpecialChance": 0.5,
-    "overrideDefaultNightSpecialChance": true,
-    "overriddenNighttimeSpecialChance": 0.5
+    "usesTimeSpecificStock": false
 }

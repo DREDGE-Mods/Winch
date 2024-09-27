@@ -10,6 +10,7 @@ public class EngineItemDataConverter : SpatialItemDataConverter
         { "itemTypeIcon", new(TextureUtil.GetSprite("EngineIcon"), null) },
         { "damageMode", new(DamageMode.OPERATION, null) },
         { "moveMode", new(MoveMode.INSTALL, null) },
+        { "canBeDiscardedByPlayer", new(true, null) },
         { "canBeSoldInBulkAction", new(false, null) },
         { "itemType", new(ItemType.EQUIPMENT, null) },
         { "itemSubtype", new(ItemSubtype.ENGINE, null) },

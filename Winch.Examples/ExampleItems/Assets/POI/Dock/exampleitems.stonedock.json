@@ -1,0 +1,170 @@
+﻿{
+	"prefab": "STONE",
+	"dockData": "exampleitems.stonedock",
+	"location": {
+		"x": 375,
+		"y": 0,
+		"z": -275
+	},
+	"rotation": {
+		"x": 0,
+		"y": 45,
+		"z": 0
+	},
+	"poiOffset": {
+		"x": 0.5,
+		"y": 0,
+		"z": 0
+	},
+	"collider": {
+		"colliderType": "SPHERE",
+		"radius": 3.54
+	},
+	"vCam": {
+		"x": 8.5,
+		"y": 5,
+		"z": -9.5
+	},
+	"lookAtTarget": {
+		"x": -1,
+		"y": 1,
+		"z": 0
+	},
+	"boatActions": {
+		"x": 1,
+		"y": 2.51,
+		"z": -0.111
+	},
+	"storage": {
+		"enabled": true,
+		"position": {
+			"x": -2.25,
+			"y": 0.575,
+			"z": -0.3
+		},
+		"vCam": {
+			"x": 1.51,
+			"y": 2.63,
+			"z": 3.48
+		},
+		"overflowHeight": 0.65
+	},
+	"constructables": [
+		{
+			"id": "exampleitems.constructable",
+			"titleKey": "exampleitems.constructable",
+			"alwaysShow": true,
+			"isIndoors": true,
+			"speakerData": "exampleitems.alex",
+			"speakerRootNodeOverride": "ExampleItems_Recipe_Root",
+			"position": {
+				"x": -1.825,
+				"y": 0,
+				"z": 0.125
+			},
+			"vCam": {
+				"x": -2,
+				"y": 12.5,
+				"z": -8
+			},
+			"useFixedScreenPosition": true,
+			"screenPosition": {
+				"x": -675,
+				"y": 0
+			},
+			"playerInventoryTabIndexesToShow": [ 0, 1, 3 ],
+			"constructableDestinationData": {
+				"productQuestGrid": "exampleitems.product",
+				"tiers": [
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_1",
+						"tierNameKey": "tab.tier-1",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier1",
+						"recipeListStringKey": "exampleitems.constructable.tier1.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier1",
+						"recipes": [
+							"exampleitems.recipeitem"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_2",
+						"tierNameKey": "tab.tier-2",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier2",
+						"recipeListStringKey": "exampleitems.constructable.tier2.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier2",
+						"recipes": [
+							"exampleitems.recipeability"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_3",
+						"tierNameKey": "tab.tier-3",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier3",
+						"recipeListStringKey": "exampleitems.constructable.tier3.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier3",
+						"recipes": [
+							"exampleitems.recipehull"
+						]
+					},
+					{
+						"type": "RecipeList",
+						"tierId": "EXAMPLE_TIER_4",
+						"tierNameKey": "tab.tier-4",
+						"viewAfterConstruction": "RECIPE_LIST",
+						"recipeToCreateThis": "exampleitems.constructable.tier4",
+						"recipeListStringKey": "exampleitems.constructable.tier4.description",
+						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier4",
+						"recipes": [
+							"exampleitems.recipe"
+						]
+					}
+				]
+			}
+		}
+	],
+	"dockSlots": [
+		{
+			"position": {
+				"x": 2.5,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": -1,
+				"y": 0,
+				"z": -2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": -1,
+				"y": 0,
+				"z": 2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		}
+	]
+
+}

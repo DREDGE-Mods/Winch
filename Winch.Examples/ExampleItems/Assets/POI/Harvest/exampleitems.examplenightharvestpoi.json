@@ -1,18 +1,14 @@
 {
 	"location": {
-		"x": 386.0,
+		"x": 354.0,
 		"y": 0.0,
-		"z": -354.0
+		"z": -289.0
 	},
-	"harvestableParticlePrefab": "SquidParticles",
+	"harvestableParticlePrefab": "MinecraftSalmonParticles",
 	"items": [],
-	"nightItems": [ "grey-mullet", "exampleitems.musicdisc" ],
-	"startStock": 30,
-	"maxStock": 50,
+	"nightItems": [ "exampleitems.mcsalmon" ],
+	"startStock": 3,
+	"maxStock": 5,
 	"doesRestock": true,
-	"usesTimeSpecificStock": true,
-	"overrideDefaultDaySpecialChance": true,
-	"overriddenDaytimeSpecialChance": 0.5,
-	"overrideDefaultNightSpecialChance": true,
-	"overriddenNighttimeSpecialChance": 0.5
+	"usesTimeSpecificStock": true
 }

@@ -1,0 +1,20 @@
+{
+    "columns": 3,
+    "rows": 2,
+    "cellGroupConfigs": [
+        {
+            "cells": [],
+            "itemType": "NONE",
+            "itemSubtype": "NONE",
+            "isHidden": true,
+            "damageImmune": true
+        }
+    ],
+    "mainItemData": "exampleitems.rainbowfiddlercrab",
+    "mainItemType": "GENERAL",
+    "mainItemSubtype": "FISH",
+    "itemsInThisBelongToPlayer": false,
+    "canAddItemsInQuestMode": true,
+    "hasUnderlay": false,
+    "gridKey": "EXAMPLE_COLOR_CRABS"
+}

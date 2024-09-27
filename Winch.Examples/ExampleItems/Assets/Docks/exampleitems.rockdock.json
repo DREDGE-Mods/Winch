@@ -1,0 +1,6 @@
+﻿{
+	"dockNameKey": "exampleitems.rockdock.name",
+	"yarnRootNode": "ExampleItems_Steve_Root",
+	"speakers": [ "exampleitems.steve" ],
+	"musicAssetReference": "exampleitems.music"
+}

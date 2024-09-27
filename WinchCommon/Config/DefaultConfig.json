@@ -1,9 +1,0 @@
-﻿{
-	"WriteLogsToFile": true,
-	"WriteLogsToConsole": false,
-	"LogLevel": "DEBUG",
-	"LogsFolder": "Logs",
-	"DetailedLogSources": false,
-	"EnableDeveloperConsole": true,
-	"MaxLogFiles": 10
-}

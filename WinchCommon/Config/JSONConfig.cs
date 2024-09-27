@@ -1,53 +1,328 @@
-﻿using System;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text;
+using Winch.Serialization;
 // ReSharper disable HeapView.PossibleBoxingAllocation
 
-namespace Winch.Config
+namespace Winch.Config;
+
+public class JSONConfig
 {
-    public class JSONConfig
+    internal static readonly DynamicConverter dynamicConverter = new DynamicConverter();
+    internal static readonly DredgeContractResolver contractResolver = new DredgeContractResolver();
+
+    public static JsonSerializerSettings CreateSerializerSettings()
     {
-        private readonly Dictionary<string, object?> _config;
-        private readonly string _configPath;
+        return new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            ContractResolver = contractResolver,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
+            Formatting = Formatting.Indented,
+            Converters = { dynamicConverter }
+        };
+    }
 
-        public JSONConfig(string path, string defaultConfig) {
-            _configPath = path;
+    public static JsonSerializer CreateSerializer()
+    {
+        return new JsonSerializer
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            ContractResolver = contractResolver,
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Include,
+            Formatting = Formatting.Indented,
+            Converters = { dynamicConverter }
+        };
+    }
 
-            if (File.Exists(_configPath))
+    public static JsonSerializerSettings jsonSerializerSettings = CreateSerializerSettings();
+
+    public static JsonSerializer jsonSerializer = CreateSerializer();
+
+    static JSONConfig()
+    {
+        JsonConvert.DefaultSettings = CreateSerializerSettings;
+    }
+
+    private static StringBuilder _stringBuilder = new StringBuilder();
+
+    public event ConfigChangedEvent? OnConfigChanged;
+
+    public event ConfigValueChangedEvent? OnConfigValueChanged;
+
+    private Dictionary<string, object?> _config;
+    private readonly Dictionary<string, object?> _defaultConfig;
+    private readonly string _configPath = string.Empty;
+    private readonly string _defaultConfigString = string.Empty;
+    private readonly string _defaultConfigPath = string.Empty;
+
+    public bool hasProperties => _config.Count > 0;
+
+    public static Dictionary<string, object?> ReadConfig(string path)
+    {
+        if (!File.Exists(path)) return new Dictionary<string, object?>();
+        return ParseConfig(File.ReadAllText(path));
+    }
+
+    public static T ReadConfig<T>(string path)
+    {
+        if (!File.Exists(path)) return default(T);
+        return ParseConfig<T>(File.ReadAllText(path));
+    }
+
+    public static Dictionary<string, object?> ParseConfig(string value)
+    {
+        return JsonConvert.DeserializeObject<Dictionary<string, object?>>(value, jsonSerializerSettings);
+    }
+
+    public static T ParseConfig<T>(string value)
+    {
+        return JsonConvert.DeserializeObject<T>(value, jsonSerializerSettings);
+    }
+
+    public static string ToSerializedJson(object? value)
+    {
+        string json = "{}";
+        using (StringWriter stringWriter = new StringWriter(_stringBuilder))
+        {
+            using (JsonTextWriter jsonTextWriter = new JsonTextWriter(stringWriter)
+                   {
+                       Formatting = Newtonsoft.Json.Formatting.Indented,
+                       IndentChar = '\t',
+                       Indentation = 1
+                   })
             {
-                string confText = File.ReadAllText(_configPath);
-                _config = JsonConvert.DeserializeObject<Dictionary<string, object?>>(confText) ?? throw new InvalidOperationException("Unable to parse config file.");
+                jsonSerializer.Serialize(jsonTextWriter, value);
+                json = _stringBuilder.ToString();
+                _stringBuilder.Clear();
+            }
+        }
+        return json;
+    }
+
+    public static string ToSerializedJson(object? value, Type? type)
+    {
+        string json = "{}";
+        using (StringWriter stringWriter = new StringWriter(_stringBuilder))
+        {
+            using (JsonTextWriter jsonTextWriter = new JsonTextWriter(stringWriter)
+                   {
+                       Formatting = Newtonsoft.Json.Formatting.Indented,
+                       IndentChar = '\t',
+                       Indentation = 1
+                   })
+            {
+                jsonSerializer.Serialize(jsonTextWriter, value, type);
+                json = _stringBuilder.ToString();
+                _stringBuilder.Clear();
+            }
+        }
+        return json;
+    }
+
+    public static void WriteConfig(string path, object? value)
+    {
+        WriteConfig(path, ToSerializedJson(value));
+    }
+
+    public static void WriteConfig(string path, object? value, Type? type)
+    {
+        WriteConfig(path, ToSerializedJson(value, type));
+    }
+
+    public static void WriteConfig(string path, string value)
+    {
+        File.WriteAllText(path, value);
+    }
+
+    public JSONConfig(string path, string defaultConfig)
+    {
+        _configPath = path;
+
+        if (!string.IsNullOrWhiteSpace(defaultConfig))
+        {
+            if (defaultConfig.Contains("{"))
+            {
+                _defaultConfigString = defaultConfig;
+                _defaultConfig = ParseConfig(defaultConfig);
             }
             else
             {
-                File.WriteAllText(_configPath, defaultConfig);
-                _config = JsonConvert.DeserializeObject<Dictionary<string, object?>>(defaultConfig) ?? throw new InvalidOperationException("Unable to parse default config.");
+                _defaultConfigPath = defaultConfig;
+                string dconfText = File.ReadAllText(_defaultConfigPath);
+                _defaultConfigString = dconfText;
+                _defaultConfig = ParseConfig(dconfText);
             }
-        }
 
-        public T? GetProperty<T>(string key, T? defaultValue)
-        {
-            if (!_config.ContainsKey(key))
+            if (!File.Exists(_configPath))
             {
-                SetProperty(key, defaultValue);
-                return defaultValue;
+                WriteConfig(_configPath, _defaultConfigString);
             }
-            return (T?)_config[key];
+            else
+            {
+                _config = ParseConfig(_defaultConfigString);
+                string pconfText = File.ReadAllText(_configPath);
+                var parsedConfig = ParseConfig(pconfText) ?? throw new InvalidOperationException("Unable to parse config file.");
+                foreach (var kvp in parsedConfig)
+                {
+                    var value = kvp.Value is JObject objectValue ? objectValue["value"] : kvp.Value;
+                    if (_config.TryGetValue(kvp.Key, out var defaultValue))
+                    {
+                        if (defaultValue is JObject setting)
+                        {
+                            setting["value"] = value != null ? JToken.FromObject(value, jsonSerializer) : null;
+                        }
+                        else
+                        {
+                            _config[kvp.Key] = value;
+                        }
+                    }
+                    else
+                        _config[kvp.Key] = kvp.Value;
+                }
+                WriteConfig(_configPath, _config);
+                return;
+            }
         }
 
-        public void SetProperty<T>(string key, T? value)
+        string confText = File.ReadAllText(_configPath);
+        _config = ParseConfig(confText) ?? throw new InvalidOperationException("Unable to parse config file.");
+    }
+
+    internal void ResetToDefaultConfig()
+    {
+        _config = ParseConfig(_defaultConfigString);
+        WriteConfig(_configPath, _defaultConfigString);
+        OnConfigChanged?.Invoke();
+        foreach (var key in _config.Keys)
         {
-            _config[key] = value;
-            SaveSettings();
+            OnConfigValueChanged?.Invoke(key);
         }
+    }
 
-        private void SaveSettings()
+    internal void ResetPropertyToDefault(string key)
+    {
+        var defaultValue = GetProperty(_defaultConfig, key);
+        SetProperty(_config, key, defaultValue);
+        OnConfigChanged?.Invoke();
+        OnConfigValueChanged?.Invoke(key);
+    }
+
+    internal static object? GetProperty(Dictionary<string, object?> config, string key, Dictionary<string, object?>? defaultConfig = null)
+    {
+        if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
+        if (!config.TryGetValue(key, out var setting))
         {
-            string confText = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            File.WriteAllText(_configPath, confText);
+            if (defaultConfig != null && defaultConfig.TryGetValue(key, out var defaultValue))
+            {
+                SetProperty(config, key, defaultValue);
+                setting = defaultValue;
+            }
+            else
+            {
+                throw new InvalidOperationException($"No default config value found for {key}.");
+            }
+        }
+        return setting is JObject objectValue ? objectValue["value"] : setting;
+    }
+
+    internal static T? GetProperty<T>(Dictionary<string, object?> config, string key, Dictionary<string, object?>? defaultConfig = null)
+    {
+        var type = typeof(T);
+        var value = GetProperty(config, key, defaultConfig);
+        return type.IsEnum ? ConvertToEnum<T>(value) : (T)Convert.ChangeType(value, type);
+    }
+
+    internal static void SetProperty<T>(Dictionary<string, object?> config, string key, T? value)
+    {
+        if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
+        if (config.TryGetValue(key, out var oValue) && oValue is JObject setting)
+        {
+            setting["value"] = value != null ? JToken.FromObject(value, jsonSerializer) : null;
+        }
+        else
+        {
+            config[key] = value;
+        }
+    }
+
+    internal Dictionary<string, object?> GetDefaultProperties()
+    {
+        return _defaultConfig;
+    }
+
+    public T? GetDefaultProperty<T>(string key)
+    {
+        return GetProperty<T>(_defaultConfig, key);
+    }
+
+    internal Dictionary<string, object?> GetProperties()
+    {
+        return _config;
+    }
+
+    public T ToObject<T>()
+    {
+        return JsonConvert.DeserializeObject<T>(ToSerializedJson(GetProperties().ToDictionary(kvp => kvp.Key, kvp => GetProperty(_config, kvp.Key, _defaultConfig))));
+    }
+
+    public T? GetProperty<T>(string key)
+    {
+        return GetProperty<T>(_config, key, _defaultConfig);
+    }
+
+    [Obsolete]
+    public T? GetProperty<T>(string key, T? defaultValue) => GetProperty<T>(key);
+
+    public void SetProperty<T>(string key, T? value)
+    {
+        SetProperty(_config, key, value);
+        SaveSettings();
+        OnConfigChanged?.Invoke();
+        OnConfigValueChanged?.Invoke(key);
+    }
+
+    private void SaveSettings()
+    {
+        WriteConfig(_configPath, _config);
+    }
+
+    public override string ToString() => _configPath;
+
+    private static T ConvertToEnum<T>(object? value)
+    {
+        if (value == null) return default(T);
+
+        if (value is float || value is double)
+        {
+            var floatValue = Convert.ToDouble(value);
+            return (T)Enum.ToObject(typeof(T), (long)Math.Round(floatValue));
         }
 
-        public override string ToString() => _configPath;
+        if (value is int || value is long || value is short || value is uint || value is ulong || value is ushort || value is byte || value is sbyte)
+        {
+            return (T)Enum.ToObject(typeof(T), value);
+        }
+
+        var valueString = Convert.ToString(value);
+
+        try
+        {
+            return (T)Enum.Parse(typeof(T), valueString, true);
+        }
+        catch (ArgumentException ex)
+        {
+            throw new InvalidOperationException($"Can't convert {valueString} to enum {typeof(T)}", ex);
+        }
+    }
+
+    internal static void AddDynamicConverter(JsonConverter converter)
+    {
+        dynamicConverter.AddConverter(converter);
     }
 }
+
+public delegate void ConfigChangedEvent();
+public delegate void ConfigValueChangedEvent(string key);

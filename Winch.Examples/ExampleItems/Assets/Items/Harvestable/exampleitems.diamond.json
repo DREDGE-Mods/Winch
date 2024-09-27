@@ -16,7 +16,6 @@
         "b": 217,
         "a": 255
     },
-    "squishFactor": 1,
     "value": 100,
     "dimensions": [
         "XX",
@@ -27,7 +26,10 @@
     "perSpotMin": 3,
     "perSpotMax": 8,
     "harvestPOICategory": "TRINKET",
-    "harvestableType": "ABYSSAL",
-    "harvestDifficulty": "VERY_HARD"
+    "harvestableType": "DREDGE",
+    "harvestDifficulty": "VERY_HARD",
+    "canBeCaughtByRod": true,
+    "canBeCaughtByNet": true,
+    "canBeCaughtByPot": true
 }
 

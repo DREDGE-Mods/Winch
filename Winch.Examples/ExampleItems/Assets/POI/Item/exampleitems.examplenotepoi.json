@@ -2,8 +2,12 @@
   "location": {
     "x": 395.0,
     "y": 0.0,
-    "z": -365.0
+    "z": -300.0
   },
   "harvestableParticlePrefab" : "MessageItem",
-  "items": ["exampleitems.note"]
+  "items": ["exampleitems.note"],
+  "intermittentSFX": [
+      "POI - Message in Bottle 1",
+      "POI - Message in Bottle 2"
+  ]
 }

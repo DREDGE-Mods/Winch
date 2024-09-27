@@ -1,3 +1,5 @@
 ﻿{
-  "notification.disaster-button": "A sudden chill runs down your spine."
+	"notification.disaster-button": "A sudden chill runs down your spine.",
+	"disasterbutton.key.title": "Disaster Button Key",
+	"disasterbutton.key.tooltip": "The name of the key you should press to trigger a random world event"
 }

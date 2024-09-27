@@ -8,21 +8,21 @@ namespace Winch.Serialization.Item;
 
 public class ItemDataConverter : DredgeTypeConverter<ItemData>
 {
-    internal const string ItemTableDefinition = "Items";
+    internal static readonly string ItemTableDefinition = LanguageManager.ITEM_TABLE;
 
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "id", new( Guid.NewGuid().ToString(), null) },
-        { "itemNameKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
-        { "itemDescriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
-        { "itemInsaneTitleKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
-        { "itemInsaneDescriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
+        { "itemNameKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
+        { "itemDescriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
+        { "itemInsaneTitleKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
+        { "itemInsaneDescriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
         { "hasAdditionalNote", new(false, o=> bool.Parse(o.ToString())) },
-        { "additionalNoteKey", new (LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
-        { "dialogueNodeSpecificDescription", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
+        { "additionalNoteKey", new (LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
+        { "dialogueNodeSpecificDescription", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
         { "itemType", new(ItemType.GENERAL, o => DredgeTypeHelpers.GetEnumValue<ItemType>(o)) },
         { "itemSubtype", new(ItemSubtype.GENERAL, o => DredgeTypeHelpers.GetEnumValue<ItemSubtype>(o)) },
-        { "tooltipTextColor", new(new Color(0.4902f, 0.3843f, 0.2667f, 255f), o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
+        { "tooltipTextColor", new(new Color(0.4902f, 0.3843f, 0.2667f, 1f), o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
         { "tooltipNotesColor", new(Color.white, o => DredgeTypeHelpers.GetColorFromJsonObject(o)) },
         { "itemTypeIcon", new(TextureUtil.GetSprite("EmptyIcon"), o => TextureUtil.GetSprite(o.ToString())) },
         { "harvestParticlePrefab", new(null, null) },
@@ -30,6 +30,8 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         { "harvestParticleDepthOffset", new(-3f, o=> float.Parse(o.ToString())) },
         { "flattenParticleShape", new(false, o=> bool.Parse(o.ToString())) },
         { "availableInDemo", new(false, null) },
+        { "linkedDialogueNode", new("", null) },
+        { "entitlementsRequired ", new(new List<Entitlement>{ Entitlement.NONE }, o=>DredgeTypeHelpers.GetEnumValues<Entitlement>(o)) },
     };
 
     private readonly Dictionary<string, string> _reroutes = new()
@@ -43,15 +45,5 @@ public class ItemDataConverter : DredgeTypeConverter<ItemData>
         AddReroutes(_reroutes);
     }
 
-    internal static LocalizedString CreateLocalizedString(string key, string value)
-    {
-        var keyValueTuple = (key, value);
-        if (StringDefinitionCache.TryGetValue(keyValueTuple, out LocalizedString cached))
-        {
-            return cached;
-        }
-        var localizedString = new LocalizedString(key, value);
-        StringDefinitionCache.Add(keyValueTuple, localizedString);
-        return localizedString;
-    }
+    protected static LocalizedString CreateLocalizedString(string value) => CreateLocalizedString(ItemTableDefinition, value);
 }

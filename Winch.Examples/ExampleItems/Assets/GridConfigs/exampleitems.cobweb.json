@@ -27,9 +27,9 @@
 				"       ",
 				"       "
 			],
-			"itemType": "GENERAL",
-			"itemSubtype": "TRINKET",
-			"isHidden": false,
+			"itemType": "NONE",
+			"itemSubtype": "NONE",
+			"isHidden": true,
 			"damageImmune": true
 		}
 	],

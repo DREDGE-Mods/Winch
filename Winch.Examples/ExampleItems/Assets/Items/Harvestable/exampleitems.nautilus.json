@@ -1,0 +1,28 @@
+﻿{
+	"itemNameKey": "exampleitems.nautilus.name",
+	"itemDescriptionKey": "exampleitems.nautilus.desc",
+	"itemType": "GENERAL",
+	"itemSubtype": "MATERIAL",
+	"sprite": "exampleitems.nautilus",
+	"itemColor": {
+		"r": 58,
+		"g": 40,
+		"b": 32,
+		"a": 255
+	},
+	"value": 50,
+	"dimensions": [
+		"X"
+	],
+	"damageMode": "DESTROY",
+	"harvestMinigameType": "DREDGE_RADIAL",
+	"perSpotMin": 1,
+	"perSpotMax": 1,
+	"harvestPOICategory": "MATERIAL",
+	"harvestableType": "DREDGE",
+	"harvestDifficulty": "VERY_HARD",
+	"canBeCaughtByRod": true,
+	"canBeCaughtByNet": true,
+	"canBeCaughtByPot": true
+}
+

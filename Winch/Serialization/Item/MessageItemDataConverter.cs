@@ -8,7 +8,7 @@ public class MessageItemDataConverter : NonSpatialItemDataConverter
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
         { "chronologicalOrder", new(0, o=> int.Parse(o.ToString())) },
-        { "messageBodyKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(ItemTableDefinition, o.ToString())) },
+        { "messageBodyKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
         { "set", new( (int)MessagesSet.MESSAGES, o=> (int)DredgeTypeHelpers.GetEnumValue<MessagesSet>(o) )}
     };
 

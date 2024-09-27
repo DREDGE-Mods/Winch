@@ -1,0 +1,4 @@
+﻿{
+    "gridKey": "EXAMPLE_FISH_MARKET",
+    "alwaysInStock": [ "exampleitems.pot", "exampleitems.potmaterial" ]
+}

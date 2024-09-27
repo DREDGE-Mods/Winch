@@ -1,0 +1,10 @@
+{
+    "buildingNameKey": "exampleitems.constructable.tier1.name",
+    "buildingDescriptionKey": "exampleitems.constructable.tier1.description",
+    "questGridConfig": "exampleitems.constructable.tier1",
+    "onRecipeShownDialogueNodeName": "ExampleItems_Recipe_Tier1_Description",
+    "onRecipeBuiltDialogueNodeName": "ExampleItems_Recipe_Tier1_Constructed",
+    "cost": 0,
+    "researchRequired": 0,
+    "quantityProduced": 1
+}

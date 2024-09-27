@@ -26,13 +26,15 @@
   "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
-  "harvestMinigameType": "DREDGE_RADIAL",
+  "harvestMinigameType": "FISHING_SPIRAL",
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "SHALLOW",
-  "harvestDifficulty": "VERY_EASY",
+  "harvestDifficulty": "MEDIUM",
   "isAberration": true,
-  "nonAberrationParent": "exampleitems.mccod"
+  "nonAberrationParent": "exampleitems.mccod",
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
 }
 

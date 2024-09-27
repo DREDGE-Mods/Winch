@@ -1,0 +1,9 @@
+﻿{
+    "questGridConfig": "exampleitems.recipe",
+    "itemProduced": "exampleitems.milk",
+    "onRecipeShownDialogueNodeName": "ExampleItems_Steve_RecipeShown",
+    "onRecipeBuiltDialogueNodeName": "ExampleItems_Steve_RecipeBuilt",
+    "quantityProduced": 1,
+    "researchRequired": 1,
+    "cost": 50
+}

@@ -8,13 +8,13 @@
 		"b": 88,
 		"a": 255
 	},
-	"value": 5,
+	"value": 0,
 	"dimensions": [
 		"X"
 	],
 	"harvestMinigameType": "DREDGE_RADIAL",
-	"perSpotMin": 3,
-	"perSpotMax": 8,
+	"perSpotMin": 1,
+	"perSpotMax": 1,
 	"harvestableType": "SHALLOW",
 	"harvestDifficulty": "VERY_EASY"
 }

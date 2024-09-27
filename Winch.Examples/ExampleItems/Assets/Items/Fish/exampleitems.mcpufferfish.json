@@ -1,0 +1,39 @@
+﻿{
+  "itemNameKey": "exampleitems.mcpufferfish.name",
+  "itemDescriptionKey": "exampleitems.mcpufferfish.desc",
+  "itemType": "GENERAL",
+  "itemSubtype": "FISH",
+  "sprite": "exampleitems.mcpufferfish",
+  "itemColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "tooltipTextColor": {
+    "r": 136,
+    "g": 0,
+    "b": 76,
+    "a": 255
+  },
+  "squishFactor": 1,
+  "value": 5,
+  "dimensions": [
+    "X"
+  ],
+  "zonesFoundIn": "OPEN_OCEAN",
+  "day": true,
+  "night": true,
+  "minSizeCentimeters": 5,
+  "maxSizeCentimeters": 10,
+  "harvestMinigameType": "FISHING_PENDULUM",
+  "perSpotMin": 3,
+  "perSpotMax": 8,
+  "harvestPOICategory": "FISH_SMALL",
+  "harvestableType": "OCEANIC",
+  "harvestDifficulty": "HARD",
+  "isAberration": true,
+  "nonAberrationParent": "exampleitems.mccod",
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
+}

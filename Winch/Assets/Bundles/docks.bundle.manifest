@@ -1,0 +1,46 @@
+ManifestFileVersion: 0
+CRC: 1863257780
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 904d3b0f6170b1b820fe3da1fb8150d6
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: d838e175e493b7b6fead489e9bc5702b
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -1866638701, guid: f270df68dea28cc47a43caf5b7b11785, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/DREDGE/Mods/Winch/Docks/LargeGenericDock.prefab
+- Assets/DREDGE/Mods/Winch/Docks/MakeshiftDock.prefab
+- Assets/DREDGE/Mods/Winch/Docks/StoneDock.prefab
+- Assets/DREDGE/Mods/Winch/Docks/GenericDock.prefab
+- Assets/DREDGE/Mods/Winch/HangingLamp.prefab
+- Assets/DREDGE/Mods/Winch/Docks/RockDock.prefab
+- Assets/DREDGE/Mods/Winch/Docks/GenericStorage.prefab
+- Assets/DREDGE/Mods/Winch/Docks/PlainStoneDock.prefab
+Dependencies: []

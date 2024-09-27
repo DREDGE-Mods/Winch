@@ -1,0 +1,90 @@
+﻿{
+	"prefab": "PLAIN_STONE",
+	"dockData": "exampleitems.plainstonedock",
+	"location": {
+		"x": 376,
+		"y": 0,
+		"z": -260
+	},
+	"rotation": {
+		"x": 0,
+		"y": 335,
+		"z": 0
+	},
+	"poiOffset": {
+		"x": 2,
+		"y": 0,
+		"z": 0
+	},
+	"collider": {
+		"colliderType": "SPHERE",
+		"radius": 3.54
+	},
+	"vCam": {
+		"x": 10.125,
+		"y": 4.59,
+		"z": -8.1
+	},
+	"lookAtTarget": {
+		"x": 1,
+		"y": 1.5,
+		"z": -0.3
+	},
+	"boatActions": {
+		"x": 2,
+		"y": 2.05,
+		"z": 0
+	},
+	"storage": {
+		"enabled": true,
+		"position": {
+			"x": -3,
+			"y": 0.55,
+			"z": -0.3
+		},
+		"vCam": {
+			"x": 4.5,
+			"y": 3.45,
+			"z": 6.75
+		},
+		"overflowHeight": 0.6
+	},
+	"dockSlots": [
+		{
+			"position": {
+				"x": 4,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": 1,
+				"y": 0,
+				"z": -2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": 1,
+				"y": 0,
+				"z": 2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		}
+	]
+}

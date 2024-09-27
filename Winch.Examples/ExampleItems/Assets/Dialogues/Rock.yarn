@@ -1,0 +1,13 @@
+﻿﻿title: ExampleItems_Rock_Root
+---
+A rock #line:exampleitems.rock
+<<AutoResolveNextLine>>
+Opening quest input grid #line:exampleitems.input
+<<ShowQuestGrid exampleitems.input>>
+<<if GetLastQuestGridResult() == 1>>
+    <<ClearQuestGrid exampleitems.input>>
+    <<AutoResolveNextLine>>
+    Opening quest output grid #line:exampleitems.output
+    <<ShowQuestGrid exampleitems.output>>
+<<endif>>
+===

@@ -1,0 +1,22 @@
+﻿{
+	"itemNameKey": "exampleitems.milk.name",
+	"itemDescriptionKey": "exampleitems.milk.desc",
+	"itemType": "GENERAL",
+	"itemSubtype": "EXAMPLE",
+	"sprite": "exampleitems.milk",
+	"itemColor": {
+		"r": 58,
+		"g": 40,
+		"b": 32,
+		"a": 255
+	},
+	"value": 50,
+	"dimensions": [
+		"X"
+	],
+	"damageMode": "DESTROY",
+	"sellOverrideValue": 10,
+	"hasSpecialDiscardAction": true,
+	"discardPromptOverride": "prompt.use"
+}
+

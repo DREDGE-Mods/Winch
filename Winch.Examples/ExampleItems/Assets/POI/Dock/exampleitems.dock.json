@@ -1,0 +1,88 @@
+{
+	"prefab": "GENERIC",
+	"dockData": "exampleitems.dock",
+	"location": {
+		"x": 355,
+		"y": 0,
+		"z": -273
+	},
+	"rotation": {
+		"x": 0,
+		"y": 140,
+		"z": 0
+	},
+	"poiOffset": {
+		"x": 1.43,
+		"y": 0,
+		"z": 0
+	},
+	"collider": {
+		"colliderType": "SPHERE",
+		"radius": 3.54
+	},
+	"vCam": {
+		"x": 10,
+		"y": 3.4,
+		"z": -4.9
+	},
+	"lookAtTarget": {
+		"x": -1,
+		"y": 1,
+		"z": 0
+	},
+	"boatActions": {
+		"x": 3.03,
+		"y": 1.6,
+		"z": 0
+	},
+	"storage": {
+		"position": {
+			"x": -1.65,
+			"y": 0.5,
+			"z": -0.45
+		},
+		"vCam": {
+			"x": 4.5,
+			"y": 3.45,
+			"z": 6.75
+		}
+	},
+	"dockSlots": [
+		{
+			"position": {
+				"x": 3.03,
+				"y": 0,
+				"z": 0
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": 1.13,
+				"y": 0,
+				"z": -2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		},
+		{
+			"position": {
+				"x": 1.13,
+				"y": 0,
+				"z": 2
+			},
+			"rotation": {
+				"x": 0,
+				"y": -90,
+				"z": 0
+			}
+		}
+	]
+}

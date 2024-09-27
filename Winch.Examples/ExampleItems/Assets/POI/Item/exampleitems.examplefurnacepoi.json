@@ -2,7 +2,7 @@
   "location": {
     "x": 405.0,
     "y": 0.0,
-    "z": -365.0
+    "z": -300.0
   },
   "harvestableParticlePrefab" : "SpecialPlateParticles",
   "items": ["exampleitems.furnace"]

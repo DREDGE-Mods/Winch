@@ -7,26 +7,25 @@ using Winch;
  * https://github.com/ow-mods/owml
  */
 
-namespace WinchConsole
+namespace WinchConsole;
+
+internal static class Program
 {
-	internal class Program
-	{
-		static void Main(string[] args)
-		{
-			Console.WriteLine("Loading Winch console!");
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Loading Winch console!");
 
-			// Only allow one console to be open at a time
-			var currentProcess = Process.GetCurrentProcess();
-			var duplicates = Process.GetProcessesByName(currentProcess.ProcessName);
+        // Only allow one console to be open at a time
+        var currentProcess = Process.GetCurrentProcess();
+        var duplicates = Process.GetProcessesByName(currentProcess.ProcessName);
 
-			if (duplicates.Length > 1)
-			{
-				currentProcess.Kill();
-			}
-			else
-			{
-				new LogSocketListener().Run();
-			}
-		}
-	}
+        if (duplicates.Length > 1)
+        {
+            currentProcess.Kill();
+        }
+        else
+        {
+            new LogSocketListener().Run();
+        }
+    }
 }

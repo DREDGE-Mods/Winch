@@ -2,7 +2,7 @@
   "location": {
     "x": 405.0,
     "y": 0.0,
-    "z": -370.0
+    "z": -305.0
   },
   "harvestableParticlePrefab" : "WoodParticles",
   "items": ["exampleitems.rod"]

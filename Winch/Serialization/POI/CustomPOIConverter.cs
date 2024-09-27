@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Winch.Data.POI;
 // ReSharper disable HeapView.BoxingAllocation
 
 namespace Winch.Serialization.POI;
@@ -9,8 +10,12 @@ public class CustomPOIConverter : DredgeTypeConverter<CustomPOI>
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
-        { "id", new( null, null) },
-        { "location", new( new Vector3(0,0,0), o=> DredgeTypeHelpers.ParseVector3(o)) }
+        { "id", new( string.Empty, null) },
+        { "location", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "canBeGhostWindTarget", new( false, o=> bool.Parse(o.ToString())) },
+        { "ghostWindTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "interactPointTarget", new( Vector3.zero, o=> DredgeTypeHelpers.ParseVector3(o)) },
+        { "mapMarkerData", new( string.Empty, null) }
     };
     
     public CustomPOIConverter()

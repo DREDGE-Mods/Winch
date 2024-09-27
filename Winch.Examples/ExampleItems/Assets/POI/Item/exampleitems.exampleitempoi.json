@@ -1,9 +1,9 @@
 {
   "location": {
-    "x": 390.0,
+    "x": 420.0,
     "y": 0.0,
-    "z": -365.0
+    "z": -255.0
   },
   "harvestableParticlePrefab" : "ImportantDredgeParticles",
-  "items": ["exampleitems.nautilus"]
+  "items": ["exampleitems.milk"]
 }

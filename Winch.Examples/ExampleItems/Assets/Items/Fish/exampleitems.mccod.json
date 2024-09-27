@@ -26,12 +26,14 @@
   "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
-  "harvestMinigameType": "DREDGE_RADIAL",
+  "harvestMinigameType": "FISHING_RADIAL",
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "COASTAL",
   "harvestDifficulty": "VERY_EASY",
-  "aberrations": ["exampleitems.mcsalmon","exampleitems.mctropical"]
+  "aberrations": ["exampleitems.mcsalmon","exampleitems.mcpufferfish","exampleitems.mctropical"],
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
 }
 

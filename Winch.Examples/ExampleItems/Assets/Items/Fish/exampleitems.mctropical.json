@@ -26,13 +26,15 @@
   "night": true,
   "minSizeCentimeters": 5,
   "maxSizeCentimeters": 10,
-  "harvestMinigameType": "DREDGE_RADIAL",
+  "harvestMinigameType": "FISHING_DIAMOND",
   "perSpotMin": 3,
   "perSpotMax": 8,
   "harvestPOICategory": "FISH_SMALL",
   "harvestableType": "OCEANIC",
-  "harvestDifficulty": "VERY_EASY",
+  "harvestDifficulty": "EASY",
   "isAberration": true,
-  "nonAberrationParent": "exampleitems.mccod"
+  "nonAberrationParent": "exampleitems.mccod",
+  "canBeCaughtByRod": true,
+  "canBeCaughtByNet": true
 }
 

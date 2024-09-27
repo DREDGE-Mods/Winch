@@ -1,0 +1,17 @@
+{
+    "titleString": "quest-grid.item-pickup",
+    "isSaved": true,
+    "allowEquipmentInstallation": true,
+    "allowManualExit": true,
+    "allowStorageAccess": true,
+    "gridConfiguration": "exampleitems.product",
+    "gridKey": "EXAMPLE_PRODUCT",
+    "presetGridMode": "NONE",
+    "questGridExitMode": "REVISITABLE",
+    "startingDurabilityProportion": 1.0,
+    "completeConditions": [
+        {
+            "type": "Empty"
+        }
+    ]
+}

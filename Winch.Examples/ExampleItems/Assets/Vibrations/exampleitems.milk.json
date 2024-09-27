@@ -1,0 +1,12 @@
+﻿{
+    "vibrationParamsList": [
+        {
+            "largeMotorIntensity": 0.03,
+            "smallMotorIntensity": 0.0,
+            "time": 0.1,
+            "postVibrateDelay": 0.3,
+            "xboxDampening": 0.75
+        }
+    ]
+}
+

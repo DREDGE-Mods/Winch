@@ -1,42 +1,63 @@
-﻿using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace Winch.Config
+namespace Winch.Config;
+
+public class WinchConfig : JSONConfig
 {
-    public class WinchConfig : JSONConfig
+    private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), Constants.WinchConfigFileName);
+
+    private WinchConfig() : base(WinchConfigPath, Winch.Properties.Resources.DefaultConfig) { }
+
+    private static WinchConfig? _instance;
+    public static WinchConfig Instance
     {
-        private static readonly string WinchConfigPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "WinchConfig.json");
-
-        private WinchConfig() : base(WinchConfigPath, WinchCommon.Properties.Resources.DefaultConfig) { }
-
-        private static WinchConfig? _instance;
-        public static WinchConfig Instance
+        get
         {
-            get
-            {
-                if(_instance == null)
-                    _instance = new WinchConfig();
-                return _instance;
-            }
+            if(_instance == null)
+                _instance = new WinchConfig();
+            return _instance;
         }
+    }
 
-        public static new T GetProperty<T>(string key, T defaultValue)
+    internal static new void ResetToDefaultConfig()
+    {
+        ((JSONConfig)Instance).ResetToDefaultConfig();
+    }
+
+    public static new T? GetDefaultProperty<T>(string key)
+    {
+        return ((JSONConfig)Instance).GetDefaultProperty<T>(key);
+    }
+
+    internal static new Dictionary<string, object> GetProperties()
+    {
+        return ((JSONConfig)Instance).GetProperties();
+    }
+
+    public static new T? GetProperty<T>(string key)
+    {
+        return ((JSONConfig)Instance).GetProperty<T>(key);
+    }
+
+    public static new T GetProperty<T>(string key, T defaultValue)
+    {
+        try
         {
-            try
-            {
-                var property = ((JSONConfig)Instance).GetProperty(key, defaultValue);
-                if (property == null) return defaultValue;
-                return property;
-            }
-            catch
-            {
-                return defaultValue;
-            }
+            return GetProperty<T>(key) ?? defaultValue;
         }
+        catch
+        {
+            return defaultValue;
+        }
+    }
 
-		public static new void SetProperty<T>(string key, T value)
-		{
-			((JSONConfig)Instance).SetProperty(key, value);
-		}
+    public static new void SetProperty<T>(string key, T value)
+    {
+        ((JSONConfig)Instance).SetProperty(key, value);
+    }
+
+    internal static new void ResetPropertyToDefault(string key)
+    {
+        ((JSONConfig)Instance).ResetPropertyToDefault(key);
     }
 }

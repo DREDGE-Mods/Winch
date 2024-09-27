@@ -1,0 +1,16 @@
+{
+    "location": {
+        "x": 0,
+        "y": 0,
+        "z": -300
+    },
+    "colliderType": "BOX",
+    "size": {
+        "x": 3000,
+        "y": 500,
+        "z": 3000
+    },
+    "harvestableItems": [ "exampleitems.musicdisc" ],
+    "day": false,
+    "night": true
+}

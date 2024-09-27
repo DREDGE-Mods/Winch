@@ -1,0 +1,14 @@
+{
+	"location": {
+		"x": 372.0,
+		"y": 0.0,
+		"z": -242.0
+	},
+	"harvestableParticlePrefab": "MinecraftClownfishParticles",
+	"items": [],
+	"nightItems": [ "exampleitems.mctropical" ],
+	"startStock": 5,
+	"maxStock": 10,
+	"doesRestock": true,
+	"usesTimeSpecificStock": true
+}

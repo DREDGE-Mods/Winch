@@ -1,23 +1,34 @@
-﻿namespace Winch.Core.API.Events.Addressables
+﻿using Winch.Core.API.Events.LookupTable;
+
+namespace Winch.Core.API.Events.Addressables;
+
+public class AddressableEvents
 {
-    public class AddressableEvents
-    {
-        public AddressablesLoadedHook<AchievementData> AchievementsLoaded = new AddressablesLoadedHook<AchievementData>();
+    public LookupTableLoadedHook<AbilityData> AbilitiesLoaded = new LookupTableLoadedHook<AbilityData>();
 
-        public AddressablesLoadedHook<GridConfiguration> GridConfigsLoaded = new AddressablesLoadedHook<GridConfiguration>();
+    public AddressablesLoadedHook<AchievementData> AchievementsLoaded = new AddressablesLoadedHook<AchievementData>();
 
-        public AddressablesLoadedHook<ItemData> ItemsLoaded = new AddressablesLoadedHook<ItemData>();
+    public AddressablesLoadedHook<GridConfiguration> GridConfigsLoaded = new AddressablesLoadedHook<GridConfiguration>();
 
-        public AddressablesLoadedHook<MapMarkerData> MapMarkersLoaded = new AddressablesLoadedHook<MapMarkerData>();
+    public AddressablesLoadedHook<ItemData> ItemsLoaded = new AddressablesLoadedHook<ItemData>();
 
-        public AddressablesLoadedHook<QuestData> QuestsLoaded = new AddressablesLoadedHook<QuestData>();
+    public AddressablesLoadedHook<MapMarkerData> MapMarkersLoaded = new AddressablesLoadedHook<MapMarkerData>();
 
-        public AddressablesLoadedHook<QuestGridConfig> QuestGridConfigsLoaded = new AddressablesLoadedHook<QuestGridConfig>();
+    public AddressablesLoadedHook<QuestData> QuestsLoaded = new AddressablesLoadedHook<QuestData>();
 
-        public AddressablesLoadedHook<UpgradeData> UpgradesLoaded = new AddressablesLoadedHook<UpgradeData>();
+    public LookupTableLoadedHook<QuestStepData> QuestStepsLoaded = new LookupTableLoadedHook<QuestStepData>();
 
-        public AddressablesLoadedHook<WeatherData> WeatherDataLoaded = new AddressablesLoadedHook<WeatherData>();
+    public AddressablesLoadedHook<QuestGridConfig> QuestGridConfigsLoaded = new AddressablesLoadedHook<QuestGridConfig>();
 
-        public AddressablesLoadedHook<WorldEventData> WorldEventsLoaded = new AddressablesLoadedHook<WorldEventData>();
-    }
+    public LookupTableLoadedHook<ShopData> ShopsLoaded = new LookupTableLoadedHook<ShopData>();
+
+    public LookupTableLoadedHook<SpeakerData> SpeakersLoaded = new LookupTableLoadedHook<SpeakerData>();
+
+    public AddressableLoadedHook<SupportedLocaleData> SupportedLocalesLoaded = new AddressableLoadedHook<SupportedLocaleData>();
+
+    public AddressablesLoadedHook<UpgradeData> UpgradesLoaded = new AddressablesLoadedHook<UpgradeData>();
+
+    public AddressablesLoadedHook<WeatherData> WeatherDataLoaded = new AddressablesLoadedHook<WeatherData>();
+
+    public AddressablesLoadedHook<WorldEventData> WorldEventsLoaded = new AddressablesLoadedHook<WorldEventData>();
 }

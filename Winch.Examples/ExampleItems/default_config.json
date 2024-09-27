@@ -1,0 +1,74 @@
+{
+	"Separator": {
+		"type": "separator",
+		"title": "exampleconfig.separator.title"
+	},
+	"Toggle": {
+		"type": "toggle",
+		"title": "exampleconfig.toggle.title",
+		"tooltip": "exampleconfig.toggle.tooltip",
+		"value": true
+	},
+	"Text": {
+		"type": "text",
+		"title": "exampleconfig.text.title",
+		"tooltip": "exampleconfig.text.tooltip",
+		"value": "Hello"
+	},
+	"Integer": {
+		"type": "integer",
+		"title": "exampleconfig.integer.title",
+		"tooltip": "exampleconfig.integer.tooltip",
+		"value": 22
+	},
+	"Decimal": {
+		"type": "decimal",
+		"title": "exampleconfig.decimal.title",
+		"tooltip": "exampleconfig.decimal.tooltip",
+		"value": 1.01
+	},
+	"Slider": {
+		"type": "slider",
+		"title": "exampleconfig.slider.title",
+		"tooltip": "exampleconfig.slider.tooltip",
+		"min": 10,
+		"max": 20,
+		"value": 15
+	},
+	"Dropdown": {
+		"type": "dropdown",
+		"title": "exampleconfig.dropdown.title",
+		"tooltip": "exampleconfig.dropdown.tooltip",
+		"options": [
+			"One",
+			"Two",
+			"Three"
+		],
+		"optionStrings": [
+			"exampleconfig.dropdown.option.one",
+			"exampleconfig.dropdown.option.two",
+			"exampleconfig.dropdown.option.three"
+		],
+		"value": "Two"
+	},
+	"Color": {
+		"type": "color",
+		"title": "exampleconfig.color.title",
+		"tooltip": "exampleconfig.color.tooltip",
+		"options": [
+			"NEUTRAL",
+			"EMPHASIS",
+			"POSITIVE",
+			"NEGATIVE",
+			"CRITICAL",
+			"WARNING",
+			"VALUABLE",
+			"DISABLED",
+			"ATTENTION",
+			"INFO",
+			"PRIORITY",
+			"ALERT"
+		],
+		"value": "NEUTRAL"
+	}
+}

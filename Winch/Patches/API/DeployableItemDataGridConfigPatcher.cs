@@ -1,22 +1,18 @@
 ﻿using HarmonyLib;
-using System.Collections.Generic;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using Winch.Core.API;
-using Winch.Serialization.Item;
+using Winch.Data.Item;
 using Winch.Util;
 
-namespace Winch.Patches.API
+namespace Winch.Patches.API;
+
+[HarmonyPatch(typeof(DeployableItemData))]
+[HarmonyPatch(nameof(DeployableItemData.GridConfig), MethodType.Getter)]
+internal static class DeployableItemDataGridConfigPatcher
 {
-    [HarmonyPatch(typeof(DeployableItemData))]
-    [HarmonyPatch(nameof(DeployableItemData.GridConfig), MethodType.Getter)]
-    class DeployableItemDataGridConfigPatcher
+    public static void Prefix(DeployableItemData __instance)
     {
-        public static void Prefix(DeployableItemData __instance)
+        if (__instance is GridConfigDeployableItemData deployableItemData && !string.IsNullOrWhiteSpace(deployableItemData.gridConfiguration))
         {
-            if (__instance is GridConfigDeployableItemData deployableItemData && !string.IsNullOrWhiteSpace(deployableItemData.gridConfiguration))
-            {
-                GridConfigUtil.AllGridConfigDict.TryGetValue(deployableItemData.gridConfiguration, out __instance.gridConfig);
-            }
+            GridConfigUtil.AllGridConfigDict.TryGetValue(deployableItemData.gridConfiguration, out __instance.gridConfig);
         }
     }
 }

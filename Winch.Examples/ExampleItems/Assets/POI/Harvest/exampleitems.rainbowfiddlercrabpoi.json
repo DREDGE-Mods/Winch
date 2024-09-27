@@ -1,0 +1,13 @@
+{
+	"location": {
+		"x": 385.0,
+		"y": 0.0,
+		"z": -274.0
+	},
+	"harvestableParticlePrefab": "MinecraftCrabParticles",
+	"items": [ "exampleitems.rainbowfiddlercrab" ],
+	"startStock": 1,
+	"maxStock": 4,
+	"doesRestock": true,
+	"usesTimeSpecificStock": false
+}

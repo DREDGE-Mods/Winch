@@ -1,15 +1,11 @@
-﻿using HarmonyLib;
-using Winch.Core;
+﻿using Winch.Core;
 
-namespace Winch.Patches
+namespace Winch.Patches;
+
+internal static class BuildInfoFeaturePatcher
 {
-    [HarmonyPatch(typeof(GameManager))]
-    [HarmonyPatch(nameof(GameManager.AddTerminalCommands))]
-    class BuildInfoFeaturePatcher
-    {
-        static bool Prefix() {
-            WinchCore.Log.Debug("Disallowed Feature Enable Commands to be added to Terminal.");
-            return false;
-        }
+    public static bool Prefix() {
+        WinchCore.Log.Debug("Disallowed Feature Enable Commands to be added to Terminal.");
+        return false;
     }
 }

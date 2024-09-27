@@ -4,87 +4,98 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Winch.Config;
 using Winch.Logging;
+using Winch.Patches;
+using Winch.Serialization;
 using Winch.Util;
 
-namespace Winch.Core
+namespace Winch.Core;
+
+public static class WinchCore
 {
-	public class WinchCore
+    internal static Harmony Harmony = new Harmony("com.dredge.winch");
+
+    public static Logger Log = new Logger();
+
+    public static Dictionary<string, object> WinchModConfig = new();
+
+    public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+    internal static Assembly WinchAssembly => Assembly.GetExecutingAssembly();
+
+    internal static string Name => WinchCore.WinchModConfig["Name"].ToString();
+
+    internal static string Author => WinchCore.WinchModConfig["Author"].ToString();
+
+    internal static string GUID => WinchCore.WinchModConfig["ModGUID"].ToString();
+
+    internal static string Version => WinchCore.WinchModConfig["Version"].ToString();
+
+    public static void Initialize()
     {
-        internal static Harmony Harmony;
-
-        public static Logger Log = new Logger();
-
-		public static Dictionary<string, object> WinchModConfig = new();
-
-		public static string WinchInstallLocation => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-		public static void Main()
+        try
         {
-			try
-			{
-				string metaPath = Path.Combine(WinchInstallLocation, "mod_meta.json");
-				if (!File.Exists(metaPath))
-				{
-					throw new FileNotFoundException($"Missing mod_meta.json file for Winch at {metaPath}. Reinstall the mod.");
-				}
+            string metaPath = Path.Combine(WinchInstallLocation, "mod_meta.json");
+            if (!File.Exists(metaPath))
+            {
+                throw new FileNotFoundException($"Missing mod_meta.json file for Winch at {metaPath}. Reinstall the mod.");
+            }
 
-				string metaText = File.ReadAllText(metaPath);
-				WinchModConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) 
-					?? throw new InvalidOperationException($"Unable to parse mod_meta.json file at {metaPath}. Reinstall the mod.");
-			}
-			catch (Exception e)
-			{
-				Log.Error(e);
-			}
+            string metaText = File.ReadAllText(metaPath);
+            WinchModConfig = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText)
+                             ?? throw new InvalidOperationException($"Unable to parse mod_meta.json file at {metaPath}. Reinstall the mod.");
 
-			string version = VersionUtil.GetVersion();
+            JSONConfig.AddDynamicConverter(new SerializedCrabPotPOIConverter());
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
+
+        try
+        {
+            string version = VersionUtil.GetVersion();
             Log.Info($"Winch {version} booting up...");
+            Log.Info($"Running under Unity {UnityInfo.Version}");
+            Log.Info($"CLR runtime version: {Environment.Version}");
 
+            Log.Debug($"Game executable path: {Paths.ExecutablePath}");
+            Log.Debug($"Unity Managed directory: {Paths.ManagedPath}");
+            Log.Debug($"Winch path: {Paths.WinchPath}");
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
+
+        try
+        {
             ModAssemblyLoader.LoadModAssemblies();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
 
-            Harmony = new Harmony("com.dredge.winch");
-            Log.Debug("Created Harmony Instance 'com.dredge.winch'. Patching...");
-            try
-            {
-                Harmony.PatchAll();
-                EnumUtil.Initialize(Harmony);
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Failed to apply winch patches: {ex}");
-            }
+        try
+        {
+            AddressablesUtil.Initialize();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e);
+        }
 
-            foreach(ModAssembly modAssembly in ModAssemblyLoader.EnabledModAssemblies.Values)
-            {
-                try
-                {
-                    if (modAssembly.LoadedAssembly != null)
-                    {
-                        EnumUtil.RegisterAllEnumHolders(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Log.Error($"Failed to register enum holders for {modAssembly.BasePath}: {ex}");
-                }
-
-                try
-                {
-                    bool hasPatches = modAssembly.Metadata.ContainsKey("ApplyPatches") && (bool)modAssembly.Metadata["ApplyPatches"] == true;
-                    if (modAssembly.LoadedAssembly != null && hasPatches)
-                    {
-                        Log.Debug($"Patching from {modAssembly.LoadedAssembly.GetName().Name}...");
-                        new Harmony((string)modAssembly.Metadata["ModGUID"]).PatchAll(modAssembly.LoadedAssembly);
-                    }
-                }
-                catch(Exception ex)
-                {
-                    Log.Error($"Failed to apply patches for {modAssembly.BasePath}: {ex}");
-                }
-            }
-
-            Log.Debug("Harmony Patching complete.");
+        try
+        {
+            Log.Debug("Patching with Harmony Instance 'com.dredge.winch'...");
+            EarlyPatcher.Initialize(WinchCore.Harmony);
+            Log.Debug("Early Harmony Patching complete.");
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"Failed to apply early winch patches: {ex}");
         }
     }
 }

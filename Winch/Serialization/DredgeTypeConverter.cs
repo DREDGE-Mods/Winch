@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using UnityEngine;
 using UnityEngine.Localization;
-using Winch.Core;
+using Winch.Util;
 
 // ReSharper disable HeapView.BoxingAllocation
 // ReSharper disable HeapView.PossibleBoxingAllocation
@@ -56,8 +52,7 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
             catch(Exception ex)
             {
                 string configuredValue = data.TryGetValue(field.Name, out var value) ? value.ToString() : "UNDEFINED";
-                WinchCore.Log.Error($"Exception occurred while processing field '{field.Name}' (Configured: '{configuredValue}'): {ex}");
-                throw;
+                throw new Exception($"Couldn't process field '{field.Name}' (Configured: '{configuredValue}')", ex);
             }
         }
     }
@@ -104,5 +99,17 @@ public class DredgeTypeConverter<T> : IDredgeTypeConverter
         {
             this.Reroutes.Add(reroute.Key, reroute.Value);
         }
+    }
+
+    protected static LocalizedString CreateLocalizedString(string key, string value)
+    {
+        var keyValueTuple = (key, value);
+        if (StringDefinitionCache.TryGetValue(keyValueTuple, out LocalizedString cached))
+        {
+            return cached;
+        }
+        var localizedString = LocalizationUtil.CreateReference(key, value);
+        StringDefinitionCache.Add(keyValueTuple, localizedString);
+        return localizedString;
     }
 }

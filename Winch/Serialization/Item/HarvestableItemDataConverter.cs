@@ -10,7 +10,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
     {
         { "itemTypeIcon", new(TextureUtil.GetSprite("TrinketIcon"), null) },
         { "damageMode", new(DamageMode.DESTROY, null) },
-        { "itemColor", new(new Color(0.2264f, 0.1563f, 0.125f, 255f), null)},
+        { "itemColor", new(new Color(0.2264f, 0.1563f, 0.125f, 1f), null)},
         { "harvestMinigameType", new( HarvestMinigameType.DREDGE_RADIAL, o => DredgeTypeHelpers.GetEnumValue<HarvestMinigameType>(o)) },
         { "perSpotMin", new(1, o => int.Parse(o.ToString())) },
         { "perSpotMax", new(1, o => int.Parse(o.ToString())) },
@@ -28,7 +28,7 @@ public class HarvestableItemDataConverter : SpatialItemDataConverter
         { "minDepth", new(DepthEnum.SHALLOW, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
         { "hasMaxDepth", new(false, o => bool.Parse(o.ToString())) },
         { "maxDepth", new(DepthEnum.VERY_DEEP, o => DredgeTypeHelpers.GetEnumValue<DepthEnum>(o)) },
-        { "zonesFoundIn", new(ZoneEnum.OPEN_OCEAN, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
+        { "zonesFoundIn", new(ZoneEnum.ALL, o => DredgeTypeHelpers.GetEnumValue<ZoneEnum>(o)) },
     };
     
     public HarvestableItemDataConverter()

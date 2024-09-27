@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using UnityEngine;
-using Winch.Core;
+using Winch.Data.GridConfig;
 
 namespace Winch.Serialization.GridConfig;
 
