@@ -290,6 +290,12 @@ public static class QuestUtil
     {
         AllQuestGridConfigDict.SafeAdd(key, value);
         WinchCore.Log.Debug($"Added quest grid config {key} to AllQuestGridConfigDict");
+
+        if (GridConfigUtil.TryGetGridConfiguration(value.gridKey, out GridConfiguration gridConfig))
+            value.gridConfiguration = gridConfig;
+
+        if (value.gridConfiguration != null && !GridConfigUtil.AllGridConfigDict.ContainsKey(value.gridConfiguration.name))
+            GridConfigUtil.PopulateGridConfiguration(value.gridConfiguration);
     }
 
     internal static void PopulateQuestGridConfigs(IList<QuestGridConfig> result)

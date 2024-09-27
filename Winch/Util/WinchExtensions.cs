@@ -559,31 +559,34 @@ public static class WinchExtensions
         return itemManager.GetMaterialItems().Concat(itemManager.GetTrinketItems()).Where(harvestable => (harvestable.canBeCaughtByNet || harvestable.canBeCaughtByPot) && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(harvestable) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(harvestable)).Shuffle().ToList();
     }
 
-    public static List<HarvestableItemData> GetBaitRange<T>(this List<T> items) where T : HarvestableItemData => items.GetRange(0, Mathf.Min(items.Count, GameManager.Instance.GameConfigData.NumFishSpeciesInBaitBall)).CastToList<HarvestableItemData>();
+    public static List<HarvestableItemData> GetBaitRange<T>(this List<T> items, int uniqueItems = 0) where T : HarvestableItemData
+        => items.GetRange(0, Mathf.Min(items.Count,
+            uniqueItems > 0 ? uniqueItems : GameManager.Instance.GameConfigData.NumFishSpeciesInBaitBall
+            )).CastToList<HarvestableItemData>();
 
-    public static List<HarvestableItemData> GetRangedBaitRegularFish(this ItemManager itemManager)
+    public static List<HarvestableItemData> GetRangedBaitRegularFish(this ItemManager itemManager, int uniqueItems = 0)
     {
-        return itemManager.GetBaitRegularFish().GetBaitRange();
+        return itemManager.GetBaitRegularFish().GetBaitRange(uniqueItems);
     }
 
-    public static List<HarvestableItemData> GetRangedBaitExoticFish(this ItemManager itemManager)
+    public static List<HarvestableItemData> GetRangedBaitExoticFish(this ItemManager itemManager, int uniqueItems = 0)
     {
-        return itemManager.GetBaitExoticFish().GetBaitRange();
+        return itemManager.GetBaitExoticFish().GetBaitRange(uniqueItems);
     }
 
-    public static List<HarvestableItemData> GetRangedBaitAberratedFish(this ItemManager itemManager)
+    public static List<HarvestableItemData> GetRangedBaitAberratedFish(this ItemManager itemManager, int uniqueItems = 0)
     {
-        return itemManager.GetBaitAberratedFish().GetBaitRange();
+        return itemManager.GetBaitAberratedFish().GetBaitRange(uniqueItems);
     }
 
-    public static List<HarvestableItemData> GetRangedBaitCrabs(this ItemManager itemManager)
+    public static List<HarvestableItemData> GetRangedBaitCrabs(this ItemManager itemManager, int uniqueItems = 0)
     {
-        return itemManager.GetBaitCrabs().GetBaitRange();
+        return itemManager.GetBaitCrabs().GetBaitRange(uniqueItems);
     }
 
-    public static List<HarvestableItemData> GetRangedBaitMaterials(this ItemManager itemManager)
+    public static List<HarvestableItemData> GetRangedBaitMaterials(this ItemManager itemManager, int uniqueItems = 0)
     {
-        return itemManager.GetBaitMaterials().GetBaitRange();
+        return itemManager.GetBaitMaterials().GetBaitRange(uniqueItems);
     }
 
     public static bool DeployBaitModified(this BaitAbility baitAbility, SpatialItemInstance baitInstance)
@@ -599,7 +602,17 @@ public static class WinchExtensions
             GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.bait-failed");
             return false;
         }
-        int num = (baitType == BaitType.EXOTIC || deepForm) ? 1 : UnityEngine.Random.Range(GameManager.Instance.GameConfigData.NumFishInBaitBallMin, GameManager.Instance.GameConfigData.NumFishInBaitBallMax);
+        var numItemsMin = GameManager.Instance.GameConfigData.NumFishInBaitBallMin;
+        var numItemsMax = GameManager.Instance.GameConfigData.NumFishInBaitBallMax;
+        if (spatialItemData is BaitItemData baitItemData)
+        {
+            if (baitItemData.numItemsMin > 0)
+                numItemsMin = baitItemData.numItemsMin;
+
+            if (baitItemData.numItemsMax > 0)
+                numItemsMax = baitItemData.numItemsMax;
+        }
+        int num = (baitType == BaitType.EXOTIC || deepForm) ? 1 : UnityEngine.Random.Range(numItemsMin, numItemsMax);
         if (deepForm) items = new List<HarvestableItemData> { baitAbility.deepFormItemData };
         Stack<HarvestableItemData> stack = new Stack<HarvestableItemData>();
         for (int i = 0; i < num; i++)
@@ -637,20 +650,21 @@ public static class WinchExtensions
         return true;
     }
 
-    public static List<HarvestableItemData> GetBaitItemsFromItemData(this SpatialItemData baitData)
+    public static List<HarvestableItemData> GetBaitItemsFromItemData(this SpatialItemData itemData)
     {
-        if (baitData == null) return new List<HarvestableItemData>();
-        var baitType = baitData.GetBaitTypeFromItemData();
+        if (itemData == null) return new List<HarvestableItemData>();
+        var baitType = itemData.GetBaitTypeFromItemData();
+        var uniqueItems = itemData is BaitItemData baitData ? baitData.numItemsMax : 0;
         if (baitType == BaitType.FISH)
-            return GameManager.Instance.ItemManager.GetRangedBaitRegularFish();
+            return GameManager.Instance.ItemManager.GetRangedBaitRegularFish(uniqueItems);
         else if (baitType == BaitType.EXOTIC)
-            return GameManager.Instance.ItemManager.GetRangedBaitExoticFish();
+            return GameManager.Instance.ItemManager.GetRangedBaitExoticFish(uniqueItems);
         else if (baitType == BaitType.ABERRATED && GameManager.Instance.SaveData.CanCatchAberrations)
-            return GameManager.Instance.ItemManager.GetRangedBaitAberratedFish();
+            return GameManager.Instance.ItemManager.GetRangedBaitAberratedFish(uniqueItems);
         else if (baitType == BaitType.CRAB)
-            return GameManager.Instance.ItemManager.GetRangedBaitCrabs();
+            return GameManager.Instance.ItemManager.GetRangedBaitCrabs(uniqueItems);
         else if (baitType == BaitType.MATERIAL)
-            return GameManager.Instance.ItemManager.GetRangedBaitMaterials();
+            return GameManager.Instance.ItemManager.GetRangedBaitMaterials(uniqueItems);
         else
             return new List<HarvestableItemData>();
     }
@@ -1313,6 +1327,12 @@ public static class WinchExtensions
 
     public static bool TryGetGridConfigForKey(this GameConfigData gameConfigData, GridKey key, out GridConfiguration gridConfig)
     {
+        if (key == GridKey.NONE)
+        {
+            gridConfig = null;
+            return false;
+        }
+
         return gameConfigData.gridConfigs.TryGetValue(key, out gridConfig) && gridConfig != null;
     }
 

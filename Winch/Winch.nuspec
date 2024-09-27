@@ -31,7 +31,7 @@
     <!-- Project URL provides a link for the gallery -->
     <projectUrl>https://github.com/DREDGE-Mods/Winch</projectUrl>
 
-    <!-- <repository type="git" url="https://github.com/DREDGE-Mods/Winch.git" /> -->
+    <repository type="git" url="https://github.com/DREDGE-Mods/Winch.git" />
 
     <!-- License information is displayed on the gallery -->
     <license type="expression">MIT</license>
@@ -40,6 +40,8 @@
     <icon>images\icon.png</icon>
     <iconUrl>https://raw.githubusercontent.com/DREDGE-Mods/Winch/master/Winch/icon.png</iconUrl>
 
+    <readme>docs\README.md</readme>
+    
     <!-- 
       If true, this value prompts the user to accept the license when
       installing the package. 
@@ -69,7 +71,10 @@
   </metadata>
   <files>
     <file src="bin\Release\Winch.dll" target="lib\net48" />
+    <file src="bin\Release\Winch.xml" target="lib\net48" />
     <file src="bin\Release\WinchCommon.dll" target="lib\net48" />
+    <file src="bin\Release\WinchCommon.xml" target="lib\net48" />
+    <file src="README.md" target="docs\" />
     <file src="icon.png" target="images\" />
   </files>
 </package>

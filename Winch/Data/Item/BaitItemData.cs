@@ -14,6 +14,12 @@ public class BaitItemData : SpatialItemData, IAbilityItemData
     [SerializeField]
     public Sprite qualityIcon;
 
+    [SerializeField]
+    public int numItemsMin = 0;
+
+    [SerializeField]
+    public int numItemsMax = 0;
+
     public AbilityMode AbilityMode => abilityMode;
 
     public Sprite QualityIcon => qualityIcon;
