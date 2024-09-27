@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Winch.Core;
 using Winch.Data.GridConfig;
@@ -25,13 +26,45 @@ public static class GridConfigUtil
     internal static List<string> VanillaGridConfigIDList = new();
     internal static Dictionary<GridKey, string> VanillaGridKeyDict = new();
 
+    internal static void CreateTier1()
+    {
+        if (!GameManager.Instance.GameConfigData.gridConfigs.ContainsKey(GridKeyExtra.UPGRADE_T1_HULL))
+        {
+            var tier1 = ScriptableObject.CreateInstance<GridConfiguration>().Rename("Tier1HullInput").DontDestroyOnLoad();
+            tier1.mainItemType = ItemType.GENERAL;
+            tier1.mainItemSubtype = ItemSubtype.MATERIAL;
+            tier1.canAddItemsInQuestMode = true;
+            tier1.itemsInThisBelongToPlayer = true;
+            GameManager.Instance.GameConfigData.gridConfigs.Add(GridKeyExtra.UPGRADE_T1_HULL, tier1);
+        }
+    }
+
+    internal static void SpecialVanillaGridHandler(GridKey key, GridConfiguration value)
+    {
+        switch (key)
+        {
+            case GridKey.UPGRADE_T2_HULL:
+            case GridKey.UPGRADE_T3_HULL:
+            case GridKey.UPGRADE_T4_HULL:
+            case GridKey.UPGRADE_T5_HULL:
+                value.name += "Input";
+                break;
+        }
+    }
+
     internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<GridConfiguration>(AddressablesUtil.GetLocations<GridConfiguration>("GridConfigData"),
              gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
-        GameManager.Instance.GameConfigData.gridConfigs.AddOrChange(GridKeyExtra.UPGRADE_T1_HULL, GameManager.Instance.GameConfigData.hullTierGridConfigs[0]);
+
+        GameManager.Instance.GameConfigData.hullTierGridConfigs.ForEach(
+             gridConfig => VanillaGridConfigIDList.SafeAdd(gridConfig.name));
+
+        CreateTier1();
+
         GameManager.Instance.GameConfigData.gridConfigs.ForEach(kvp =>
         {
+            SpecialVanillaGridHandler(kvp.Key, kvp.Value);
             VanillaGridConfigIDList.Add(kvp.Value.name);
             VanillaGridKeyDict.Add(kvp.Key, kvp.Value.name);
         });
@@ -76,6 +109,18 @@ public static class GridConfigUtil
             return null;
     }
 
+    public static bool TryGetGridConfiguration(GridKey gridKey, out GridConfiguration gridConfig)
+    {
+        gridConfig = null;
+        if (gridKey == GridKey.NONE)
+            return false;
+
+        if (GameManager.Instance.GameConfigData.gridConfigs.TryGetValue(gridKey, out gridConfig))
+            return true;
+
+        return false;
+    }
+
     internal static void AddModdedGridConfigurations(IList<GridConfiguration> list)
     {
         foreach (var gridConfig in ModdedGridConfigDict.Values)
@@ -108,11 +153,6 @@ public static class GridConfigUtil
         // Change grid configurations to the addressable ones
         foreach (var kvp in GameManager.Instance.GameConfigData.gridConfigs.Where(kvp => VanillaGridKeyDict.ContainsKey(kvp.Key) && (kvp.Value == null || (kvp.Value != null && AllGridConfigDict.ContainsKey(kvp.Value.name)))).ToArray())
             GameManager.Instance.GameConfigData.gridConfigs.AddOrChange(kvp.Key, AllGridConfigDict[VanillaGridKeyDict[kvp.Key]]);
-        GameManager.Instance.GameConfigData.hullTierGridConfigs[0] = GameManager.Instance.GameConfigData.gridConfigs[GridKeyExtra.UPGRADE_T1_HULL];
-        GameManager.Instance.GameConfigData.hullTierGridConfigs[1] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T2_HULL];
-        GameManager.Instance.GameConfigData.hullTierGridConfigs[2] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T3_HULL];
-        GameManager.Instance.GameConfigData.hullTierGridConfigs[3] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T4_HULL];
-        GameManager.Instance.GameConfigData.hullTierGridConfigs[4] = GameManager.Instance.GameConfigData.gridConfigs[GridKey.UPGRADE_T5_HULL];
     }
 
     internal static void ClearGridConfigurations()

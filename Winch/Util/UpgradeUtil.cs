@@ -31,7 +31,17 @@ public static class UpgradeUtil
             upgradeData =>
             {
                 VanillaUpgradeIDList.SafeAdd(upgradeData.id);
-                if (upgradeData.gridConfig != null) QuestUtil.VanillaQuestGridConfigIDList.SafeAdd(upgradeData.gridConfig.name);
+                if (upgradeData.gridConfig != null)
+                {
+                    QuestUtil.VanillaQuestGridConfigIDList.SafeAdd(upgradeData.gridConfig.name);
+                    GridConfigUtil.VanillaGridConfigIDList.SafeAdd(upgradeData.gridConfig.gridConfiguration.name);
+
+                    if (upgradeData.gridConfig != null && GameManager.Instance.GameConfigData.TryGetGridConfigForKey(upgradeData.gridConfig.gridKey, out GridConfiguration gridConfig))
+                        upgradeData.gridConfig.gridConfiguration = gridConfig;
+
+                    if (upgradeData is HullUpgradeData hullUpgradeData && GameManager.Instance.GameConfigData.hullTierGridConfigs.Count >= hullUpgradeData.tier)
+                        hullUpgradeData.hullGridConfiguration = GameManager.Instance.GameConfigData.hullTierGridConfigs[hullUpgradeData.tier - 1];
+                }
             });
     }
 
@@ -123,12 +133,18 @@ public static class UpgradeUtil
             {
                 AllHullUpgradeDataDict.SafeAdd(hullUpgradeData.id, hullUpgradeData);
                 WinchCore.Log.Debug($"Added upgrade data {hullUpgradeData.id} to AllHullUpgradeDataDict");
+
+                if (hullUpgradeData is not DeferredHullUpgradeData && GameManager.Instance.GameConfigData.hullTierGridConfigs.Count >= hullUpgradeData.tier)
+                    hullUpgradeData.hullGridConfiguration = GameManager.Instance.GameConfigData.hullTierGridConfigs[hullUpgradeData.tier - 1];
             }
             if (upgradeData is SlotUpgradeData slotUpgradeData)
             {
                 AllSlotUpgradeDataDict.SafeAdd(slotUpgradeData.id, slotUpgradeData);
                 WinchCore.Log.Debug($"Added upgrade data {slotUpgradeData.id} to AllSlotUpgradeDataDict");
             }
+
+            if (upgradeData is not IDeferredUpgradeData && upgradeData.gridConfig != null && GameManager.Instance.GameConfigData.TryGetGridConfigForKey(upgradeData.gridConfig.gridKey, out GridConfiguration gridConfig))
+                upgradeData.gridConfig.gridConfiguration = gridConfig;
         }
         foreach (var upgradeData in ModdedUpgradeDataDict.Values.OfType<IDeferredUpgradeData>())
         {

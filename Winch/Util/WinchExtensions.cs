@@ -1327,6 +1327,12 @@ public static class WinchExtensions
 
     public static bool TryGetGridConfigForKey(this GameConfigData gameConfigData, GridKey key, out GridConfiguration gridConfig)
     {
+        if (key == GridKey.NONE)
+        {
+            gridConfig = null;
+            return false;
+        }
+
         return gameConfigData.gridConfigs.TryGetValue(key, out gridConfig) && gridConfig != null;
     }
 
