@@ -15,11 +15,37 @@ Example items include a cod (+ its aberrations salmon and tropical), diamond, he
 Circle Island located near Gale Cliff's Merchant Pontoon
 ![Circle Island](https://github.com/user-attachments/assets/c35424ae-1986-4191-9cc7-6026e22b193e)
 - Characters
-- Market
+    - Steve
+    - Alex
+- Markets
+    - Fish Market
+    - Trinket Trader
+    - Shipyard
 - Constructable with Recipes
+    - 4 Tiers with each tier having one example recipe type
 
 ### Points of Interest
 You can find the POIs nearby the island.
+- Harvest POIs
+    - Fish
+    - Trinket
+    - Relic
+    - Flag
+- Item POIs
+    - Spatial
+        - Engine
+        - Light
+        - Rod
+        - Net
+        - Pot
+    - Non Spatial
+        - Message
+        - Note
+        - Journal
+        - Book
+- Conversation POIs
+    - Inspect
+    - Auto Move
 
 ### Harvest Zones
 - Fish harvest zones are centered on the island with a radius of 62.5

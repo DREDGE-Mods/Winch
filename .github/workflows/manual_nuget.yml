@@ -1,0 +1,42 @@
+name: Publish nuget
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        type: string
+
+jobs:
+  Build:
+    if: ${{ github.ref == 'refs/heads/master' || contains(github.event.pull_request.labels.*.name, 'update-pr')  }}
+    uses: ./.github/workflows/build.yml
+    with:
+      build_type: Release
+  Pack_Nuget:
+      name: Pack nuget
+      needs: Build
+      runs-on: windows-latest
+      if: github.ref == 'refs/heads/master'
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+        - name: Get version
+          id: version
+          uses: notiz-dev/github-action-json-property@release
+          with:
+            path: Winch/mod_meta.json
+            prop_path: Version
+        - name: Set up nuget
+          uses: NuGet/setup-nuget@v1.0.5
+        - name: Download Winch Asset
+          uses: actions/download-artifact@v3
+          with:
+            name: Winch
+            path: Winch/bin
+        - name: Pack nuget
+          run: nuget pack Winch/Winch.nuspec -Properties "version=${{ inputs.version }}"
+        - run: dir
+        - name: Publish nuget
+          run: nuget push "Winch.*.nupkg" -ApiKey ${{ secrets.NUGET_KEY }} -Source https://api.nuget.org/v3/index.json
+
