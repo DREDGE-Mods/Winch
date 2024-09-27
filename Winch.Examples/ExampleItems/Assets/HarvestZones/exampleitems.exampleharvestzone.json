@@ -1,11 +1,11 @@
 {
     "location": {
-        "x": 382.0,
+        "x": 365.0,
         "y": 0.0,
-        "z": -354.0
+        "z": -265.0
     },
     "colliderType": "SPHERE",
-    "radius": 50,
+    "radius": 62.5,
     "harvestableItems": [ "exampleitems.mccod" ],
     "day": true,
     "night": true
