@@ -19,6 +19,8 @@ public class BaitItemDataConverter : SpatialItemDataConverter
         { "abilityMode", new(AbilityMode.BAIT, o => DredgeTypeHelpers.GetEnumValue<AbilityMode>(o)) },
         { "baitType", new(BaitType.FISH, o => DredgeTypeHelpers.GetEnumValue<BaitType>(o)) },
         { "qualityIcon", new(null, o => TextureUtil.GetSprite(o.ToString())) },
+        { "numItemsMin", new(0, o => int.Parse(o.ToString())) },
+        { "numItemsMax", new(0, o => int.Parse(o.ToString())) },
     };
 
     public BaitItemDataConverter()
