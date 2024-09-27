@@ -11,14 +11,19 @@ Example items include a cod (+ its aberrations salmon and tropical), diamond, he
 
 ![Inventory](https://github.com/user-attachments/assets/fe08b9d6-fec5-421a-8aaf-4021c035c4a1)
 
-### Points of Interest
-You can find the POIs right by Gale Cliff's Merchant Pontoon.
-
 ### Docks
+Circle Island located near Gale Cliff's Merchant Pontoon
 ![Circle Island](https://github.com/user-attachments/assets/c35424ae-1986-4191-9cc7-6026e22b193e)
 - Characters
 - Market
 - Constructable with Recipes
+
+### Points of Interest
+You can find the POIs nearby the island.
+
+### Harvest Zones
+- Fish harvest zones are centered on the island with a radius of 62.5
+- Dredge harvest zones are the same position and size as vanilla's (meaning you can get the items anywhere)
 
 ### Boat Customization
 - Example white flag
