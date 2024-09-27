@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Xml.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -461,9 +462,19 @@ public static class DredgeTypeHelpers
         return parsed;
     }
 
-    public static AssetReference ParseAudioReference(string o)
+    public static AssetReferenceAudioClip ParseAudioReference(string s)
     {
-        return ParseAssetReference<AudioClip>(o);
+        if (string.IsNullOrWhiteSpace(s)) return new AssetReferenceAudioClip(string.Empty);
+
+        if (Guid.TryParse(s, out _)) return new AssetReferenceAudioClip(s);
+
+        if (AddressablesUtil.TryGetAssetGUID(s, out string guid))
+            return new AssetReferenceAudioClip(guid);
+
+        if (AddressablesUtil.TryGetIdenticalLocationKey<AudioClip>(s, out string identical))
+            return new AssetReferenceAudioClip(identical);
+
+        return new AssetReferenceAudioClip(string.Empty);
     }
 
     public static List<AssetReference> ParseAudioReferences(JArray o)

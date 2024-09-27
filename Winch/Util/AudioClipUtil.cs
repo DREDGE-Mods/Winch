@@ -12,8 +12,8 @@ namespace Winch.Util;
 
 public static class AudioClipUtil
 {
-    private static AssetReferenceT<AudioClip> EmptyReference = new AssetReferenceT<AudioClip>(string.Empty);
-    private static Dictionary<string, AssetReferenceT<AudioClip>> AudioReferenceMap = new();
+    private static AssetReferenceAudioClip EmptyReference = new AssetReferenceAudioClip(string.Empty);
+    private static Dictionary<string, AssetReferenceAudioClip> AudioReferenceMap = new();
     private static Dictionary<string, AudioClip> AudioClipMap = new();
 
     public static AudioClip GetAudioClip(string key)
@@ -40,22 +40,22 @@ public static class AudioClipUtil
         return null;
     }
 
-    public static AssetReferenceT<AudioClip> GetAudioReference(string key)
+    public static AssetReferenceAudioClip GetAudioReference(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
             return EmptyReference;
 
-        if (AudioReferenceMap.TryGetValue(key, out AssetReferenceT<AudioClip> audio))
+        if (AudioReferenceMap.TryGetValue(key, out AssetReferenceAudioClip audio))
             return audio;
         
         if (Guid.TryParse(key, out _))
-            return new AssetReferenceT<AudioClip>(key);
+            return new AssetReferenceAudioClip(key);
 
         if (AddressablesUtil.TryGetAssetGUID(key, out string guid))
-            return new AssetReferenceT<AudioClip>(guid);
+            return new AssetReferenceAudioClip(guid);
 
         if (AddressablesUtil.TryGetIdenticalLocationKey<AudioClip>(key, out string identical))
-            return new AssetReferenceT<AudioClip>(identical);
+            return new AssetReferenceAudioClip(identical);
 
         WinchCore.Log.Error($"Audio reference '{key}' not found");
         return EmptyReference;

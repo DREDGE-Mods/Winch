@@ -332,6 +332,10 @@ public static class AddressablesUtil
     public static AssetReferenceSprite CreateAssetReferenceSprite(string namePathOrGuid)
         => new AssetReferenceSprite(GetPossibleAssetGUID<Sprite>(namePathOrGuid));
 
+    /// <inheritdoc cref="CreateAssetReference(string)"/>
+    public static AssetReferenceAudioClip CreateAssetReferenceAudioClip(string namePathOrGuid)
+        => new AssetReferenceAudioClip(GetPossibleAssetGUID<AudioClip>(namePathOrGuid));
+
     /// <summary>
     /// Generates a new GUID in Unity's format
     /// </summary>
@@ -364,6 +368,10 @@ public static class AddressablesUtil
     /// <inheritdoc cref="GenerateAssetReference(string, UnityEngine.Object)"/>
     public static AssetReferenceSprite GenerateAssetReference(string location, Sprite resource)
         => new AssetReferenceSprite(AddResourceAtLocationWithGUID(location, resource));
+
+    /// <inheritdoc cref="GenerateAssetReference(string, UnityEngine.Object)"/>
+    public static AssetReferenceAudioClip GenerateAssetReference(string location, AudioClip resource)
+        => new AssetReferenceAudioClip(AddResourceAtLocationWithGUID(location, resource));
 
     /// <inheritdoc cref="GenerateAssetReference(string, UnityEngine.Object)"/>
     public static AssetReferenceT<T> GenerateAssetReference<T>(string location, T resource) where T : UnityEngine.Object
