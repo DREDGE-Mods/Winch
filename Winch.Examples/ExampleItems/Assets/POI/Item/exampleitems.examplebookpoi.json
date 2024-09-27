@@ -5,5 +5,9 @@
     "z": -290.0
   },
   "harvestableParticlePrefab" : "MessageItem",
-  "items": ["exampleitems.book"]
+  "items": ["exampleitems.book"],
+  "intermittentSFX": [
+      "POI - Message in Bottle 1",
+      "POI - Message in Bottle 2"
+  ]
 }

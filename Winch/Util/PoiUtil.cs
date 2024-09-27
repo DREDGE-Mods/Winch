@@ -340,7 +340,7 @@ public static class PoiUtil
         }
 
         var sfx = customPoi.AddComponent<IntermittentSFXPlayer>();
-        sfx.assetReferences = new List<AssetReference>();
+        sfx.assetReferences = customItemPoi.intermittentSFX;
         sfx.audioMixerGroup = Resources.FindObjectsOfTypeAll<AudioMixerGroup>().FirstOrDefault(amg => amg.name == "WorldSFX");
         sfx.audioRolloffMode = AudioRolloffMode.Linear;
         sfx.volumeScale = 1;

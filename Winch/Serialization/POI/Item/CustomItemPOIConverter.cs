@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using UnityEngine.AddressableAssets;
 
 // ReSharper disable HeapView.BoxingAllocation
 
@@ -11,7 +12,8 @@ public class CustomItemPOIConverter : CustomPOIConverter
     {
         { "harvestableParticlePrefab", new( null, null) },
         { "items", new( new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
-        { "cullable", new( true, o => bool.Parse(o.ToString())) }
+        { "cullable", new( true, o => bool.Parse(o.ToString())) },
+        { "intermittentSFX", new( new List<AssetReference>(), o => DredgeTypeHelpers.ParseAudioReferences((JArray)o) ) }
     };
     
     public CustomItemPOIConverter()

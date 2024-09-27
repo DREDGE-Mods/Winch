@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using Winch.Util;
 
 namespace Winch.Data.POI.Item;
@@ -24,6 +25,9 @@ public class CustomItemPOI : CustomPOI
 
     [SerializeField]
     public bool cullable = true;
+
+    [SerializeField]
+    public List<AssetReference> intermittentSFX = new List<AssetReference>();
 
     /// <summary>
     /// <see cref="items"/> converted to actual items
