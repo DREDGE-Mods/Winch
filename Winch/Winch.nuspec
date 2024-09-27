@@ -69,7 +69,9 @@
   </metadata>
   <files>
     <file src="bin\Release\Winch.dll" target="lib\net48" />
+    <file src="bin\Release\Winch.xml" target="lib\net48" />
     <file src="bin\Release\WinchCommon.dll" target="lib\net48" />
+    <file src="bin\Release\WinchCommon.xml" target="lib\net48" />
     <file src="icon.png" target="images\" />
   </files>
 </package>
