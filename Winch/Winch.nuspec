@@ -31,7 +31,7 @@
     <!-- Project URL provides a link for the gallery -->
     <projectUrl>https://github.com/DREDGE-Mods/Winch</projectUrl>
 
-    <!-- <repository type="git" url="https://github.com/DREDGE-Mods/Winch.git" /> -->
+    <repository type="git" url="https://github.com/DREDGE-Mods/Winch.git" />
 
     <!-- License information is displayed on the gallery -->
     <license type="expression">MIT</license>
