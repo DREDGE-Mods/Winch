@@ -118,6 +118,31 @@ internal static class ItemLoadPatcher
         }
     }
 
+    public static void ChangeFish(IList<ItemData> items)
+    {
+        var fishes = items.WhereType<ItemData, FishItemData>();
+        foreach (var fish in fishes)
+        {
+            switch (fish.id)
+            {
+                case "oarfish":
+                case "oarfish-ab-1":
+                case "coelacanth":
+                case "coelacanth-ab-1":
+                case "gulper-eel":
+                case "gulper-eel-ab-1":
+                case "goliath-tigerfish":
+                case "goliath-tigerfish-ab-1":
+                case "sleeper-shark":
+                case "sleeper-shark-ab-1":
+                    fish.canAppearInBaitBalls = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     public static void Prefix(ItemManager __instance, AsyncOperationHandle<IList<ItemData>> handle)
     {
         if (handle.Result == null || handle.Status != AsyncOperationStatus.Succeeded) return;
@@ -125,6 +150,7 @@ internal static class ItemLoadPatcher
         ChangeDredgeCrane(handle.Result);
         ChangeBaits(handle.Result);
         ChangeHarvestables(handle.Result);
+        ChangeFish(handle.Result);
         ItemUtil.AddModdedItemData(handle.Result);
         DredgeEvent.AddressableEvents.ItemsLoaded.Trigger(__instance, handle, true);
     }
