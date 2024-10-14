@@ -3,7 +3,7 @@
 ﻿![Winch](../banner.png)
 
 [![Discord](https://img.shields.io/discord/1097191320935735346?style=for-the-badge)](https://discord.gg/qFqPuTUAmD)
-[![GitHub all releases](https://img.shields.io/github/downloads/DREDGE-Mods/Winch/total?style=for-the-badge)](https://github.com/DREDGE-Mods/Winch/releases)
+[![GitHub all releases](https://img.shields.io/github/downloads/DREDGE-Mods/Winch/Winch.zip?style=for-the-badge)](https://github.com/DREDGE-Mods/Winch/releases)
 
 Winch is a mod loader for DREDGE. This is made for use with the [DREDGE Mod Manager](https://dredgemods.com/manager/).
 
