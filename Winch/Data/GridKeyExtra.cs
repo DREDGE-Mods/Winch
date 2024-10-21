@@ -3,7 +3,18 @@
 [EnumHolder]
 public static class GridKeyExtra
 {
+    public const GridKey SOLDIER_BAIT_1_OUTPUT = GridKey.SOLDIER_BAIT_3_INPUT + 1;
+    public const GridKey SOLDIER_BAIT_2_OUTPUT = GridKey.SOLDIER_BAIT_3_INPUT + 2;
+    public const GridKey SOLDIER_BAIT_3_OUTPUT = GridKey.SOLDIER_BAIT_3_INPUT + 3;
+
+    public const GridKey DS_PYRE = GridKey.DS_STATUE_3 + 1;
+    public const GridKey DS_LIGHTHOUSE_RUIN_DOOR = GridKey.DS_LIGHTHOUSE_RUIN_REWARD - 1;
+
+    public const GridKey GM_FISHMONGER_CRAB_POT = GridKey.GM_FISHMONGER_DELIVERY_1 - 1;
+
     public const GridKey UPGRADE_T1_HULL = GridKey.UPGRADE_T1_FISHING_1 - 1;
+
+    public const GridKey DLC1_ICE_CUTTER_REWARD = GridKey.DLC1_ICE_CUTTER_MATERIALS + 1;
 
     public const GridKey HOODED_FIGURE_1A = (GridKey)4300;
     public const GridKey HOODED_FIGURE_1B = (GridKey)4301;

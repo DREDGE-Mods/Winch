@@ -43,6 +43,20 @@ public static class QuestUtil
     {
         switch (name)
         {
+            case "DSPyre":
+                return GridKeyExtra.DS_PYRE;
+            case "LighthouseRuinDoor":
+                return GridKeyExtra.DS_LIGHTHOUSE_RUIN_DOOR;
+            case "SoldierInspectTrap1":
+                return GridKeyExtra.SOLDIER_BAIT_1_OUTPUT;
+            case "SoldierInspectTrap2":
+                return GridKeyExtra.SOLDIER_BAIT_2_OUTPUT;
+            case "SoldierInspectTrap3":
+                return GridKeyExtra.SOLDIER_BAIT_3_OUTPUT;
+            case "Fishmonger_CrabPot":
+                return GridKeyExtra.GM_FISHMONGER_CRAB_POT;
+            case "DLC1_IceCutterReward":
+                return GridKeyExtra.DLC1_ICE_CUTTER_REWARD;
             case "HoodedFigure1A":
                 return GridKeyExtra.HOODED_FIGURE_1A;
             case "HoodedFigure1B":
