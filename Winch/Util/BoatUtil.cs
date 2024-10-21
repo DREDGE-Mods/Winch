@@ -187,6 +187,7 @@ public static class BoatUtil
             flagData.localizedNameKey = localizedNameKey;
             localizedNameKeys.Add(flagData.localizedNameKey);
             VanillaBoatFlagDataDict.Add(flagData.id, flagData);
+            VanillaBoatFlagDataDict.Add(flagData.flagItem, flagData);
             VanillaBoatFlagDataIndexDict.Add(index, flagData);
         }
         DialogueUtil.AddInstructions(
@@ -521,6 +522,6 @@ public static class BoatUtil
 
     public static BoatFlagData[] GetAllBoatFlagData()
     {
-        return VanillaBoatFlagDataDict.Values.Concat(ModdedBoatFlagDataDict.Values).ToArray();
+        return VanillaBoatFlagDataDict.Values.Concat(ModdedBoatFlagDataDict.Values).Distinct().ToArray();
     }
 }

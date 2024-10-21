@@ -39,6 +39,70 @@ public static class QuestUtil
     internal static List<string> VanillaQuestStepDataIDList = new();
     internal static List<string> VanillaQuestGridConfigIDList = new();
 
+    internal static GridKey GetQuestGridKeyByName(string name)
+    {
+        switch (name)
+        {
+            case "DSPyre":
+                return GridKeyExtra.DS_PYRE;
+            case "LighthouseRuinDoor":
+                return GridKeyExtra.DS_LIGHTHOUSE_RUIN_DOOR;
+            case "SoldierInspectTrap1":
+                return GridKeyExtra.SOLDIER_BAIT_1_OUTPUT;
+            case "SoldierInspectTrap2":
+                return GridKeyExtra.SOLDIER_BAIT_2_OUTPUT;
+            case "SoldierInspectTrap3":
+                return GridKeyExtra.SOLDIER_BAIT_3_OUTPUT;
+            case "Fishmonger_CrabPot":
+                return GridKeyExtra.GM_FISHMONGER_CRAB_POT;
+            case "DLC1_IceCutterReward":
+                return GridKeyExtra.DLC1_ICE_CUTTER_REWARD;
+            case "HoodedFigure1A":
+                return GridKeyExtra.HOODED_FIGURE_1A;
+            case "HoodedFigure1B":
+                return GridKeyExtra.HOODED_FIGURE_1B;
+            case "HoodedFigure1C":
+                return GridKeyExtra.HOODED_FIGURE_1C;
+            case "HoodedFigure2A":
+                return GridKeyExtra.HOODED_FIGURE_2A;
+            case "HoodedFigure2B":
+                return GridKeyExtra.HOODED_FIGURE_2B;
+            case "HoodedFigure2C":
+                return GridKeyExtra.HOODED_FIGURE_2C;
+            case "HoodedFigure3A":
+                return GridKeyExtra.HOODED_FIGURE_3A;
+            case "HoodedFigure3B":
+                return GridKeyExtra.HOODED_FIGURE_3B;
+            case "HoodedFigure3C":
+                return GridKeyExtra.HOODED_FIGURE_3C;
+            case "HoodedFigure4A":
+                return GridKeyExtra.HOODED_FIGURE_4A;
+            case "HoodedFigure4B":
+                return GridKeyExtra.HOODED_FIGURE_4B;
+            case "HoodedFigure4C":
+                return GridKeyExtra.HOODED_FIGURE_4C;
+            case "HoodedFigure5A":
+                return GridKeyExtra.HOODED_FIGURE_5A;
+            case "HoodedFigure5B":
+                return GridKeyExtra.HOODED_FIGURE_5B;
+            case "HoodedFigure5C":
+                return GridKeyExtra.HOODED_FIGURE_5C;
+            default:
+                return GridKey.NONE;
+        }
+    }
+
+    internal static void FixVanillaQuestGrid(QuestGridConfig questGridConfig)
+    {
+        var gridKey = GetQuestGridKeyByName(questGridConfig.name);
+        if (gridKey != GridKey.NONE)
+        {
+            questGridConfig.gridKey = gridKey;
+            GridConfigUtil.VanillaGridKeyDict.SafeAdd(gridKey, questGridConfig.gridConfiguration.name);
+            GameManager.Instance.GameConfigData.gridConfigs.AddOrChange(gridKey, questGridConfig.gridConfiguration);
+        }
+    }
+
     internal static void Initialize()
     {
         Addressables.LoadAssetsAsync<QuestData>(AddressablesUtil.GetLocations<QuestData>("QuestData"), questData =>
@@ -52,6 +116,7 @@ public static class QuestUtil
             {
                 VanillaQuestGridConfigIDList.SafeAdd(questGridConfig.name);
                 GridConfigUtil.VanillaGridConfigIDList.SafeAdd(questGridConfig.gridConfiguration.name);
+                FixVanillaQuestGrid(questGridConfig);
             });
     }
 
