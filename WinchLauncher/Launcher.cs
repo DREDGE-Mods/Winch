@@ -56,6 +56,8 @@ internal static class Launcher
             }
             catch (ReflectionTypeLoadException ex)
             {
+                Console.WriteLine("Only partially loaded assembly: " + ex.Message);
+
                 // Apparently this can happen
                 types = ex.Types.Where(x => x != null).Select(x => x.Name).ToList();
             }
