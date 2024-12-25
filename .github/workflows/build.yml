@@ -19,6 +19,8 @@ jobs:
 
         - name: Setup .NET
           uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: '6.x.x'
 
         - name: Build Winch
           run: dotnet build -c ${{ inputs.build_type }}
