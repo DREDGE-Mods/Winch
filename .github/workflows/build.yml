@@ -23,13 +23,16 @@ jobs:
             dotnet-version: '8.x.x'
 
         - name: Build Winch
+          shell: bash
           run: dotnet build -c ${{ inputs.build_type }}
 
         - name: Copy WinchConsole into Winch folder
+          shell: bash
           run: |
             cp -r WinchConsole/bin/* Winch/bin/
 
         - name: Copy WinchLauncher into Winch folder
+          shell: bash
           run: |
             cp -r WinchLauncher/bin/* Winch/bin/
 
@@ -40,6 +43,7 @@ jobs:
             path: Winch/bin
             
         - name: Move Example Mods
+          shell: bash
           run: |
             for mod in DisasterButton ExampleItems IntroSkipper
             do
