@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,19 +12,28 @@ internal static class Launcher
     public static void Main(string[] args)
     {
         StartGame();
+
+        // Keep the window open until the user presses a key
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
     }
 
     /// <summary>
     /// Adapted from OWML https://github.com/ow-mods/owml/blob/master/src/OWML.Launcher/App.cs
     /// </summary>
-    /// <param name="gamePath"></param>
     public static void StartGame()
     {
         string gamePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         var dllPath = Path.Combine(gamePath, "DREDGE_Data/Managed/Assembly-CSharp.dll");
 
-        void StartGameViaExe() => Process.Start(Path.Combine(gamePath, "DREDGE.exe"));
+        void StartGameViaExe()
+        {
+            Console.WriteLine("Defaulting to running exe. If you bought DREDGE on Epic Games this will not work. Run the game from there directly");
+            Process.Start(Path.Combine(gamePath, "DREDGE.exe"));
+        }
+
+        bool isEpic = false, isSteam = false;
 
         Assembly assembly = null;
         try
@@ -32,23 +42,42 @@ internal static class Launcher
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("Failed to load assembly: " + e.Message);
             StartGameViaExe();
             return;
         }
 
         try
         {
-            var types = assembly.GetTypes().Select(x => x.Name).ToList();
+            List<string> types;
+            try
+            {
+                types = assembly.GetExportedTypes().Select(x => x.Name).ToList();
+            }
+            catch (ReflectionTypeLoadException ex)
+            {
+                // Apparently this can happen
+                types = ex.Types.Where(x => x != null).Select(x => x.Name).ToList();
+            }
+
             types.Sort();
-            var isEpic = types.Any(x => x == "EOSScreenshotStrategy");
-            var isSteam = types.Any(x => x == "SteamEntitlementStrategy");
+            isEpic = types.Any(x => x == "EOSScreenshotStrategy");
+            isSteam = types.Any(x => x == "SteamEntitlementStrategy");
 
             foreach (var type in types)
             {
                 Console.WriteLine(type);
             }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Failed to load types from assembly: " + e.Message);
+            StartGameViaExe();
+            return;
+        }
 
+        try
+        { 
             if (isEpic && !isSteam)
             {
                 Console.WriteLine("Identified as Epic install");
@@ -70,12 +99,9 @@ internal static class Launcher
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            Console.WriteLine("Failed to start process: " + e.Message);
             StartGameViaExe();
+            return;
         }
-
-        // Keep the window open until the user presses a key
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
     }
 }
