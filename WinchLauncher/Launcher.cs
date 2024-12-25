@@ -14,8 +14,8 @@ internal static class Launcher
         StartGame();
 
         // Keep the window open until the user presses a key
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
+        // Console.WriteLine("Press any key to exit...");
+        // Console.ReadKey();
     }
 
     /// <summary>
