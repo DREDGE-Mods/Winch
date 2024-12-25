@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     name: Create artifacts
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
         - name: Checkout
           uses: actions/checkout@v4
