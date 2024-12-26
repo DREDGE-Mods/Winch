@@ -93,11 +93,43 @@ class Initializer
         {
             if (gridKey != GridKey.NONE && gridKey != GridKey.INVENTORY)
             {
-                if (!GameManager.Instance.GameConfigData.TryGetGridConfigForKey(gridKey, out _))
+                if (!GameManager.Instance.GameConfigData.TryGetGridConfigForKey(gridKey, out _) && !CanSkip(gridKey))
                 {
                     WinchCore.Log.Error($"Could not find gridConfiguration for gridKey: {gridKey}. Every grid key enum value is REQUIRED to be associated with a grid configuration in the GameConfigData or else the game will not initialize!");
                 }
             }
+        }
+    }
+
+    private static bool CanSkip(GridKey gridKey)
+    {
+        switch (gridKey)
+        {
+            case GridKeyExtra.SOLDIER_BAIT_1_OUTPUT:
+            case GridKeyExtra.SOLDIER_BAIT_2_OUTPUT:
+            case GridKeyExtra.SOLDIER_BAIT_3_OUTPUT:
+            case GridKeyExtra.DS_PYRE:
+            case GridKeyExtra.DS_LIGHTHOUSE_RUIN_DOOR:
+            case GridKeyExtra.GM_FISHMONGER_CRAB_POT:
+            case GridKeyExtra.DLC1_ICE_CUTTER_REWARD:
+            case GridKeyExtra.HOODED_FIGURE_1A:
+            case GridKeyExtra.HOODED_FIGURE_1B:
+            case GridKeyExtra.HOODED_FIGURE_1C:
+            case GridKeyExtra.HOODED_FIGURE_2A:
+            case GridKeyExtra.HOODED_FIGURE_2B:
+            case GridKeyExtra.HOODED_FIGURE_2C:
+            case GridKeyExtra.HOODED_FIGURE_3A:
+            case GridKeyExtra.HOODED_FIGURE_3B:
+            case GridKeyExtra.HOODED_FIGURE_3C:
+            case GridKeyExtra.HOODED_FIGURE_4A:
+            case GridKeyExtra.HOODED_FIGURE_4B:
+            case GridKeyExtra.HOODED_FIGURE_4C:
+            case GridKeyExtra.HOODED_FIGURE_5A:
+            case GridKeyExtra.HOODED_FIGURE_5B:
+            case GridKeyExtra.HOODED_FIGURE_5C:
+                return true;
+            default:
+                return false;
         }
     }
 
