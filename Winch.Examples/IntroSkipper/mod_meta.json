@@ -1,7 +1,7 @@
 {
 	"Name": "Intro Skipper",
 	"ModGUID": "hacktix.introskipper",
-	"Version": "1.0.0",
+	"Version": "1.0.1",
 	"ModAssembly": "IntroSkipper.dll",
 	"MinWinchVersion": "alpha-1.4",
 	"ApplyPatches": true
