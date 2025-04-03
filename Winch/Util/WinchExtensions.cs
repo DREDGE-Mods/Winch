@@ -239,6 +239,13 @@ public static class WinchExtensions
     public static bool IsFlag(this HarvestableItemData itemData) => itemData.id.StartsWith("flag") || itemData is FlagItemData;
 
     /// <summary>
+    /// Check whether this config's itemType has <see cref="ItemType.GENERAL"/> and itemSubtype has <see cref="ItemSubtypeExtra.DEFAULT"/>
+    /// </summary>
+    public static bool IsDefault(this GridConfiguration gridConfiguration) => gridConfiguration.mainItemType.HasFlag(ItemType.GENERAL) && gridConfiguration.mainItemSubtype.HasFlag(ItemSubtypeExtra.DEFAULT);
+    /// <inheritdoc cref="IsDefault(GridConfiguration)"/>
+    public static bool IsDefault(this CellGroupConfiguration cellGroupConfiguration) => cellGroupConfiguration.itemType.HasFlag(ItemType.GENERAL) && cellGroupConfiguration.itemSubtype.HasFlag(ItemSubtypeExtra.DEFAULT);
+
+    /// <summary>
     /// Trigger the fish caught event for both DREDGE and Winch
     /// </summary>
     /// <param name="gameEvents">Game events</param>

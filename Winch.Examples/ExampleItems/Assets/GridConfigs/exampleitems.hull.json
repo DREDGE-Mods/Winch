@@ -58,7 +58,7 @@
                 "          "
             ],
             "itemType": [ "GENERAL", "EQUIPMENT" ],
-            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ENGINE" ],
+            "itemSubtype": [ "DEFAULT", "ENGINE" ],
             "isHidden": false,
             "damageImmune": false
         },
@@ -78,7 +78,7 @@
                 "          "
             ],
             "itemType": [ "GENERAL", "EQUIPMENT" ],
-            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ROD" ],
+            "itemSubtype": [ "DEFAULT", "ROD" ],
             "isHidden": false,
             "damageImmune": false
         },
@@ -98,7 +98,7 @@
                 "          "
             ],
             "itemType": [ "GENERAL", "EQUIPMENT" ],
-            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ROD", "NET" ],
+            "itemSubtype": [ "DEFAULT", "ROD", "NET" ],
             "isHidden": false,
             "damageImmune": false
         },
@@ -118,13 +118,13 @@
                 "          "
             ],
             "itemType": [ "GENERAL", "EQUIPMENT" ],
-            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "LIGHT" ],
+            "itemSubtype": [ "DEFAULT", "LIGHT" ],
             "isHidden": false,
             "damageImmune": false
         }
     ],
     "mainItemType": "GENERAL",
-    "mainItemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET" ],
+    "mainItemSubtype": "DEFAULT",
     "itemsInThisBelongToPlayer": true,
     "canAddItemsInQuestMode": false,
     "hasUnderlay": true

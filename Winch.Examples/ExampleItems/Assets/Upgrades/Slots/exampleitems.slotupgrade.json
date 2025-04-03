@@ -20,7 +20,7 @@
                 "          "
             ],
             "itemType": "GENERAL",
-            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET" ],
+            "itemSubtype": "DEFAULT",
             "isHidden": false,
             "damageImmune": false
         }
