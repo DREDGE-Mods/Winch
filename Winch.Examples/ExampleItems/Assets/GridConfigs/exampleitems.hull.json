@@ -1,0 +1,131 @@
+{
+    "columns": 10,
+    "rows": 12,
+    "cellGroupConfigs": [
+        {
+            "cells": [
+                "XXX    XXX",
+                "XX      XX",
+                "X        X",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "X        X",
+                "XX      XX",
+                "XX  XXXXXX"
+            ],
+            "itemType": "NONE",
+            "itemSubtype": "NONE",
+            "isHidden": true,
+            "damageImmune": true
+        },
+        {
+            "cells": [
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "  XX      "
+            ],
+            "itemType": "EQUIPMENT",
+            "itemSubtype": "DREDGE",
+            "isHidden": true,
+            "damageImmune": true
+        },
+        {
+            "cells": [
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "   XXXX   ",
+                "  XXXXXX  ",
+                "          "
+            ],
+            "itemType": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ENGINE" ],
+            "isHidden": false,
+            "damageImmune": false
+        },
+        {
+            "cells": [
+                "          ",
+                "          ",
+                "          ",
+                "        XX",
+                "        XX",
+                "        XX",
+                "XX      XX",
+                "XX      XX",
+                "          ",
+                "          ",
+                "          ",
+                "          "
+            ],
+            "itemType": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ROD" ],
+            "isHidden": false,
+            "damageImmune": false
+        },
+        {
+            "cells": [
+                "          ",
+                "          ",
+                "          ",
+                "XX        ",
+                "XX        ",
+                "XX        ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          "
+            ],
+            "itemType": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "ROD", "NET" ],
+            "isHidden": false,
+            "damageImmune": false
+        },
+        {
+            "cells": [
+                "   XXXX   ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          "
+            ],
+            "itemType": [ "GENERAL", "EQUIPMENT" ],
+            "itemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET", "LIGHT" ],
+            "isHidden": false,
+            "damageImmune": false
+        }
+    ],
+    "mainItemType": "GENERAL",
+    "mainItemSubtype": [ "FISH", "GENERAL", "RELIC", "TRINKET", "MATERIAL", "POT", "GADGET" ],
+    "itemsInThisBelongToPlayer": true,
+    "canAddItemsInQuestMode": false,
+    "hasUnderlay": true
+}
