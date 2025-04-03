@@ -47,6 +47,7 @@
 			"y": 2.63,
 			"z": 3.48
 		},
+		"hasOverflow": true,
 		"overflowHeight": 0.65
 	},
 	"constructables": [
@@ -109,6 +110,7 @@
 						"recipeListStringKey": "exampleitems.constructable.tier3.description",
 						"descriptionDialogueNodeName": "ExampleItems_Recipe_Tier3",
 						"recipes": [
+							"exampleitems.recipeslot",
 							"exampleitems.recipehull"
 						]
 					},

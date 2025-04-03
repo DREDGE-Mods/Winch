@@ -16,6 +16,7 @@ public static class RecipeUtil
         { typeof(DeferredAbilityRecipeData), new AbilityRecipeDataConverter() },
         { typeof(DeferredBuildingRecipeData), new BuildingRecipeDataConverter() },
         { typeof(DeferredHullRecipeData), new HullRecipeDataConverter() },
+        { typeof(DeferredSlotRecipeData), new SlotRecipeDataConverter() },
         { typeof(DeferredItemRecipeData), new ItemRecipeDataConverter() },
         { typeof(DeferredRecipeData), new RecipeDataConverter() },
     };
@@ -77,6 +78,7 @@ public static class RecipeUtil
     internal static Dictionary<string, AbilityRecipeData> AllAbilityRecipeDataDict = new();
     internal static Dictionary<string, BuildingRecipeData> AllBuildingRecipeDataDict = new();
     internal static Dictionary<string, HullRecipeData> AllHullRecipeDataDict = new();
+    internal static Dictionary<string, SlotRecipeData> AllSlotRecipeDataDict = new();
     internal static Dictionary<string, ItemRecipeData> AllItemRecipeDataDict = new();
 
     public static void RegisterModdedRecipeData(string id, RecipeData recipeData)
@@ -162,6 +164,17 @@ public static class RecipeUtil
         return null;
     }
 
+    public static SlotRecipeData GetSlotRecipeData(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            return null;
+
+        if (AllSlotRecipeDataDict.TryGetValue(id, out var recipe))
+            return recipe;
+
+        return null;
+    }
+
     public static ItemRecipeData GetItemRecipeData(string id)
     {
         if (string.IsNullOrWhiteSpace(id))
@@ -212,6 +225,11 @@ public static class RecipeUtil
                 AllHullRecipeDataDict.SafeAdd(hullRecipeData.recipeId, hullRecipeData);
                 WinchCore.Log.Debug($"Added recipe data {hullRecipeData.recipeId} to AllHullRecipeDataDict");
             }
+            if (recipeData is SlotRecipeData slotRecipeData)
+            {
+                AllSlotRecipeDataDict.SafeAdd(slotRecipeData.recipeId, slotRecipeData);
+                WinchCore.Log.Debug($"Added recipe data {slotRecipeData.recipeId} to AllSlotRecipeDataDict");
+            }
             if (recipeData is ItemRecipeData itemRecipeData)
             {
                 AllItemRecipeDataDict.SafeAdd(itemRecipeData.recipeId, itemRecipeData);
@@ -235,6 +253,7 @@ public static class RecipeUtil
         AllAbilityRecipeDataDict.Clear();
         AllBuildingRecipeDataDict.Clear();
         AllHullRecipeDataDict.Clear();
+        AllSlotRecipeDataDict.Clear();
         AllItemRecipeDataDict.Clear();
     }
 
@@ -293,6 +312,11 @@ public static class RecipeUtil
     public static HullRecipeData[] GetAllHullRecipeData()
     {
         return AllHullRecipeDataDict.Values.ToArray();
+    }
+
+    public static SlotRecipeData[] GetAllSlotRecipeData()
+    {
+        return AllSlotRecipeDataDict.Values.ToArray();
     }
 
     public static ItemRecipeData[] GetAllItemRecipeData()

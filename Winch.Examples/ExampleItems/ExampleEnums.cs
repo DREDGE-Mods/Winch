@@ -38,7 +38,8 @@ public static class ExampleEnums
         public static readonly GridKey EXAMPLE_TIER_4;
         public static readonly GridKey EXAMPLE_RECIPE;
         public static readonly GridKey EXAMPLE_PRODUCT;
-        
+
         public static readonly GridKey EXAMPLE_UPGRADE_HULL;
+        public static readonly GridKey EXAMPLE_UPGRADE_STORAGE;
     }
 }

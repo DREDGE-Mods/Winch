@@ -251,6 +251,7 @@ internal static class AssetLoader
         { typeof(DeferredAbilityRecipeData), "Abilities"},
         { typeof(DeferredBuildingRecipeData), "Buildings"},
         { typeof(DeferredHullRecipeData), "Hulls"},
+        { typeof(DeferredSlotRecipeData), "Slots"},
         { typeof(DeferredItemRecipeData), "Items"}
     };
 

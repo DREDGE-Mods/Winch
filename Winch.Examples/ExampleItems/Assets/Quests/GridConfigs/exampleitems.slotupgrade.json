@@ -3,8 +3,8 @@
     "isSaved": true,
     "allowManualExit": true,
     "allowStorageAccess": true,
-    "gridConfiguration": "exampleitems.hullinput",
-    "gridKey": "EXAMPLE_UPGRADE_HULL",
+    "gridConfiguration": "exampleitems.slotinput",
+    "gridKey": "EXAMPLE_UPGRADE_STORAGE",
     "presetGrid": {
         "spatialItems": [
             {

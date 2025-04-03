@@ -125,11 +125,57 @@ internal static class RecipePatcher
     {
         if (recipeData == null) return;
 
+        if (recipeData is SlotRecipeData slotRecipeData)
+        {
+            GameManager.Instance.UpgradeManager.AddUpgrade(slotRecipeData.slotUpgradeData, free: false);
+            __instance.OnBuildingTabChanged(__instance.buildingTabbedPanel.CurrentIndex);
+        }
         if (recipeData is ModdedRecipeData moddedRecipeData)
         {
             moddedRecipeData.OnRecipeCompleted();
             __instance.OnBuildingTabChanged(__instance.buildingTabbedPanel.CurrentIndex);
         }
+    }
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(typeof(ConstructableItemUI), nameof(ConstructableItemUI.Init))]
+    public static IEnumerable<CodeInstruction> ConstructableItemUI_Init_Transpiler(IEnumerable<CodeInstruction> instructions, ILGenerator generator)
+    {
+        var matcher = new CodeMatcher(instructions, generator);
+
+        matcher.MatchEndForward(
+            new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(UpgradeData), nameof(UpgradeData.tier))),
+            new CodeMatch(OpCodes.Box, typeof(int)),
+            new CodeMatch(OpCodes.Stelem_Ref),
+            new CodeMatch(OpCodes.Stloc_0),
+            new CodeMatch(OpCodes.Ldarg_1)
+        ).CreateLabel(out Label end).Start();
+
+        matcher.MatchStartForward(
+            new CodeMatch(OpCodes.Ldarg_1),
+            new CodeMatch(OpCodes.Isinst, typeof(HullRecipeData)),
+            new CodeMatch(OpCodes.Brfalse)
+        ).CreateLabel(out Label hull);
+
+        matcher.Insert(
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Brfalse, hull),
+            new CodeInstruction(OpCodes.Ldc_I4_1),
+            new CodeInstruction(OpCodes.Newarr, typeof(object)),
+            new CodeInstruction(OpCodes.Dup),
+            new CodeInstruction(OpCodes.Ldc_I4_0),
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(SlotRecipeData), nameof(SlotRecipeData.slotUpgradeData))),
+            new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(UpgradeData), nameof(UpgradeData.GetNewCellCount))),
+            new CodeInstruction(OpCodes.Box, typeof(int)),
+            new CodeInstruction(OpCodes.Stelem_Ref),
+            new CodeInstruction(OpCodes.Stloc_0),
+            new CodeInstruction(OpCodes.Br_S, end)
+        );
+
+        return matcher.InstructionEnumeration();
     }
 
     [HarmonyPrefix]
@@ -153,6 +199,11 @@ internal static class RecipePatcher
             GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", hullRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), hullRecipeData.hullUpgradeData.tier);
             return false;
         }
+        if (__instance.recipeData is SlotRecipeData slotRecipeData && GameManager.Instance.SaveData.GetIsUpgradeOwned(slotRecipeData.slotUpgradeData))
+        {
+            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", slotRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), slotRecipeData.slotUpgradeData.GetNewCellCount());
+            return false;
+        }
         if (__instance.recipeData is ModdedRecipeData moddedRecipeData && moddedRecipeData.IsOneTimeAndAlreadyOwned())
         {
             GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", moddedRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS));
@@ -169,7 +220,7 @@ internal static class RecipePatcher
 
         matcher.Start().MatchEndForward(
             new CodeMatch(OpCodes.Ldarg_1),
-            new CodeMatch(OpCodes.Isinst, typeof(HullUpgradeData)), 
+            new CodeMatch(OpCodes.Isinst, typeof(HullUpgradeData)),
             new CodeMatch(OpCodes.Brfalse),
             new CodeMatch(OpCodes.Ldarg_0),
             new CodeMatch(OpCodes.Ldfld, AccessTools.Field(typeof(BannerUI), nameof(BannerUI.image)))
@@ -324,6 +375,25 @@ internal static class RecipePatcher
             new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(ModdedRecipeData), nameof(ModdedRecipeData.IsOneTimeAndAlreadyOwned))),
             new CodeInstruction(OpCodes.Stfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.isOneTimeAndAlreadyOwned))),
             new CodeInstruction(OpCodes.Br_S, end)
+        ).CreateLabel(out Label modded);
+
+        matcher.Insert(
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.recipeData))),
+            new CodeInstruction(OpCodes.Ldnull),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(UnityEngine.Object), "op_Inequality")),
+            new CodeInstruction(OpCodes.Brfalse_S, modded),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.recipeData))),
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Brfalse_S, modded),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.recipeData))),
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Callvirt, AccessTools.Method(typeof(SlotRecipeData), nameof(SlotRecipeData.IsOneTimeAndAlreadyOwned))),
+            new CodeInstruction(OpCodes.Stfld, AccessTools.Field(typeof(RecipeEntry), nameof(RecipeEntry.isOneTimeAndAlreadyOwned))),
+            new CodeInstruction(OpCodes.Br_S, end)
         );
 
         return matcher.InstructionEnumeration();
@@ -354,6 +424,17 @@ internal static class RecipePatcher
         moddedRecipeTooltipRequester.RecipeData = recipeData;
     }
 
+    internal static void EnableSlotRecipeTooltipRequester(RecipeEntry entry, SlotRecipeData recipeData)
+    {
+        entry.spatialItemTooltipRequester.enabled = false;
+        entry.abilityTooltipRequester.enabled = false;
+        var upgradeRecipe = entry.upgradeTooltipRequester as UpgradeRecipeTooltipRequester;
+        upgradeRecipe.recipeData = recipeData;
+        upgradeRecipe.upgradeData = recipeData.slotUpgradeData;
+        upgradeRecipe.enabled = true;
+        DisableModdedRecipeTooltipRequester(entry);
+    }
+
     internal static void EnableHullRecipeTooltipRequester(RecipeEntry entry, HullRecipeData recipeData)
     {
         entry.spatialItemTooltipRequester.enabled = false;
@@ -371,7 +452,8 @@ internal static class RecipePatcher
     {
         var matcher = new CodeMatcher(instructions, generator);
 
-        var notUpgrade = generator.DefineLabel();
+        var notHullUpgrade = generator.DefineLabel();
+        var notSlotUpgrade = generator.DefineLabel();
         var notModded = generator.DefineLabel();
         matcher.Start().MatchStartForward(
             new CodeMatch(OpCodes.Ldarg_0),
@@ -401,8 +483,21 @@ internal static class RecipePatcher
         ).Advance(-1);
         matcher.Labels = new List<Label> { notAbility };
         matcher.Advance(1).InsertAndAdvance(
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Brfalse_S, notSlotUpgrade),
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Ldarg_1),
+            new CodeInstruction(OpCodes.Isinst, typeof(SlotRecipeData)),
+            new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(RecipePatcher), nameof(EnableSlotRecipeTooltipRequester)))
+        );
+        matcher.InsertAndAdvance(
+            new CodeInstruction(OpCodes.Br_S, end),
+            new CodeInstruction(OpCodes.Ldarg_1)
+        ).Advance(-1);
+        matcher.Labels = new List<Label> { notSlotUpgrade };
+        matcher.Advance(1).InsertAndAdvance(
             new CodeInstruction(OpCodes.Isinst, typeof(HullRecipeData)),
-            new CodeInstruction(OpCodes.Brfalse_S, notUpgrade),
+            new CodeInstruction(OpCodes.Brfalse_S, notHullUpgrade),
             new CodeInstruction(OpCodes.Ldarg_0),
             new CodeInstruction(OpCodes.Ldarg_1),
             new CodeInstruction(OpCodes.Isinst, typeof(HullRecipeData)),
@@ -412,7 +507,7 @@ internal static class RecipePatcher
             new CodeInstruction(OpCodes.Br_S, end),
             new CodeInstruction(OpCodes.Ldarg_1)
         ).Advance(-1);
-        matcher.Labels = new List<Label> { notUpgrade };
+        matcher.Labels = new List<Label> { notHullUpgrade };
         matcher.Advance(1).InsertAndAdvance(
             new CodeInstruction(OpCodes.Isinst, typeof(ModdedRecipeData)),
             new CodeInstruction(OpCodes.Brfalse_S, notModded),

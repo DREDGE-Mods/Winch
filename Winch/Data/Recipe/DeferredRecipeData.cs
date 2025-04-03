@@ -65,3 +65,16 @@ public class DeferredHullRecipeData : HullRecipeData, IDeferredRecipeData
         base.hullUpgradeData = UpgradeUtil.GetHullUpgradeData(hullUpgradeData);
     }
 }
+
+public class DeferredSlotRecipeData : SlotRecipeData, IDeferredRecipeData
+{
+    public new string questGridConfig = string.Empty;
+
+    public new string slotUpgradeData = string.Empty;
+
+    public virtual void Populate()
+    {
+        base.questGridConfig = QuestUtil.GetQuestGridConfig(questGridConfig);
+        base.slotUpgradeData = UpgradeUtil.GetSlotUpgradeData(slotUpgradeData);
+    }
+}
