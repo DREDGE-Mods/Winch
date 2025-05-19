@@ -1,0 +1,20 @@
+{
+    "columns": 4,
+    "rows": 2,
+    "cellGroupConfigs": [
+        {
+            "cells": [],
+            "itemType": "NONE",
+            "itemSubtype": "NONE",
+            "isHidden": true,
+            "damageImmune": true
+        }
+    ],
+    "mainItemData": "exampleitems.diamond",
+    "mainItemType": "GENERAL",
+    "mainItemSubtype": "TRINKET",
+    "itemsInThisBelongToPlayer": true,
+    "canAddItemsInQuestMode": true,
+    "hasUnderlay": false,
+    "gridKey": "EXAMPLE_UPGRADE_HULL"
+}

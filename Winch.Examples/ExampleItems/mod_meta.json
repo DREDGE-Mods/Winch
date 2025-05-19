@@ -2,7 +2,7 @@
 	"Name": "Example Items",
 	"Author": "Hacktix",
 	"ModGUID": "hacktix.exampleitems",
-	"Version": "2.0.0",
+	"Version": "2.0.1",
 	"ModAssembly": "ExampleItems.dll",
 	"Entrypoint": "ExampleItems.Loader/Initialize",
 	"MinWinchVersion": "0.5.0"

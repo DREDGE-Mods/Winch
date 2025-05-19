@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Xml.Linq;
 using Newtonsoft.Json;
@@ -169,6 +170,36 @@ public static class DredgeTypeHelpers
         }
 
         return parsed;
+    }
+
+    public static List<string> ConvertToGridString(List<Vector2Int> cells)
+    {
+        if (cells == null || cells.Count == 0)
+            return new List<string>();
+
+        int width = cells.GetWidth();
+        int height = cells.GetHeight();
+
+        char[,] grid = new char[height, width];
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+                grid[y, x] = ' ';
+
+        foreach (var cell in cells)
+        {
+            int x = cell.x;
+            int y = cell.y;
+            grid[y, x] = 'X';
+        }
+
+        List<string> result = new List<string>();
+        for (int y = 0; y < height; y++)
+        {
+            string row = new string(Enumerable.Range(0, width).Select(x => grid[y, x]).ToArray());
+            result.Add(row);
+        }
+
+        return result;
     }
 
     public static List<Vector2Int> ParseItemDimensions(JArray dimensions)

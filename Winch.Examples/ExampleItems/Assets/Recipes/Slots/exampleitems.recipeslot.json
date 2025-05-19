@@ -1,6 +1,6 @@
 ﻿{
-    "questGridConfig": "exampleitems.hullupgrade",
-    "hullUpgradeData": "exampleitems.hullupgrade",
+    "questGridConfig": "exampleitems.slotupgrade",
+    "slotUpgradeData": "exampleitems.slotupgrade",
     "onRecipeShownDialogueNodeName": "ExampleItems_Steve_RecipeShown",
     "onRecipeBuiltDialogueNodeName": "ExampleItems_Steve_RecipeBuilt",
     "quantityProduced": 1,

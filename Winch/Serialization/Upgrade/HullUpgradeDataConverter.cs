@@ -7,6 +7,7 @@ public class HullUpgradeDataConverter : UpgradeDataConverter
 {
     private readonly Dictionary<string, FieldDefinition> _definitions = new()
     {
+        { "sprite", new(TextureUtil.GetSprite("GenericHullUpgradeIcon"), null) },
         { "titleKey", new(LocalizationUtil.CreateStringsReference("upgrades.hull-upgrade-title"), null) },
         { "descriptionKey", new(LocalizationUtil.CreateStringsReference("upgrades.hull-upgrade-description.no-hp"), null) },
         { "hullGridConfiguration", new( string.Empty, null) },

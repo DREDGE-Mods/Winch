@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 using UnityEngine.Localization;
 using Winch.Util;
 
@@ -18,6 +19,7 @@ public class UpgradeDataConverter : DredgeTypeConverter<UpgradeData>
         { "descriptionKey", new(LocalizationUtil.Empty, o=> CreateLocalizedString(o.ToString())) },
         { "monetaryCost", new(0m, o=>decimal.Parse(o.ToString())) },
         { "availableInDemo", new(false, o=>bool.Parse(o.ToString())) },
+        { "prerequisiteUpgrades", new(new List<string>(), o => DredgeTypeHelpers.ParseStringList((JArray)o)) },
     };
 
     public UpgradeDataConverter()

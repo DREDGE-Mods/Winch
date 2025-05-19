@@ -1,5 +1,32 @@
 ﻿{
-    //WIP
     "titleKey": "upgrades.storage-title",
-    "descriptionKey": "upgrades.storage-description"
+    "descriptionKey": "upgrades.storage-description",
+    "gridConfig": "exampleitems.slotupgrade",
+    "prerequisiteUpgrades": [ "tier-5-hull" ],
+    "cellGroupConfigs": [
+        {
+            "cells": [
+                "XXX    XXX",
+                "XX      XX",
+                "X        X",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "          ",
+                "X        X",
+                "XX      XX",
+                "XX      XX",
+                "          "
+            ],
+            "itemType": "GENERAL",
+            "itemSubtype": "DEFAULT",
+            "isHidden": false,
+            "damageImmune": false
+        }
+    ],
+    "sprite": "StorageUpgradeIcon",
+    "monetaryCost": 500,
+    "tier": 5,
+    "upgradeCost": []
 }

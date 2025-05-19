@@ -1705,7 +1705,7 @@ public static class EnumUtil
     public static IEnumerable<T> EnumCast<T>(this IEnumerable<Enum> values) where T : Enum => values.Select(e => e.EnumCast<T>());
 
     /// <inheritdoc cref="Enum.HasFlag(Enum)"/>
-    public static bool HasFlag<T>(T flags, T flag) where T : Enum
+    public static bool HasFlag<T>(this T flags, T flag) where T : Enum
         => flags.HasFlag(flag);
 
     /// <summary>
@@ -1762,7 +1762,7 @@ public static class EnumUtil
         Type underlyingType = GetUnderlyingType<T>();
 
         ulong num = flags.ToFriendlyValue();
-        var enumNameValues = GetValues<T>().Select(ToFriendlyValue);
+        var enumNameValues = GetValues<T>().Select(ToFriendlyValue).Where(IsPowerOfTwo);
         IList<T> selectedFlagsValues = new List<T>();
 
         foreach (ulong enumNameValue in enumNameValues)

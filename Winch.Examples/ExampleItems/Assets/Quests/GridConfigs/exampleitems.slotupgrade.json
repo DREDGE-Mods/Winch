@@ -1,0 +1,33 @@
+{
+    "titleString": "quest-grid.upgrades",
+    "isSaved": true,
+    "allowManualExit": true,
+    "allowStorageAccess": true,
+    "gridConfiguration": "exampleitems.slotinput",
+    "gridKey": "EXAMPLE_UPGRADE_STORAGE",
+    "presetGrid": {
+        "spatialItems": [
+            {
+                "id": "exampleitems.diamond",
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            {
+                "id": "exampleitems.diamond",
+                "x": 3,
+                "y": 1,
+                "z": 180
+            }
+        ]
+    },
+    "presetGridMode": "SILHOUETTE",
+    "questGridExitMode": "REVISITABLE",
+    "completeConditions": [
+        {
+            "type": "ItemCount",
+            "item": "exampleitems.diamond",
+            "count": 2
+        }
+    ]
+}

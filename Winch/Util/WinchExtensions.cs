@@ -239,6 +239,13 @@ public static class WinchExtensions
     public static bool IsFlag(this HarvestableItemData itemData) => itemData.id.StartsWith("flag") || itemData is FlagItemData;
 
     /// <summary>
+    /// Check whether this config's itemType has <see cref="ItemType.GENERAL"/> and itemSubtype has <see cref="ItemSubtypeExtra.DEFAULT"/>
+    /// </summary>
+    public static bool IsDefault(this GridConfiguration gridConfiguration) => gridConfiguration.mainItemType.HasFlag(ItemType.GENERAL) && gridConfiguration.mainItemSubtype.HasFlag(ItemSubtypeExtra.DEFAULT);
+    /// <inheritdoc cref="IsDefault(GridConfiguration)"/>
+    public static bool IsDefault(this CellGroupConfiguration cellGroupConfiguration) => cellGroupConfiguration.itemType.HasFlag(ItemType.GENERAL) && cellGroupConfiguration.itemSubtype.HasFlag(ItemSubtypeExtra.DEFAULT);
+
+    /// <summary>
     /// Trigger the fish caught event for both DREDGE and Winch
     /// </summary>
     /// <param name="gameEvents">Game events</param>
@@ -551,7 +558,7 @@ public static class WinchExtensions
 
     public static List<FishItemData> GetBaitCrabs(this ItemManager itemManager)
     {
-        return itemManager.GetFishItems().Where(fish => fish.canBeCaughtByPot && !fish.IsAberration && fish.CanAppearInBaitBalls && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish)).Shuffle().ToList();
+        return itemManager.GetFishItems().Where(fish => fish.canBeCaughtByPot && !fish.IsAberration && fish.CanAppearInBaitBalls && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish)).Shuffle().ToList();
     }
 
     public static List<HarvestableItemData> GetBaitMaterials(this ItemManager itemManager)
@@ -1349,6 +1356,8 @@ public static class WinchExtensions
             .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
         currentOptions.AddRange(options.Select(option => (ValueTuple<Line, string, bool>)option));
     }
+
+    public static bool AreOwningPrerequisitesMet(this UpgradeData upgradeData) => upgradeData.prerequisiteUpgrades.TrueForAll(GameManager.Instance.SaveData.GetIsUpgradeOwned);
     #endregion
 
     #region Reflection
