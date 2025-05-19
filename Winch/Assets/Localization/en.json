@@ -2,6 +2,7 @@
 	"menu.mods": "Mods",
 	"prompt.incompatible-mods": "This save file was last used with modded items that are no longer available due either to an update, uninstallation, or an error.\n\nIf you load this save file, those items will disappear the next time you save.\n\nAre you sure you wish to continue?",
 	"popup.confirm-restore-mod-default-settings": "Are you sure you want to restore this mod's settings back to default values?\n\nThis action cannot be undone.",
+	"notification.missing-prerequisite-upgrades": "Missing prerequisites upgrades.",
 	"settings.tab.mods": "Mods",
 	"settings.mods.footer.list": "List",
 	"settings.mods.footer.options": "Options",

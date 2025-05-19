@@ -194,15 +194,31 @@ internal static class RecipePatcher
     [HarmonyPatch(typeof(RecipeEntry), nameof(RecipeEntry.OnRecipeEntryClicked))]
     public static bool RecipeEntry_OnRecipeEntryClicked_Prefix(RecipeEntry __instance)
     {
-        if (__instance.recipeData is HullRecipeData hullRecipeData && GameManager.Instance.SaveData.GetIsUpgradeOwned(hullRecipeData.hullUpgradeData))
+        if (__instance.recipeData is HullRecipeData hullRecipeData)
         {
-            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", hullRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), hullRecipeData.hullUpgradeData.tier);
-            return false;
+            if (GameManager.Instance.SaveData.GetIsUpgradeOwned(hullRecipeData.hullUpgradeData))
+            {
+                GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", hullRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), hullRecipeData.hullUpgradeData.tier);
+                return false;
+            }
+            if (!hullRecipeData.hullUpgradeData.AreOwningPrerequisitesMet())
+            {
+                GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.missing-prerequisite-upgrades");
+                return false;
+            }
         }
-        if (__instance.recipeData is SlotRecipeData slotRecipeData && GameManager.Instance.SaveData.GetIsUpgradeOwned(slotRecipeData.slotUpgradeData))
+        if (__instance.recipeData is SlotRecipeData slotRecipeData)
         {
-            GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", slotRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), slotRecipeData.slotUpgradeData.GetNewCellCount());
-            return false;
+            if (GameManager.Instance.SaveData.GetIsUpgradeOwned(slotRecipeData.slotUpgradeData))
+            {
+                GameManager.Instance.UI.ShowNotificationWithItemName(NotificationType.ERROR, "notification.already-researched-ability", slotRecipeData.GetItemNameKey(), GameManager.Instance.LanguageManager.GetColor(DredgeColorTypeEnum.EMPHASIS), slotRecipeData.slotUpgradeData.GetNewCellCount());
+                return false;
+            }
+            if (!slotRecipeData.slotUpgradeData.AreOwningPrerequisitesMet())
+            {
+                GameManager.Instance.UI.ShowNotification(NotificationType.ERROR, "notification.missing-prerequisite-upgrades");
+                return false;
+            }
         }
         if (__instance.recipeData is ModdedRecipeData moddedRecipeData && moddedRecipeData.IsOneTimeAndAlreadyOwned())
         {

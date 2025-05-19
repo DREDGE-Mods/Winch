@@ -1356,6 +1356,8 @@ public static class WinchExtensions
             .Field("vm").Field("state").Field("currentOptions").GetValue<List<ValueTuple<Line, string, bool>>>();
         currentOptions.AddRange(options.Select(option => (ValueTuple<Line, string, bool>)option));
     }
+
+    public static bool AreOwningPrerequisitesMet(this UpgradeData upgradeData) => upgradeData.prerequisiteUpgrades.TrueForAll(GameManager.Instance.SaveData.GetIsUpgradeOwned);
     #endregion
 
     #region Reflection
