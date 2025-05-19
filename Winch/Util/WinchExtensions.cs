@@ -558,7 +558,7 @@ public static class WinchExtensions
 
     public static List<FishItemData> GetBaitCrabs(this ItemManager itemManager)
     {
-        return itemManager.GetFishItems().Where(fish => fish.canBeCaughtByPot && !fish.IsAberration && fish.CanAppearInBaitBalls && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish) && GameManager.Instance.PlayerStats.GetHasEquipmentForHarvestableItem(fish)).Shuffle().ToList();
+        return itemManager.GetFishItems().Where(fish => fish.canBeCaughtByPot && !fish.IsAberration && fish.CanAppearInBaitBalls && GameManager.Instance.Player.PlayerZoneDetector.IsItemHarvestable(fish) && GameManager.Instance.SaveData.IsFishInCurrentWorldPhases(fish)).Shuffle().ToList();
     }
 
     public static List<HarvestableItemData> GetBaitMaterials(this ItemManager itemManager)
