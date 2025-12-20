@@ -25,7 +25,7 @@ Self explanatory. Skips the intro cutscene when starting the game.
 
 ## Credits
 
-Winch was originally made by [Hacktix](https://github.com/Hacktix), this project is based off the [original repo](https://github.com/Hacktix/Winch).
+Winch was originally made by [Hacktix](https://github.com/Ashiepaws), this project is based off the [original repo](https://github.com/Ashiepaws/Winch).
 
 Authors:
 - [xen-42](https://github.com/xen-42)
