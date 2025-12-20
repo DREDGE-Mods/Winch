@@ -44,6 +44,46 @@ public class ModAssembly
 
         string metaText = File.ReadAllText(metaPath);
         Metadata = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) ?? throw new InvalidOperationException("Unable to parse mod_meta.json file.");
+
+        BasePath = ValidateBasePath(basePath);
+    }
+
+    private string ValidateBasePath(string basePath)
+    {
+        // If the folder name doesn't match the GUID, attempt to rename the folder to the GUID
+        string basePathFolderName = Path.GetFileName(basePath);
+        if (basePathFolderName != GUID)
+        {
+            WinchCore.Log.Warn($"Mod folder name '{basePathFolderName}' does not match Mod GUID '{GUID}'. Attempting to rename folder...");
+            string? parentDir = Path.GetDirectoryName(basePath);
+            if (!string.IsNullOrWhiteSpace(parentDir))
+            {
+                string newPath = Path.Combine(parentDir, GUID);
+                if (Directory.Exists(newPath))
+                {
+                    WinchCore.Log.Error($"Cannot rename mod folder '{basePathFolderName}' to '{GUID}' because destination '{newPath}' already exists.");
+                }
+                else
+                {
+                    try
+                    {
+                        Directory.Move(basePath, newPath);
+                        WinchCore.Log.Debug($"Renamed mod folder '{basePathFolderName}' to '{GUID}'.");
+                        return newPath;
+                    }
+                    catch (Exception ex)
+                    {
+                        WinchCore.Log.Error($"Failed to rename mod folder '{basePathFolderName}' to '{GUID}': {ex}");
+                    }
+                }
+            }
+            else
+            {
+                WinchCore.Log.Error($"Unable to determine parent directory for '{basePath}'. Folder not renamed.");
+            }
+        }
+
+        return basePath;
     }
 
     internal static ModAssembly FromPath(string path)

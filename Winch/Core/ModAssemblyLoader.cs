@@ -52,7 +52,7 @@ public static class ModAssemblyLoader
         {
             ModAssembly mod = ModAssembly.FromPath(path);
             mod.LoadAssembly();
-            _installedAssemblies.Add(modName, mod);
+            _installedAssemblies.Add(mod.BasePath, mod);
         }
         catch(Exception ex)
         {
