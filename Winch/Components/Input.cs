@@ -151,7 +151,7 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
             return;
         }
 
-        if (ModConfig.TryGetConfig(modName, out var config))
+        if (ModConfig.TryGetConfig(modName, out ModConfig config))
         {
             config.SetProperty<T>(key, value);
         }

@@ -31,7 +31,7 @@ public class ModAssembly
     public string Preload => Metadata.ContainsKey("Preload") ? Metadata["Preload"].ToString() : string.Empty;
     public string Entrypoint => Metadata.ContainsKey("Entrypoint") ? Metadata["Entrypoint"].ToString() : string.Empty;
     public bool ApplyPatches => Metadata.ContainsKey("ApplyPatches") && (bool)Metadata["ApplyPatches"];
-    public ModConfig? Config => ModConfig.TryGetConfig(BasePathFolderName, out var config) ? config : null;
+    public ModConfig? Config;
     public bool DefaultConfig => ModConfig.HasDefaultConfig(BasePathFolderName);
     public ModConfig GetConfig() => ModConfig.GetConfig(BasePathFolderName);
 
@@ -44,6 +44,8 @@ public class ModAssembly
 
         string metaText = File.ReadAllText(metaPath);
         Metadata = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaText) ?? throw new InvalidOperationException("Unable to parse mod_meta.json file.");
+
+        Config = ModConfig.TryGetConfig(BasePathFolderName, out var config) ? config : null;
     }
 
     internal static ModAssembly FromPath(string path)

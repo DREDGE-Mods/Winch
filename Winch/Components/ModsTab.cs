@@ -291,6 +291,10 @@ internal class ModsTab : MonoBehaviour
         headerText.gameObject.Activate();
         footerText.LabelString = footerOptions;
         footerButton.gameObject.Activate();
+        if (ModConfig.TryGetConfig(mod.GUID, out var config))
+        {
+            mod.Config = config;
+        }
         AddOptions(mod);
         var firstSelectable = options.GetComponentInChildren<Selectable>();
         Navigation footerNavigation = footerButton.Button.navigation;
@@ -334,6 +338,7 @@ internal class ModsTab : MonoBehaviour
 
     protected Input AddConfigInput(string modName, string key, object value)
     {
+        WinchCore.Log.Error("[ModsTab] AddConfigInput(" + modName + ", " + key + ", " + (value != null ? value.ToString() : "null") + ")");
         if (value is JObject obj)
         {
             var settingType = (string)obj["type"];
