@@ -182,7 +182,9 @@ public static class Loader
     private static void OnGameLoaded()
     {
         // Islands
-        AssetBundleUtil.GetPrefab("exampleitems.bundle", "CircleIsland").Instantiate(new Vector3(365, 0, -265));
+        GameObject prefab = AssetBundleUtil.GetPrefab("exampleitems.bundle", "CircleIsland");
+        GameObject instance = prefab.Instantiate(new Vector3(365, 0, -265));
+        AssetBundleUtil.ReplaceShaders(instance);
 
         var cubeLand = CreateCube();
         cubeLand.transform.position = new Vector3(1000, 0, -1000);
