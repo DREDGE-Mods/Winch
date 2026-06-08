@@ -177,6 +177,13 @@ public static class AssetBundleUtil
     /// <param name="bundle">The bundle to get the prefabs from and replace their shaders</param>
     public static void BlacklistShaders(this AssetBundle bundle)
     {
+        foreach (Shader shader in bundle.LoadAllAssets<Shader>())
+        {
+            if (shader != null)
+            {
+                shader.Blacklist();
+            }
+        }
         foreach (GameObject prefab in bundle.LoadAllAssets<GameObject>())
         {
             if (prefab != null)
