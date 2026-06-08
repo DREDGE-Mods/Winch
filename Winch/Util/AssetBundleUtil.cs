@@ -172,9 +172,9 @@ public static class AssetBundleUtil
     }
 
     /// <summary>
-    /// Replaces shaders on all of the asset bundle's prefabs with one's from the game (if they are available)
+    /// Blacklists shaders on all of the asset bundle's prefabs from being used in the replace shaders method
     /// </summary>
-    /// <param name="bundle">The bundle to get the prefabs from and replace their shaders</param>
+    /// <param name="bundle">The bundle to get the prefabs from and blacklist their shaders</param>
     public static void BlacklistShaders(this AssetBundle bundle)
     {
         foreach (Shader shader in bundle.LoadAllAssets<Shader>())
@@ -201,9 +201,9 @@ public static class AssetBundleUtil
     }
 
     /// <summary>
-    /// Replaces shaders on an asset bundle prefab with one's from the game (if they are available)
+    /// Blacklists shaders on an asset bundle prefab from being used in the replace shaders method
     /// </summary>
-    /// <param name="prefab">The prefab to replace the shaders of</param>
+    /// <param name="prefab">The prefab to blacklist the shaders of</param>
     public static void BlacklistShaders(this GameObject prefab)
     {
         foreach (var renderer in prefab.GetComponentsInChildren<Renderer>(true))
