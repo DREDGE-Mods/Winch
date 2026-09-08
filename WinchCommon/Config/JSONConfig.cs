@@ -74,7 +74,13 @@ public class JSONConfig
 
     public static Dictionary<string, object?> ParseConfig(string value)
     {
-        return JsonConvert.DeserializeObject<Dictionary<string, object?>>(value, jsonSerializerSettings);
+        var dict = JsonConvert.DeserializeObject<Dictionary<string, object?>>(value, jsonSerializerSettings);
+        // Ignore schema
+        if (dict != null && dict.ContainsKey("$schema"))
+        {
+            dict.Remove("$schema");
+        }
+        return dict;
     }
 
     public static T ParseConfig<T>(string value)

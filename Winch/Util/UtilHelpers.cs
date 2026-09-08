@@ -17,6 +17,10 @@ public static class UtilHelpers
         {
             string metaFile = File.ReadAllText(metaPath);
             Dictionary<string, object>? meta = JsonConvert.DeserializeObject<Dictionary<string, object>>(metaFile);
+            if (meta != null && meta.ContainsKey("$schema"))
+            {
+                meta.Remove("$schema");
+            }
             return meta;
         }
         catch (Exception ex)
