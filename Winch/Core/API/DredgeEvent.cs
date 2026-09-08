@@ -21,6 +21,13 @@ public static class DredgeEvent
         OnModAssetsLoaded?.Invoke();
     }
 
+    public static event Action? OnTitleOpen;
+    internal static void TriggerTitleOpen()
+    {
+        WinchCore.Log.Debug("Triggered OnTitleOpen event");
+        OnTitleOpen?.Invoke();
+    }
+
     public static event Action<GameSceneInitializer>? OnGameLoading;
     internal static void TriggerGameLoading(GameSceneInitializer gameSceneInitializer)
     {
