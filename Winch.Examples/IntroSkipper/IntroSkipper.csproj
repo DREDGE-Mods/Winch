@@ -9,9 +9,19 @@
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
 		<DebugType>portable</DebugType>
 		<OutputPath>./bin</OutputPath>
-		<VersionPrefix>1.0.0</VersionPrefix>
 		<Deterministic>False</Deterministic>
 	</PropertyGroup>
+
+  <Target Name="ReadModVersion" BeforeTargets="GetAssemblyVersion">
+    <ReadLinesFromFile File="$(MSBuildProjectDirectory)\mod_meta.json">
+      <Output TaskParameter="Lines" ItemName="ModMetaLines" />
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <ModMetaJson>@(ModMetaLines, '')</ModMetaJson>
+      <Version>$([System.Text.RegularExpressions.Regex]::Match('$(ModMetaJson)', '&quot;Version&quot;\s*:\s*&quot;([^&quot;]+)&quot;').Groups[1].Value)</Version>
+    </PropertyGroup>
+  </Target>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\WinchCommon\WinchCommon.csproj">
