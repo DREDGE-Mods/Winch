@@ -1,0 +1,141 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "Name",
+        "Author",
+        "ModGUID",
+        "Version",
+        "ModAssembly",
+        "MinWinchVersion"
+    ],
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "The JSON schema for this mod metadata file"
+        },
+        "ModAssembly": {
+            "type": "string",
+            "description": "The path to the dll file to load, relative to the mod folder",
+            "pattern": "^(?:[^\\\\/:*?\"<>|]+[\\\\/])*[^\\\\/:*?\"<>|]+\\.dll$",
+            "examples": [
+                "MyMod.dll",
+                "MyCoolMod.dll",
+                "DredgeVR.dll",
+                "FastDock.dll"
+            ]
+        },
+        "Author": {
+            "type": "string",
+            "description": "The author of the mod",
+            "pattern": "^\\S(?:.*\\S)?$",
+            "examples": [
+                "John Doe",
+                "MegaPiggy",
+                "xen"
+            ]
+        },
+        "Name": {
+            "type": "string",
+            "description": "The human-readable name of the mod",
+            "pattern": "^\\S(?:.*\\S)?$",
+            "examples": [
+                "Example Mod",
+                "My Cool Mod",
+                "Dredge VR",
+                "Fast Dock"
+            ]
+        },
+        "ModGUID": {
+            "type": "string",
+            "description": "The unique identifier of the mod, in the format 'Author.ExampleMod'",
+            "pattern": "^[A-Za-z][A-Za-z0-9-]*\\.[A-Za-z][A-Za-z0-9-]*$",
+            "examples": [
+                "Me.MyCoolMod",
+                "me.mycoolmod",
+                "Author.ExampleMod",
+                "author.examplemod",
+                "MegaPiggy.FastDock",
+                "xen.DredgeVR"
+            ]
+        },
+        "Version": {
+            "type": "string",
+            "description": "The version of the mod (should follow semver)",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "examples": [
+                "1.0.0",
+                "2.0.1",
+                "0.1.4"
+            ]
+        },
+        "MinWinchVersion": {
+            "type": "string",
+            "description": "The minimum version of Winch required by the mod",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$",
+            "examples": [
+                "0.6.2"
+            ]
+        },
+        "Entrypoint": {
+            "type": "string",
+            "description": "The static parameterless method to invoke to initialize the mod, in the format 'Namespace.Type/Method'",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:[.+][A-Za-z_][A-Za-z0-9_]*)*/[A-Za-z_][A-Za-z0-9_]*$",
+            "examples": [
+                "MyMod.Loader/Initialize",
+                "MyCoolMod.Main/Initialize",
+                "FastDock.Main/Initialize",
+                "DredgeVR.Loader/Initialize"
+            ]
+        },
+        "Preload": {
+            "type": "string",
+            "description": "The static parameterless method to invoke after loading the assembly and before the mod entrypoint, in the format 'Namespace.Type/Method'",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:[.+][A-Za-z_][A-Za-z0-9_]*)*/[A-Za-z_][A-Za-z0-9_]*$",
+            "examples": [
+                "MyMod.Loader/Preload",
+                "MyCoolMod.Main/Preload",
+                "FastDock.Main/Preload",
+                "DredgeVR.Loader/Preload"
+            ]
+        },
+        "ApplyPatches": {
+            "type": "boolean",
+            "description": "Whether to automatically apply all Harmony patches contained in the mod assembly",
+            "default": false
+        },
+        "Dependencies": {
+            "type": "array",
+            "description": "The mods that this mod depends on. A minimum version can be specified by appending '@<version>' to the ModGUID",
+            "default": [],
+            "items": {
+                "type": "string",
+                "pattern": "^[A-Za-z][A-Za-z0-9-]*\\.[A-Za-z][A-Za-z0-9-]*(?:@\\d+\\.\\d+\\.\\d+)?$",
+                "examples": [
+                    "them.theirmod",
+                    "Them.TheirMod",
+                    "Them.TheirMod@1.0.0",
+                    "xen.DredgeVR"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "Conflicts": {
+            "type": "array",
+            "description": "The mods that this mod conflicts with",
+            "default": [],
+            "items": {
+                "type": "string",
+                "description": "The ModGUID of the conflicting mod",
+                "pattern": "^[A-Za-z][A-Za-z0-9-]*\\.[A-Za-z][A-Za-z0-9-]*$",
+                "examples": [
+                    "them.theirmod",
+                    "Them.TheirMod",
+                    "xen.DredgeVR"
+                ]
+            },
+            "uniqueItems": true
+        }
+    }
+}
