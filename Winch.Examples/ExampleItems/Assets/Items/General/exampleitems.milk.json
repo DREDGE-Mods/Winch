@@ -14,8 +14,8 @@
 	"dimensions": [
 		"X"
 	],
-	"damageMode": "DESTROY",
 	"sellOverrideValue": 10,
+	"damageMode": "DESTROY",
 	"hasSpecialDiscardAction": true,
 	"discardPromptOverride": "prompt.use"
 }

@@ -9,57 +9,58 @@ using Winch.Config;
 using Sirenix.Utilities;
 using Newtonsoft.Json.Linq;
 using System;
+using Winch.Core.API;
 
 namespace Winch.Components;
 
-internal class ModsTab : MonoBehaviour
+public class ModsTab : MonoBehaviour
 {
-    internal static LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
-    internal static LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
-    internal static LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
-    internal static LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
+    public static readonly LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
+    public static readonly LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
+    public static readonly LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
+    public static readonly LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
 
-    internal static ModsTab Instance { get; private set; }
+    public static ModsTab Instance { get; private set; }
 
     public bool isCurrentTab => Instance.settingsDialog.dialog.CurrentIndex == ModsButton.modsTabIndex;
     public static bool isActive => Instance.isCurrentTab;
     public ResetAllSettingsButton ResetAllSettingsButton => settingsDialog.GetComponentInChildren<ResetAllSettingsButton>(true);
 
-    internal Label labelPrefab;
-    internal LocalizedLabel labelLocalizedPrefab;
-    internal BasicButtonWrapper buttonPrefab;
-    internal DropdownInput dropdownPrefab;
-    internal ColorDropdownInput colorDropdownPrefab;
-    internal OnOffDropdownInput onOffDropdownPrefab;
-    internal SliderInput sliderPrefab;
-    internal FieldInput inputFieldPrefab;
-    internal IntegerFieldInput integerInputFieldPrefab;
-    internal DecimalFieldInput decimalInputFieldPrefab;
-    internal SeparatorInput separatorPrefab;
-    internal SettingsDialog settingsDialog;
-    internal TabbedPanel panel;
-    internal TabUI tab;
-    internal Transform header;
-    internal Label headerText;
-    internal LocalizedLabel headerTextLocalized;
-    internal Transform footer;
-    internal LocalizedLabel footerText;
-    internal BasicButtonWrapper footerButton;
-    internal BasicButtonWrapper resetAllSettingsButton;
-    internal BasicButtonWrapper resumeButton;
-    internal BasicButtonWrapper saveAndQuitButton;
-    internal Transform list;
-    internal Transform options;
-    internal ScrollRect listScroller;
-    internal ScrollRect optionsScroller;
-    internal ControllerFocusGrabber listControllerFocusGrabber;
-    internal ControllerFocusGrabber optionsControllerFocusGrabber;
-    internal bool inOptions;
-    internal bool currentWinch;
-    internal ModAssembly currentMod;
-    private List<BasicButtonWrapper> modButtons = new List<BasicButtonWrapper>();
-    private List<Label> modLabels = new List<Label>();
-    private List<Transform> modOptions = new List<Transform>();
+    public Label labelPrefab;
+    public LocalizedLabel labelLocalizedPrefab;
+    public BasicButtonWrapper buttonPrefab;
+    public DropdownInput dropdownPrefab;
+    public ColorDropdownInput colorDropdownPrefab;
+    public OnOffDropdownInput onOffDropdownPrefab;
+    public SliderInput sliderPrefab;
+    public FieldInput inputFieldPrefab;
+    public IntegerFieldInput integerInputFieldPrefab;
+    public DecimalFieldInput decimalInputFieldPrefab;
+    public SeparatorInput separatorPrefab;
+    public SettingsDialog settingsDialog;
+    public TabbedPanel panel;
+    public TabUI tab;
+    public Transform header;
+    public Label headerText;
+    public LocalizedLabel headerTextLocalized;
+    public Transform footer;
+    public LocalizedLabel footerText;
+    public BasicButtonWrapper footerButton;
+    public BasicButtonWrapper resetAllSettingsButton;
+    public BasicButtonWrapper resumeButton;
+    public BasicButtonWrapper saveAndQuitButton;
+    public Transform list;
+    public Transform options;
+    public ScrollRect listScroller;
+    public ScrollRect optionsScroller;
+    public ControllerFocusGrabber listControllerFocusGrabber;
+    public ControllerFocusGrabber optionsControllerFocusGrabber;
+    public bool inOptions;
+    public bool currentWinch;
+    public ModAssembly currentMod;
+    public List<BasicButtonWrapper> modButtons = new List<BasicButtonWrapper>();
+    public List<Label> modLabels = new List<Label>();
+    public List<Transform> modOptions = new List<Transform>();
 
     public void Awake()
     {
@@ -292,6 +293,7 @@ internal class ModsTab : MonoBehaviour
         footerText.LabelString = footerOptions;
         footerButton.gameObject.Activate();
         AddOptions(mod);
+        DredgeEvent.TriggerBuildModConfigMenu(mod, this);
         var firstSelectable = options.GetComponentInChildren<Selectable>();
         Navigation footerNavigation = footerButton.Button.navigation;
         footerNavigation.mode = Navigation.Mode.Explicit;
@@ -332,7 +334,42 @@ internal class ModsTab : MonoBehaviour
         }
     }
 
-    protected Input AddConfigInput(string modName, string key, object value)
+    // Allows mods to add a custom button into the current options list programmatically.
+    public BasicButtonWrapper AddOptionButton(string name, string text, Action onClick)
+    {
+        var button = buttonPrefab.Instantiate(options, false).Rename(name);
+        button.DeactivateButtonEffects();
+        // ensure we use a simple non-localized label
+        button.gameObject.RemoveComponentImmediate<LocalizedLabel>();
+        var lbl = button.gameObject.AddComponent<Label>();
+        lbl.LabelString = text;
+        var wrapper = button.GetComponent<BasicButtonWrapper>();
+        if (onClick != null) wrapper.OnClick += onClick;
+        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
+        modOptions.Add(button.transform);
+        return wrapper;
+    }
+
+    public BasicButtonWrapper AddOptionButtonLocalized(string name, string localizedLabel, Action onClick)
+    {
+        return AddOptionButtonLocalized(name, LocalizationUtil.CreateStringsReference(localizedLabel), onClick);
+    }
+
+    public BasicButtonWrapper AddOptionButtonLocalized(string name, LocalizedString localizedLabel, Action onClick)
+    {
+        var button = buttonPrefab.Instantiate(options, false).Rename(name);
+        button.DeactivateButtonEffects();
+        button.gameObject.RemoveComponentImmediate<Label>();
+        var localized = button.gameObject.AddComponent<LocalizedLabel>();
+        localized.LabelString = localizedLabel;
+        var wrapper = button.GetComponent<BasicButtonWrapper>();
+        if (onClick != null) wrapper.OnClick += onClick;
+        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
+        modOptions.Add(button.transform);
+        return wrapper;
+    }
+
+    public Input AddConfigInput(string modName, string key, object value)
     {
         if (value is JObject obj)
         {
@@ -408,9 +445,9 @@ internal class ModsTab : MonoBehaviour
         throw new InvalidOperationException("Unrecognized setting type: " + value.GetType());
     }
 
-    private SeparatorInput AddSeparatorAndLabelInput(string modName, string key, JObject obj) => AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
+    public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, JObject obj) => AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
 
-    private SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
+    public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
     {
         var count = modOptions.Count == 0 ? 1 : (3 - ((modOptions.Count - 1) % 3)); //shenanigans to put empty spaces until next middle
         for (int i = 0; i < count; i++)
@@ -436,7 +473,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private SeparatorInput AddSeparatorInput(string modName, string key)
+    public SeparatorInput AddSeparatorInput(string modName, string key)
     {
         var clone = separatorPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -447,7 +484,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private OnOffDropdownInput AddToggleInput(string modName, string key, bool value)
+    public OnOffDropdownInput AddToggleInput(string modName, string key, bool value)
     {
         var clone = onOffDropdownPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -460,9 +497,9 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private OnOffDropdownInput AddToggleInput(string modName, string key, JObject obj) => AddToggleInput(modName, key, (bool)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+    public OnOffDropdownInput AddToggleInput(string modName, string key, JObject obj) => AddToggleInput(modName, key, (bool)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private OnOffDropdownInput AddToggleInput(string modName, string key, bool value, string title, string tooltip)
+    public OnOffDropdownInput AddToggleInput(string modName, string key, bool value, string title, string tooltip)
     {
         var clone = onOffDropdownPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -476,9 +513,9 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private SliderInput AddSliderInput(string modName, string key, JObject obj) => AddSliderInput(modName, key, (float)obj["value"], (float)obj["min"], (float)obj["max"], (string)obj["title"], (string)obj["tooltip"]);
+    public SliderInput AddSliderInput(string modName, string key, JObject obj) => AddSliderInput(modName, key, (float)obj["value"], (float)obj["min"], (float)obj["max"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private SliderInput AddSliderInput(string modName, string key, float value, float min, float max)
+    public SliderInput AddSliderInput(string modName, string key, float value, float min, float max)
     {
         var clone = sliderPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -491,7 +528,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private SliderInput AddSliderInput(string modName, string key, float value, float min, float max, string title, string tooltip)
+    public SliderInput AddSliderInput(string modName, string key, float value, float min, float max, string title, string tooltip)
     {
         var clone = sliderPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -505,11 +542,11 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DropdownInput AddDropdownInput(string modName, string key, JObject obj) => AddDropdownInput(modName, key, (string)obj["value"], obj["options"].ToObject<string[]>(), obj["optionStrings"]?.ToObject<string[]>(), (string)obj["title"], (string)obj["tooltip"]);
+    public DropdownInput AddDropdownInput(string modName, string key, JObject obj) => AddDropdownInput(modName, key, (string)obj["value"], obj["options"].ToObject<string[]>(), obj["optionStrings"]?.ToObject<string[]>(), (string)obj["title"], (string)obj["tooltip"]);
 
-    private ColorDropdownInput AddColorDropdownInput(string modName, string key, JObject obj) => AddColorDropdownInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+    public ColorDropdownInput AddColorDropdownInput(string modName, string key, JObject obj) => AddColorDropdownInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private ColorDropdownInput AddColorDropdownInput(string modName, string key, string value, string title, string tooltip)
+    public ColorDropdownInput AddColorDropdownInput(string modName, string key, string value, string title, string tooltip)
     {
         var clone = colorDropdownPrefab.Instantiate(this.options, false);
         modOptions.Add(clone.transform);
@@ -523,7 +560,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings)
+    public DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings)
     {
         var clone = dropdownPrefab.Instantiate(this.options, false);
         modOptions.Add(clone.transform);
@@ -536,7 +573,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings, string title, string tooltip)
+    public DropdownInput AddDropdownInput(string modName, string key, string value, string[] options, string[] optionStrings, string title, string tooltip)
     {
         var clone = dropdownPrefab.Instantiate(this.options, false);
         modOptions.Add(clone.transform);
@@ -550,7 +587,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private FieldInput AddTextInput(string modName, string key, string value)
+    public FieldInput AddTextInput(string modName, string key, string value)
     {
         var clone = inputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -563,9 +600,9 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private FieldInput AddTextInput(string modName, string key, JObject obj) => AddTextInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+    public FieldInput AddTextInput(string modName, string key, JObject obj) => AddTextInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private FieldInput AddTextInput(string modName, string key, string value, string title, string tooltip)
+    public FieldInput AddTextInput(string modName, string key, string value, string title, string tooltip)
     {
         var clone = inputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -579,7 +616,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private IntegerFieldInput AddIntegerInput(string modName, string key, object value)
+    public IntegerFieldInput AddIntegerInput(string modName, string key, object value)
     {
         var clone = integerInputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -592,9 +629,9 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private IntegerFieldInput AddIntegerInput(string modName, string key, JObject obj) => AddIntegerInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+    public IntegerFieldInput AddIntegerInput(string modName, string key, JObject obj) => AddIntegerInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private IntegerFieldInput AddIntegerInput(string modName, string key, object value, string title, string tooltip)
+    public IntegerFieldInput AddIntegerInput(string modName, string key, object value, string title, string tooltip)
     {
         var clone = integerInputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -608,7 +645,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DecimalFieldInput AddDecimalInput(string modName, string key, object value)
+    public DecimalFieldInput AddDecimalInput(string modName, string key, object value)
     {
         var clone = decimalInputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -621,9 +658,9 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private DecimalFieldInput AddDecimalInput(string modName, string key, JObject obj) => AddDecimalInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
+    public DecimalFieldInput AddDecimalInput(string modName, string key, JObject obj) => AddDecimalInput(modName, key, (string)obj["value"], (string)obj["title"], (string)obj["tooltip"]);
 
-    private DecimalFieldInput AddDecimalInput(string modName, string key, object value, string title, string tooltip)
+    public DecimalFieldInput AddDecimalInput(string modName, string key, object value, string title, string tooltip)
     {
         var clone = decimalInputFieldPrefab.Instantiate(options, false);
         modOptions.Add(clone.transform);
@@ -637,7 +674,7 @@ internal class ModsTab : MonoBehaviour
         return clone;
     }
 
-    internal void SetupInputTooltip(Input input, string tooltip)
+    public void SetupInputTooltip(Input input, string tooltip)
     {
         if (!string.IsNullOrWhiteSpace(tooltip))
         {
@@ -645,7 +682,7 @@ internal class ModsTab : MonoBehaviour
         }
     }
 
-    internal void SetupTitle(Input input, string title, string key)
+    public void SetupTitle(Input input, string title, string key)
     {
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -658,7 +695,7 @@ internal class ModsTab : MonoBehaviour
         }
     }
 
-    internal void AddScrollMagnet(Input input)
+    public void AddScrollMagnet(Input input)
     {
         input.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
     }

@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using Winch.Components;
 using Winch.Config;
 using Winch.Core;
+using Winch.Core.API;
 using Winch.Data.Shop;
 using Winch.Util;
 using Yarn;
@@ -37,6 +39,7 @@ public static class Loader
         RefreshConfig(); // First grab of config
         ModConfig.OnConfigChanged += ModConfig_OnConfigChanged;
         ModConfig.OnConfigValueChanged += ModConfig_OnConfigValueChanged; // This always runs after OnConfigChanged
+        DredgeEvent.OnBuildModConfigMenu += OnBuildModConfigMenu;
 
         // Saves
         SaveUtil.RegisterDataParticipant(Participant);
@@ -108,9 +111,30 @@ public static class Loader
         #endregion
 
         // Game Events
+
+        // Title screen
+        DredgeEvent.OnTitleOpen += OnTitleOpen;
+        ApplicationEvents.Instance.OnTitleClosed += OnTitleClosed;
+
+        // Game world
         ApplicationEvents.Instance.OnGameLoaded += OnGameLoaded;
+        ApplicationEvents.Instance.OnGameUnloaded += OnGameUnloaded;
+
+        // Gameplay
         GameManager.Instance.OnGameStarted += OnGameStarted;
         GameManager.Instance.OnGameEnded += OnGameEnded;
+    }
+
+    private static void OnBuildModConfigMenu(ModAssembly assembly, ModsTab tab)
+    {
+        if (assembly.GUID != GUID) return;
+
+        tab.AddOptionButtonLocalized("Button", "exampleitems.config.button", OnButtonClicked);
+    }
+
+    private static void OnButtonClicked()
+    {
+        WinchCore.Log.Info("Button clicked");
     }
 
     #region Config
@@ -179,8 +203,28 @@ public static class Loader
         return GameObject.CreatePrimitive(PrimitiveType.Cube).FixPrimitive();
     }
 
+    private static void OnTitleOpen()
+    {
+        // When the title screen is opened
+        // Best for modifying the title screen.
+        WinchCore.Log.Info("Title Opened");
+    }
+
+    private static void OnTitleClosed()
+    {
+        // When the title screen is closed
+        // Happens when leaving the title screen to load into the world.
+        WinchCore.Log.Info("Title Closed");
+    }
+
     private static void OnGameLoaded()
     {
+        // When the game world finishes loading
+        // Happens after loading from the title screen or after loading the last save from game over screen.
+        // Best for creating or modifying world objects and/or data.
+
+        WinchCore.Log.Info("Game Loaded");
+
         // Islands
         GameObject prefab = AssetBundleUtil.GetPrefab("exampleitems.bundle", "CircleIsland");
         GameObject instance = prefab.Instantiate(new Vector3(365, 0, -265));
@@ -260,8 +304,22 @@ public static class Loader
         factory.GetRecipeListTier(BuildingTierId.FACTORY_TIER_3).recipes.Add(RecipeUtil.GetItemRecipeData("exampleitems.recipeitem"));
     }
 
+    private static void OnGameUnloaded()
+    {
+        // When the game world is unloaded
+        // Happens when leaving to the title screen or loading the last save.
+        // Best for logic that should run after the world has been unloaded.
+        WinchCore.Log.Info("Game Unloaded");
+    }
+
     private static void OnGameStarted()
     {
+        // When the game world starts
+        // Happens when loading screen fades and intro cutscene finishes and the player can control the game.
+        // Best for gameplay logic and subscribing to gameplay events.
+
+        WinchCore.Log.Info("Game Started");
+
         GameManager.Instance.SaveData.SetBoolVariable("exampleitems.explosive-detonated", val: false); // for testing
 
         GameEvents.Instance.OnSpecialItemHandlerRequested += OnSpecialItemHandlerRequested;
@@ -269,19 +327,47 @@ public static class Loader
 
     private static void OnGameEnded()
     {
+        // When the current game session ends
+        // Happens on game over, or before the world is unloaded if it has not already ended.
+        // Game over does not unload the world by itself. (only happens when player presses continue or quit to title)
+        // Best for stopping gameplay logic and unsubscribing from gameplay events.
+
+        WinchCore.Log.Info("Game Ended");
+
         GameEvents.Instance.OnSpecialItemHandlerRequested -= OnSpecialItemHandlerRequested;
     }
 
+    /// <summary>
+    /// Special discard action. 
+    /// Requires your item to have these in its json file:
+    /// <code>
+    /// {
+    ///     "damageMode": "DESTROY",
+    ///     "hasSpecialDiscardAction": true,
+    ///     "discardPromptOverride": "prompt.use"
+    /// }
+    /// </code>
+    /// </summary>
+    /// <param name="itemData"></param>
     private static void OnSpecialItemHandlerRequested(SpatialItemData itemData)
     {
+        WinchCore.Log.Info("Special Item Handler Requested: " + itemData.id);
         if (itemData.id == MilkBucket.id) // Milk bucket use
         {
+            // Repair boat
             GameManager.Instance.ItemManager.UseRepairKit();
+
+            // Repair all durability items in inventory (crab pots)
             GameManager.Instance.ItemManager.RepairAllItemDurability();
             GameManager.Instance.UI.OccasionalGridPanel.TryRepairCurrentCrabPot();
             GameManager.Instance.UI.ShowNotification(NotificationType.ANY_REPAIR_KIT_USED, "notification.durability-repaired");
+
+
+            // Restore sanity
             GameManager.Instance.Player.Sanity.ChangeSanity(1f);
             GameManager.Instance.UI.ShowNotification(NotificationType.ANY_REPAIR_KIT_USED, "notification.panic-repaired");
+
+            // Vibrate controllers
             GameManager.Instance.VibrationManager.Vibrate(MilkBucketVibrationData, VibrationRegion.WholeBody, overrideExistingVibrations: true);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Winch.Components;
 using Winch.Core.API.Events.Addressables;
 
 namespace Winch.Core.API;
@@ -40,6 +41,14 @@ public static class DredgeEvent
     {
         WinchCore.Log.Debug("Triggered OnDialogueRunnerLoaded event");
         OnDialogueRunnerLoaded?.Invoke(dialogueRunner);
+    }
+
+    // Fired after a mod's config UI has been built inside the Mods tab.
+    public static event Action<ModAssembly, ModsTab>? OnBuildModConfigMenu;
+    internal static void TriggerBuildModConfigMenu(ModAssembly mod, ModsTab tab)
+    {
+        WinchCore.Log.Debug($"Triggered OnBuildModConfigMenu({mod?.GUID}) event");
+        OnBuildModConfigMenu?.Invoke(mod, tab);
     }
 
     public static event Action<HarvestPOI, SpatialItemInstance>? OnPOIHarvested;
