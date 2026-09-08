@@ -39,7 +39,7 @@ public static class Loader
 
     public static void Initialize()
     {
-        WinchCore.Log.Info($"My mod {ModAssembly.Name} is loaded!");
+        WinchCore.Log.Success($"My mod {ModAssembly.Name} is initializing!");
 
         // Config
         RefreshConfig(); // First grab of config

@@ -162,6 +162,7 @@ public class LogSocketListener
         {
             LogLevel.ERROR => ConsoleColor.Red,
             LogLevel.WARN => ConsoleColor.Yellow,
+            LogLevel.SUCCESS => ConsoleColor.Green,
             LogLevel.DEBUG => ConsoleColor.DarkGray,
             _ => ConsoleColor.White
         };

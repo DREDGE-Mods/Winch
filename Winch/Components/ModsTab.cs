@@ -246,12 +246,15 @@ public class ModsTab : MonoBehaviour
                     AddToggleInput(WinchCore.GUID, obj.Key, (bool)obj.Value, title, tooltip);
                     break;
                 case "LogLevel":
-                    AddDropdownInput(WinchCore.GUID, obj.Key, (string)obj.Value, EnumUtil.GetNames<Winch.LogLevel>(), EnumUtil.GetNames<Winch.LogLevel>().Select(level =>
-                    {
-                        var key = "winch." + level;
-                        LocalizationUtil.AddLocalizedString("en", key, System.Globalization.CultureInfo.InvariantCulture.TextInfo.ToTitleCase(level.ToLowerInvariant()));
-                        return key;
-                    }).ToArray(), title, tooltip);
+                    AddDropdownInput(WinchCore.GUID, obj.Key, (string)obj.Value,
+                        EnumUtil.GetNames<Winch.LogLevel>(),
+                        EnumUtil.GetNames<Winch.LogLevel>()
+                            .Select(
+                                level =>
+                                    "winch.loglevel."
+                                        + level.ToLowerInvariant()
+                            ).ToArray(),
+                        title, tooltip);
                     break;
                 case "LogsFolder":
                     AddTextInput(WinchCore.GUID, obj.Key, (string)obj.Value, title, tooltip);

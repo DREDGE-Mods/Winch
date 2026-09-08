@@ -139,7 +139,7 @@ public class Logger
             callingMethod = frames[i].GetMethod().Name;
             callingClass = frames[i].GetMethod().ReflectedType?.GetFormattedName();
             callingAssembly = frames[i].GetMethod().ReflectedType?.Assembly.GetName().Name;
-            if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)) && callingMethod != "Log" && callingMethod != "LogInfo" && callingMethod != "LogWarning" && callingMethod != "LogError" && callingMethod != "LogDebug")
+            if(callingClass != null && !callingClass.Equals(nameof(Logger)) && !callingClass.Equals(nameof(WinchExtensions)) && callingMethod != "Log" && callingMethod != "LogInfo" && callingMethod != "LogWarning" && callingMethod != "LogError" && callingMethod != "LogDebug" && callingMethod != "LogSuccess")
                 break;
         }
 
@@ -157,6 +157,8 @@ public class Logger
     public void Debug(object message) { Log(LogLevel.DEBUG, message.ToString()); }
     internal void Info(object message, string source) { Log(LogLevel.INFO, message.ToString(), source); }
     public void Info(object message) { Log(LogLevel.INFO, message.ToString()); }
+    internal void Success(object message, string source) { Log(LogLevel.SUCCESS, message.ToString(), source); }
+    public void Success(object message) { Log(LogLevel.SUCCESS, message.ToString()); }
     internal void Warn(object message, string source) { Log(LogLevel.WARN, message.ToString(), source); }
     public void Warn(object message) { Log(LogLevel.WARN, message.ToString()); }
     internal void Error(object message, string source) { Log(LogLevel.ERROR, message.ToString(), source); }
