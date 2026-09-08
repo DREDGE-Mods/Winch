@@ -14,12 +14,16 @@ namespace ExampleItems;
 
 public static class Loader
 {
+    private static ModConfig _modConfig;
     // Automatically gets your mod's config
-    public static ModConfig ModConfig => ModConfig.GetConfig();
+    public static ModConfig ModConfig =>
+        _modConfig ??= ModConfig.GetConfig();
     public static ExampleConfig Config;
 
+    private static ModAssembly _modAssembly;
+    public static ModAssembly ModAssembly =>
+        _modAssembly ??= ModAssemblyLoader.GetCurrentMod();
 
-    public static ModAssembly ModAssembly => ModAssemblyLoader.GetCurrentMod();
     public static string BasePath => ModAssembly.BasePath;
     public static string GUID => ModAssembly.GUID;
 
@@ -35,6 +39,8 @@ public static class Loader
 
     public static void Initialize()
     {
+        WinchCore.Log.Info($"My mod {ModAssembly.Name} is loaded!");
+
         // Config
         RefreshConfig(); // First grab of config
         ModConfig.OnConfigChanged += ModConfig_OnConfigChanged;
