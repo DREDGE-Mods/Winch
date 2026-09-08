@@ -547,7 +547,7 @@ public static class DredgeTypeHelpers
         {
             gridKey = jsonDict.TryGetValue("gridKey", out object gridKey) ? GetEnumValue<GridKey>(gridKey) : GridKey.NONE,
             tabSprite = jsonDict.TryGetValue("tabSprite", out object tabSprite) ? TextureUtil.GetSprite(tabSprite.ToString()) : null,
-            titleKey = jsonDict.TryGetValue("titleKey", out object titleKey) ? LocalizationUtil.CreateStringsReference(titleKey.ToString()) : LocalizationUtil.Empty,
+            titleKey = jsonDict.TryGetValue("titleKey", out object titleKey) ? LocalizationUtil.CreateReference(titleKey.ToString()) : LocalizationUtil.Empty,
             isUnlockedBasedOnDialogue = jsonDict.TryGetValue("isUnlockedBasedOnDialogue", out object isUnlockedBasedOnDialogue) ? bool.Parse(isUnlockedBasedOnDialogue.ToString()) : false,
             unlockDialogueNodes = jsonDict.TryGetValue("unlockDialogueNodes", out object unlockDialogueNodes) ? ParseStringList((JArray)unlockDialogueNodes) : new List<string>(),
         };

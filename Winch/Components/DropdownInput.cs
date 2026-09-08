@@ -158,7 +158,7 @@ public class DropdownInput : Input
         {
             foreach (var optionString in optionStrings)
             {
-                newOptionStrings.Add(LocalizationUtil.CreateStringsReference(optionString));
+                newOptionStrings.Add(LocalizationUtil.CreateReference(optionString));
             }
         }
         for (int i = 0; i < options.Length; i++)

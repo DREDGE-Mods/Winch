@@ -10,13 +10,38 @@ public static class LocalizationUtil
 {
     private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
 
-    public static LocalizedString CreateReference(string table, string entry) => new LocalizedString(table, entry);
-    public static LocalizedString CreateStringsReference(string entry) => CreateReference(LanguageManager.STRING_TABLE, entry);
-    public static LocalizedString CreateItemsReference(string entry) => CreateReference(LanguageManager.ITEM_TABLE, entry);
-    public static LocalizedString CreateCharactersReference(string entry) => CreateReference(LanguageManager.CHARACTER_TABLE, entry);
-    public static LocalizedString CreateYarnReference(string entry) => CreateReference(LanguageManager.YARN_TABLE, entry);
-    public static LocalizedString Empty => LocalizationUtil.CreateReference(string.Empty, string.Empty);
-    public static LocalizedString Unknown => LocalizationUtil.CreateReference(LanguageManager.STRING_TABLE, "label.unknown");
+    public static LocalizedString CreateReference(string table, string entry)
+        => new LocalizedString(table, entry);
+
+    public static LocalizedString CreateReference(string value)
+        => CreateReferenceWithDefaultTable(value, LanguageManager.STRING_TABLE);
+
+    public static LocalizedString CreateReferenceWithDefaultTable(string value, string defaultTable)
+    {
+        var split = value.Split(new[] { ':' }, 2);
+
+        return split.Length == 2
+            ? CreateReference(split[0], split[1])
+            : CreateReference(defaultTable, value);
+    }
+
+    public static LocalizedString CreateStringsReference(string entry)
+        => CreateReference(LanguageManager.STRING_TABLE, entry);
+
+    public static LocalizedString CreateItemsReference(string entry)
+        => CreateReference(LanguageManager.ITEM_TABLE, entry);
+
+    public static LocalizedString CreateCharactersReference(string entry)
+        => CreateReference(LanguageManager.CHARACTER_TABLE, entry);
+
+    public static LocalizedString CreateYarnReference(string entry)
+        => CreateReference(LanguageManager.YARN_TABLE, entry);
+
+    public static LocalizedString Empty
+        => CreateReference(string.Empty, string.Empty);
+
+    public static LocalizedString Unknown
+        => CreateReference(LanguageManager.STRING_TABLE, "label.unknown");
 
     public static void AddLocalizedString(string locale, string key, string value)
     {

@@ -355,7 +355,7 @@ public class ModsTab : MonoBehaviour
 
     public BasicButtonWrapper AddOptionButtonLocalized(string name, string localizedLabel, Action onClick)
     {
-        return AddOptionButtonLocalized(name, LocalizationUtil.CreateStringsReference(localizedLabel), onClick);
+        return AddOptionButtonLocalized(name, LocalizationUtil.CreateReference(localizedLabel), onClick);
     }
 
     public BasicButtonWrapper AddOptionButtonLocalized(string name, LocalizedString localizedLabel, Action onClick)
@@ -461,11 +461,11 @@ public class ModsTab : MonoBehaviour
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference(key);
+            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference(key);
         }
         else
         {
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference(title);
+            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference(title);
         }
         modOptions.Add(clone.transform);
         clone.modName = modName;
@@ -681,7 +681,7 @@ public class ModsTab : MonoBehaviour
     {
         if (!string.IsNullOrWhiteSpace(tooltip))
         {
-            input.TooltipDescriptionString = LocalizationUtil.CreateStringsReference(tooltip);
+            input.TooltipDescriptionString = LocalizationUtil.CreateReference(tooltip);
         }
     }
 
@@ -690,11 +690,11 @@ public class ModsTab : MonoBehaviour
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
-            input.TitleString = LocalizationUtil.CreateStringsReference(key);
+            input.TitleString = LocalizationUtil.CreateReference(key);
         }
         else
         {
-            input.TitleString = LocalizationUtil.CreateStringsReference(title);
+            input.TitleString = LocalizationUtil.CreateReference(title);
         }
     }
 
