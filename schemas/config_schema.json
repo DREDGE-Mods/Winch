@@ -1,0 +1,453 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "type": "object",
+    "additionalProperties": {
+        "$ref": "#/definitions/configValue"
+    },
+    "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "The JSON schema for this config"
+        }
+    },
+    "definitions": {
+        "configValue": {
+            "oneOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "boolean"
+                },
+                {
+                    "type": "number"
+                },
+                {
+                    "$ref": "#/definitions/optionsObject"
+                }
+            ]
+        },
+
+        "optionsBase": {
+            "allOf": [
+                {
+                    "type": "object",
+                    "required": [
+                        "type"
+                    ],
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "separator",
+                                "slider",
+                                "toggle",
+                                "dropdown",
+                                "color",
+                                "text",
+                                "integer",
+                                "decimal",
+                                "number"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsLabelBase": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsBase"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string",
+                            "description": "Localization key for the label to show in the options menu",
+                            "examples": [
+                                "examplemod.setting.title"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsInteractiveBase": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsLabelBase"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "tooltip": {
+                            "type": "string",
+                            "description": "Localization key for the tooltip to show when hovering on the option",
+                            "examples": [
+                                "examplemod.setting.tooltip"
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsObject": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsBase"
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "separator"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsSeparator"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "toggle"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsToggle"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "text"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsText"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "integer"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsInteger"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "enum": [
+                                    "decimal",
+                                    "number"
+                                ]
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsDecimal"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "slider"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsSlider"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "dropdown"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsDropdown"
+                    }
+                },
+                {
+                    "if": {
+                        "properties": {
+                            "type": {
+                                "const": "color"
+                            }
+                        }
+                    },
+                    "then": {
+                        "$ref": "#/definitions/optionsColor"
+                    }
+                }
+            ]
+        },
+
+        "optionsSeparator": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsLabelBase"
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "const": "separator"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsToggle": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "toggle"
+                        },
+                        "value": {
+                            "type": "boolean",
+                            "description": "Default value of the setting"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsText": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "text"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Default value of the setting"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsInteger": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "integer"
+                        },
+                        "value": {
+                            "type": "integer",
+                            "description": "Default integer value of the setting"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsDecimal": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "decimal",
+                                "number"
+                            ]
+                        },
+                        "value": {
+                            "type": "number",
+                            "description": "Default numeric value of the setting"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsSlider": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value",
+                        "min",
+                        "max"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "slider"
+                        },
+                        "value": {
+                            "type": "number",
+                            "description": "Default value of the slider"
+                        },
+                        "min": {
+                            "type": "number",
+                            "description": "Minimum value for the slider"
+                        },
+                        "max": {
+                            "type": "number",
+                            "description": "Maximum value for the slider"
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsDropdown": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value",
+                        "options"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "dropdown"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Default selected option"
+                        },
+                        "options": {
+                            "type": "array",
+                            "description": "List of values the user can select from",
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "One",
+                                    "Two",
+                                    "Three"
+                                ]
+                            ]
+                        },
+                        "optionStrings": {
+                            "type": "array",
+                            "description": "Localization keys corresponding to the options",
+                            "items": {
+                                "type": "string"
+                            },
+                            "examples": [
+                                [
+                                    "examplemod.dropdown.option.one",
+                                    "examplemod.dropdown.option.two",
+                                    "examplemod.dropdown.option.three"
+                                ]
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+
+        "optionsColor": {
+            "allOf": [
+                {
+                    "$ref": "#/definitions/optionsInteractiveBase"
+                },
+                {
+                    "type": "object",
+                    "required": [
+                        "value"
+                    ],
+                    "properties": {
+                        "type": {
+                            "const": "color"
+                        },
+                        "value": {
+                            "$ref": "#/definitions/color",
+                            "description": "Default selected color"
+                        },
+                        "options": {
+                            "type": "array",
+                            "description": "List of colors to show in the dropdown",
+                            "uniqueItems": true,
+                            "items": {
+                                "$ref": "#/definitions/color"
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+
+        "color": {
+            "type": "string",
+            "enum": [
+                "NEUTRAL",
+                "EMPHASIS",
+                "POSITIVE",
+                "NEGATIVE",
+                "CRITICAL",
+                "WARNING",
+                "VALUABLE",
+                "DISABLED",
+                "ATTENTION",
+                "INFO",
+                "PRIORITY",
+                "ALERT"
+            ]
+        }
+    }
+}
