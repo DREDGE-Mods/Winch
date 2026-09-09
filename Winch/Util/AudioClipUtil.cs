@@ -66,7 +66,7 @@ public static class AudioClipUtil
         try
         {
             string fileName = Path.GetFileNameWithoutExtension(path);
-            WinchCore.Log.Debug($"Loading audio at path: {path}");
+            WinchCore.Log.Debug($"Loading audio at [{path}]");
             var task = Task.Run(async () => await LoadAudioClip(path));
             task.Wait();
             var clip = task.Result;

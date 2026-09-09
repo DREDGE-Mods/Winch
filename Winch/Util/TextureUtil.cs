@@ -71,6 +71,7 @@ public static class TextureUtil
 
     internal static void LoadTextureFromFile(string path)
     {
+        WinchCore.Log.Debug($"Loading texture at [{path}]");
         byte[] textureData = File.ReadAllBytes(path);
         var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
         texture.LoadImage(textureData);

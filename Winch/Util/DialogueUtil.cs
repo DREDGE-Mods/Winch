@@ -1,20 +1,20 @@
-﻿using HarmonyLib;
+﻿using System;
 using System.Collections.Generic;
-using Yarn.Unity;
-using Yarn;
-using CsvHelper;
-using System.IO;
-using Winch.Core;
-using CsvHelper.Configuration;
-using System;
-using System.Linq;
-using Yarn.Compiler;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Text;
-using Winch.Config;
 using CommandTerminal;
-using Sirenix.Utilities;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Google.Protobuf;
+using HarmonyLib;
+using Sirenix.Utilities;
+using Winch.Config;
+using Winch.Core;
+using Yarn;
+using Yarn.Compiler;
+using Yarn.Unity;
 
 namespace Winch.Util;
 
@@ -58,6 +58,7 @@ public static class DialogueUtil
         foreach (var yarnFile in yarnFiles)
         {
             File.WriteAllText(yarnFile, File.ReadAllText(yarnFile).Replace("\t", "    "));
+            WinchCore.Log.Debug($"Loading dialogue at [{yarnFile}]");
         }
     }
 
@@ -264,6 +265,7 @@ public static class DialogueUtil
 
         foreach (var linesPath in csvFiles)
         {
+            WinchCore.Log.Debug($"Loading localized lines at [{linesPath}]");
             // Language code (i.e. "en", "es", "pt-BR") from game settings.
             string localeId = Path.GetFileNameWithoutExtension(linesPath);
             var localizedLines = GetLinesForLocale(localeId);
