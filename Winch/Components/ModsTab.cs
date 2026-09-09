@@ -466,32 +466,62 @@ public class ModsTab : MonoBehaviour
         throw new InvalidOperationException("Unrecognized setting type: " + value.GetType());
     }
 
-    public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, JObject obj) => AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
+    private readonly HashSet<Transform> layoutSeparators = new();
+
+    private SeparatorInput AddLayoutSeparatorInput(string modName, string key)
+    {
+        var separator = AddSeparatorInput(modName, key);
+        layoutSeparators.Add(separator.transform);
+        return separator;
+    }
+
+    public SeparatorInput AddSeparatorAndLabelInput (string modName, string key, JObject obj) =>
+        AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
 
     public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
     {
-        var count = modOptions.Count == 0 ? 1 : (3 - ((modOptions.Count - 1) % 3)); //shenanigans to put empty spaces until next middle
-        for (int i = 0; i < count; i++)
-        {
-            AddSeparatorInput(modName, key + i);
-        }
-        var clone = labelLocalizedPrefab.Instantiate(options, false).gameObject.AddComponent<SeparatorInput>();
+        AddLabelPadding(modName, key);
+
+        var clone = labelLocalizedPrefab
+            .Instantiate(options, false)
+            .gameObject
+            .AddComponent<SeparatorInput>();
+
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference(key);
+            clone.GetComponent<LocalizedLabel>().LabelString =
+                LocalizationUtil.CreateReference(key);
         }
         else
         {
-            clone.GetComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateReference(title);
+            clone.GetComponent<LocalizedLabel>().LabelString =
+                LocalizationUtil.CreateReference(title);
         }
+
         modOptions.Add(clone.transform);
+
         clone.modName = modName;
         clone.key = key;
         clone.name = key;
+
         AddScrollMagnet(clone);
-        AddSeparatorInput(modName, key + "End");
+
+        // Right side of the label row.
+        AddLayoutSeparatorInput(modName, key + "End");
+
         return clone;
+    }
+
+    private void AddLabelPadding(string modName, string key)
+    {
+        // Finish the current row, then add the empty left cell of the label row.
+        var count = 1 + ((3 - (modOptions.Count % 3)) % 3);
+
+        for (int i = 0; i < count; i++)
+        {
+            AddLayoutSeparatorInput(modName, key + i);
+        }
     }
 
     public SeparatorInput AddSeparatorInput(string modName, string key)
@@ -721,6 +751,120 @@ public class ModsTab : MonoBehaviour
         input.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
     }
 
+    public bool MoveOptionToStart(Transform option)
+    {
+        return option != null && MoveOptionsToStart(new[] { option });
+    }
+
+    public bool MoveOptionToStart(Input input) =>
+        input != null && MoveOptionToStart(input.transform);
+
+    public bool MoveOptionToStart(BasicButtonWrapper button) =>
+        button != null && MoveOptionToStart(button.transform);
+
+    public bool MoveOptionToStart(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return false;
+        var t = modOptions.FirstOrDefault(mt => mt != null && mt.name == name);
+        return t != null && MoveOptionToStart(t);
+    }
+
+    public bool MoveOptionsToStart(IEnumerable<Transform> options)
+    {
+        var movedOptions = options
+            .Where(option => option != null && modOptions.Contains(option))
+            .Distinct()
+            .ToList();
+
+        if (movedOptions.Count == 0)
+            return false;
+
+        foreach (var option in movedOptions)
+        {
+            modOptions.Remove(option);
+        }
+
+        modOptions.InsertRange(0, movedOptions);
+
+        for (int i = 0; i < modOptions.Count; i++)
+        {
+            modOptions[i].SetSiblingIndex(i);
+        }
+
+        FixSeparatorsAndLabels();
+
+        return true;
+    }
+
+    public bool MoveOptionsToStart(IEnumerable<Input> inputs)
+    {
+        return MoveOptionsToStart(
+            inputs
+                .Where(input => input != null)
+                .Select(input => input.transform)
+        );
+    }
+
+    public bool MoveOptionsToStart(IEnumerable<BasicButtonWrapper> buttons)
+    {
+        return MoveOptionsToStart(
+            buttons
+                .Where(button => button != null)
+                .Select(button => button.transform)
+        );
+    }
+
+    public void FixSeparatorsAndLabels()
+    {
+        // Remove old label spacing.
+        foreach (var separator in layoutSeparators.ToArray())
+        {
+            if (separator == null)
+                continue;
+
+            modOptions.Remove(separator);
+            DestroyImmediate(separator.gameObject);
+        }
+
+        layoutSeparators.Clear();
+
+        var logicalOptions = modOptions.ToList();
+        modOptions.Clear();
+
+        foreach (var option in logicalOptions)
+        {
+            if (option == null)
+                continue;
+
+            var separator = option.GetComponent<SeparatorInput>();
+            var localizedLabel = option.GetComponent<LocalizedLabel>();
+
+            // A SeparatorInput with a LocalizedLabel is one of our section labels.
+            if (separator != null && localizedLabel != null)
+            {
+                AddLabelPadding(separator.modName, separator.key);
+
+                modOptions.Add(option);
+
+                // Empty right cell of the label's row.
+                AddLayoutSeparatorInput(
+                    separator.modName,
+                    separator.key + "End"
+                );
+            }
+            else
+            {
+                modOptions.Add(option);
+            }
+        }
+
+        // Sync hierarchy order with the rebuilt layout.
+        for (int i = 0; i < modOptions.Count; i++)
+        {
+            modOptions[i].SetSiblingIndex(i);
+        }
+    }
+
     public void ExitOptions()
     {
         WinchCore.Log.Debug($"[ModsTab] ExitOptions()");
@@ -730,6 +874,7 @@ public class ModsTab : MonoBehaviour
         settingsDialog.dialog.AddTabInput();
         optionsScroller.gameObject.Deactivate();
         modOptions.Clear();
+        layoutSeparators.Clear();
         options.DestroyAllChildrenImmediate();
         listScroller.gameObject.Activate();
         listControllerFocusGrabber.SelectSelectable();
