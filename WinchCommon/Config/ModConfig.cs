@@ -123,6 +123,11 @@ public class ModConfig : JSONConfig
         return false;
     }
 
+    public static bool HasProperty(string modName, string key)
+    {
+        return GetConfig(modName).HasProperty(key);
+    }
+
     internal static Dictionary<string, object?> GetProperties(string modName)
     {
         return GetConfig(modName).GetProperties();

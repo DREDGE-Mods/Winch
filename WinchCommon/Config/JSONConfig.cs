@@ -253,10 +253,18 @@ public class JSONConfig
         }
     }
 
+    internal static bool HasProperty(Dictionary<string, object?> config, string key)
+    {
+        if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
+        return config.ContainsKey(key);
+    }
+
     internal Dictionary<string, object?> GetDefaultProperties()
     {
         return _defaultConfig;
     }
+
+    public bool HasProperty(string key) => HasProperty(_config, key);
 
     public T? GetDefaultProperty<T>(string key)
     {
