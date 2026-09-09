@@ -268,6 +268,11 @@ public class JSONConfig
         return _config;
     }
 
+    public IReadOnlyCollection<string> GetKeys()
+    {
+        return _config.Keys;
+    }
+
     public T ToObject<T>()
     {
         return JsonConvert.DeserializeObject<T>(ToSerializedJson(GetProperties().ToDictionary(kvp => kvp.Key, kvp => GetProperty(_config, kvp.Key, _defaultConfig))));

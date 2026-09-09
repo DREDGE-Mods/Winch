@@ -128,6 +128,11 @@ public class ModConfig : JSONConfig
         return GetConfig(modName).GetProperties();
     }
 
+    public static IReadOnlyCollection<string> GetKeys(string modName)
+    {
+        return GetConfig(modName).GetKeys();
+    }
+
     public static T? GetProperty<T>(string modName, string key)
     {
         if (string.IsNullOrWhiteSpace(key)) throw new ArgumentNullException("key");
