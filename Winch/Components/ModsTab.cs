@@ -356,38 +356,139 @@ public class ModsTab : MonoBehaviour
     }
 
     // Allows mods to add a custom button into the current options list programmatically.
-    public BasicButtonWrapper AddOptionButton(string name, string text, Action onClick)
+    public BasicButtonWrapper AddOptionButton(string name, string text, Action onClick) =>
+        AddOptionButton(name, text, string.Empty, onClick);
+
+    public BasicButtonWrapper AddOptionButton(string name, string text, string tooltip, Action onClick)
     {
         var button = buttonPrefab.Instantiate(options, false).Rename(name);
         button.DeactivateButtonEffects();
-        // ensure we use a simple non-localized label
+
+        // Ensure we use a simple non-localized label.
         button.gameObject.RemoveComponentImmediate<LocalizedLabel>();
-        var lbl = button.gameObject.AddComponent<Label>();
-        lbl.LabelString = text;
+
+        var label = button.gameObject.AddComponent<Label>();
+        label.LabelString = text;
+
         var wrapper = button.GetComponent<BasicButtonWrapper>();
-        if (onClick != null) wrapper.OnClick += onClick;
+
+        if (onClick != null)
+            wrapper.OnClick += onClick;
+
+        SetupButtonTooltip(wrapper, name, text, tooltip);
+
         button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
         modOptions.Add(button.transform);
+
         return wrapper;
     }
 
-    public BasicButtonWrapper AddOptionButtonLocalized(string name, string localizedLabel, Action onClick)
-    {
-        return AddOptionButtonLocalized(name, LocalizationUtil.CreateReference(localizedLabel), onClick);
-    }
+    public BasicButtonWrapper AddOptionButtonLocalized(
+        string name,
+        string localizedLabel,
+        Action onClick
+    ) =>
+        AddOptionButtonLocalized(
+            name,
+            LocalizationUtil.CreateReference(localizedLabel),
+            LocalizationUtil.Empty,
+            onClick
+        );
 
-    public BasicButtonWrapper AddOptionButtonLocalized(string name, LocalizedString localizedLabel, Action onClick)
+    public BasicButtonWrapper AddOptionButtonLocalized(
+        string name,
+        string localizedLabel,
+        string localizedTooltip,
+        Action onClick
+    ) =>
+        AddOptionButtonLocalized(
+            name,
+            LocalizationUtil.CreateReference(localizedLabel),
+            string.IsNullOrWhiteSpace(localizedTooltip)
+                ? LocalizationUtil.Empty
+                : LocalizationUtil.CreateReference(localizedTooltip),
+            onClick
+        );
+
+    public BasicButtonWrapper AddOptionButtonLocalized(
+        string name,
+        LocalizedString localizedLabel,
+        Action onClick
+    ) =>
+        AddOptionButtonLocalized(
+            name,
+            localizedLabel,
+            LocalizationUtil.Empty,
+            onClick
+        );
+
+    public BasicButtonWrapper AddOptionButtonLocalized(
+        string name,
+        LocalizedString localizedLabel,
+        LocalizedString localizedTooltip,
+        Action onClick
+    )
     {
         var button = buttonPrefab.Instantiate(options, false).Rename(name);
         button.DeactivateButtonEffects();
+
         button.gameObject.RemoveComponentImmediate<Label>();
+
         var localized = button.gameObject.AddComponent<LocalizedLabel>();
         localized.LabelString = localizedLabel;
+
         var wrapper = button.GetComponent<BasicButtonWrapper>();
-        if (onClick != null) wrapper.OnClick += onClick;
+
+        if (onClick != null)
+            wrapper.OnClick += onClick;
+
+        SetupButtonTooltip(wrapper, localizedLabel, localizedTooltip);
+
         button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
         modOptions.Add(button.transform);
+
         return wrapper;
+    }
+
+    private void SetupButtonTooltip(
+        BasicButtonWrapper button,
+        string name,
+        string title,
+        string tooltip
+    )
+    {
+        if (string.IsNullOrWhiteSpace(tooltip))
+            return;
+
+        var prefix = currentMod?.GUID ?? WinchCore.GUID;
+
+        var titleKey = $"{prefix}.{name}.title";
+        var tooltipKey = $"{prefix}.{name}.tooltip";
+
+        LocalizationUtil.AddLocalizedString("en", titleKey, title);
+        LocalizationUtil.AddLocalizedString("en", tooltipKey, tooltip);
+
+        SetupButtonTooltip(
+            button,
+            LocalizationUtil.CreateReference(titleKey),
+            LocalizationUtil.CreateReference(tooltipKey)
+        );
+    }
+
+    private void SetupButtonTooltip(
+        BasicButtonWrapper button,
+        LocalizedString title,
+        LocalizedString tooltip
+    )
+    {
+        if (tooltip.IsEmpty)
+            return;
+
+        var requester = button.gameObject.GetOrAddComponent<TextTooltipRequester>();
+
+        requester.LocalizedTitleKey = title;
+        requester.LocalizedDescriptionKey = tooltip;
+        requester.enabled = true;
     }
 
     public Input AddConfigInput(string modName, string key, object value)
