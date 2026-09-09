@@ -121,6 +121,24 @@ public class ModsTab : MonoBehaviour
         this.FireOnNextUpdate(ScrollToTop);
     }
 
+    public void RefreshAllInputs()
+    {
+        if (options == null) return;
+
+        var inputs = options.GetComponentsInChildren<Input>(true);
+        foreach (var input in inputs)
+        {
+            try
+            {
+                input.ForceRefresh();
+            }
+            catch (Exception ex)
+            {
+                WinchCore.Log.Error($"Error refreshing input '{input?.name}': {ex}");
+            }
+        }
+    }
+
     public void ScrollToTop()
     {
         listScroller.verticalNormalizedPosition = 1;
