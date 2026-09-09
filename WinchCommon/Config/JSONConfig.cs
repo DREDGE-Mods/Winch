@@ -185,8 +185,7 @@ public class JSONConfig
                             _config[kvp.Key] = value;
                         }
                     }
-                    else
-                        _config[kvp.Key] = kvp.Value;
+                    // else: skip keys that are not in the default config to remove them from the active config
                 }
                 WriteConfig(_configPath, _config);
                 return;
