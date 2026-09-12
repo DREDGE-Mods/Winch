@@ -188,7 +188,7 @@ internal static class AssetLoader
         string path,
         SearchOption searchOption = SearchOption.TopDirectoryOnly)
     {
-        return GetSortedFiles(path, new[] { ".json" }, searchOption);
+        return GetSortedFiles(path, new[] { ".json", ".jsonc" }, searchOption);
     }
 
     private static void LoadAssetBundleFiles(string bundlesFolderPath)
