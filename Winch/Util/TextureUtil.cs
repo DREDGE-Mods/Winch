@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -8,6 +9,13 @@ namespace Winch.Util;
 
 public static class TextureUtil
 {
+    private static readonly HashSet<string> SupportedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ".png",
+        ".jpg",
+        ".jpeg"
+    };
+
     private static Dictionary<string, AssetReferenceTexture2D> TextureReferenceMap = new();
     private static Dictionary<string, Texture2D> TextureMap = new();
     private static Dictionary<string, AssetReferenceSprite> SpriteReferenceMap = new();
@@ -69,12 +77,27 @@ public static class TextureUtil
         }
     }
 
+    internal static bool IsSupportedImageFile(string path)
+    {
+        return SupportedImageExtensions.Contains(Path.GetExtension(path));
+    }
+
     internal static void LoadTextureFromFile(string path)
     {
+        if (!IsSupportedImageFile(path))
+            return;
+
         WinchCore.Log.Debug($"Loading texture at [{path}]");
         byte[] textureData = File.ReadAllBytes(path);
         var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false, false);
-        texture.LoadImage(textureData);
+
+        if (!texture.LoadImage(textureData))
+        {
+            UnityEngine.Object.Destroy(texture);
+            WinchCore.Log.Error($"Failed to load texture at [{path}]");
+            return;
+        }
+
         texture.anisoLevel = 2;
         texture.wrapModeU = TextureWrapMode.Clamp;
         texture.wrapModeV = TextureWrapMode.Clamp;
