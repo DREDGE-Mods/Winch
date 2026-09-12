@@ -3,14 +3,17 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-		<Nullable>enable</Nullable>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>$(NoWarn);1591</NoWarn>
+
 		<NuspecFile>Winch.nuspec</NuspecFile>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<NoWarn>1591</NoWarn>
 		<VersionPrefix>$(Version)</VersionPrefix>
 	</PropertyGroup>
 
@@ -22,15 +25,18 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Assets\**\*.*">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="mod_meta.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-		<None Include="doorstop_config.ini">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		<None Include="Assets\**\*.*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+
+		<None Include="mod_meta.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+
+		<None Include="doorstop_config.ini">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+
 		<None Include="Winch.csproj.user" />
 	</ItemGroup>
 
@@ -43,8 +49,7 @@
 	</Target>
 
 	<ItemGroup>
-		<ProjectReference Include="..\WinchCommon\WinchCommon.csproj">
-		</ProjectReference>
+		<ProjectReference Include="..\WinchCommon\WinchCommon.csproj" />
 	</ItemGroup>
 
 </Project>
