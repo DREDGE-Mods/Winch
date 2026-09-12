@@ -121,11 +121,16 @@ internal static class AssetLoader
     }
 
     /// <summary>
-    /// <see cref="AlphanumComparer"/>
+    /// Returns the provided files sorted alphanumerically by file name.
     /// </summary>
+    /// <param name="files">The files to sort.</param>
+    /// <returns>The sorted files.</returns>
+    /// <inheritdoc cref="Path.GetFileNameWithoutExtension(string)" path="/exception"/>
     public static string[] GetSortedFiles(IEnumerable<string> files)
     {
-        return files.OrderBy(file => Path.GetFileNameWithoutExtension(file), AlphanumComparer.Instance).ToArray();
+        return files
+            .OrderBy(file => Path.GetFileNameWithoutExtension(file), AlphanumComparer.Instance)
+            .ToArray();
     }
 
     /// <inheritdoc cref="Directory.GetFiles(string)"/>
@@ -146,14 +151,59 @@ internal static class AssetLoader
         return GetSortedFiles(Directory.GetFiles(path, searchPattern, searchOption));
     }
 
-    private static void LoadAssetBundleFiles(string bundlesFolderpath)
+    /// <summary>
+    /// Gets files with one of the specified extensions and sorts them
+    /// alphanumerically by file name.
+    /// </summary>
+    /// <param name="path">The directory to search.</param>
+    /// <param name="extensions">The allowed file extensions.</param>
+    /// <param name="searchOption">Whether to search subdirectories.</param>
+    /// <returns>The matching sorted files.</returns>
+    /// <inheritdoc cref="Directory.GetFiles(string, string, SearchOption)" path="/exception"/>
+    public static string[] GetSortedFiles(
+        string path,
+        IEnumerable<string> extensions,
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
     {
-        string[] bundleFiles = GetSortedFiles(bundlesFolderpath);
+        var extensionSet = new HashSet<string>(
+            extensions,
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        return GetSortedFiles(
+            Directory.GetFiles(path, "*.*", searchOption)
+                .Where(file => extensionSet.Contains(Path.GetExtension(file)))
+        );
+    }
+
+    /// <summary>
+    /// Gets JSON files from the specified directory and sorts them
+    /// alphanumerically by file name.
+    /// </summary>
+    /// <param name="path">The directory to search.</param>
+    /// <param name="searchOption">Whether to search subdirectories.</param>
+    /// <returns>The sorted JSON files.</returns>
+    /// <inheritdoc cref="GetSortedFiles(string, IEnumerable{string}, SearchOption)" path="/exception"/>
+    public static string[] GetSortedJsonFiles(
+        string path,
+        SearchOption searchOption = SearchOption.TopDirectoryOnly)
+    {
+        return GetSortedFiles(path, new[] { ".json" }, searchOption);
+    }
+
+    private static void LoadAssetBundleFiles(string bundlesFolderPath)
+    {
+        string[] bundleFiles = GetSortedFiles(
+            Directory.GetFiles(bundlesFolderPath)
+                .Where(file =>
+                    !file.EndsWith(".manifest", StringComparison.OrdinalIgnoreCase) &&
+                    !string.Equals(Path.GetFileName(file), ".gitkeep", StringComparison.OrdinalIgnoreCase))
+        );
+
         foreach (string file in bundleFiles)
         {
             try
             {
-                if (file.EndsWith("manifest")) continue;
                 AssetBundleUtil.LoadBundle(file);
             }
             catch (Exception ex)
@@ -271,14 +321,14 @@ internal static class AssetLoader
 
     private static void LoadGridConfigFiles(string gridConfigFolderPath)
     {
-        string[] gridConfigFiles = GetSortedFiles(gridConfigFolderPath);
-        foreach(string file in gridConfigFiles)
+        string[] gridConfigFiles = GetSortedJsonFiles(gridConfigFolderPath);
+        foreach (string file in gridConfigFiles)
         {
             try
             {
                 GridConfigUtil.AddGridConfigFromMeta(file);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load grid configuration from {file}: {ex}");
             }
@@ -287,7 +337,7 @@ internal static class AssetLoader
 
     private static void LoadVibrationFiles(string vibrationFolderPath)
     {
-        string[] vibrationFiles = GetSortedFiles(vibrationFolderPath);
+        string[] vibrationFiles = GetSortedJsonFiles(vibrationFolderPath);
         foreach (string file in vibrationFiles)
         {
             try
@@ -303,7 +353,7 @@ internal static class AssetLoader
 
     private static void LoadBuildingFiles(string buildingFolderPath)
     {
-        string[] buildingFiles = GetSortedFiles(buildingFolderPath);
+        string[] buildingFiles = GetSortedJsonFiles(buildingFolderPath);
         foreach (string file in buildingFiles)
         {
             try
@@ -319,7 +369,7 @@ internal static class AssetLoader
 
     private static void LoadDockFiles(string dockFolderPath)
     {
-        string[] dockFiles = GetSortedFiles(dockFolderPath);
+        string[] dockFiles = GetSortedJsonFiles(dockFolderPath);
         foreach (string file in dockFiles)
         {
             try
@@ -335,7 +385,7 @@ internal static class AssetLoader
 
     private static void LoadMapMarkerFiles(string mapMarkerFolderPath)
     {
-        string[] mapMarkerFiles = GetSortedFiles(mapMarkerFolderPath);
+        string[] mapMarkerFiles = GetSortedJsonFiles(mapMarkerFolderPath);
         foreach (string file in mapMarkerFiles)
         {
             try
@@ -351,7 +401,7 @@ internal static class AssetLoader
 
     private static void LoadQuestFiles(string questFolderPath)
     {
-        string[] questFiles = GetSortedFiles(questFolderPath, "*.*", SearchOption.TopDirectoryOnly);
+        string[] questFiles = GetSortedJsonFiles(questFolderPath, SearchOption.TopDirectoryOnly);
         foreach (string file in questFiles)
         {
             try
@@ -367,7 +417,7 @@ internal static class AssetLoader
 
     private static void LoadQuestStepFiles(string questStepFolderPath)
     {
-        string[] questStepFiles = GetSortedFiles(questStepFolderPath);
+        string[] questStepFiles = GetSortedJsonFiles(questStepFolderPath);
         foreach (string file in questStepFiles)
         {
             try
@@ -383,7 +433,7 @@ internal static class AssetLoader
 
     private static void LoadQuestGridConfigFiles(string questGridConfigFolderPath)
     {
-        string[] questGridConfigFiles = GetSortedFiles(questGridConfigFolderPath);
+        string[] questGridConfigFiles = GetSortedJsonFiles(questGridConfigFolderPath);
         foreach (string file in questGridConfigFiles)
         {
             try
@@ -399,7 +449,7 @@ internal static class AssetLoader
 
     private static void LoadShopFiles(string shopFolderPath)
     {
-        string[] shopFolderFiles = GetSortedFiles(shopFolderPath);
+        string[] shopFolderFiles = GetSortedJsonFiles(shopFolderPath);
         foreach (string file in shopFolderFiles)
         {
             try
@@ -415,7 +465,7 @@ internal static class AssetLoader
 
     private static void LoadPoiFilesOfType<T>(string poiFolderPath) where T : CustomPOI
     {
-        string[] poiFiles = GetSortedFiles(poiFolderPath);
+        string[] poiFiles = GetSortedJsonFiles(poiFolderPath);
         foreach(string file in poiFiles)
         {
             try
@@ -431,7 +481,7 @@ internal static class AssetLoader
 
     private static void LoadItemFilesOfType<T>(string itemFolderPath) where T : ItemData
     {
-        string[] itemFiles = GetSortedFiles(itemFolderPath);
+        string[] itemFiles = GetSortedJsonFiles(itemFolderPath);
         foreach (string file in itemFiles)
         {
             try
@@ -447,7 +497,7 @@ internal static class AssetLoader
 
     private static void LoadUpgradeFilesOfType<T>(string upgradeFolderPath) where T : UpgradeData, IDeferredUpgradeData
     {
-        string[] upgradeFiles = GetSortedFiles(upgradeFolderPath);
+        string[] upgradeFiles = GetSortedJsonFiles(upgradeFolderPath);
         foreach (string file in upgradeFiles)
         {
             try
@@ -463,7 +513,7 @@ internal static class AssetLoader
 
     private static void LoadRecipeFilesOfType<T>(string recipeFolderPath) where T : RecipeData, IDeferredRecipeData
     {
-        string[] recipeFiles = GetSortedFiles(recipeFolderPath);
+        string[] recipeFiles = GetSortedJsonFiles(recipeFolderPath);
         foreach (string file in recipeFiles)
         {
             try
@@ -479,7 +529,7 @@ internal static class AssetLoader
 
     private static void LoadLocalizationFiles(string localizationFolderPath)
     {
-        string[] localizationFiles = GetSortedFiles(localizationFolderPath, "*.*", SearchOption.TopDirectoryOnly);
+        string[] localizationFiles = GetSortedJsonFiles(localizationFolderPath, SearchOption.TopDirectoryOnly);
         foreach (string file in localizationFiles)
         {
             try
@@ -495,14 +545,18 @@ internal static class AssetLoader
 
     private static void LoadTextureFiles(string textureFolderPath)
     {
-        string[] textureFiles = GetSortedFiles(textureFolderPath);
+        string[] textureFiles = GetSortedFiles(
+            textureFolderPath,
+            TextureUtil.SupportedImageExtensions
+        );
+
         foreach (string file in textureFiles)
         {
             try
             {
                 TextureUtil.LoadTextureFromFile(file);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WinchCore.Log.Error($"Failed to load texture file {file}: {ex}");
             }
@@ -511,7 +565,11 @@ internal static class AssetLoader
 
     private static void LoadAudioFiles(string audioFolderPath)
     {
-        string[] audioFiles = GetSortedFiles(audioFolderPath);
+        string[] audioFiles = GetSortedFiles(
+            audioFolderPath,
+            AudioClipUtil.SupportedAudioExtensions
+        );
+
         foreach (string file in audioFiles)
         {
             try
@@ -527,7 +585,7 @@ internal static class AssetLoader
 
     private static void LoadHarvestZoneFiles(string harvestZoneFolderPath)
     {
-        string[] harvestZoneFiles = GetSortedFiles(harvestZoneFolderPath);
+        string[] harvestZoneFiles = GetSortedJsonFiles(harvestZoneFolderPath);
         foreach (string file in harvestZoneFiles)
         {
             try
@@ -543,7 +601,7 @@ internal static class AssetLoader
 
     private static void LoadAbilityFiles(string abilityFolderPath)
     {
-        string[] abilityFiles = GetSortedFiles(abilityFolderPath);
+        string[] abilityFiles = GetSortedJsonFiles(abilityFolderPath);
         foreach (string file in abilityFiles)
         {
             try
@@ -562,7 +620,7 @@ internal static class AssetLoader
         var dynamicPath = Path.Combine(worldEventFolderPath, "Dynamic");
         if (Directory.Exists(dynamicPath))
         {
-            string[] worldEventFiles = GetSortedFiles(dynamicPath);
+            string[] worldEventFiles = GetSortedJsonFiles(dynamicPath);
             foreach (string file in worldEventFiles)
             {
                 try
@@ -578,7 +636,7 @@ internal static class AssetLoader
         var staticPath = Path.Combine(worldEventFolderPath, "Static");
         if (Directory.Exists(staticPath))
         {
-            string[] staticWorldEventFiles = GetSortedFiles(staticPath);
+            string[] staticWorldEventFiles = GetSortedJsonFiles(staticPath);
             foreach (string file in staticWorldEventFiles)
             {
                 try
@@ -616,7 +674,7 @@ internal static class AssetLoader
 
     private static void LoadCharacterFiles(string charactersFolderPath)
     {
-        string[] charactersFiles = GetSortedFiles(charactersFolderPath);
+        string[] charactersFiles = GetSortedJsonFiles(charactersFolderPath);
         foreach (string file in charactersFiles)
         {
             try
@@ -632,7 +690,7 @@ internal static class AssetLoader
 
     private static void LoadBoatPaintFiles(string paintFolderpath)
     {
-        string[] paintFiles = GetSortedFiles(paintFolderpath);
+        string[] paintFiles = GetSortedJsonFiles(paintFolderpath);
         foreach (string paintFile in paintFiles)
         {
             try
@@ -648,7 +706,7 @@ internal static class AssetLoader
 
     private static void LoadBoatFlagFiles(string flagFolderpath)
     {
-        string[] flagFiles = GetSortedFiles(flagFolderpath);
+        string[] flagFiles = GetSortedJsonFiles(flagFolderpath);
         foreach (string flagFile in flagFiles)
         {
             try

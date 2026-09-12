@@ -12,6 +12,14 @@ namespace Winch.Util;
 
 public static class AudioClipUtil
 {
+
+    internal static readonly string[] SupportedAudioExtensions =
+    {
+        ".wav",
+        ".ogg",
+        ".mp3"
+    };
+
     private static AssetReferenceAudioClip EmptyReference = new AssetReferenceAudioClip(string.Empty);
     private static Dictionary<string, AssetReferenceAudioClip> AudioReferenceMap = new();
     private static Dictionary<string, AudioClip> AudioClipMap = new();
@@ -85,70 +93,69 @@ public static class AudioClipUtil
 
     private static async Task<AudioClip> LoadAudioClip(string path)
     {
-        var extension = Path.GetExtension(path);
+        var extension = Path.GetExtension(path).ToLowerInvariant();
 
-        UnityEngine.AudioType audioType;
-
-        switch (extension)
+        var audioType = extension switch
         {
-            case ".wav":
-                audioType = UnityEngine.AudioType.WAV;
-                break;
-            case ".ogg":
-                audioType = UnityEngine.AudioType.OGGVORBIS;
-                break;
-            case ".mp3":
-                audioType = UnityEngine.AudioType.MPEG;
-                break;
-            default:
-                WinchCore.Log.Error($"Couldn't load Audio at {path} : Invalid audio file extension ({extension}) must be .wav or .ogg or .mp3");
-                return null;
+            ".wav" => AudioType.WAV,
+            ".ogg" => AudioType.OGGVORBIS,
+            ".mp3" => AudioType.MPEG,
+            _ => AudioType.UNKNOWN
+        };
+
+        if (audioType == AudioType.UNKNOWN)
+        {
+            WinchCore.Log.Error($"Couldn't load Audio at {path}: Invalid audio file extension ({extension}) must be .wav or .ogg or .mp3");
+            return null;
         }
 
+        string fileName = Path.GetFileNameWithoutExtension(path);
         path = $"file:///{path.Replace("+", "%2B")}";
-        if (audioType == UnityEngine.AudioType.MPEG)
+
+        if (audioType == AudioType.MPEG)
         {
-            DownloadHandlerAudioClip dh = new DownloadHandlerAudioClip(path, UnityEngine.AudioType.MPEG);
-            dh.compressed = true;
-            using (UnityWebRequest www = new UnityWebRequest(path, "GET", dh, null))
+            var dh = new DownloadHandlerAudioClip(path, audioType)
             {
-                var result = www.SendWebRequest();
+                compressed = true
+            };
 
-                while (!result.isDone) await Task.Yield();
+            using var www = new UnityWebRequest(path, "GET", dh, null);
 
-                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    WinchCore.Log.Error($"Couldn't load Audio at {path} : {www.error}");
-                    return null;
-                }
-                else
-                {
-                    var audioClip = dh.audioClip;
-                    audioClip.name = Path.GetFileNameWithoutExtension(path);
-                    return audioClip;
-                }
+            var result = www.SendWebRequest();
+
+            while (!result.isDone)
+                await Task.Yield();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError ||
+                www.result == UnityWebRequest.Result.ProtocolError)
+            {
+                WinchCore.Log.Error($"Couldn't load Audio at {path}: {www.error}");
+                return null;
             }
+
+            var audioClip = dh.audioClip;
+            audioClip.name = fileName;
+            return audioClip;
         }
         else
         {
-            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(path, audioType))
+            using var www = UnityWebRequestMultimedia.GetAudioClip(path, audioType);
+
+            var result = www.SendWebRequest();
+
+            while (!result.isDone)
+                await Task.Yield();
+
+            if (www.result == UnityWebRequest.Result.ConnectionError ||
+                www.result == UnityWebRequest.Result.ProtocolError)
             {
-                var result = www.SendWebRequest();
-
-                while (!result.isDone) await Task.Yield();
-
-                if (www.result == UnityWebRequest.Result.ConnectionError || www.result == UnityWebRequest.Result.ProtocolError)
-                {
-                    WinchCore.Log.Error($"Couldn't load Audio at {path} : {www.error}");
-                    return null;
-                }
-                else
-                {
-                    var audioClip = DownloadHandlerAudioClip.GetContent(www);
-                    audioClip.name = Path.GetFileNameWithoutExtension(path);
-                    return audioClip;
-                }
+                WinchCore.Log.Error($"Couldn't load Audio at {path}: {www.error}");
+                return null;
             }
+
+            var audioClip = DownloadHandlerAudioClip.GetContent(www);
+            audioClip.name = fileName;
+            return audioClip;
         }
     }
 }

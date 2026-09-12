@@ -9,7 +9,7 @@ namespace Winch.Util;
 
 public static class TextureUtil
 {
-    private static readonly HashSet<string> SupportedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+    public static readonly HashSet<string> SupportedImageExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
         ".png",
         ".jpg",
