@@ -1,14 +1,15 @@
 ﻿using System;
 using System.IO;
+using Winch.Core;
 
-namespace Winch.Core;
+namespace Doorstop;
 
-internal static class EntryPoint
+internal static class Entrypoint
 {
     /// <summary>
     /// The main entrypoint, called from Doorstop.
     /// </summary>
-    public static void Main()
+    public static void Start()
     {
         // We set it to the current directory first as a fallback, but try to use the same location as the .exe file.
         var silentExceptionLog = $"preloader_{DateTime.Now:yyyyMMdd_HHmmss_fff}.log";
