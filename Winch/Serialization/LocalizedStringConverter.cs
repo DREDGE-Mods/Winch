@@ -20,7 +20,7 @@ public sealed class LocalizedStringConverter : JsonConverter<LocalizedString>
         }
 
         writer.WriteValue(
-            LocalizationUtil.GetReferenceString(value)
+            LocalizationUtil.SerializeReference(value)
         );
     }
 

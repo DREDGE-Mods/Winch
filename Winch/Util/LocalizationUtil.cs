@@ -102,7 +102,7 @@ public static class LocalizationUtil
             : fallback;
     }
 
-    public static string GetReferenceString(LocalizedString localizedString)
+    public static string SerializeReference(LocalizedString localizedString)
     {
         var table = LocalizationSettings.StringDatabase
             .GetTableAsync(localizedString.TableReference)
