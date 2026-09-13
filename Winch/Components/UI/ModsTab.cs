@@ -493,6 +493,38 @@ public class ModsTab : MonoBehaviour
         requester.enabled = true;
     }
 
+    public bool SetOptionCentered(Transform option, bool centered = true)
+    {
+        if (option == null || !modOptions.Contains(option))
+            return false;
+
+        if (centered)
+            option.gameObject.GetOrAddComponent<CenteredOption>();
+        else
+            option.gameObject.RemoveComponentImmediate<CenteredOption>();
+
+        RebuildOptionLayout();
+        return true;
+    }
+
+    public bool SetOptionCentered(Input input, bool centered = true) =>
+        input != null && SetOptionCentered(input.transform, centered);
+
+    public bool SetOptionCentered(BasicButtonWrapper button, bool centered = true) =>
+        button != null && SetOptionCentered(button.transform, centered);
+
+    public bool SetOptionCentered(string name, bool centered = true)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return false;
+
+        var option = modOptions.FirstOrDefault(
+            option => option != null && option.name == name
+        );
+
+        return option != null && SetOptionCentered(option, centered);
+    }
+
     public Input AddConfigInput(string modName, string key, object value)
     {
         if (value is JObject obj)
@@ -583,12 +615,14 @@ public class ModsTab : MonoBehaviour
 
     public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
     {
-        AddLabelPadding(modName, key);
+        AddCenteredOptionPadding(modName, key);
 
         var clone = labelLocalizedPrefab
             .Instantiate(options, false)
             .gameObject
             .AddComponent<SeparatorInput>();
+
+        clone.gameObject.AddComponent<CenteredOption>();
 
         if (string.IsNullOrWhiteSpace(title))
         {
@@ -616,7 +650,7 @@ public class ModsTab : MonoBehaviour
         return clone;
     }
 
-    private void AddLabelPadding(string modName, string key)
+    private void AddCenteredOptionPadding(string modName, string key)
     {
         // Finish the current row, then add the empty left cell of the label row.
         var count = 1 + ((3 - (modOptions.Count % 3)) % 3);
@@ -894,7 +928,7 @@ public class ModsTab : MonoBehaviour
             modOptions[i].SetSiblingIndex(i);
         }
 
-        FixSeparatorsAndLabels();
+        RebuildOptionLayout();
 
         return true;
     }
@@ -917,9 +951,9 @@ public class ModsTab : MonoBehaviour
         );
     }
 
-    public void FixSeparatorsAndLabels()
+    public void RebuildOptionLayout()
     {
-        // Remove old label spacing.
+        // Remove old layout spacing.
         foreach (var separator in layoutSeparators.ToArray())
         {
             if (separator == null)
@@ -939,20 +973,29 @@ public class ModsTab : MonoBehaviour
             if (option == null)
                 continue;
 
-            var separator = option.GetComponent<SeparatorInput>();
-            var localizedLabel = option.GetComponent<LocalizedLabel>();
-
-            // A SeparatorInput with a LocalizedLabel is one of our section labels.
-            if (separator != null && localizedLabel != null)
+            if (option.GetComponent<CenteredOption>() != null)
             {
-                AddLabelPadding(separator.modName, separator.key);
+                var input = option.GetComponent<Input>();
+
+                var modName =
+                    input?.modName ??
+                    currentMod?.GUID ??
+                    WinchCore.GUID;
+
+                var key =
+                    !string.IsNullOrWhiteSpace(input?.key)
+                        ? input.key
+                        : option.name;
+
+                // Finish the current row and add the empty left cell.
+                AddCenteredOptionPadding(modName, key);
 
                 modOptions.Add(option);
 
-                // Empty right cell of the label's row.
+                // Empty right cell of the row.
                 AddLayoutSeparatorInput(
-                    separator.modName,
-                    separator.key + "End"
+                    modName,
+                    key + "End"
                 );
             }
             else
