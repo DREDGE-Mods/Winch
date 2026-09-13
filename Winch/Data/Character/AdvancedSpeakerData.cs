@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Winch.Components;
+using Winch.Components.UI;
 using Winch.Util;
 
 namespace Winch.Data.Character;

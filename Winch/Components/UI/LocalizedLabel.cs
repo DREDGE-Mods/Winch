@@ -3,7 +3,7 @@ using UnityEngine.Localization.Components;
 using UnityEngine.Localization;
 using Winch.Util;
 
-namespace Winch.Components;
+namespace Winch.Components.UI;
 
 public class LocalizedLabel : MonoBehaviour
 {

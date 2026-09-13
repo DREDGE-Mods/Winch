@@ -10,8 +10,10 @@ using Sirenix.Utilities;
 using Newtonsoft.Json.Linq;
 using System;
 using Winch.Core.API;
+using Winch.Components.UI.Inputs;
+using Input = Winch.Components.UI.Inputs.Input;
 
-namespace Winch.Components;
+namespace Winch.Components.UI;
 
 public class ModsTab : MonoBehaviour
 {

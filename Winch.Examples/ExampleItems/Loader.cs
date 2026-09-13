@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
-using Winch.Components;
+using Winch.Components.UI;
 using Winch.Config;
 using Winch.Core;
 using Winch.Core.API;

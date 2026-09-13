@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using HarmonyLib;
 using UnityEngine;
-using Winch.Components;
+using Winch.Components.UI;
 using Winch.Data.Recipe;
 using Winch.Util;
 using static TooltipUI;

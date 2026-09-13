@@ -1,4 +1,4 @@
-﻿namespace Winch.Components;
+﻿namespace Winch.Components.UI;
 
 public class UpgradeRecipeTooltipRequester : UpgradeTooltipRequester
 {

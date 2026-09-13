@@ -3,10 +3,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Winch.Components.UI;
 using Winch.Core;
 using Winch.Patches;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class FieldInput : Input, ISubmitHandler, IEventSystemHandler
 {

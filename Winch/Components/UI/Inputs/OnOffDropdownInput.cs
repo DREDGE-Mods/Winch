@@ -2,7 +2,7 @@
 using UnityEngine.Localization;
 using Winch.Util;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class OnOffDropdownInput : DropdownInput
 {

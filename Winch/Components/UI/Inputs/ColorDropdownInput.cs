@@ -6,7 +6,7 @@ using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Util;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class ColorDropdownInput : DropdownInput
 {

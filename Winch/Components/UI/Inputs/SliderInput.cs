@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Winch.Core;
 using Winch.Patches;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class SliderInput : Input, ISubmitHandler, IEventSystemHandler
 {

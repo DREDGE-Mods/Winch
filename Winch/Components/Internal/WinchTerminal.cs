@@ -5,7 +5,7 @@ using Winch.Config;
 using Winch.Core;
 using Winch.Util;
 
-namespace Winch.Components;
+namespace Winch.Components.Internal;
 
 [RequireComponent(typeof(Terminal))]
 internal class WinchTerminal : MonoBehaviour

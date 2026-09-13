@@ -23,6 +23,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Winch.Components;
+using Winch.Components.UI;
 using Winch.Config;
 using Winch.Core;
 using Winch.Core.API;

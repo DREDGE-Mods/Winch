@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using CommandTerminal;
 using UnityEngine;
-using Winch.Components;
+using Winch.Components.Internal;
 
 namespace Winch.Patches;
 

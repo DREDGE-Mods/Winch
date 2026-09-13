@@ -1,6 +1,6 @@
 ﻿using Winch.Data.Recipe;
 
-namespace Winch.Components;
+namespace Winch.Components.UI;
 
 public class ModdedRecipeTooltipRequester : TextTooltipRequester
 {

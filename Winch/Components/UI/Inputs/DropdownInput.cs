@@ -8,7 +8,7 @@ using UnityEngine.Localization.Settings;
 using Winch.Core;
 using Winch.Util;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class DropdownInput : Input
 {

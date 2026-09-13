@@ -1,4 +1,4 @@
-﻿namespace Winch.Components;
+﻿namespace Winch.Components.UI.Inputs;
 
 public class SeparatorInput : Input
 {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Winch.Components;
+namespace Winch.Components.UI;
 
 public class ModsButton : MonoBehaviour
 {

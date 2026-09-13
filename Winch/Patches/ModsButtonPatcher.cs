@@ -1,7 +1,6 @@
 ﻿using HarmonyLib;
 using System.Linq;
 using UnityEngine.Localization.Components;
-using Winch.Components;
 using UnityEngine;
 using UnityEngine.UI;
 using Winch.Config;
@@ -9,6 +8,8 @@ using Winch.Core;
 using TMPro;
 using Winch.Util;
 using UnityEngine.EventSystems;
+using Winch.Components.UI;
+using Winch.Components.UI.Inputs;
 
 namespace Winch.Patches;
 

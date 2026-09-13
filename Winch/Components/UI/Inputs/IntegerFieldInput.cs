@@ -1,7 +1,6 @@
-﻿
-using Winch.Core;
+﻿using Winch.Core;
 
-namespace Winch.Components;
+namespace Winch.Components.UI.Inputs;
 
 public class IntegerFieldInput : FieldInput
 {

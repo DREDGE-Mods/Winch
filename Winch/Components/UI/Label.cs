@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 
-namespace Winch.Components;
+namespace Winch.Components.UI;
 
 public class Label : MonoBehaviour
 {
