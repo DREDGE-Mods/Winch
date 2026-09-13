@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Localization;
+using UnityEngine.Localization.Settings;
 using Winch.Core;
 
 namespace Winch.Util;
@@ -71,5 +72,26 @@ public static class LocalizationUtil
         }
 
         WinchCore.Log.Debug($"Loaded {dict.Keys.Count.ToString()} localized string(s) from {path}");
+    }
+
+    public static LocalizedString WithFallback(
+        LocalizedString preferred,
+        LocalizedString fallback)
+    {
+        return preferred != null && !preferred.IsEmpty
+            ? preferred
+            : fallback;
+    }
+
+    public static string GetReferenceString(LocalizedString localizedString)
+    {
+        var table = LocalizationSettings.StringDatabase
+            .GetTableAsync(localizedString.TableReference)
+            .WaitForCompletion();
+
+        var key = localizedString.TableEntryReference
+            .ResolveKeyName(table.SharedData);
+
+        return $"{table.TableCollectionName}:{key}";
     }
 }

@@ -7,16 +7,16 @@ using Winch.Core;
 namespace Winch.Serialization;
 
 /// <summary>
-/// Special converter for <see cref="SerializedCrabPotPOIData"/> because they need to be uninitialized
+/// Special converter for <see cref="SerializedCrabPotPOIData"/> because it needs to be created uninitialized.
 /// </summary>
-public class SerializedCrabPotPOIConverter : JsonConverter
+public class SerializedCrabPotPOIConverter : JsonConverter<SerializedCrabPotPOIData>
 {
-    public override bool CanConvert(Type objectType)
-    {
-        return objectType == typeof(SerializedCrabPotPOIData);
-    }
-
-    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override SerializedCrabPotPOIData? ReadJson(
+        JsonReader reader,
+        Type objectType,
+        SerializedCrabPotPOIData? existingValue,
+        bool hasExistingValue,
+        JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null)
             return null;
@@ -24,52 +24,71 @@ public class SerializedCrabPotPOIConverter : JsonConverter
         if (reader.TokenType != JsonToken.StartObject)
             throw new JsonException("Expected start of JSON object");
 
-        var data = (SerializedCrabPotPOIData)FormatterServices.GetUninitializedObject(typeof(SerializedCrabPotPOIData));
+        var data = (SerializedCrabPotPOIData)FormatterServices
+            .GetUninitializedObject(typeof(SerializedCrabPotPOIData));
+
         var meta = JObject.Load(reader);
+
         try
         {
-            data.deployableItemId = meta.GetValueOrDefault("deployableItemId", string.Empty)?.ToString();
-            data.x = meta["x"]?.Value<float>() ?? 0;
-            data.z = meta["z"]?.Value<float>() ?? 0;
-            data.durability = meta["durability"]?.Value<float>() ?? 0;
-            data.timeUntilNextCatchRoll = meta["timeUntilNextCatchRoll"]?.Value<float>() ?? 0;
-            data.lastUpdate = meta["lastUpdate"]?.Value<float>() ?? 0;
-            data.grid = meta["grid"]?.ToObject<SerializableGrid>(serializer) ?? new SerializableGrid();
-            data.hadDurabilityRemaining = meta["hadDurabilityRemaining"]?.Value<bool>() ?? false;
+            data.deployableItemId = meta.GetValueOrDefault(
+                nameof(data.deployableItemId),
+                string.Empty
+            )?.ToString();
+
+            data.x = meta[nameof(data.x)]?.Value<float>() ?? 0;
+            data.z = meta[nameof(data.z)]?.Value<float>() ?? 0;
+            data.durability = meta[nameof(data.durability)]?.Value<float>() ?? 0;
+            data.timeUntilNextCatchRoll = meta[nameof(data.timeUntilNextCatchRoll)]?.Value<float>() ?? 0;
+            data.lastUpdate = meta[nameof(data.lastUpdate)]?.Value<float>() ?? 0;
+            data.grid = meta[nameof(data.grid)]?.ToObject<SerializableGrid>(serializer) ?? new SerializableGrid();
+            data.hadDurabilityRemaining = meta[nameof(data.hadDurabilityRemaining)]?.Value<bool>() ?? false;
         }
         catch (Exception ex)
         {
             WinchCore.Log.Error(ex);
         }
+
         return data;
     }
 
-    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+    public override void WriteJson(
+        JsonWriter writer,
+        SerializedCrabPotPOIData? value,
+        JsonSerializer serializer)
     {
-        if (value != null && value is SerializedCrabPotPOIData data)
-        {
-            writer.WriteStartObject();
-            writer.WritePropertyName(nameof(data.x));
-            serializer.Serialize(writer, data.x);
-            writer.WritePropertyName(nameof(data.z));
-            serializer.Serialize(writer, data.z);
-            writer.WritePropertyName(nameof(data.deployableItemId));
-            serializer.Serialize(writer, data.deployableItemId);
-            writer.WritePropertyName(nameof(data.durability));
-            serializer.Serialize(writer, data.durability);
-            writer.WritePropertyName(nameof(data.timeUntilNextCatchRoll));
-            serializer.Serialize(writer, data.timeUntilNextCatchRoll);
-            writer.WritePropertyName(nameof(data.lastUpdate));
-            serializer.Serialize(writer, data.lastUpdate);
-            writer.WritePropertyName(nameof(data.grid));
-            serializer.Serialize(writer, data.grid);
-            writer.WritePropertyName(nameof(data.hadDurabilityRemaining));
-            serializer.Serialize(writer, data.hadDurabilityRemaining);
-            writer.WriteEndObject();
-        }
-        else
+        if (value == null)
         {
             writer.WriteNull();
+            return;
         }
+
+        writer.WriteStartObject();
+
+        writer.WritePropertyName(nameof(value.x));
+        serializer.Serialize(writer, value.x);
+
+        writer.WritePropertyName(nameof(value.z));
+        serializer.Serialize(writer, value.z);
+
+        writer.WritePropertyName(nameof(value.deployableItemId));
+        serializer.Serialize(writer, value.deployableItemId);
+
+        writer.WritePropertyName(nameof(value.durability));
+        serializer.Serialize(writer, value.durability);
+
+        writer.WritePropertyName(nameof(value.timeUntilNextCatchRoll));
+        serializer.Serialize(writer, value.timeUntilNextCatchRoll);
+
+        writer.WritePropertyName(nameof(value.lastUpdate));
+        serializer.Serialize(writer, value.lastUpdate);
+
+        writer.WritePropertyName(nameof(value.grid));
+        serializer.Serialize(writer, value.grid);
+
+        writer.WritePropertyName(nameof(value.hadDurabilityRemaining));
+        serializer.Serialize(writer, value.hadDurabilityRemaining);
+
+        writer.WriteEndObject();
     }
 }

@@ -47,6 +47,7 @@ public static class WinchCore
                              ?? throw new InvalidOperationException($"Unable to parse {Constants.ModManifestFileName} file at {metaPath}. Reinstall the mod.");
 
             JSONConfig.AddDynamicConverter(new SerializedCrabPotPOIConverter());
+            JSONConfig.AddDynamicConverter(new LocalizedStringConverter());
         }
         catch (Exception e)
         {
