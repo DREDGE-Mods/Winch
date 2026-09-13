@@ -74,7 +74,7 @@ public static class LocalizationUtil
         WinchCore.Log.Debug($"Loaded {dict.Keys.Count.ToString()} localized string(s) from {path}");
     }
 
-    public static LocalizedString WithFallback(
+    public static LocalizedString Prefer(
         LocalizedString preferred,
         LocalizedString fallback)
     {
