@@ -94,4 +94,131 @@ public static class LocalizationUtil
 
         return $"{table.TableCollectionName}:{key}";
     }
+
+    public static Locale? GetLocale(string code) =>
+        LocalizationSettings.AvailableLocales.Locales.Find(
+            locale => locale.Identifier.Code == code
+        );
+
+    public static Locale? EnglishLocale =>
+        GetLocale("en");
+
+    public static Locale? FrenchLocale =>
+        GetLocale("fr");
+
+    public static Locale? ItalianLocale =>
+        GetLocale("it");
+
+    public static Locale? GermanLocale =>
+        GetLocale("de");
+
+    public static Locale? SpanishLocale =>
+        GetLocale("es");
+
+    public static Locale? PortugueseBrazilLocale =>
+        GetLocale("pt-BR");
+
+    public static Locale? RussianLocale =>
+        GetLocale("ru");
+
+    public static Locale? ChineseSimplifiedLocale =>
+        GetLocale("zh-Hans");
+
+    public static Locale? ChineseTraditionalLocale =>
+        GetLocale("zh-Hant");
+
+    public static Locale? JapaneseLocale =>
+        GetLocale("ja-JP");
+
+    public static Locale? KoreanLocale =>
+        GetLocale("ko-KR");
+
+    public static Locale? PolishLocale =>
+        GetLocale("pl");
+
+    public static string Resolve(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, LocalizationSettings.SelectedLocale, arguments);
+
+    public static string ResolveEnglish(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, EnglishLocale, arguments);
+
+    public static string ResolveFrench(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, FrenchLocale, arguments);
+
+    public static string ResolveItalian(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, ItalianLocale, arguments);
+
+    public static string ResolveGerman(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, GermanLocale, arguments);
+
+    public static string ResolveSpanish(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, SpanishLocale, arguments);
+
+    public static string ResolvePortugueseBrazil(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, PortugueseBrazilLocale, arguments);
+
+    public static string ResolveRussian(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, RussianLocale, arguments);
+
+    public static string ResolveChineseSimplified(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, ChineseSimplifiedLocale, arguments);
+
+    public static string ResolveChineseTraditional(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, ChineseTraditionalLocale, arguments);
+
+    public static string ResolveJapanese(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, JapaneseLocale, arguments);
+
+    public static string ResolveKorean(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, KoreanLocale, arguments);
+
+    public static string ResolvePolish(
+        LocalizedString reference,
+        params object[] arguments)
+        => ResolveLocale(reference, PolishLocale, arguments);
+
+    public static string ResolveLocale(
+        LocalizedString reference,
+        string code,
+        params object[] arguments)
+        => ResolveLocale(reference, GetLocale(code), arguments);
+
+    public static string ResolveLocale(
+        LocalizedString reference,
+        Locale? locale,
+        params object[] arguments)
+    {
+        return LocalizationSettings.StringDatabase
+            .GetLocalizedString(
+                reference.TableReference,
+                reference.TableEntryReference,
+                locale,
+                FallbackBehavior.UseProjectSettings,
+                arguments
+            );
+    }
 }
