@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine.Localization;
@@ -9,7 +10,7 @@ namespace Winch.Util;
 
 public static class LocalizationUtil
 {
-    private static Dictionary<string, Dictionary<string, string>> StringDatabase = new Dictionary<string, Dictionary<string, string>>();
+    private static Dictionary<string, Dictionary<string, string>> TranslationDatabase = new Dictionary<string, Dictionary<string, string>>();
 
     public static LocalizedString CreateReference(string table, string entry)
         => new LocalizedString(table, entry);
@@ -44,20 +45,38 @@ public static class LocalizationUtil
     public static LocalizedString Unknown
         => CreateReference(LanguageManager.STRING_TABLE, "label.unknown");
 
-    public static void AddLocalizedString(string locale, string key, string value)
+    public static void AddModString(string locale, string key, string value)
     {
-        if(!StringDatabase.ContainsKey(locale))
-            StringDatabase[locale] = new Dictionary<string, string>();
-        StringDatabase[locale][key] = value;
+        if (!TranslationDatabase.TryGetValue(locale, out var translations))
+        {
+            translations = new Dictionary<string, string>();
+            TranslationDatabase[locale] = translations;
+        }
+
+        translations[key] = value;
     }
 
-    public static string? GetLocalizedString(string locale, string key)
+    public const string EnglishLocaleCode = "en";
+
+    public static void AddEnglishModString(string key, string value)
+        => AddModString(EnglishLocaleCode, key, value);
+
+    public static string? GetModString(string locale, string key)
     {
-        if (string.IsNullOrEmpty(locale) || string.IsNullOrEmpty(key)) return null;
-        if (!StringDatabase.ContainsKey(locale)) return null;
-        if (!StringDatabase[locale].ContainsKey(key)) return null;
-        return StringDatabase[locale][key];
+        if (string.IsNullOrEmpty(locale) || string.IsNullOrEmpty(key))
+            return null;
+
+        return TranslationDatabase.TryGetValue(locale, out var translations) &&
+               translations.TryGetValue(key, out var value)
+            ? value
+            : null;
     }
+
+    public static string? GetEnglishModString(string key)
+        => GetModString(EnglishLocaleCode, key);
+
+    [Obsolete]
+    private static string? GetLocalizedString(string locale, string key) => ResolveLocale(CreateStringsReference(key), locale);
 
     internal static void LoadLocalizationFile(string path)
     {
@@ -68,7 +87,7 @@ public static class LocalizationUtil
 
         foreach (string key in dict.Keys)
         {
-            AddLocalizedString(locale, key, dict[key]);
+            AddModString(locale, key, dict[key]);
         }
 
         WinchCore.Log.Debug($"Loaded {dict.Keys.Count.ToString()} localized string(s) from {path}");
@@ -101,7 +120,7 @@ public static class LocalizationUtil
         );
 
     public static Locale? EnglishLocale =>
-        GetLocale("en");
+        GetLocale(EnglishLocaleCode);
 
     public static Locale? FrenchLocale =>
         GetLocale("fr");

@@ -171,7 +171,7 @@ public class DropdownInput : Input
             if (optionStrings == null)
             {
                 var optionKey = modName + "." + key + "." + option;
-                LocalizationUtil.AddLocalizedString("en", optionKey, option);
+                LocalizationUtil.AddEnglishModString(optionKey, option);
                 newOptionStrings.Add(LocalizationUtil.CreateStringsReference(optionKey));
             }
         }

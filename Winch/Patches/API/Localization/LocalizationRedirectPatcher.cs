@@ -17,12 +17,12 @@ internal static class LocalizationRedirectPatcher
     public static bool LocalizedStringDatabase_ProcessUntranslatedText_Prefix(ref string __result, string key, long keyId, TableReference tableReference, StringTable table, Locale locale)
     {
         string localeCode = locale.Identifier.Code;
-        string? localized = LocalizationUtil.GetLocalizedString(localeCode, key);
+        string? localized = LocalizationUtil.GetModString(localeCode, key);
         if (localized == null)
         {
-            if (localeCode != "en")
+            if (localeCode != LocalizationUtil.EnglishLocaleCode)
             {
-                localized = LocalizationUtil.GetLocalizedString("en", key); // Default to english
+                localized = LocalizationUtil.GetEnglishModString(key); // Default to english
                 if (localized == null)
                     return true;
             }
@@ -40,12 +40,12 @@ internal static class LocalizationRedirectPatcher
     public static bool DredgeLocalizedLineProvider_GetLocalizedLine_Prefix(DredgeLocalizedLineProvider __instance, ref LocalizedLine __result, Line line)
     {
         string localeCode = LocalizationSettings.SelectedLocale.Identifier.Code;
-        string? rawText = LocalizationUtil.GetLocalizedString(localeCode, line.ID);
+        string? rawText = LocalizationUtil.GetModString(localeCode, line.ID);
         if (rawText == null)
         {
-            if (localeCode != "en")
+            if (localeCode != LocalizationUtil.EnglishLocaleCode)
             {
-                rawText = LocalizationUtil.GetLocalizedString("en", line.ID); // Default to english
+                rawText = LocalizationUtil.GetEnglishModString(line.ID); // Default to english
                 if (rawText == null)
                     return true;
             }

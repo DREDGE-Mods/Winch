@@ -467,8 +467,8 @@ public class ModsTab : MonoBehaviour
         var titleKey = $"{prefix}.{name}.title";
         var tooltipKey = $"{prefix}.{name}.tooltip";
 
-        LocalizationUtil.AddLocalizedString("en", titleKey, title);
-        LocalizationUtil.AddLocalizedString("en", tooltipKey, tooltip);
+        LocalizationUtil.AddEnglishModString(titleKey, title);
+        LocalizationUtil.AddEnglishModString(tooltipKey, tooltip);
 
         SetupButtonTooltip(
             button,
@@ -626,7 +626,7 @@ public class ModsTab : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
+            LocalizationUtil.AddEnglishModString(key, key.SplitPascalCase());
             clone.GetComponent<LocalizedLabel>().LabelString =
                 LocalizationUtil.CreateReference(key);
         }
@@ -874,7 +874,7 @@ public class ModsTab : MonoBehaviour
     {
         if (string.IsNullOrWhiteSpace(title))
         {
-            LocalizationUtil.AddLocalizedString("en", key, key.SplitPascalCase());
+            LocalizationUtil.AddEnglishModString(key, key.SplitPascalCase());
             input.TitleString = LocalizationUtil.CreateReference(key);
         }
         else
