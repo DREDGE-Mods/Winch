@@ -720,22 +720,33 @@ public static class EnumUtil
     /// <param name="assembly">The assembly to register enum holders in</param>
     internal static void RegisterAllEnumHolders(Assembly assembly)
     {
-        var enumHolders = assembly.GetTypes().Where(type => type.IsDefined(typeof(EnumHolderAttribute), true)).ToList();
+        var enumHolders = assembly.GetTypes()
+            .Where(type => type.IsDefined(typeof(EnumHolderAttribute), true))
+            .ToList();
+
         if (enumHolders.Count > 0)
         {
             WinchCore.Log.Debug($"Registering enum holders for {assembly.GetName().Name}");
+
             foreach (var type in enumHolders)
             {
-                foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
+                foreach (var field in type.GetFields(
+                    BindingFlags.Static |
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic))
                 {
                     if (!field.FieldType.IsEnum) continue;
 
-                    if (Convert.ToInt64(field.GetValue(null)) == 0)
-                    {
+                    var value = field.GetValue(null);
+
+                    if (field.IsLiteral)
+                        // Const fields explicitly alias this enum value.
+                        Create(field.FieldType, value, field.Name);
+                    else if (Convert.ToInt64(value) == 0)
+                        // Normal zero-valued fields are uninitialized dynamic values.
                         field.SetValue(null, Create(field.FieldType, field.Name));
-                    }
                     else
-                        Create(field.FieldType, field.GetValue(null), field.Name);
+                        Create(field.FieldType, value, field.Name);
                 }
             }
         }
