@@ -67,6 +67,8 @@ public class ModsTab : MonoBehaviour
     public void Awake()
     {
         Instance = this;
+        ConfigureScrollRect(listScroller);
+        ConfigureScrollRect(optionsScroller);
     }
 
     public void Start()
@@ -99,6 +101,61 @@ public class ModsTab : MonoBehaviour
     public void Update()
     {
         UpdateResetButton();
+
+        if (!isCurrentTab)
+            return;
+
+        HandleScrollInput(inOptions ? optionsScroller : listScroller);
+    }
+
+    private static void ConfigureScrollRect(ScrollRect scrollRect)
+    {
+        if (scrollRect == null)
+            return;
+
+        var scrollbar = scrollRect.verticalScrollbar;
+        if (scrollbar == null)
+            return;
+
+        scrollbar.enabled = true;
+        scrollbar.interactable = true;
+
+        // Make sure the scrollbar is in front of the viewport and can receive clicks/drags.
+        scrollbar.transform.SetAsLastSibling();
+
+        foreach (var graphic in scrollbar.GetComponentsInChildren<Graphic>(true))
+        {
+            graphic.raycastTarget = true;
+        }
+    }
+
+    private static void HandleScrollInput(ScrollRect scroll)
+    {
+        if (scroll == null || !scroll.gameObject.activeInHierarchy)
+            return;
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Home))
+        {
+            scroll.verticalNormalizedPosition = 1f;
+        }
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.End))
+        {
+            scroll.verticalNormalizedPosition = 0f;
+        }
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.PageUp))
+        {
+            scroll.verticalNormalizedPosition =
+                Mathf.Clamp01(
+                    scroll.verticalNormalizedPosition + 0.25f
+                );
+        }
+        else if (UnityEngine.Input.GetKeyDown(KeyCode.PageDown))
+        {
+            scroll.verticalNormalizedPosition =
+                Mathf.Clamp01(
+                    scroll.verticalNormalizedPosition - 0.25f
+                );
+        }
     }
 
     public void UpdateResetButton()
@@ -159,7 +216,7 @@ public class ModsTab : MonoBehaviour
             {
                 mod.GetConfig();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (!(ex.InnerException != null && ex.InnerException.Message.Contains("file found in folder")))
                     WinchCore.Log.Error(ex.InnerException != null ? (ex.Message + " " + ex.InnerException.Message) : ex.Message);
@@ -610,7 +667,7 @@ public class ModsTab : MonoBehaviour
         return separator;
     }
 
-    public SeparatorInput AddSeparatorAndLabelInput (string modName, string key, JObject obj) =>
+    public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, JObject obj) =>
         AddSeparatorAndLabelInput(modName, key, (string)obj["title"]);
 
     public SeparatorInput AddSeparatorAndLabelInput(string modName, string key, string title)
