@@ -69,6 +69,19 @@ public class ModsTab : MonoBehaviour
         Instance = this;
         ConfigureScrollRect(listScroller);
         ConfigureScrollRect(optionsScroller);
+
+        SetupOptionsPadding();
+    }
+
+    private const int OptionsBottomPadding = 24;
+
+    private void SetupOptionsPadding()
+    {
+        var layout = options.GetComponent<GridLayoutGroup>();
+        if (layout == null)
+            return;
+
+        layout.padding.bottom = OptionsBottomPadding;
     }
 
     public void Start()
@@ -136,26 +149,58 @@ public class ModsTab : MonoBehaviour
 
         if (UnityEngine.Input.GetKeyDown(KeyCode.Home))
         {
-            scroll.verticalNormalizedPosition = 1f;
+            ScrollHome(scroll);
         }
         else if (UnityEngine.Input.GetKeyDown(KeyCode.End))
         {
-            scroll.verticalNormalizedPosition = 0f;
+            ScrollEnd(scroll);
         }
         else if (UnityEngine.Input.GetKeyDown(KeyCode.PageUp))
         {
-            scroll.verticalNormalizedPosition =
-                Mathf.Clamp01(
-                    scroll.verticalNormalizedPosition + 0.25f
-                );
+            ScrollPageUp(scroll);
         }
         else if (UnityEngine.Input.GetKeyDown(KeyCode.PageDown))
         {
-            scroll.verticalNormalizedPosition =
-                Mathf.Clamp01(
-                    scroll.verticalNormalizedPosition - 0.25f
-                );
+            ScrollPageDown(scroll);
         }
+    }
+
+    public static void ScrollHome(ScrollRect scroll)
+    {
+        if (scroll == null)
+            return;
+
+        scroll.verticalNormalizedPosition = 1f;
+    }
+
+    public static void ScrollEnd(ScrollRect scroll)
+    {
+        if (scroll == null)
+            return;
+
+        scroll.verticalNormalizedPosition = 0f;
+    }
+
+    public static void ScrollPageUp(ScrollRect scroll)
+    {
+        if (scroll == null)
+            return;
+
+        scroll.verticalNormalizedPosition =
+            Mathf.Clamp01(
+                scroll.verticalNormalizedPosition + 0.25f
+            );
+    }
+
+    public static void ScrollPageDown(ScrollRect scroll)
+    {
+        if (scroll == null)
+            return;
+
+        scroll.verticalNormalizedPosition =
+            Mathf.Clamp01(
+                scroll.verticalNormalizedPosition - 0.25f
+            );
     }
 
     public void UpdateResetButton()
