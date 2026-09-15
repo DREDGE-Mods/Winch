@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Localization;
+using InControl;
 using Winch.Util;
 using Winch.Core;
 using UnityEngine.UI;
@@ -74,6 +75,8 @@ public class ModsTab : MonoBehaviour
     }
 
     private const int OptionsBottomPadding = 24;
+    private const float ControllerScrollDeadZone = 0.2f;
+    private const float ControllerScrollSpeed = 500f; // Pixels per second
 
     private void SetupOptionsPadding()
     {
@@ -142,6 +145,20 @@ public class ModsTab : MonoBehaviour
         }
     }
 
+    private static Selectable MakeLabelSelectable(GameObject gameObject)
+    {
+        if (gameObject == null)
+            return null;
+
+        var selectable = gameObject.GetOrAddComponent<Selectable>();
+        var navigation = selectable.navigation;
+        navigation.mode = Navigation.Mode.Automatic;
+        selectable.navigation = navigation;
+        selectable.interactable = true;
+
+        return selectable;
+    }
+
     private static void HandleScrollInput(ScrollRect scroll)
     {
         if (scroll == null || !scroll.gameObject.activeInHierarchy)
@@ -162,6 +179,27 @@ public class ModsTab : MonoBehaviour
         else if (UnityEngine.Input.GetKeyDown(KeyCode.PageDown))
         {
             ScrollPageDown(scroll);
+        }
+
+        var controllerScroll = InputManager.ActiveDevice.RightStickY.Value;
+
+        if (Mathf.Abs(controllerScroll) > ControllerScrollDeadZone)
+        {
+            var scrollableHeight = Mathf.Max(
+                1f,
+                scroll.content.rect.height - scroll.viewport.rect.height
+            );
+
+            var input = Mathf.InverseLerp(
+                ControllerScrollDeadZone,
+                1f,
+                Mathf.Abs(controllerScroll)
+            ) * Mathf.Sign(controllerScroll);
+
+            scroll.verticalNormalizedPosition = Mathf.Clamp01(
+                scroll.verticalNormalizedPosition
+                + input * ControllerScrollSpeed / scrollableHeight * Time.unscaledDeltaTime
+            );
         }
     }
 
@@ -283,7 +321,7 @@ public class ModsTab : MonoBehaviour
         button.DeactivateButtonEffects();
         button.GetComponent<LocalizedLabel>().LabelString = winchHeader;
         button.GetComponent<BasicButtonWrapper>().OnClick += () => OnWinchClicked();
-        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = listScroller;
+        AddScrollMagnets(button.transform, listScroller);
         listControllerFocusGrabber.SetSelectable(button.GetComponent<BasicButton>());
         listControllerFocusGrabber.SelectSelectable();
         modButtons.Add(button);
@@ -296,7 +334,7 @@ public class ModsTab : MonoBehaviour
         button.gameObject.RemoveComponentImmediate<LocalizedLabel>();
         button.gameObject.AddComponent<Label>().LabelString = mod.Name;
         button.GetComponent<BasicButtonWrapper>().OnClick += () => OnModClicked(mod);
-        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = listScroller;
+        AddScrollMagnets(button.transform, listScroller);
         modButtons.Add(button);
     }
 
@@ -304,7 +342,8 @@ public class ModsTab : MonoBehaviour
     {
         var label = labelPrefab.Instantiate(list, false).Rename(mod.GUID + " Label");
         label.LabelString = mod.Name;
-        label.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = listScroller;
+        MakeLabelSelectable(label.gameObject);
+        AddScrollMagnets(label.transform, listScroller);
         modLabels.Add(label);
     }
 
@@ -324,6 +363,7 @@ public class ModsTab : MonoBehaviour
         footerText.LabelString = footerOptions;
         footerButton.gameObject.Activate();
         AddWinchOptions();
+        RefreshOptionsForController();
         var firstSelectable = options.GetComponentInChildren<Selectable>();
         Navigation footerNavigation = footerButton.Button.navigation;
         footerNavigation.mode = Navigation.Mode.Explicit;
@@ -419,6 +459,7 @@ public class ModsTab : MonoBehaviour
         footerButton.gameObject.Activate();
         AddOptions(mod);
         DredgeEvent.TriggerBuildModConfigMenu(mod, this);
+        RefreshOptionsForController();
         var firstSelectable = options.GetComponentInChildren<Selectable>();
         Navigation footerNavigation = footerButton.Button.navigation;
         footerNavigation.mode = Navigation.Mode.Explicit;
@@ -481,7 +522,7 @@ public class ModsTab : MonoBehaviour
 
         SetupButtonTooltip(wrapper, name, text, tooltip);
 
-        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
+        AddScrollMagnets(button.transform, optionsScroller);
         modOptions.Add(button.transform);
 
         return wrapper;
@@ -548,7 +589,7 @@ public class ModsTab : MonoBehaviour
 
         SetupButtonTooltip(wrapper, localizedLabel, localizedTooltip);
 
-        button.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
+        AddScrollMagnets(button.transform, optionsScroller);
         modOptions.Add(button.transform);
 
         return wrapper;
@@ -744,7 +785,8 @@ public class ModsTab : MonoBehaviour
         clone.key = key;
         clone.name = key;
 
-        AddScrollMagnet(clone);
+        MakeLabelSelectable(clone.gameObject);
+        AddInputScrollMagnet(clone);
 
         // Right side of the label row.
         AddLayoutSeparatorInput(modName, key + "End");
@@ -770,7 +812,7 @@ public class ModsTab : MonoBehaviour
         clone.modName = modName;
         clone.key = key;
         clone.name = key;
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -783,7 +825,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.SetSelectedValue(value);
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -799,7 +841,7 @@ public class ModsTab : MonoBehaviour
         clone.SetSelectedValue(value);
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -814,7 +856,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.Initialize(value, min, max);
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -828,7 +870,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value, min, max);
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -846,7 +888,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value);
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -859,7 +901,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.Initialize(value, options, optionStrings);
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -873,7 +915,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value, options, optionStrings);
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -886,7 +928,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.Initialize(value);
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -902,7 +944,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value);
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -915,7 +957,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.Initialize(value.ToString());
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -931,7 +973,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value.ToString());
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -944,7 +986,7 @@ public class ModsTab : MonoBehaviour
         clone.name = key;
         clone.Initialize(value.ToString());
         SetupTitle(clone, string.Empty, key);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -960,7 +1002,7 @@ public class ModsTab : MonoBehaviour
         clone.Initialize(value.ToString());
         SetupTitle(clone, title, key);
         SetupInputTooltip(clone, tooltip);
-        AddScrollMagnet(clone);
+        AddInputScrollMagnet(clone);
         return clone;
     }
 
@@ -985,9 +1027,33 @@ public class ModsTab : MonoBehaviour
         }
     }
 
-    public void AddScrollMagnet(Input input)
+    public void AddInputScrollMagnet(Input input)
     {
-        input.gameObject.AddComponent<ScrollRectMagnet>().scrollRect = optionsScroller;
+        if (input == null)
+            return;
+
+        AddScrollMagnets(input.transform, optionsScroller);
+    }
+
+    private static void AddScrollMagnets(
+        Transform root,
+        ScrollRect scrollRect
+    )
+    {
+        if (root == null || scrollRect == null)
+            return;
+
+        RectTransform scrollTarget = root as RectTransform;
+
+        foreach (var selectable in root.GetComponentsInChildren<Selectable>(true))
+        {
+            if (selectable == null)
+                continue;
+
+            var magnet = selectable.gameObject.GetOrAddComponent<TargetedScrollRectMagnet>();
+            magnet.scrollRect = scrollRect;
+            magnet.scrollTarget = scrollTarget;
+        }
     }
 
     public bool MoveOptionToStart(Transform option)
