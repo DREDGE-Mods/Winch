@@ -65,6 +65,9 @@ public class ModsTab : MonoBehaviour
     public List<Label> modLabels = new List<Label>();
     public List<Transform> modOptions = new List<Transform>();
 
+    private static bool _automaticNavigation = false;
+    public static bool AutomaticNavigation => _automaticNavigation;
+
     public void Awake()
     {
         Instance = this;
@@ -77,6 +80,7 @@ public class ModsTab : MonoBehaviour
     private const int OptionsBottomPadding = 24;
     private const float ControllerScrollDeadZone = 0.2f;
     private const float ControllerScrollSpeed = 500f; // Pixels per second
+    private const float NavigationRowTolerance = 4f;
 
     private void SetupOptionsPadding()
     {
@@ -151,12 +155,209 @@ public class ModsTab : MonoBehaviour
             return null;
 
         var selectable = gameObject.GetOrAddComponent<Selectable>();
-        var navigation = selectable.navigation;
-        navigation.mode = Navigation.Mode.Automatic;
-        selectable.navigation = navigation;
         selectable.interactable = true;
 
+        var uiSelectable = gameObject.GetOrAddComponent<UISelectable>();
+        uiSelectable.doesSelectableMove = true;
+        uiSelectable.delayForOneFrame = true;
+
+        if (AutomaticNavigation)
+        {
+            var navigation = selectable.navigation;
+            navigation.mode = Navigation.Mode.Automatic;
+            selectable.navigation = navigation;
+        }
+
         return selectable;
+    }
+
+    private static Selectable ConfigureScrollContentNavigation(
+        ScrollRect scrollRect,
+        Selectable fallbackTarget = null
+    )
+    {
+        if (scrollRect == null || scrollRect.content == null)
+            return null;
+
+        ForceScrollRectLayout(scrollRect);
+
+        var content = scrollRect.content;
+        var selectables = content
+            .GetComponentsInChildren<Selectable>(false)
+            .Where(selectable =>
+                selectable != null &&
+                selectable.gameObject.activeInHierarchy &&
+                selectable.interactable &&
+                IsTopLevelSelectable(selectable, content)
+            )
+            .OrderByDescending(selectable => GetSelectablePosition(selectable, content).y)
+            .ThenBy(selectable => GetSelectablePosition(selectable, content).x)
+            .ToList();
+
+        if (selectables.Count == 0)
+            return null;
+
+        var rows = new List<List<Selectable>>();
+        var rowY = new List<float>();
+
+        foreach (var selectable in selectables)
+        {
+            var position = GetSelectablePosition(selectable, content);
+
+            if (rows.Count == 0 ||
+                Mathf.Abs(position.y - rowY[rowY.Count - 1]) > NavigationRowTolerance)
+            {
+                rows.Add(new List<Selectable> { selectable });
+                rowY.Add(position.y);
+            }
+            else
+            {
+                rows[rows.Count - 1].Add(selectable);
+            }
+        }
+
+        foreach (var row in rows)
+        {
+            row.Sort((a, b) =>
+                GetSelectablePosition(a, content).x.CompareTo(
+                    GetSelectablePosition(b, content).x
+                )
+            );
+        }
+
+        for (var rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+        {
+            var row = rows[rowIndex];
+
+            for (var columnIndex = 0; columnIndex < row.Count; columnIndex++)
+            {
+                var selectable = row[columnIndex];
+                var navigation = selectable.navigation;
+
+                navigation.mode = Navigation.Mode.Explicit;
+
+                navigation.selectOnLeft =
+                    columnIndex > 0
+                        ? row[columnIndex - 1]
+                        : fallbackTarget;
+
+                navigation.selectOnRight =
+                    columnIndex + 1 < row.Count
+                        ? row[columnIndex + 1]
+                        : fallbackTarget;
+
+                navigation.selectOnUp =
+                    rowIndex > 0
+                        ? FindClosestOnRow(
+                            rows[rowIndex - 1],
+                            selectable,
+                            content
+                        )
+                        : fallbackTarget;
+
+                navigation.selectOnDown =
+                    rowIndex + 1 < rows.Count
+                        ? FindClosestOnRow(
+                            rows[rowIndex + 1],
+                            selectable,
+                            content
+                        )
+                        : fallbackTarget;
+
+                selectable.navigation = navigation;
+            }
+        }
+
+        return rows[0][0];
+    }
+
+    private static bool IsTopLevelSelectable(Selectable selectable, RectTransform content)
+    {
+        var parent = selectable.transform.parent;
+
+        while (parent != null && parent != content)
+        {
+            if (parent.GetComponent<Selectable>() != null)
+                return false;
+
+            parent = parent.parent;
+        }
+
+        return true;
+    }
+
+    private static Vector2 GetSelectablePosition(
+        Selectable selectable,
+        RectTransform content
+    )
+    {
+        var navigationTransform = GetNavigationTransform(
+            selectable.transform,
+            content
+        );
+
+        if (navigationTransform is not RectTransform rectTransform)
+        {
+            return content.InverseTransformPoint(
+                navigationTransform.position
+            );
+        }
+
+        return content.InverseTransformPoint(
+            rectTransform.TransformPoint(rectTransform.rect.center)
+        );
+    }
+
+    private static Transform GetNavigationTransform(
+        Transform transform,
+        RectTransform content
+    )
+    {
+        while (
+            transform.parent != null &&
+            transform.parent != content
+        )
+        {
+            transform = transform.parent;
+        }
+
+        return transform;
+    }
+
+    private static Selectable FindClosestOnRow(
+        IEnumerable<Selectable> row,
+        Selectable source,
+        RectTransform content
+    )
+    {
+        var sourceX = GetSelectablePosition(source, content).x;
+
+        return row
+            .OrderBy(selectable =>
+                Mathf.Abs(GetSelectablePosition(selectable, content).x - sourceX)
+            )
+            .FirstOrDefault();
+    }
+
+    private static Selectable FindBottomSelectable(ScrollRect scrollRect, Selectable source)
+    {
+        if (scrollRect == null || scrollRect.content == null || source == null)
+            return null;
+
+        var content = scrollRect.content;
+        var sourceWorldX = source.transform.position.x;
+
+        return content
+            .GetComponentsInChildren<Selectable>(false)
+            .Where(selectable =>
+                selectable != null &&
+                selectable.gameObject.activeInHierarchy &&
+                selectable.interactable &&
+                IsTopLevelSelectable(selectable, content)
+            )
+            .OrderBy(selectable => GetSelectablePosition(selectable, content).y)
+            .ThenBy(selectable => Mathf.Abs(selectable.transform.position.x - sourceWorldX))
+            .FirstOrDefault();
     }
 
     private static void HandleScrollInput(ScrollRect scroll)
@@ -313,6 +514,9 @@ public class ModsTab : MonoBehaviour
         {
             AddDisabledMod(mod);
         }
+
+        if (!AutomaticNavigation)
+            ConfigureScrollContentNavigation(listScroller);
     }
 
     public void AddWinch()
@@ -459,12 +663,37 @@ public class ModsTab : MonoBehaviour
         footerButton.gameObject.Activate();
         AddOptions(mod);
         DredgeEvent.TriggerBuildModConfigMenu(mod, this);
-        RefreshOptionsForController();
-        var firstSelectable = options.GetComponentInChildren<Selectable>();
+
+        modSettingsSubtabs.Open(mod);
+        ConfigureOptionsNavigation(modSettingsSubtabs.GetFirstSelectable());
+        ScrollToTop();
+    }
+
+    public void ConfigureOptionsNavigation(Selectable firstSelectable)
+    {
+        var activeScrollRect =
+            modSettingsSubtabs?.ActiveScrollRect ?? optionsScroller;
+
+        var bottomSelectable = firstSelectable;
+
+        if (!AutomaticNavigation)
+        {
+            var rebuiltFirstSelectable = ConfigureScrollContentNavigation(
+                activeScrollRect,
+                footerButton.Button
+            );
+
+            firstSelectable = rebuiltFirstSelectable ?? firstSelectable;
+
+            bottomSelectable =
+                FindBottomSelectable(activeScrollRect, footerButton.Button) ??
+                firstSelectable;
+        }
+
         Navigation footerNavigation = footerButton.Button.navigation;
         footerNavigation.mode = Navigation.Mode.Explicit;
-        footerNavigation.selectOnLeft = firstSelectable;
-        footerNavigation.selectOnUp = firstSelectable;
+        footerNavigation.selectOnLeft = bottomSelectable;
+        footerNavigation.selectOnUp = bottomSelectable;
         footerNavigation.selectOnDown = resumeButton.Button;
         footerButton.Button.navigation = footerNavigation;
         optionsControllerFocusGrabber.SetSelectable(firstSelectable);
@@ -485,7 +714,6 @@ public class ModsTab : MonoBehaviour
         resumeButton.Button.navigation = resumeNavigation;
         saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
         resetAllSettingsButton.Button.navigation = resetAllSettingsNavigation;
-        ScrollToTop();
     }
 
     public void AddOptions(ModAssembly mod)
