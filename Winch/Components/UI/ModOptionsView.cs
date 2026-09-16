@@ -44,24 +44,6 @@ public sealed class ModOptionsView : ModsView
         _layoutSeparators.Clear();
     }
 
-    public void RefreshAllInputs()
-    {
-        if (Content == null) return;
-
-        var inputs = Content.GetComponentsInChildren<Input>(true);
-        foreach (var input in inputs)
-        {
-            try
-            {
-                input.ForceRefresh();
-            }
-            catch (Exception ex)
-            {
-                WinchCore.Log.Error($"Error refreshing input '{input?.name}': {ex}");
-            }
-        }
-    }
-
 
     public void AddWinchOptions()
     {

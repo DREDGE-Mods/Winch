@@ -172,11 +172,6 @@ public class ModsTab : MonoBehaviour
         this.FireOnNextUpdate(ScrollToTop);
     }
 
-    public void RefreshAllInputs()
-    {
-        ModOptionsView?.RefreshAllInputs();
-    }
-
     public void ScrollToTop()
     {
         ModListView?.ScrollToTop();

@@ -64,6 +64,8 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
         }
     }
 
+    private ModConfig _modConfig;
+
     protected virtual void Start()
     {
         if (localizedStringField != null)
@@ -73,6 +75,24 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
         }
 
         RefreshTooltips();
+
+        if (!isWinch && ModConfig.TryGetConfig(modName, out var config))
+        {
+            _modConfig = config;
+            _modConfig.OnConfigValueChanged += OnConfigValueChanged;
+        }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (_modConfig != null)
+            _modConfig.OnConfigValueChanged -= OnConfigValueChanged;
+    }
+
+    private void OnConfigValueChanged(string changedKey)
+    {
+        if (changedKey == key)
+            ForceRefresh();
     }
 
     protected virtual void RefreshTooltips()
@@ -166,14 +186,12 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
         if (isWinch)
         {
             WinchConfig.ResetPropertyToDefault(key);
-            ForceRefresh();
             return;
         }
 
         if (ModConfig.TryGetConfig(modName, out var config))
         {
             config.ResetPropertyToDefault(key);
-            ForceRefresh();
         }
     }
 }
