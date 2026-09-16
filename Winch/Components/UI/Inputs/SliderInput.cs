@@ -1,33 +1,19 @@
-﻿using InControl;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Winch.Core;
 using Winch.Patches;
 
 namespace Winch.Components.UI.Inputs;
 
-public class SliderInput : Input, ISubmitHandler, IEventSystemHandler
+public class SliderInput : InnerFocusInput
 {
     [SerializeField]
     public bool retrieveSelectedValue = true;
 
     [SerializeField]
-    protected internal UISelectable uiSelectable;
-
-    [SerializeField]
     protected internal Slider slider;
 
-    [SerializeField]
-    protected internal Button sliderFocusButton;
-
-    [SerializeField]
-    protected internal SliderDisabler sliderDisabler;
-
-    [SerializeField]
-    protected internal SettingsDialog dialog;
-
-    private bool initialized = false;
+    protected override Selectable InnerSelectable => slider;
 
     public float MinValue
     {
@@ -47,85 +33,19 @@ public class SliderInput : Input, ISubmitHandler, IEventSystemHandler
         set => slider.value = value;
     }
 
-    protected virtual void OnEnable()
+    protected virtual void Awake()
     {
-        RefreshSlider();
-        RefreshInteractionState();
-        GameManager.Instance.Input.OnInputChanged += OnInputChanged;
-        sliderDisabler.SliderDeselected += OnSliderDeselected;
-        sliderDisabler.SliderSubmitted += OnSliderSubmitted;
+        slider.onValueChanged.AddListener(OnValueChanged);
     }
 
-    protected virtual void OnDisable()
+    protected override void RefreshOnEnable()
     {
-        GameManager.Instance.Input.OnInputChanged -= OnInputChanged;
-        sliderDisabler.SliderDeselected -= OnSliderDeselected;
-        sliderDisabler.SliderSubmitted -= OnSliderSubmitted;
+        RefreshSlider();
     }
 
     public override void OnForceRefresh()
     {
         RefreshSlider();
-    }
-
-    protected virtual void OnInputChanged(BindingSourceType bindingSourceType, InputDeviceStyle inputDeviceStyle)
-    {
-        RefreshInteractionState();
-    }
-
-    protected virtual void OnSliderFocusChanged(bool sliderHasInnerFocus)
-    {
-        DredgePlayerActionBase[] actions = new DredgePlayerActionPress[] { dialog.forceExitSliderFocusAction };
-        if (sliderHasInnerFocus)
-        {
-            ModsButtonPatcher.activeSlider = this;
-            ModsButtonPatcher.activeField = null;
-            dialog.activeSlider = null;
-            GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
-            GameManager.Instance.Input.AddActionListener(actions, ActionLayer.SYSTEM);
-        }
-        else
-        {
-            ModsButtonPatcher.activeSlider = null;
-            ModsButtonPatcher.activeField = null;
-            dialog.activeSlider = null;
-            GameManager.Instance.Input.RemoveActionListener(actions, ActionLayer.SYSTEM);
-            GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
-        }
-    }
-
-    protected virtual void OnSliderDeselected()
-    {
-        sliderFocusButton.interactable = true;
-        OnSliderFocusChanged(false);
-    }
-
-    public virtual void ForceDeselect()
-    {
-        slider.interactable = false;
-        EventSystem.current.SetSelectedGameObject(gameObject);
-        sliderFocusButton.Select();
-    }
-
-    protected virtual void OnSliderSubmitted()
-    {
-        slider.interactable = false;
-        EventSystem.current.SetSelectedGameObject(gameObject);
-        sliderFocusButton.Select();
-        OnSliderFocusChanged(false);
-    }
-
-    protected virtual void RefreshInteractionState()
-    {
-        bool flag = !GameManager.Instance.Input.IsUsingController;
-        slider.interactable = flag;
-        sliderFocusButton.interactable = !flag;
-        uiSelectable.enabled = !flag;
-    }
-
-    protected virtual void Awake()
-    {
-        slider.onValueChanged.AddListener(OnValueChanged);
     }
 
     protected virtual void RefreshSlider()
@@ -143,26 +63,16 @@ public class SliderInput : Input, ISubmitHandler, IEventSystemHandler
     protected virtual void OnValueChanged(float value)
     {
         if (!initialized) return;
-        WinchCore.Log.Debug(string.Format("[SliderInput] OnValueChanged({0})", value));
+
+        WinchCore.Log.Debug($"[SliderInput] OnValueChanged({value})");
         ChangeValue(value);
     }
 
     protected virtual void ChangeValue(float value)
     {
         if (!initialized) return;
-        SetConfigValue(value);
-    }
 
-    public virtual void OnSubmit(BaseEventData eventData)
-    {
-        slider.interactable = !slider.interactable;
-        sliderFocusButton.interactable = !slider.interactable;
-        if (slider.interactable)
-        {
-            EventSystem.current.SetSelectedGameObject(slider.gameObject);
-            slider.Select();
-            OnSliderFocusChanged(true);
-        }
+        SetConfigValue(value);
     }
 
     protected internal virtual void Initialize(float value, float min, float max)

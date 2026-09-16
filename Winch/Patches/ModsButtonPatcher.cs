@@ -16,8 +16,7 @@ namespace Winch.Patches;
 [HarmonyPatch]
 internal static class ModsButtonPatcher
 {
-    public static SliderInput activeSlider;
-    public static FieldInput activeField;
+    public static InnerFocusInput activeInnerFocusInput;
 
     [HarmonyPrefix]
     [HarmonyPriority(Priority.First)]
@@ -26,8 +25,7 @@ internal static class ModsButtonPatcher
     {
         try
         {
-            activeSlider = null;
-            activeField = null;
+            activeInnerFocusInput = null;
             var generalTabbedPanel = __instance.dialog.tabbedPanels.First();
             var controlsTabbedPanel = __instance.dialog.tabbedPanels.Last();
             var mapping = controlsTabbedPanel.panel.GetComponentInChildren<ControlMappingContainer>(true);
@@ -37,7 +35,7 @@ internal static class ModsButtonPatcher
             prefabs.SetParent(modsPanel.container.transform, false);
             var button = __instance.dialog.transform.Find("ButtonBar/ButtonContainer/ResumeButton").gameObject.Instantiate(prefabs, false).Rename("Button").GetComponent<BasicButtonWrapper>();
             button.gameObject.RemoveComponentImmediate<SettingsButton>();
-            button.gameObject.AddComponent<LocalizedLabel>();
+            button.GetOrAddComponent<LocalizedLabel>();
             button.GetComponent<UISelectable>().doesSelectableMove = true;
             button.GetComponent<UISelectable>().delayForOneFrame = true;
             button.gameObject.Activate();
@@ -53,7 +51,7 @@ internal static class ModsButtonPatcher
             var modsHeader = controlsTabbedPanel.panel.container.transform.Find("ControlEntriesHeader").Instantiate(modsPanel.container.transform, false).Rename("Header");
             modsHeader.DestroyAllChildrenImmediate(0);
             var headerText = modsHeader.Find("ActionLabel").Rename("LabelLocalized").gameObject;
-            var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).gameObject.AddComponent<LocalizedLabel>();
+            var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).GetOrAddComponent<LocalizedLabel>();
             var labelLocalized = headerTextLocalized.Instantiate(prefabs, false);
             labelLocalized.gameObject.Activate();
             var headerTextUnlocalized = headerText.AddComponent<Label>();
@@ -64,10 +62,10 @@ internal static class ModsButtonPatcher
             var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsPanel.container.transform, false).Rename("Footer");
             modsFooter.gameObject.FindChildWithExactName("ListeningFooter").DestroyImmediate();
             var footerRoot = modsFooter.Find("IdleFooter").Rename("Root");
-            var footerText = footerRoot.Find("Text").gameObject.AddComponent<LocalizedLabel>();
+            var footerText = footerRoot.Find("Text").GetOrAddComponent<LocalizedLabel>();
             var footerButton = footerRoot.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>(); // TODO: Make it so you can go back to mod options from this button with a controller
             footerButton.GetComponent<RectTransform>().sizeDelta = new Vector2(225, 50);
-            footerButton.gameObject.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("prompt.leave");
+            footerButton.GetOrAddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("prompt.leave");
             var modsList = modsListScroller.transform.Find("ControlList");
             modsList.transform.DestroyAllChildrenImmediate();
             var modOptionsScroller = modsListScroller.Instantiate(modsPanel.container.transform, false).Rename("ModOptions");
@@ -80,7 +78,7 @@ internal static class ModsButtonPatcher
             modsListGrid.startAxis = GridLayoutGroup.Axis.Vertical;
             modsListGrid.childAlignment = TextAnchor.UpperCenter;
             var modsTab = generalTabbedPanel.tab.Instantiate(generalTabbedPanel.tab.transform.parent, false).Rename("ModsTab").gameObject.AddComponent<ModsTab>();
-            modsTab.gameObject.AddComponent<LocalizedLabel>().LabelString = ModsTab.tabHeader;
+            modsTab.GetOrAddComponent<LocalizedLabel>().LabelString = ModsTab.tabHeader;
             modsTab.settingsDialog = __instance;
             modsTab.panel = modsPanel.GetComponent<TabbedPanel>();
             modsTab.tab = modsTab.GetComponent<TabUI>();
@@ -168,12 +166,14 @@ internal static class ModsButtonPatcher
             sliderInput.gameObject.RemoveComponentImmediate<SKUSpecificLocalizedString>();
             var sliderOld = sliderInput.GetComponent<SliderSettingInput>();
             sliderInput.slider = sliderOld.slider;
-            sliderInput.sliderDisabler = sliderOld.sliderDisabler;
-            sliderInput.sliderFocusButton = sliderOld.sliderFocusButton;
+            sliderInput.selectableDisabler = sliderOld.sliderDisabler.GetOrAddComponent<SelectableDisabler>();
+            sliderInput.focusButton = sliderOld.sliderFocusButton;
             sliderInput.uiSelectable = sliderOld.uiSelectable;
             sliderInput.localizedStringField = sliderOld.localizedStringField;
             sliderInput.textTooltipRequester = sliderOld.textTooltipRequester;
+            sliderInput.rootTextTooltipRequester = sliderInput.focusButton.GetOrAddComponent<TextTooltipRequester>();
             sliderInput.dialog = __instance;
+            sliderOld.sliderDisabler.DestroyImmediate();
             sliderOld.DestroyImmediate();
             sliderInput.gameObject.Activate();
 
@@ -199,7 +199,7 @@ internal static class ModsButtonPatcher
             inputField.image.sprite = dropdownInput.dropdown.image.sprite;
             inputField.image.color = dropdownInput.dropdown.image.color;
             var inputFieldPlaceholder = ((TMP_Text)inputField.placeholder);
-            inputFieldPlaceholder.color = dropdownInput.dropdown.itemText.color/2;
+            inputFieldPlaceholder.color = dropdownInput.dropdown.itemText.color / 2;
             inputFieldPlaceholder.enableAutoSizing = dropdownInput.dropdown.itemText.enableAutoSizing;
             inputField.textComponent.color = dropdownInput.dropdown.itemText.color;
             inputField.textComponent.enableAutoSizing = dropdownInput.dropdown.itemText.enableAutoSizing;
@@ -239,10 +239,11 @@ internal static class ModsButtonPatcher
             inputField.gameObject.RemoveComponentImmediate<AeLa.EasyFeedback.Utility.TabNext>();
             inputField.gameObject.AddComponent<UISelectable>();
             inputFieldContainer.uiSelectable = inputFieldOld.uiSelectable;
-            inputFieldContainer.focusButton = inputFieldOld.sliderFocusButton;
+            inputFieldContainer.focusButton = inputFieldOld.focusButton;
             inputFieldContainer.textTooltipRequester = inputField.gameObject.AddComponent<TextTooltipRequester>();
+            inputFieldContainer.rootTextTooltipRequester = inputFieldOld.rootTextTooltipRequester;
             inputField.gameObject.AddComponent<SettingsUIComponentEventNotifier>();
-            inputFieldContainer.selectableDisabler = inputField.gameObject.AddComponent<SelectableDisabler>();
+            inputFieldContainer.selectableDisabler = inputField.GetOrAddComponent<SelectableDisabler>();
             inputFieldContainer.dialog = __instance;
             UnityEngine.Object.DestroyImmediate(inputField.gameObject.GetComponent(AccessTools.TypeByName("AeLa.EasyFeedback.FormFields.TextField")));
             inputField.placeholder.gameObject.RemoveComponentImmediate<LocalizeStringEvent>();
@@ -267,6 +268,7 @@ internal static class ModsButtonPatcher
             integerInputField.uiSelectable = integerInputFieldOld.uiSelectable;
             integerInputField.focusButton = integerInputFieldOld.focusButton;
             integerInputField.textTooltipRequester = integerInputFieldOld.textTooltipRequester;
+            integerInputField.rootTextTooltipRequester = integerInputFieldOld.rootTextTooltipRequester;
             integerInputField.selectableDisabler = integerInputFieldOld.selectableDisabler;
             integerInputField.dialog = __instance;
             integerInputField.placeholder = integerInputFieldOld.placeholder;
@@ -280,6 +282,7 @@ internal static class ModsButtonPatcher
             decimalInputField.uiSelectable = decimalInputFieldOld.uiSelectable;
             decimalInputField.focusButton = decimalInputFieldOld.focusButton;
             decimalInputField.textTooltipRequester = decimalInputFieldOld.textTooltipRequester;
+            decimalInputField.rootTextTooltipRequester = decimalInputFieldOld.rootTextTooltipRequester;
             decimalInputField.selectableDisabler = decimalInputFieldOld.selectableDisabler;
             decimalInputField.dialog = __instance;
             decimalInputField.placeholder = decimalInputFieldOld.placeholder;
@@ -311,8 +314,7 @@ internal static class ModsButtonPatcher
     [HarmonyPatch(typeof(SettingsDialog), nameof(SettingsDialog.OnSliderFocusChanged))]
     public static void SettingsDialog_OnSliderFocusChanged_Prefix(SettingsDialog __instance)
     {
-        activeSlider = null;
-        activeField = null;
+        activeInnerFocusInput = null;
     }
 
     [HarmonyPrefix]
@@ -320,8 +322,7 @@ internal static class ModsButtonPatcher
     [HarmonyPatch(typeof(SettingsDialog), nameof(SettingsDialog.ForceSliderFocusExit))]
     public static void SettingsDialog_ForceSliderFocusExit_Prefix(SettingsDialog __instance)
     {
-        if (activeSlider != null) activeSlider.ForceDeselect();
-        if (activeField != null) activeField.ForceDeselect();
+        if (activeInnerFocusInput != null) activeInnerFocusInput.ForceDeselect();
     }
 
     [HarmonyPrefix]
@@ -396,8 +397,8 @@ internal static class ModsButtonPatcher
         {
             var modsButton = __instance.gameObject.InstantiateInactive(__instance.transform.parent, false).Rename("Mods");
             modsButton.RemoveComponentImmediate<SettingsButton>();
-            modsButton.AddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("menu.mods");
-            modsButton.AddComponent<ModsButton>();
+            modsButton.GetOrAddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("menu.mods");
+            modsButton.GetOrAddComponent<ModsButton>();
             modsButton.transform.SetSiblingIndex(3);
             modsButton.Activate();
         }

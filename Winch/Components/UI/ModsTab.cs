@@ -319,7 +319,7 @@ public class ModsTab : MonoBehaviour
     {
         var button = buttonPrefab.Instantiate(list, false).Rename("WinchButton");
         button.DeactivateButtonEffects();
-        button.GetComponent<LocalizedLabel>().LabelString = winchHeader;
+        button.GetOrAddComponent<LocalizedLabel>().LabelString = winchHeader;
         button.GetComponent<BasicButtonWrapper>().OnClick += () => OnWinchClicked();
         AddScrollMagnets(button.transform, listScroller);
         listControllerFocusGrabber.SetSelectable(button.GetComponent<BasicButton>());
@@ -579,7 +579,7 @@ public class ModsTab : MonoBehaviour
 
         button.gameObject.RemoveComponentImmediate<Label>();
 
-        var localized = button.gameObject.AddComponent<LocalizedLabel>();
+        var localized = button.GetOrAddComponent<LocalizedLabel>();
         localized.LabelString = localizedLabel;
 
         var wrapper = button.GetComponent<BasicButtonWrapper>();
@@ -770,12 +770,12 @@ public class ModsTab : MonoBehaviour
         if (string.IsNullOrWhiteSpace(title))
         {
             LocalizationUtil.AddEnglishModString(key, key.SplitPascalCase());
-            clone.GetComponent<LocalizedLabel>().LabelString =
+            clone.GetOrAddComponent<LocalizedLabel>().LabelString =
                 LocalizationUtil.CreateReference(key);
         }
         else
         {
-            clone.GetComponent<LocalizedLabel>().LabelString =
+            clone.GetOrAddComponent<LocalizedLabel>().LabelString =
                 LocalizationUtil.CreateReference(title);
         }
 
@@ -1050,9 +1050,13 @@ public class ModsTab : MonoBehaviour
             if (selectable == null)
                 continue;
 
-            var magnet = selectable.gameObject.GetOrAddComponent<TargetedScrollRectMagnet>();
+            var magnet = selectable.GetOrAddComponent<TargetedScrollRectMagnet>();
             magnet.scrollRect = scrollRect;
             magnet.scrollTarget = scrollTarget;
+
+            var uiSelectable = selectable.GetOrAddComponent<UISelectable>();
+            uiSelectable.doesSelectableMove = true;
+            uiSelectable.delayForOneFrame = true;
         }
     }
 

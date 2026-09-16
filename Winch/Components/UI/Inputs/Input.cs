@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
@@ -10,7 +11,6 @@ namespace Winch.Components.UI.Inputs;
 
 public abstract class Input : MonoBehaviour, ISettingsRefreshable
 {
-    [SerializeField]
     internal bool isWinch => modName == WinchCore.GUID;
 
     [SerializeField]
@@ -31,20 +31,26 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
     [SerializeField]
     protected LocalizedString tooltipDescriptionString = LocalizationUtil.Empty;
 
+    protected virtual IEnumerable<TextTooltipRequester> TooltipRequesters
+    {
+        get
+        {
+            if (textTooltipRequester != null)
+                yield return textTooltipRequester;
+        }
+    }
+
     public LocalizedString TitleString
     {
         get => localizedString;
         set
         {
             localizedString = value;
+
             if (localizedStringField != null)
-            {
                 localizedStringField.StringReference = value;
-            }
-            if (textTooltipRequester != null)
-            {
-                textTooltipRequester.LocalizedTitleKey = value;
-            }
+
+            RefreshTooltips();
         }
     }
 
@@ -54,18 +60,7 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
         set
         {
             tooltipDescriptionString = value;
-            if (textTooltipRequester != null)
-            {
-                if (value.IsEmpty)
-                {
-                    textTooltipRequester.enabled = false;
-                }
-                else
-                {
-                    textTooltipRequester.LocalizedDescriptionKey = value;
-                    textTooltipRequester.enabled = true;
-                }
-            }
+            RefreshTooltips();
         }
     }
 
@@ -76,17 +71,26 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
             localizedStringField.OnUpdateString.Invoke(string.Empty);
             localizedStringField.StringReference = localizedString;
         }
-        if (textTooltipRequester != null)
+
+        RefreshTooltips();
+    }
+
+    protected virtual void RefreshTooltips()
+    {
+        foreach (var requester in TooltipRequesters)
         {
-            textTooltipRequester.LocalizedTitleKey = localizedString;
+            if (requester == null) continue;
+
+            requester.LocalizedTitleKey = localizedString;
+
             if (tooltipDescriptionString.IsEmpty)
             {
-                textTooltipRequester.enabled = false;
+                requester.enabled = false;
             }
             else
             {
-                textTooltipRequester.LocalizedDescriptionKey = tooltipDescriptionString;
-                textTooltipRequester.enabled = true;
+                requester.LocalizedDescriptionKey = tooltipDescriptionString;
+                requester.enabled = true;
             }
         }
     }
