@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+using HarmonyLib;
+using System;
 using System.Linq;
 using UnityEngine.Localization.Components;
 using UnityEngine;
@@ -50,11 +51,11 @@ internal static class ModsButtonPatcher
             scrollbarRect.offsetMax = new Vector2(scrollbarRect.offsetMax.x, otherScroller.offsetMax.y);
             var modsHeader = controlsTabbedPanel.panel.container.transform.Find("ControlEntriesHeader").Instantiate(modsPanel.container.transform, false).Rename("Header");
             modsHeader.DestroyAllChildrenImmediate(0);
-            var headerText = modsHeader.Find("ActionLabel").Rename("LabelLocalized").gameObject;
-            var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).GetOrAddComponent<LocalizedLabel>();
-            var labelLocalized = headerTextLocalized.Instantiate(prefabs, false);
+            var headerText = modsHeader.Find("ActionLabel").gameObject;
+            var headerTextLocalized = headerText.Instantiate(headerText.transform.parent, false).Rename("HeaderLabelLocalized").GetOrAddComponent<LocalizedLabel>();
+            var labelLocalized = headerTextLocalized.Instantiate(prefabs, false).Rename("LabelLocalized");
             labelLocalized.gameObject.Activate();
-            var headerTextUnlocalized = headerText.AddComponent<Label>();
+            var headerTextUnlocalized = headerText.AddComponent<Label>().Rename("HeaderLabelUnlocalized");
             var label = headerTextUnlocalized.Instantiate(prefabs, false);
             label.gameObject.Rename("LabelUnlocalized").Activate();
             controlsTabbedPanel.panel.container.transform.Find("Image").Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
@@ -91,12 +92,11 @@ internal static class ModsButtonPatcher
             modsTab.resetAllSettingsButton = mapping.resetAllSettingsButton;
             modsTab.resumeButton = mapping.resumeButton;
             modsTab.saveAndQuitButton = mapping.saveAndQuitButton;
-            modsTab.list = modsList;
-            modsTab.options = modOptions;
-            modsTab.listScroller = modsListScroller;
-            modsTab.optionsScroller = modOptionsScroller;
-            modsTab.listControllerFocusGrabber = modsListScroller.gameObject.AddComponent<ControllerFocusGrabber>();
-            modsTab.optionsControllerFocusGrabber = modOptionsScroller.gameObject.AddComponent<ControllerFocusGrabber>();
+            modsTab.ModListView =
+                modsListScroller.gameObject.AddComponent<ModListView>();
+
+            modsTab.ModOptionsView =
+                modOptionsScroller.gameObject.AddComponent<ModOptionsView>();
 
             modsTab.buttonPrefab = button;
             modsTab.labelPrefab = label;
@@ -292,6 +292,8 @@ internal static class ModsButtonPatcher
             var separatorObj = new GameObject("Separator", typeof(RectTransform));
             separatorObj.transform.SetParent(prefabs, false);
             var separator = modsTab.separatorPrefab = separatorObj.AddComponent<SeparatorInput>();
+
+            modsTab.InitializeViews();
 
             var modsTabbedPanel = new TabConfig
             {

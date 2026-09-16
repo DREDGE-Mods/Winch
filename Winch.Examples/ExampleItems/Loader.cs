@@ -135,7 +135,7 @@ public static class Loader
     {
         if (assembly.GUID != GUID) return;
 
-        tab.AddOptionButtonLocalized("Button", "exampleitems.config.button", OnButtonClicked);
+        tab.ModOptionsView.AddOptionButtonLocalized("Button", "exampleitems.config.button", OnButtonClicked);
     }
 
     private static void OnButtonClicked()
