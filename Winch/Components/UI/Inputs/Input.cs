@@ -76,7 +76,11 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
 
         RefreshTooltips();
 
-        if (!isWinch && ModConfig.TryGetConfig(modName, out var config))
+        if (isWinch)
+        {
+            WinchConfig.Instance.OnConfigValueChanged += OnConfigValueChanged;
+        }
+        else if (ModConfig.TryGetConfig(modName, out var config))
         {
             _modConfig = config;
             _modConfig.OnConfigValueChanged += OnConfigValueChanged;
@@ -85,8 +89,14 @@ public abstract class Input : MonoBehaviour, ISettingsRefreshable
 
     protected virtual void OnDestroy()
     {
-        if (_modConfig != null)
+        if (isWinch)
+        {
+            WinchConfig.Instance.OnConfigValueChanged -= OnConfigValueChanged;
+        }
+        else if (_modConfig != null)
+        {
             _modConfig.OnConfigValueChanged -= OnConfigValueChanged;
+        }
     }
 
     private void OnConfigValueChanged(string changedKey)
