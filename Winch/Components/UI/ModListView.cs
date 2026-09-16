@@ -64,7 +64,8 @@ public sealed class ModListView : ModsView
     private static bool HasModSettings(ModAssembly mod)
     {
         return
-            (mod.Config != null && mod.Config.hasProperties);
+            (mod.Config != null && mod.Config.hasProperties) ||
+            RebindingUtil.HasRebindables(mod.GUID);
     }
 
     private void AddWinch()

@@ -31,20 +31,22 @@ public abstract class ModsView : MonoBehaviour
     public virtual void Initialize(ModsTab owner)
     {
         Owner = owner;
-        Scroller = GetComponent<ScrollRect>();
-        FocusGrabber = gameObject.GetOrAddComponent<ControllerFocusGrabber>();
+        Scroller = GetComponent<ScrollRect>() ?? GetComponentInChildren<ScrollRect>(true);
+
+        if (Scroller != null)
+            FocusGrabber = Scroller.gameObject.GetOrAddComponent<ControllerFocusGrabber>();
 
         ConfigureScrollRect();
     }
 
     public virtual void Show()
     {
-        Scroller?.gameObject.Activate();
+        gameObject.Activate();
     }
 
     public virtual void Hide()
     {
-        Scroller?.gameObject.Deactivate();
+        gameObject.Deactivate();
     }
 
     public virtual void Clear()

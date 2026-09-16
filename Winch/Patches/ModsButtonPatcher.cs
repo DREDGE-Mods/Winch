@@ -17,6 +17,21 @@ namespace Winch.Patches;
 [HarmonyPatch]
 internal static class ModsButtonPatcher
 {
+    private enum ModSettingsSubtabPlacement
+    {
+        Footer,
+        Header
+    }
+
+    // Change this between Footer and Header to compare the two layouts.
+    private const ModSettingsSubtabPlacement SubtabPlacement = ModSettingsSubtabPlacement.Header;
+
+    private const float SubtabButtonWidth = 225f;
+    private const float SubtabButtonHeight = 50f;
+    private const float SubtabButtonSpacing = 8f;
+    private const float FooterButtonInset = 8f;
+    private const float HeaderButtonInset = 20f;
+
     public static InnerFocusInput activeInnerFocusInput;
 
     [HarmonyPrefix]
@@ -58,13 +73,17 @@ internal static class ModsButtonPatcher
             var headerTextUnlocalized = headerText.AddComponent<Label>().Rename("HeaderLabelUnlocalized");
             var label = headerTextUnlocalized.Instantiate(prefabs, false);
             label.gameObject.Rename("LabelUnlocalized").Activate();
-            controlsTabbedPanel.panel.container.transform.Find("Image").Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
+
+            var scrollerTopImageSource = controlsTabbedPanel.panel.container.transform.Find("Image");
+            scrollerTopImageSource.Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
             controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsPanel.container.transform, false);
-            var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsPanel.container.transform, false).Rename("Footer");
-            modsFooter.gameObject.FindChildWithExactName("ListeningFooter").DestroyImmediate();
-            var footerRoot = modsFooter.Find("IdleFooter").Rename("Root");
-            var footerText = footerRoot.Find("Text").GetOrAddComponent<LocalizedLabel>();
-            var footerButton = footerRoot.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>(); // TODO: Make it so you can go back to mod options from this button with a controller
+
+            var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsPanel.container.transform, false);
+            var listeningFooter = modsFooter.Find("ListeningFooter");
+            var idleFooter = modsFooter.Find("IdleFooter");
+            listeningFooter.gameObject.Deactivate();
+            var footerText = idleFooter.Find("Text").GetOrAddComponent<LocalizedLabel>();
+            var footerButton = idleFooter.Find("ResetAllButton").Rename("BackButton").GetComponent<BasicButtonWrapper>(); // TODO: Make it so you can go back to mod options from this button with a controller
             footerButton.GetComponent<RectTransform>().sizeDelta = new Vector2(225, 50);
             footerButton.GetOrAddComponent<LocalizedLabel>().LabelString = LocalizationUtil.CreateStringsReference("prompt.leave");
             var modsList = modsListScroller.transform.Find("ControlList");
@@ -293,6 +312,24 @@ internal static class ModsButtonPatcher
             separatorObj.transform.SetParent(prefabs, false);
             var separator = modsTab.separatorPrefab = separatorObj.AddComponent<SeparatorInput>();
 
+            var controlEntryPrefab = mapping.controlEntryPrefab;
+
+            var controlItemEntryContainer = mapping.itemEntryContainer;
+
+            var controlEntriesHeader =
+                controlsTabbedPanel.panel.container.transform.Find("ControlEntriesHeader");
+
+            BuildModControlsUI(
+                modsTab,
+                controlEntryPrefab,
+                controlItemEntryContainer,
+                controlEntriesHeader,
+                scrollerTopImageSource,
+                idleFooter.gameObject,
+                listeningFooter.gameObject
+            );
+
+            CreateModSubtabs(modsTab, idleFooter);
             modsTab.InitializeViews();
 
             var modsTabbedPanel = new TabConfig
@@ -309,6 +346,264 @@ internal static class ModsButtonPatcher
         {
             WinchCore.Log.Error(e);
         }
+    }
+
+    private static void BuildModControlsUI(
+        ModsTab modsTab,
+        GameObject controlEntryPrefab,
+        RectTransform vanillaContent,
+        Transform controlEntriesHeader,
+        Transform scrollerTopImageSource,
+        GameObject idleFooter,
+        GameObject listeningFooter)
+    {
+        var optionsScroller =
+            modsTab.ModOptionsView.GetComponent<ScrollRect>();
+
+        var parent = optionsScroller.transform.parent;
+
+        var controlsRoot = new GameObject(
+            "ModControls",
+            typeof(RectTransform)
+        );
+
+        controlsRoot.transform.SetParent(parent, false);
+        controlsRoot.transform.SetSiblingIndex(
+            optionsScroller.transform.GetSiblingIndex() + 1
+        );
+
+        var controlsRootRect = controlsRoot.GetComponent<RectTransform>();
+
+        controlsRootRect.anchorMin = Vector2.zero;
+        controlsRootRect.anchorMax = Vector2.one;
+        controlsRootRect.offsetMin = Vector2.zero;
+        controlsRootRect.offsetMax = Vector2.zero;
+        controlsRootRect.localScale = Vector3.one;
+
+        var controlsScroller = optionsScroller
+            .Instantiate(controlsRoot.transform, false)
+            .Rename("Scroller");
+
+        controlsScroller.gameObject.RemoveComponentImmediate<ModOptionsView>();
+
+        var controlsContent = controlsScroller.content;
+
+        foreach (Transform child in controlsContent)
+            UnityEngine.Object.DestroyImmediate(child.gameObject);
+
+        CopyGridLayout(
+            vanillaContent.GetComponent<GridLayoutGroup>(),
+            controlsContent.GetComponent<GridLayoutGroup>()
+        );
+
+        CopyContentSizeFitter(
+            vanillaContent.GetComponent<ContentSizeFitter>(),
+            controlsContent.GetComponent<ContentSizeFitter>()
+        );
+
+        var oldMagnet = controlsScroller.GetComponent<ScrollRectMagnet>();
+
+        if (oldMagnet != null)
+            UnityEngine.Object.DestroyImmediate(oldMagnet);
+
+        var controlsHeader = controlEntriesHeader
+            .Instantiate(controlsRoot.transform, false)
+            .Rename("ActionHeader") as RectTransform;
+
+        var controlsScrollerTopImage = scrollerTopImageSource
+            .Instantiate(controlsRoot.transform, false)
+            .Rename("ScrollerTopImage") as RectTransform;
+        controlsScrollerTopImage.anchoredPosition += Vector2.down * controlsHeader.sizeDelta.y;
+
+        var controlsView = controlsRoot.AddComponent<ModControlsView>();
+
+        controlsView.Header = controlsHeader.gameObject;
+        controlsView.ScrollerTopImage = controlsScrollerTopImage.gameObject;
+
+        controlsView.ControlEntryPrefab = controlEntryPrefab;
+        controlsView.BottomSelectable = modsTab.footerButton.Button;
+        controlsView.IdleFooter = idleFooter;
+        controlsView.ListeningFooter = listeningFooter;
+
+        controlsRoot.Deactivate();
+
+        modsTab.ModControlsView = controlsView;
+    }
+
+    private static void CreateModSubtabs(
+        ModsTab modsTab,
+        Transform footerRoot)
+    {
+        var parent =
+            SubtabPlacement == ModSettingsSubtabPlacement.Footer
+                ? footerRoot
+                : modsTab.header;
+
+        modsTab.optionsSubtabButton = CreateSubtabButton(
+            modsTab,
+            parent,
+            "OptionsSubtab",
+            "OPTIONS",
+            modsTab.ShowOptions
+        );
+
+        modsTab.controlsSubtabButton = CreateSubtabButton(
+            modsTab,
+            parent,
+            "ControlsSubtab",
+            "CONTROLS",
+            modsTab.ShowControls
+        );
+
+        if (SubtabPlacement == ModSettingsSubtabPlacement.Footer)
+        {
+            PositionFooterSubtabs(
+                modsTab.footerButton.transform as RectTransform,
+                modsTab.optionsSubtabButton.transform as RectTransform,
+                modsTab.controlsSubtabButton.transform as RectTransform
+            );
+        }
+        else
+        {
+            PositionHeaderSubtabs(
+                modsTab.optionsSubtabButton.transform as RectTransform,
+                modsTab.controlsSubtabButton.transform as RectTransform
+            );
+
+            modsTab.optionsSubtabButton.transform.SetAsFirstSibling();
+            modsTab.controlsSubtabButton.transform.SetAsLastSibling();
+        }
+
+        modsTab.optionsSubtabButton.gameObject.Deactivate();
+        modsTab.controlsSubtabButton.gameObject.Deactivate();
+    }
+
+    private static BasicButtonWrapper CreateSubtabButton(
+        ModsTab modsTab,
+        Transform parent,
+        string name,
+        string text,
+        Action onClick)
+    {
+        var button = modsTab.buttonPrefab
+            .Instantiate(parent, false)
+            .Rename(name);
+
+        button.DeactivateButtonEffects();
+        button.gameObject.RemoveComponentImmediate<LocalizedLabel>();
+        button.gameObject.GetOrAddComponent<Label>().LabelString = text;
+        button.OnClick += onClick;
+
+        var rect = button.transform as RectTransform;
+        rect.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+
+        return button;
+    }
+
+    private static void PositionFooterSubtabs(
+        RectTransform leaveButton,
+        RectTransform optionsButton,
+        RectTransform controlsButton)
+    {
+        if (leaveButton == null || optionsButton == null || controlsButton == null)
+            return;
+
+        if (optionsButton.parent is not RectTransform footerRoot)
+            return;
+
+        // Keep the same vertical placement/style as Leave, but anchor these
+        // independently on the opposite side of the footer.
+        var yAnchor = (leaveButton.anchorMin.y + leaveButton.anchorMax.y) * 0.5f;
+        var y = leaveButton.anchoredPosition.y;
+
+        optionsButton.anchorMin = new Vector2(0.5f, yAnchor);
+        optionsButton.anchorMax = new Vector2(0.5f, yAnchor);
+        optionsButton.pivot = new Vector2(0f, leaveButton.pivot.y);
+        optionsButton.localScale = leaveButton.localScale;
+        optionsButton.localRotation = leaveButton.localRotation;
+        optionsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+
+        controlsButton.anchorMin = optionsButton.anchorMin;
+        controlsButton.anchorMax = optionsButton.anchorMax;
+        controlsButton.pivot = optionsButton.pivot;
+        controlsButton.localScale = leaveButton.localScale;
+        controlsButton.localRotation = leaveButton.localRotation;
+        controlsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+
+        // With a centered anchor and left-side pivot, the left edge of the
+        // footer is -width / 2. Options sits there; Controls sits beside it.
+        var left = -footerRoot.rect.width * 0.5f + FooterButtonInset;
+
+        optionsButton.anchoredPosition = new Vector2(left, y);
+        controlsButton.anchoredPosition = new Vector2(
+            left + SubtabButtonWidth + SubtabButtonSpacing,
+            y
+        );
+    }
+
+    private static void PositionHeaderSubtabs(
+        RectTransform optionsButton,
+        RectTransform controlsButton)
+    {
+        if (optionsButton == null || controlsButton == null)
+            return;
+
+        optionsButton.anchorMin = new Vector2(0f, 0.5f);
+        optionsButton.anchorMax = new Vector2(0f, 0.5f);
+        optionsButton.pivot = new Vector2(0f, 0.5f);
+        optionsButton.anchoredPosition = new Vector2(HeaderButtonInset, 0f);
+        optionsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+
+        controlsButton.anchorMin = new Vector2(1f, 0.5f);
+        controlsButton.anchorMax = new Vector2(1f, 0.5f);
+        controlsButton.pivot = new Vector2(1f, 0.5f);
+        controlsButton.anchoredPosition = new Vector2(-HeaderButtonInset, 0f);
+        controlsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+    }
+
+    private static void CopyRectPlacement(
+        RectTransform source,
+        RectTransform target)
+    {
+        target.anchorMin = source.anchorMin;
+        target.anchorMax = source.anchorMax;
+        target.pivot = source.pivot;
+        target.localScale = source.localScale;
+        target.localRotation = source.localRotation;
+        target.anchoredPosition = source.anchoredPosition;
+    }
+
+    private static void CopyGridLayout(
+        GridLayoutGroup source,
+        GridLayoutGroup target)
+    {
+        if (source == null || target == null)
+            return;
+
+        target.padding = new RectOffset(
+            source.padding.left,
+            source.padding.right,
+            source.padding.top,
+            source.padding.bottom
+        );
+        target.cellSize = source.cellSize;
+        target.spacing = source.spacing;
+        target.startCorner = source.startCorner;
+        target.startAxis = source.startAxis;
+        target.childAlignment = source.childAlignment;
+        target.constraint = source.constraint;
+        target.constraintCount = source.constraintCount;
+    }
+
+    private static void CopyContentSizeFitter(
+        ContentSizeFitter source,
+        ContentSizeFitter target)
+    {
+        if (source == null || target == null)
+            return;
+
+        target.horizontalFit = source.horizontalFit;
+        target.verticalFit = source.verticalFit;
     }
 
     [HarmonyPrefix]

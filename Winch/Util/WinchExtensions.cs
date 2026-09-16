@@ -1912,11 +1912,11 @@ public static class WinchExtensions
         return defaultValue;
     }
 
-    public static bool SafeAdd<T>(this IList<T> list, T value)
+    public static bool SafeAdd<T>(this ICollection<T> collection, T value)
     {
-        if (!list.Contains(value))
+        if (!collection.Contains(value))
         {
-            list.Add(value);
+            collection.Add(value);
             return true;
         }
         return false;

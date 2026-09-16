@@ -86,6 +86,8 @@
     "exampleitems.config.dropdown.option.three": "Third",
     "exampleitems.config.color.title": "Color",
     "exampleitems.config.color.tooltip": "A dropdown menu with stock colors",
+    "exampleitems.config.rebind.title": "Rebind",
+    "exampleitems.config.rebind.tooltip": "A rebindable control",
 
     "exampleitems.recipe.name": "Recipe Name",
     "exampleitems.recipe.description": "Recipe Description",
