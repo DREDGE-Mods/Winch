@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using InControl;
 using UnityEngine;
 using UnityEngine.AI;
 using Winch.Components.UI;
@@ -47,8 +48,34 @@ public static class Loader
         ModConfig.OnConfigValueChanged += ModConfig_OnConfigValueChanged; // This always runs after OnConfigChanged
         DredgeEvent.OnBuildModConfigMenu += OnBuildModConfigMenu;
 
-        RebindingUtil.RegisterRebindable(GUID, "rebind", "exampleitems.config.rebind.title", "exampleitems.config.rebind.tooltip", InControl.Key.F3, InControl.Mouse.MiddleButton, InControl.InputControlType.LeftStickButton, false);
-        RebindingUtil.RegisterRebindable(GUID, "unbind", "exampleitems.config.unbind.title", "exampleitems.config.unbind.tooltip", InControl.Key.F2, InControl.Mouse.None, InControl.InputControlType.RightStickButton, true);
+        ControlUtil.RegisterControl(
+            "rebindOnly",
+            "exampleitems.controls.rebindonly.title",
+            "exampleitems.controls.rebindonly.tooltip",
+            keyboard: Key.F3,
+            mouse: Mouse.MiddleButton,
+            controller: InputControlType.LeftStickButton,
+            rebindable: true,
+            unbindable: false
+        );
+        ControlUtil.RegisterControl(
+            "rebindAndUnbind",
+            "exampleitems.controls.rebindandunbind.title",
+            "exampleitems.controls.rebindandunbind.tooltip",
+            keyboard: Key.F2,
+            controller: InputControlType.RightStickButton,
+            rebindable: true,
+            unbindable: true
+        );
+        ControlUtil.RegisterControl(
+            "readOnly",
+            "exampleitems.controls.readonly.title",
+            "exampleitems.controls.readonly.tooltip",
+            keyboard: Key.F1,
+            controller: InputControlType.Start,
+            rebindable: false,
+            unbindable: true
+        );
 
         // Saves
         SaveUtil.RegisterDataParticipant(Participant);

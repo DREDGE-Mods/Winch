@@ -156,12 +156,12 @@ public sealed class ModControlsView : ModsView
     {
         Clear();
 
-        var rebindables = RebindingUtil.GetRebindables(mod.GUID);
+        var controls = ControlUtil.GetControls(mod.GUID);
         var alternatingColor = new Color(0f, 0f, 0f, 0f);
 
-        for (var i = 0; i < rebindables.Count; i++)
+        for (var i = 0; i < controls.Count; i++)
         {
-            var rebindable = rebindables[i];
+            var control = controls[i];
 
             var entry = CreateEntry();
 
@@ -175,13 +175,13 @@ public sealed class ModControlsView : ModsView
             }
 
             var canRebind =
-                _allowRebinding && rebindable.Rebindable;
+                _allowRebinding && control.Rebindable;
 
             var canUnbind =
-                canRebind && rebindable.Unbindable;
+                canRebind && control.Unbindable;
 
             entry.Init(
-                rebindable,
+                control,
                 canRebind,
                 canUnbind
             );
@@ -202,7 +202,7 @@ public sealed class ModControlsView : ModsView
             if (_allowRebinding && entry.ResetEntryUI != null)
             {
                 entry.ResetEntryUI.Init(
-                    rebindable.PlayerAction,
+                    control.PlayerAction,
                     canRebind
                 );
 

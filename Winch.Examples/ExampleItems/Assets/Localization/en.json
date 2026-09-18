@@ -86,10 +86,13 @@
     "exampleitems.config.dropdown.option.three": "Third",
     "exampleitems.config.color.title": "Color",
     "exampleitems.config.color.tooltip": "A dropdown menu with stock colors",
-    "exampleitems.config.rebind.title": "Rebind",
-    "exampleitems.config.rebind.tooltip": "A rebindable control",
-    "exampleitems.config.unbind.title": "Unbindable Rebind",
-    "exampleitems.config.unbind.tooltip": "An unbindable rebindable control",
+
+    "exampleitems.controls.rebindonly.title": "Rebind Only",
+    "exampleitems.controls.rebindonly.tooltip": "This control can be rebound, but its binding cannot be removed.",
+    "exampleitems.controls.rebindandunbind.title": "Rebind and Unbind",
+    "exampleitems.controls.rebindandunbind.tooltip": "This control can be rebound or have its binding removed.",
+    "exampleitems.controls.readonly.title": "Read-Only Control",
+    "exampleitems.controls.readonly.tooltip": "This control is shown in the controls menu, but its binding cannot be changed.",
 
     "exampleitems.recipe.name": "Recipe Name",
     "exampleitems.recipe.description": "Recipe Description",

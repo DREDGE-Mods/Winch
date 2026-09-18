@@ -2,7 +2,7 @@
 using InControl;
 using UnityEngine;
 using UnityEngine.Localization.Components;
-using Winch.Util;
+using Winch.Data;
 
 namespace Winch.Components.UI;
 
@@ -17,7 +17,7 @@ public sealed class ModControlEntryUI : MonoBehaviour
     [SerializeField]
     public ResetControlEntryUI resetEntryUI;
 
-    public ModRebindable ModRebindable { get; private set; }
+    public ModControl ModRebindable { get; private set; }
     public PlayerAction PlayerAction => ModRebindable?.PlayerAction;
     public bool Rebindable { get; private set; }
     public bool Unbindable { get; private set; }
@@ -26,7 +26,7 @@ public sealed class ModControlEntryUI : MonoBehaviour
     public ResetControlEntryUI ResetEntryUI => resetEntryUI;
 
     public void Init(
-        ModRebindable modRebindable,
+        ModControl modRebindable,
         bool rebindable,
         bool unbindable)
     {

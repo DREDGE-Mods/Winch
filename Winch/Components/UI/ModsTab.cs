@@ -69,7 +69,7 @@ public class ModsTab : MonoBehaviour
     public bool ShowingControls => CurrentView == ModsTabView.ModControls;
 
     public bool HasCurrentModControls =>
-        currentMod != null && RebindingUtil.HasRebindables(currentMod.GUID);
+        currentMod != null && ControlUtil.HasControls(currentMod.GUID);
 
     private DredgePlayerActionPress _closeAction;
     private bool _closeActionEnabled;

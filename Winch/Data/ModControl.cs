@@ -1,9 +1,9 @@
 using InControl;
 using UnityEngine.Localization;
 
-namespace Winch.Util;
+namespace Winch.Data;
 
-public sealed class ModRebindable
+public sealed class ModControl
 {
     public string ModGUID { get; }
     public string Key { get; }
@@ -13,7 +13,7 @@ public sealed class ModRebindable
     public bool Rebindable { get; }
     public bool Unbindable { get; }
 
-    internal ModRebindable(
+    internal ModControl(
         string modGUID,
         string key,
         PlayerAction playerAction,
