@@ -23,7 +23,7 @@ public abstract class ModsView : MonoBehaviour
 
     public abstract ModsTabView ViewType { get; }
 
-    protected virtual Selectable SubtabSelectable => null;
+    protected virtual Selectable CurrentSubtabSelectable => null;
 
     public virtual Selectable FirstSelectable =>
         GetTopLevelSelectables()
@@ -83,7 +83,7 @@ public abstract class ModsView : MonoBehaviour
         selectable.Select();
     }
 
-    public virtual Selectable ConfigureNavigation(Selectable fallbackTarget = null)
+    public virtual Selectable ConfigureNavigation(Navigation fallbackNavigation = default)
     {
         if (Scroller == null || Content == null)
             return null;
@@ -138,22 +138,22 @@ public abstract class ModsView : MonoBehaviour
                 navigation.selectOnLeft =
                     columnIndex > 0
                         ? row[columnIndex - 1]
-                        : fallbackTarget;
+                        : fallbackNavigation.selectOnLeft;
 
                 navigation.selectOnRight =
                     columnIndex + 1 < row.Count
                         ? row[columnIndex + 1]
-                        : fallbackTarget;
+                        : fallbackNavigation.selectOnRight;
 
                 navigation.selectOnUp =
                     rowIndex > 0
                         ? FindClosestOnRow(rows[rowIndex - 1], selectable)
-                        : fallbackTarget;
+                        : fallbackNavigation.selectOnUp;
 
                 navigation.selectOnDown =
                     rowIndex + 1 < rows.Count
                         ? FindClosestOnRow(rows[rowIndex + 1], selectable)
-                        : fallbackTarget;
+                        : fallbackNavigation.selectOnDown;
 
                 selectable.navigation = navigation;
             }
@@ -182,22 +182,33 @@ public abstract class ModsView : MonoBehaviour
         if (Owner == null)
             return;
 
+        var footerSelectable = Owner.footerButton?.Button;
+        var subtabSelectables = GetSubtabSelectables();
+        var currentSubtabSelectable = CurrentSubtabSelectable;
         var firstSelectable = FirstSelectable;
 
         if (!ModsTab.AutomaticNavigation)
         {
+            var fallbackNavigation = new Navigation
+            {
+                mode = Navigation.Mode.Explicit,
+                selectOnLeft = footerSelectable,
+                selectOnRight = footerSelectable,
+                selectOnUp = currentSubtabSelectable ?? footerSelectable,
+                selectOnDown = footerSelectable
+            };
+
             firstSelectable =
-                ConfigureNavigation(Owner.footerButton?.Button) ??
+                ConfigureNavigation(fallbackNavigation) ??
                 firstSelectable;
         }
 
-        var footerSelectable = Owner.footerButton?.Button;
         var bottomSelectable =
             FindBottomSelectable(footerSelectable) ??
             firstSelectable;
 
-        ConfigureFooterNavigation(bottomSelectable, SubtabSelectable);
-        ConfigureSubtabNavigation(SubtabSelectable);
+        ConfigureFooterNavigation(bottomSelectable, subtabSelectables);
+        ConfigureSubtabNavigation(subtabSelectables, firstSelectable);
 
         if (firstSelectable != null)
             Select(firstSelectable);
@@ -299,9 +310,30 @@ public abstract class ModsView : MonoBehaviour
         resetAllSettingsButton.navigation = resetAllSettingsNavigation;
     }
 
+    private List<Selectable> GetSubtabSelectables()
+    {
+        var selectables = new List<Selectable>();
+
+        if (Owner?.HasCurrentModControls != true)
+            return selectables;
+
+        if (Owner.ModOptionsView?.HasOptions == true &&
+            Owner.optionsSubtabButton?.Button != null)
+        {
+            selectables.Add(Owner.optionsSubtabButton.Button);
+        }
+
+        if (Owner.controlsSubtabButton?.Button != null)
+            selectables.Add(Owner.controlsSubtabButton.Button);
+
+        return selectables
+            .OrderBy(selectable => selectable.transform.position.x)
+            .ToList();
+    }
+
     private void ConfigureFooterNavigation(
         Selectable bottomSelectable,
-        Selectable subtabSelectable)
+        IReadOnlyList<Selectable> subtabSelectables)
     {
         var footerButton = Owner?.footerButton?.Button;
         if (footerButton == null)
@@ -309,26 +341,46 @@ public abstract class ModsView : MonoBehaviour
 
         var navigation = footerButton.navigation;
         navigation.mode = Navigation.Mode.Explicit;
-        navigation.selectOnLeft = subtabSelectable ?? bottomSelectable;
-        navigation.selectOnRight = subtabSelectable ?? bottomSelectable;
+        navigation.selectOnLeft =
+            subtabSelectables.Count > 0
+                ? subtabSelectables[subtabSelectables.Count - 1]
+                : bottomSelectable;
+        navigation.selectOnRight =
+            subtabSelectables.Count > 0
+                ? subtabSelectables[0]
+                : bottomSelectable;
         navigation.selectOnUp = bottomSelectable;
         navigation.selectOnDown = Owner.resumeButton?.Button;
         footerButton.navigation = navigation;
     }
 
-    private void ConfigureSubtabNavigation(Selectable subtabSelectable)
+    private void ConfigureSubtabNavigation(
+        IReadOnlyList<Selectable> subtabSelectables,
+        Selectable firstSelectable)
     {
         var footerButton = Owner?.footerButton?.Button;
-        if (subtabSelectable == null || footerButton == null)
+        if (footerButton == null)
             return;
 
-        var navigation = subtabSelectable.navigation;
-        navigation.mode = Navigation.Mode.Explicit;
-        navigation.selectOnLeft = footerButton;
-        navigation.selectOnRight = footerButton;
-        navigation.selectOnUp = footerButton;
-        navigation.selectOnDown = footerButton;
-        subtabSelectable.navigation = navigation;
+        for (var i = 0; i < subtabSelectables.Count; i++)
+        {
+            var subtabSelectable = subtabSelectables[i];
+            var navigation = subtabSelectable.navigation;
+
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnLeft =
+                i > 0
+                    ? subtabSelectables[i - 1]
+                    : footerButton;
+            navigation.selectOnRight =
+                i + 1 < subtabSelectables.Count
+                    ? subtabSelectables[i + 1]
+                    : footerButton;
+            navigation.selectOnUp = footerButton;
+            navigation.selectOnDown = firstSelectable;
+
+            subtabSelectable.navigation = navigation;
+        }
     }
 
     public void HandleScrollInput()

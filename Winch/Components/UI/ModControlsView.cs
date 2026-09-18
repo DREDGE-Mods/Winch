@@ -26,10 +26,9 @@ public sealed class ModControlsView : ModsView
 
     public override ModsTabView ViewType => ModsTabView.ModControls;
 
-    protected override Selectable SubtabSelectable =>
-        Owner?.HasCurrentModControls == true &&
-        Owner.ModOptionsView?.HasOptions == true
-            ? Owner.optionsSubtabButton?.Button
+    protected override Selectable CurrentSubtabSelectable =>
+        Owner?.HasCurrentModControls == true
+            ? Owner.controlsSubtabButton?.Button
             : null;
 
     public GameObject Header { get; set; }
@@ -276,8 +275,55 @@ public sealed class ModControlsView : ModsView
     }
 
     public override Selectable ConfigureNavigation(
-        Selectable fallbackTarget = null)
+        Navigation fallbackNavigation = default)
     {
+        if (_entries.Count == 0)
+            return null;
+
+        var firstEntry = _entries[0];
+        foreach (var bindingEntry in firstEntry.ControlBindingEntryUIs)
+        {
+            var button = bindingEntry?.ButtonWrapper?.Button;
+            if (button == null)
+                continue;
+
+            var navigation = button.navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnUp = fallbackNavigation.selectOnUp;
+            button.navigation = navigation;
+        }
+
+        if (_allowRebinding && firstEntry.ResetEntryUI != null)
+        {
+            var resetButton = firstEntry.ResetEntryUI.ButtonWrapper.Button;
+            var navigation = resetButton.navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnUp = fallbackNavigation.selectOnUp;
+            resetButton.navigation = navigation;
+        }
+
+        var lastEntry = _entries[_entries.Count - 1];
+        foreach (var bindingEntry in lastEntry.ControlBindingEntryUIs)
+        {
+            var button = bindingEntry?.ButtonWrapper?.Button;
+            if (button == null)
+                continue;
+
+            var navigation = button.navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnDown = fallbackNavigation.selectOnDown;
+            button.navigation = navigation;
+        }
+
+        if (_allowRebinding && lastEntry.ResetEntryUI != null)
+        {
+            var resetButton = lastEntry.ResetEntryUI.ButtonWrapper.Button;
+            var navigation = resetButton.navigation;
+            navigation.mode = Navigation.Mode.Explicit;
+            navigation.selectOnDown = fallbackNavigation.selectOnDown;
+            resetButton.navigation = navigation;
+        }
+
         return FirstSelectable;
     }
 

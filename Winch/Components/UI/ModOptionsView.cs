@@ -25,9 +25,9 @@ public sealed class ModOptionsView : ModsView
 
     public override ModsTabView ViewType => ModsTabView.ModOptions;
 
-    protected override Selectable SubtabSelectable =>
+    protected override Selectable CurrentSubtabSelectable =>
         Owner?.HasCurrentModControls == true
-            ? Owner.controlsSubtabButton?.Button
+            ? Owner.optionsSubtabButton?.Button
             : null;
 
     public List<Transform> ModOptions { get; } = new();
