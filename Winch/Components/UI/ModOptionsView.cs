@@ -17,18 +17,13 @@ namespace Winch.Components.UI;
 public sealed class ModOptionsView : ModsView
 {
     public static readonly LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
-    public static readonly LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
+    public static readonly LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.tab.options");
 
     private const int BottomPadding = 24;
 
     private readonly HashSet<Transform> _layoutSeparators = new();
 
     public override ModsTabView ViewType => ModsTabView.ModOptions;
-
-    protected override Selectable CurrentSubtabSelectable =>
-        Owner?.HasCurrentModControls == true
-            ? Owner.optionsSubtabButton?.Button
-            : null;
 
     public List<Transform> ModOptions { get; } = new();
 
@@ -53,12 +48,6 @@ public sealed class ModOptionsView : ModsView
             ShowLocalizedHeader(winchHeader);
 
         SetFooter(footerOptions, true);
-
-        var hasControls = Owner?.HasCurrentModControls == true;
-        SetSubtabButtonsVisible(hasControls);
-
-        Owner?.optionsSubtabButton?.SetCanBeClicked(false);
-        Owner?.controlsSubtabButton?.SetCanBeClicked(hasControls);
     }
 
     public override void Clear()

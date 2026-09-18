@@ -11,6 +11,7 @@ using Winch.Util;
 using UnityEngine.EventSystems;
 using Winch.Components.UI;
 using Winch.Components.UI.Inputs;
+using UnityEngine.Localization;
 
 namespace Winch.Patches;
 
@@ -439,65 +440,76 @@ internal static class ModsButtonPatcher
                 ? footerRoot
                 : modsTab.header;
 
-        modsTab.optionsSubtabButton = CreateSubtabButton(
+        var optionsSubtabButton = CreateSubtabButton(
             modsTab,
             parent,
+            ModsTabView.ModOptions,
             "OptionsSubtab",
-            "OPTIONS",
-            modsTab.ShowOptions
+            ModOptionsView.footerOptions
         );
 
-        modsTab.controlsSubtabButton = CreateSubtabButton(
+        var controlsSubtabButton = CreateSubtabButton(
             modsTab,
             parent,
+            ModsTabView.ModControls,
             "ControlsSubtab",
-            "CONTROLS",
-            modsTab.ShowControls
+            ModControlsView.controls
         );
+
+        modsTab.subtabButtons = new[]
+        {
+            optionsSubtabButton,
+            controlsSubtabButton
+        };
 
         if (SubtabPlacement == ModSettingsSubtabPlacement.Footer)
         {
             PositionFooterSubtabs(
                 modsTab.footerButton.transform as RectTransform,
-                modsTab.optionsSubtabButton.transform as RectTransform,
-                modsTab.controlsSubtabButton.transform as RectTransform
+                optionsSubtabButton.Button.transform as RectTransform,
+                controlsSubtabButton.Button.transform as RectTransform
             );
         }
         else
         {
             PositionHeaderSubtabs(
-                modsTab.optionsSubtabButton.transform as RectTransform,
-                modsTab.controlsSubtabButton.transform as RectTransform
+                optionsSubtabButton.Button.transform as RectTransform,
+                controlsSubtabButton.Button.transform as RectTransform
             );
 
-            modsTab.optionsSubtabButton.transform.SetAsFirstSibling();
-            modsTab.controlsSubtabButton.transform.SetAsLastSibling();
+            optionsSubtabButton.transform.SetAsFirstSibling();
+            controlsSubtabButton.transform.SetAsLastSibling();
         }
 
-        modsTab.optionsSubtabButton.gameObject.Deactivate();
-        modsTab.controlsSubtabButton.gameObject.Deactivate();
+        optionsSubtabButton.gameObject.Deactivate();
+        controlsSubtabButton.gameObject.Deactivate();
     }
 
-    private static BasicButtonWrapper CreateSubtabButton(
+    private static ModsSubtabButton CreateSubtabButton(
         ModsTab modsTab,
         Transform parent,
+        ModsTabView view,
         string name,
-        string text,
-        Action onClick)
+        LocalizedString localizedLabel)
     {
         var button = modsTab.buttonPrefab
             .Instantiate(parent, false)
             .Rename(name);
 
         button.DeactivateButtonEffects();
-        button.gameObject.RemoveComponentImmediate<LocalizedLabel>();
-        button.gameObject.GetOrAddComponent<Label>().LabelString = text;
-        button.OnClick += onClick;
+        button.GetOrAddComponent<LocalizedLabel>().LabelString = localizedLabel;
+
+        var textField = button.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (textField != null)
+            textField.fontStyle = FontStyles.UpperCase;
 
         var rect = button.transform as RectTransform;
         rect.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
 
-        return button;
+        var subtabButton = button.gameObject.AddComponent<ModsSubtabButton>();
+        subtabButton.Initialize(modsTab, view, button);
+
+        return subtabButton;
     }
 
     private static void PositionFooterSubtabs(

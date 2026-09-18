@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using InControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Core;
 using Winch.Util;
@@ -11,6 +12,9 @@ namespace Winch.Components.UI;
 
 public sealed class ModControlsView : ModsView
 {
+    public static readonly LocalizedString controls = LocalizationUtil.CreateStringsReference("settings.tab.controls");
+    public static readonly LocalizedString footerIdle = LocalizationUtil.CreateStringsReference("settings.bindings.label.info-idle");
+
     private const float HeaderGap = 2f;
 
     private readonly List<ModControlEntryUI> _entries = new();
@@ -25,11 +29,6 @@ public sealed class ModControlsView : ModsView
     private bool _allowRebinding;
 
     public override ModsTabView ViewType => ModsTabView.ModControls;
-
-    protected override Selectable CurrentSubtabSelectable =>
-        Owner?.HasCurrentModControls == true
-            ? Owner.controlsSubtabButton?.Button
-            : null;
 
     public GameObject Header { get; set; }
     public GameObject ScrollerTopImage { get; set; }
@@ -228,19 +227,9 @@ public sealed class ModControlsView : ModsView
             ShowHeader(Owner.currentMod.Name);
 
         SetFooter(
-            LocalizationUtil.CreateStringsReference(
-                "settings.bindings.label.info-idle"
-            ),
+            footerIdle,
             true
         );
-
-        var hasControls = Owner?.HasCurrentModControls == true;
-        SetSubtabButtonsVisible(hasControls);
-
-        Owner?.optionsSubtabButton?.SetCanBeClicked(
-            hasControls && Owner.ModOptionsView?.HasOptions == true
-        );
-        Owner?.controlsSubtabButton?.SetCanBeClicked(false);
 
         UpdateFooter();
     }
@@ -610,6 +599,7 @@ public sealed class ModControlsView : ModsView
             return;
         }
 
+        Owner?.DisableTabShortcuts();
         entry.PlayerAction.ListenForBinding();
         UpdateFooter();
     }
@@ -643,6 +633,7 @@ public sealed class ModControlsView : ModsView
     private void OnPlayerActionBindingEnded(
         PlayerAction action)
     {
+        Owner?.EnableTabShortcuts();
         UpdateFooter();
     }
 
@@ -731,10 +722,7 @@ public sealed class ModControlsView : ModsView
     {
         if (Owner?.footerText != null)
         {
-            Owner.footerText.LabelString =
-                LocalizationUtil.CreateStringsReference(
-                    "settings.bindings.label.info-idle"
-                );
+            Owner.footerText.LabelString = footerIdle;
         }
 
         SetListeningFooter(

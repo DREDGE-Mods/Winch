@@ -48,8 +48,7 @@ public class ModsTab : MonoBehaviour
     public ModOptionsView ModOptionsView { get; set; }
     public ModControlsView ModControlsView { get; set; }
 
-    public BasicButtonWrapper optionsSubtabButton;
-    public BasicButtonWrapper controlsSubtabButton;
+    public ModsSubtabButton[] subtabButtons;
 
     public bool currentWinch;
     public ModAssembly currentMod;
@@ -72,7 +71,11 @@ public class ModsTab : MonoBehaviour
         currentMod != null && ControlUtil.HasControls(currentMod.GUID);
 
     private DredgePlayerActionPress _closeAction;
+    private DredgePlayerActionPress leftActionPress;
+    private DredgePlayerActionPress rightActionPress;
+
     private bool _closeActionEnabled;
+    private bool _tabShortcutsEnabled;
     private bool _viewsInitialized;
 
     private static bool _automaticNavigation = false;
@@ -103,6 +106,7 @@ public class ModsTab : MonoBehaviour
     {
         InitializeViews();
         InitializeCloseAction();
+        InitializeTabShortcuts();
 
         Refresh();
 
@@ -125,6 +129,8 @@ public class ModsTab : MonoBehaviour
     public void OnDisable()
     {
         DisableCloseAction();
+        DisableTabShortcuts();
+        ShowUnpauseAction();
 
         ResetAllSettingsButton.gameObject.Activate();
 
@@ -134,8 +140,15 @@ public class ModsTab : MonoBehaviour
 
     private void OnSliderFocusToggled(bool hasFocus)
     {
-        if (IsViewingMod)
-            settingsDialog.dialog.RemoveTabInput();
+        if (!IsViewingMod)
+            return;
+
+        settingsDialog.dialog.RemoveTabInput();
+
+        if (hasFocus)
+            DisableTabShortcuts();
+        else
+            EnableTabShortcuts();
     }
 
     public void Update()
@@ -226,20 +239,65 @@ public class ModsTab : MonoBehaviour
         ScrollToTop();
     }
 
-    public void ShowOptions()
+    public bool CanShowSubtab(ModsTabView view)
     {
-        if (!ModOptionsView.HasOptions)
-            return;
-
-        SetView(ModsTabView.ModOptions, updateNavigation: true);
+        return view switch
+        {
+            ModsTabView.ModOptions => ModOptionsView.HasOptions,
+            ModsTabView.ModControls => HasCurrentModControls,
+            _ => false
+        };
     }
 
-    public void ShowControls()
+    public ModsSubtabButton GetSubtabButton(ModsTabView view)
     {
-        if (!HasCurrentModControls)
+        if (subtabButtons == null)
+            return null;
+
+        foreach (var subtabButton in subtabButtons)
+        {
+            if (subtabButton != null && subtabButton.View == view)
+                return subtabButton;
+        }
+
+        return null;
+    }
+
+    private int GetShowableSubtabCount()
+    {
+        if (subtabButtons == null)
+            return 0;
+
+        var count = 0;
+
+        foreach (var subtabButton in subtabButtons)
+        {
+            if (subtabButton != null && CanShowSubtab(subtabButton.View))
+                count++;
+        }
+
+        return count;
+    }
+
+    private void RefreshSubtabButtons()
+    {
+        if (subtabButtons == null)
             return;
 
-        SetView(ModsTabView.ModControls, updateNavigation: true);
+        var visible = IsViewingMod && GetShowableSubtabCount() > 1;
+
+        foreach (var subtabButton in subtabButtons)
+        {
+            subtabButton?.Refresh(visible);
+        }
+    }
+
+    public void ShowSubtab(ModsTabView view)
+    {
+        if (!CanShowSubtab(view))
+            return;
+
+        SetView(view, updateNavigation: true);
     }
 
     private void SetView(
@@ -260,13 +318,16 @@ public class ModsTab : MonoBehaviour
         {
             HideUnpauseAction();
             EnableCloseAction();
+            EnableTabShortcuts();
         }
         else
         {
+            DisableTabShortcuts();
             DisableCloseAction();
             ShowUnpauseAction();
         }
 
+        RefreshSubtabButtons();
         UpdateResetButton();
 
         if (!updateNavigation || activeView == null)
@@ -274,6 +335,132 @@ public class ModsTab : MonoBehaviour
 
         activeView.ConfigureViewNavigation();
         activeView.ScrollToTop();
+    }
+
+    private void InitializeTabShortcuts()
+    {
+        if (leftActionPress != null || rightActionPress != null)
+            return;
+
+        leftActionPress = new DredgePlayerActionPress(
+            "Tab Left",
+            GameManager.Instance.Input.Controls.TabLeft
+        )
+        {
+            evaluateWhenPaused = true
+        };
+
+        rightActionPress = new DredgePlayerActionPress(
+            "Tab Right",
+            GameManager.Instance.Input.Controls.TabRight
+        )
+        {
+            evaluateWhenPaused = true
+        };
+    }
+
+    public void EnableTabShortcuts()
+    {
+        if (
+            _tabShortcutsEnabled ||
+            !IsViewingMod ||
+            GetShowableSubtabCount() <= 1 ||
+            leftActionPress == null ||
+            rightActionPress == null)
+        {
+            return;
+        }
+
+        var actions = new DredgePlayerActionBase[]
+        {
+            leftActionPress,
+            rightActionPress
+        };
+
+        GameManager.Instance.Input.AddActionListener(
+            actions,
+            ActionLayer.SYSTEM
+        );
+
+        leftActionPress.ClearListeners();
+        leftActionPress.OnPressComplete += OnLeftPressComplete;
+        leftActionPress.Enable();
+
+        rightActionPress.ClearListeners();
+        rightActionPress.OnPressComplete += OnRightPressComplete;
+        rightActionPress.Enable();
+
+        _tabShortcutsEnabled = true;
+    }
+
+    public void DisableTabShortcuts()
+    {
+        if (!_tabShortcutsEnabled)
+            return;
+
+        leftActionPress.Disable(dispatchPressEnd: true);
+        leftActionPress.ClearListeners();
+
+        rightActionPress.Disable(dispatchPressEnd: true);
+        rightActionPress.ClearListeners();
+
+        if (GameManager.Instance?.Input != null)
+        {
+            GameManager.Instance.Input.RemoveActionListener(
+                new DredgePlayerActionBase[]
+                {
+                    leftActionPress,
+                    rightActionPress
+                },
+                ActionLayer.SYSTEM
+            );
+        }
+
+        _tabShortcutsEnabled = false;
+    }
+
+    private void OnLeftPressComplete()
+    {
+        SwitchSubtab(-1);
+    }
+
+    private void OnRightPressComplete()
+    {
+        SwitchSubtab(1);
+    }
+
+    private void SwitchSubtab(int direction)
+    {
+        if (subtabButtons == null || subtabButtons.Length <= 1)
+            return;
+
+        var currentIndex = -1;
+
+        for (var i = 0; i < subtabButtons.Length; i++)
+        {
+            if (subtabButtons[i]?.View == CurrentView)
+            {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex < 0)
+            return;
+
+        for (var offset = 1; offset < subtabButtons.Length; offset++)
+        {
+            var index =
+                (currentIndex + direction * offset + subtabButtons.Length) %
+                subtabButtons.Length;
+
+            var subtabButton = subtabButtons[index];
+            if (subtabButton == null || !CanShowSubtab(subtabButton.View))
+                continue;
+
+            ShowSubtab(subtabButton.View);
+            return;
+        }
     }
 
     private void InitializeCloseAction()

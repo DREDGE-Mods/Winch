@@ -23,7 +23,17 @@ public abstract class ModsView : MonoBehaviour
 
     public abstract ModsTabView ViewType { get; }
 
-    protected virtual Selectable CurrentSubtabSelectable => null;
+    protected virtual Selectable CurrentSubtabSelectable
+    {
+        get
+        {
+            var subtabButton = Owner?.GetSubtabButton(ViewType);
+            if (subtabButton == null || !subtabButton.gameObject.activeInHierarchy)
+                return null;
+
+            return subtabButton.Button?.Button;
+        }
+    }
 
     public virtual Selectable FirstSelectable =>
         GetTopLevelSelectables()
@@ -207,7 +217,7 @@ public abstract class ModsView : MonoBehaviour
             FindBottomSelectable(footerSelectable) ??
             firstSelectable;
 
-        ConfigureFooterNavigation(bottomSelectable, subtabSelectables);
+        ConfigureFooterNavigation(firstSelectable, bottomSelectable, subtabSelectables);
         ConfigureSubtabNavigation(subtabSelectables, firstSelectable);
 
         if (firstSelectable != null)
@@ -255,15 +265,6 @@ public abstract class ModsView : MonoBehaviour
             Owner.footerText.LabelString = localizedString;
 
         Owner.footerButton?.gameObject.SetActive(showButton);
-    }
-
-    protected void SetSubtabButtonsVisible(bool visible)
-    {
-        if (Owner == null)
-            return;
-
-        Owner.optionsSubtabButton?.gameObject.SetActive(visible);
-        Owner.controlsSubtabButton?.gameObject.SetActive(visible);
     }
 
     protected void ConfigureSettingsBarNavigation(Navigation.Mode mode)
@@ -314,17 +315,21 @@ public abstract class ModsView : MonoBehaviour
     {
         var selectables = new List<Selectable>();
 
-        if (Owner?.HasCurrentModControls != true)
+        if (Owner?.subtabButtons == null)
             return selectables;
 
-        if (Owner.ModOptionsView?.HasOptions == true &&
-            Owner.optionsSubtabButton?.Button != null)
+        foreach (var subtabButton in Owner.subtabButtons)
         {
-            selectables.Add(Owner.optionsSubtabButton.Button);
-        }
+            if (
+                subtabButton == null ||
+                !subtabButton.gameObject.activeInHierarchy ||
+                subtabButton.Button?.Button == null)
+            {
+                continue;
+            }
 
-        if (Owner.controlsSubtabButton?.Button != null)
-            selectables.Add(Owner.controlsSubtabButton.Button);
+            selectables.Add(subtabButton.Button.Button);
+        }
 
         return selectables
             .OrderBy(selectable => selectable.transform.position.x)
@@ -332,6 +337,7 @@ public abstract class ModsView : MonoBehaviour
     }
 
     private void ConfigureFooterNavigation(
+        Selectable firstSelectable,
         Selectable bottomSelectable,
         IReadOnlyList<Selectable> subtabSelectables)
     {
@@ -348,9 +354,9 @@ public abstract class ModsView : MonoBehaviour
         navigation.selectOnRight =
             subtabSelectables.Count > 0
                 ? subtabSelectables[0]
-                : bottomSelectable;
+                : firstSelectable;
         navigation.selectOnUp = bottomSelectable;
-        navigation.selectOnDown = Owner.resumeButton?.Button;
+        navigation.selectOnDown = Owner.saveAndQuitButton?.Button;
         footerButton.navigation = navigation;
     }
 

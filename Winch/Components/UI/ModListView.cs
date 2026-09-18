@@ -15,7 +15,7 @@ public sealed class ModListView : ModsView
 {
     public static readonly LocalizedString winch = LocalizationUtil.CreateStringsReference("winch.name");
     public static readonly LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
-    public static readonly LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
+    public static readonly LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.tab.list");
 
     public override ModsTabView ViewType => ModsTabView.ModList;
 
@@ -28,7 +28,6 @@ public sealed class ModListView : ModsView
 
         ShowLocalizedHeader(tabHeader);
         SetFooter(footerList, false);
-        SetSubtabButtonsVisible(false);
         ConfigureSettingsBarNavigation(Navigation.Mode.Automatic);
 
         foreach (var button in ModButtons)
