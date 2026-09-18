@@ -766,4 +766,12 @@ public static class ControlUtil
     /// <returns><see langword="true"/> if the player action belongs to a registered mod control; otherwise, <see langword="false"/>.</returns>
     public static bool IsModdedAction(PlayerAction playerAction) =>
         ModdedActions.Contains(playerAction);
+
+    /// <summary>
+    /// Determines whether the <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> is a vanilla control.
+    /// </summary>
+    /// <param name="playerAction">The player action to check.</param>
+    /// <returns><see langword="true"/> if the player action is not registered as a mod control; otherwise, <see langword="false"/>.</returns>
+    public static bool IsVanillaAction(PlayerAction playerAction) =>
+        !ModdedActions.Contains(playerAction);
 }

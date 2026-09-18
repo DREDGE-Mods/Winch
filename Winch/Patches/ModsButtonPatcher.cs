@@ -18,20 +18,12 @@ namespace Winch.Patches;
 [HarmonyPatch]
 internal static class ModsButtonPatcher
 {
-    private enum ModSettingsSubtabPlacement
-    {
-        Footer,
-        Header
-    }
-
-    // Change this between Footer and Header to compare the two layouts.
-    private static readonly ModSettingsSubtabPlacement SubtabPlacement = ModSettingsSubtabPlacement.Header;
-
-    private const float SubtabButtonWidth = 225f;
-    private const float SubtabButtonHeight = 50f;
-    private const float SubtabButtonSpacing = 8f;
-    private const float FooterButtonInset = 8f;
-    private const float HeaderButtonInset = 20f;
+    private const float SubtabWidth = 225f;
+    private const float SubtabHeight = 50f;
+    private const float HeaderTabInset = 20f;
+    private const float HeaderControlPromptSpacing = 8f;
+    private const float HeaderTitleSpacing = 8f;
+    private const float HeaderTabBorderOverlap = 4f;
 
     public static InnerFocusInput activeInnerFocusInput;
 
@@ -76,8 +68,11 @@ internal static class ModsButtonPatcher
             label.gameObject.Rename("LabelUnlocalized").Activate();
 
             var scrollerTopImageSource = controlsTabbedPanel.panel.container.transform.Find("Image");
-            scrollerTopImageSource.Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
-            controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsPanel.container.transform, false);
+            var scrollerTopImage = scrollerTopImageSource.Instantiate(modsPanel.container.transform, false).Rename("ScrollerTopImage");
+            var scrollerBottomImage = controlsTabbedPanel.panel.container.transform.Find("ScrollerBottomImage").Instantiate(modsPanel.container.transform, false);
+
+            modsHeader.SetAsFirstSibling();
+            scrollerTopImage.SetAsFirstSibling();
 
             var modsFooter = controlsTabbedPanel.panel.container.transform.Find("Footers").Instantiate(modsPanel.container.transform, false);
             var listeningFooter = modsFooter.Find("ListeningFooter");
@@ -330,7 +325,16 @@ internal static class ModsButtonPatcher
                 listeningFooter.gameObject
             );
 
-            CreateModSubtabs(modsTab, idleFooter);
+            CreateModSubtabs(
+                modsTab,
+                controlsTabbedPanel.tab,
+                __instance.dialog.transform
+                    .Find("TopBar/LeftControlPrompt")
+                    .GetComponent<ControlPromptIcon>(),
+                __instance.dialog.transform
+                    .Find("TopBar/RightControlPrompt")
+                    .GetComponent<ControlPromptIcon>()
+            );
             modsTab.InitializeViews();
 
             var modsTabbedPanel = new TabConfig
@@ -433,144 +437,214 @@ internal static class ModsButtonPatcher
 
     private static void CreateModSubtabs(
         ModsTab modsTab,
-        Transform footerRoot)
+        TabUI tabPrefab,
+        ControlPromptIcon leftControlPromptPrefab,
+        ControlPromptIcon rightControlPromptPrefab)
     {
-        var parent =
-            SubtabPlacement == ModSettingsSubtabPlacement.Footer
-                ? footerRoot
-                : modsTab.header;
+        var leftControlPrompt = leftControlPromptPrefab
+            .Instantiate(modsTab.header, false)
+            .Rename("LeftControlPrompt");
 
-        var optionsSubtabButton = CreateSubtabButton(
+        var optionsSubtab = CreateSubtab(
             modsTab,
-            parent,
+            tabPrefab,
             ModsTabView.ModOptions,
             "OptionsSubtab",
             ModOptionsView.footerOptions
         );
 
-        var controlsSubtabButton = CreateSubtabButton(
+        var controlsSubtab = CreateSubtab(
             modsTab,
-            parent,
+            tabPrefab,
             ModsTabView.ModControls,
             "ControlsSubtab",
             ModControlsView.controls
         );
 
-        modsTab.subtabButtons = new[]
+        var rightControlPrompt = rightControlPromptPrefab
+            .Instantiate(modsTab.header, false)
+            .Rename("RightControlPrompt");
+
+        modsTab.subtabs = new[]
         {
-            optionsSubtabButton,
-            controlsSubtabButton
+            optionsSubtab,
+            controlsSubtab
         };
 
-        if (SubtabPlacement == ModSettingsSubtabPlacement.Footer)
-        {
-            PositionFooterSubtabs(
-                modsTab.footerButton.transform as RectTransform,
-                optionsSubtabButton.Button.transform as RectTransform,
-                controlsSubtabButton.Button.transform as RectTransform
-            );
-        }
-        else
-        {
-            PositionHeaderSubtabs(
-                optionsSubtabButton.Button.transform as RectTransform,
-                controlsSubtabButton.Button.transform as RectTransform
-            );
+        modsTab.leftControlPrompt = leftControlPrompt;
+        modsTab.rightControlPrompt = rightControlPrompt;
 
-            optionsSubtabButton.transform.SetAsFirstSibling();
-            controlsSubtabButton.transform.SetAsLastSibling();
-        }
+        modsTab.header.gameObject.RemoveComponentImmediate<HorizontalLayoutGroup>();
+        modsTab.header.gameObject.RemoveComponentImmediate<ContentSizeFitter>();
 
-        optionsSubtabButton.gameObject.Deactivate();
-        controlsSubtabButton.gameObject.Deactivate();
+        PositionHeaderContents(
+            modsTab.headerText.transform as RectTransform,
+            modsTab.headerTextLocalized.transform as RectTransform,
+            leftControlPrompt.transform as RectTransform,
+            optionsSubtab.transform as RectTransform,
+            controlsSubtab.transform as RectTransform,
+            rightControlPrompt.transform as RectTransform
+        );
+
+        leftControlPrompt.transform.SetAsFirstSibling();
+        optionsSubtab.transform.SetSiblingIndex(1);
+        controlsSubtab.transform.SetAsLastSibling();
+        rightControlPrompt.transform.SetAsLastSibling();
+
+        leftControlPrompt.gameObject.Deactivate();
+        optionsSubtab.gameObject.Deactivate();
+        controlsSubtab.gameObject.Deactivate();
+        rightControlPrompt.gameObject.Deactivate();
     }
 
-    private static ModsSubtabButton CreateSubtabButton(
+    private static ModsSubtab CreateSubtab(
         ModsTab modsTab,
-        Transform parent,
+        TabUI tabPrefab,
         ModsTabView view,
         string name,
         LocalizedString localizedLabel)
     {
-        var button = modsTab.buttonPrefab
-            .Instantiate(parent, false)
+        var tab = tabPrefab
+            .Instantiate(modsTab.header, false)
             .Rename(name);
 
-        button.DeactivateButtonEffects();
-        button.GetOrAddComponent<LocalizedLabel>().LabelString = localizedLabel;
+        tab.Button.onClick.RemoveAllListeners();
 
-        var textField = button.GetComponentInChildren<TextMeshProUGUI>(true);
-        if (textField != null)
-            textField.fontStyle = FontStyles.UpperCase;
+        var rect = tab.transform as RectTransform;
+        rect.sizeDelta = new Vector2(SubtabWidth, SubtabHeight);
 
-        var rect = button.transform as RectTransform;
-        rect.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+        var subtab = tab.gameObject.AddComponent<ModsSubtab>();
+        subtab.Initialize(
+            modsTab,
+            view,
+            tab,
+            localizedLabel
+        );
 
-        var subtabButton = button.gameObject.AddComponent<ModsSubtabButton>();
-        subtabButton.Initialize(modsTab, view, button);
-
-        return subtabButton;
+        return subtab;
     }
 
-    private static void PositionFooterSubtabs(
-        RectTransform leaveButton,
-        RectTransform optionsButton,
-        RectTransform controlsButton)
+    private static void PositionHeaderContents(
+        RectTransform headerText,
+        RectTransform headerTextLocalized,
+        RectTransform leftControlPrompt,
+        RectTransform optionsTab,
+        RectTransform controlsTab,
+        RectTransform rightControlPrompt)
     {
-        if (leaveButton == null || optionsButton == null || controlsButton == null)
+        if (
+            headerText == null ||
+            headerTextLocalized == null ||
+            leftControlPrompt == null ||
+            optionsTab == null ||
+            controlsTab == null ||
+            rightControlPrompt == null)
+        {
             return;
+        }
 
-        if (optionsButton.parent is not RectTransform footerRoot)
-            return;
+        var leftControlPromptWidth = leftControlPrompt.rect.width;
+        var rightControlPromptWidth = rightControlPrompt.rect.width;
 
-        // Keep the same vertical placement/style as Leave, but anchor these
-        // independently on the opposite side of the footer.
-        var yAnchor = (leaveButton.anchorMin.y + leaveButton.anchorMax.y) * 0.5f;
-        var y = leaveButton.anchoredPosition.y;
+        var leftTabX =
+            HeaderTabInset +
+            leftControlPromptWidth +
+            HeaderControlPromptSpacing;
 
-        optionsButton.anchorMin = new Vector2(0.5f, yAnchor);
-        optionsButton.anchorMax = new Vector2(0.5f, yAnchor);
-        optionsButton.pivot = new Vector2(0f, leaveButton.pivot.y);
-        optionsButton.localScale = leaveButton.localScale;
-        optionsButton.localRotation = leaveButton.localRotation;
-        optionsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+        var rightTabX =
+            HeaderTabInset +
+            rightControlPromptWidth +
+            HeaderControlPromptSpacing;
 
-        controlsButton.anchorMin = optionsButton.anchorMin;
-        controlsButton.anchorMax = optionsButton.anchorMax;
-        controlsButton.pivot = optionsButton.pivot;
-        controlsButton.localScale = leaveButton.localScale;
-        controlsButton.localRotation = leaveButton.localRotation;
-        controlsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+        PositionHeaderControlPrompt(
+            leftControlPrompt,
+            left: true,
+            inset: HeaderTabInset
+        );
 
-        // With a centered anchor and left-side pivot, the left edge of the
-        // footer is -width / 2. Options sits there; Controls sits beside it.
-        var left = -footerRoot.rect.width * 0.5f + FooterButtonInset;
+        PositionHeaderTab(
+            optionsTab,
+            left: true,
+            inset: leftTabX
+        );
 
-        optionsButton.anchoredPosition = new Vector2(left, y);
-        controlsButton.anchoredPosition = new Vector2(
-            left + SubtabButtonWidth + SubtabButtonSpacing,
-            y
+        PositionHeaderTab(
+            controlsTab,
+            left: false,
+            inset: rightTabX
+        );
+
+        PositionHeaderControlPrompt(
+            rightControlPrompt,
+            left: false,
+            inset: HeaderTabInset
+        );
+
+        var titleLeftInset =
+            leftTabX +
+            SubtabWidth +
+            HeaderTitleSpacing;
+
+        var titleRightInset =
+            rightTabX +
+            SubtabWidth +
+            HeaderTitleSpacing;
+
+        PositionHeaderTitle(
+            headerText,
+            titleLeftInset,
+            titleRightInset
+        );
+
+        PositionHeaderTitle(
+            headerTextLocalized,
+            titleLeftInset,
+            titleRightInset
         );
     }
 
-    private static void PositionHeaderSubtabs(
-        RectTransform optionsButton,
-        RectTransform controlsButton)
+    private static void PositionHeaderControlPrompt(
+        RectTransform rect,
+        bool left,
+        float inset)
     {
-        if (optionsButton == null || controlsButton == null)
+        rect.anchorMin = new Vector2(left ? 0f : 1f, 1f);
+        rect.anchorMax = new Vector2(left ? 0f : 1f, 1f);
+        rect.pivot = new Vector2(left ? 0f : 1f, 0.5f);
+        rect.anchoredPosition = new Vector2(
+            left ? inset : -inset,
+            -SubtabHeight * 0.5f
+        );
+    }
+
+    private static void PositionHeaderTab(
+        RectTransform rect,
+        bool left,
+        float inset)
+    {
+        rect.anchorMin = new Vector2(left ? 0f : 1f, 1f);
+        rect.anchorMax = new Vector2(left ? 0f : 1f, 1f);
+        rect.pivot = new Vector2(left ? 0f : 1f, 0.5f);
+        rect.anchoredPosition = new Vector2(
+            left ? inset : -inset,
+            -SubtabHeight * 0.5f - HeaderTabBorderOverlap
+        );
+        rect.sizeDelta = new Vector2(SubtabWidth, SubtabHeight);
+    }
+
+    private static void PositionHeaderTitle(
+        RectTransform rect,
+        float leftInset,
+        float rightInset)
+    {
+        if (rect == null)
             return;
 
-        optionsButton.anchorMin = new Vector2(0f, 0.5f);
-        optionsButton.anchorMax = new Vector2(0f, 0.5f);
-        optionsButton.pivot = new Vector2(0f, 0.5f);
-        optionsButton.anchoredPosition = new Vector2(HeaderButtonInset, 0f);
-        optionsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
-
-        controlsButton.anchorMin = new Vector2(1f, 0.5f);
-        controlsButton.anchorMax = new Vector2(1f, 0.5f);
-        controlsButton.pivot = new Vector2(1f, 0.5f);
-        controlsButton.anchoredPosition = new Vector2(-HeaderButtonInset, 0f);
-        controlsButton.sizeDelta = new Vector2(SubtabButtonWidth, SubtabButtonHeight);
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.offsetMin = new Vector2(leftInset, -SubtabHeight);
+        rect.offsetMax = new Vector2(-rightInset, 0f);
     }
 
     private static void CopyRectPlacement(
@@ -681,14 +755,22 @@ internal static class ModsButtonPatcher
             {
                 SettingsUtil.Create();
             }
-            if (ModsTab.Instance.currentWinch)
+            else if (ModsTab.Instance.ShowingOptions)
             {
-                WinchConfig.ResetToDefaultConfig();
+                if (ModsTab.Instance.currentWinch)
+                {
+                    WinchConfig.ResetToDefaultConfig();
+                }
+                else if (ModsTab.Instance.currentMod?.Config != null)
+                {
+                    ModsTab.Instance.currentMod.Config.ResetToDefaultConfig();
+                }
             }
-            else if (ModsTab.Instance.currentMod != null && ModsTab.Instance.currentMod.Config != null)
+            else if (ModsTab.Instance.ShowingControls)
             {
-                ModsTab.Instance.currentMod.Config.ResetToDefaultConfig();
+                ResetAllControls();
             }
+
             UnityEngine.Object.FindObjectsOfType<MonoBehaviour>(true).OfType<ISettingsRefreshable>().ToList().ForEach(ForceRefresh);
         }
         __instance.OnPopupDismissed?.Invoke();
@@ -697,6 +779,20 @@ internal static class ModsButtonPatcher
         {
             EventSystem.current.SetSelectedGameObject(__instance.gameObject);
         }
+    }
+
+    private static void ResetAllControls()
+    {
+        var mod = ModsTab.Instance.currentMod;
+        if (mod == null)
+            return;
+
+        foreach (var control in ControlUtil.GetControls(mod.GUID))
+        {
+            GameManager.Instance.Input.ResetBinding(control.PlayerAction);
+        }
+
+        ApplicationEvents.Instance.TriggerSettingChanged(SettingType.CONTROL_BINDINGS);
     }
 
     private static void ForceRefresh(ISettingsRefreshable refreshable) => refreshable.ForceRefresh();
@@ -719,5 +815,23 @@ internal static class ModsButtonPatcher
         {
             WinchCore.Log.Error(e);
         }
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(DredgeInputManager), nameof(DredgeInputManager.ResetAllBindings))]
+    public static bool ResetAllBindings_Prefix(
+        DredgeInputManager __instance)
+    {
+        foreach (var action in __instance.Controls.Actions.Where(ControlUtil.IsVanillaAction))
+        {
+            __instance.ResetBinding(action);
+        }
+
+        ApplicationEvents.Instance.TriggerSettingChanged(
+            SettingType.CONTROL_BINDINGS
+        );
+
+        return false;
     }
 }

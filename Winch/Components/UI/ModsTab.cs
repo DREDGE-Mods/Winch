@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.Localization;
 using Winch.Components.UI.Inputs;
 using Winch.Core;
@@ -44,11 +45,15 @@ public class ModsTab : MonoBehaviour
     public BasicButtonWrapper resumeButton;
     public BasicButtonWrapper saveAndQuitButton;
 
+    public AssetReference panelSwapSFX = AddressablesUtil.CreateAssetReferenceAudioClip("99a846b2939e13149ba4430721690747");
+
     public ModListView ModListView { get; set; }
     public ModOptionsView ModOptionsView { get; set; }
     public ModControlsView ModControlsView { get; set; }
 
-    public ModsSubtabButton[] subtabButtons;
+    public ModsSubtab[] subtabs;
+    public ControlPromptIcon leftControlPrompt;
+    public ControlPromptIcon rightControlPrompt;
 
     public bool currentWinch;
     public ModAssembly currentMod;
@@ -75,7 +80,7 @@ public class ModsTab : MonoBehaviour
     private DredgePlayerActionPress rightActionPress;
 
     private bool _closeActionEnabled;
-    private bool _tabShortcutsEnabled;
+    private bool _tabInputAdded;
     private bool _viewsInitialized;
 
     private static bool _automaticNavigation = false;
@@ -129,7 +134,7 @@ public class ModsTab : MonoBehaviour
     public void OnDisable()
     {
         DisableCloseAction();
-        DisableTabShortcuts();
+        RemoveTabInput();
         ShowUnpauseAction();
 
         ResetAllSettingsButton.gameObject.Activate();
@@ -146,9 +151,9 @@ public class ModsTab : MonoBehaviour
         settingsDialog.dialog.RemoveTabInput();
 
         if (hasFocus)
-            DisableTabShortcuts();
+            RemoveTabInput();
         else
-            EnableTabShortcuts();
+            AddTabInput();
     }
 
     public void Update()
@@ -249,15 +254,15 @@ public class ModsTab : MonoBehaviour
         };
     }
 
-    public ModsSubtabButton GetSubtabButton(ModsTabView view)
+    public ModsSubtab GetSubtab(ModsTabView view)
     {
-        if (subtabButtons == null)
+        if (subtabs == null)
             return null;
 
-        foreach (var subtabButton in subtabButtons)
+        foreach (var subtab in subtabs)
         {
-            if (subtabButton != null && subtabButton.View == view)
-                return subtabButton;
+            if (subtab != null && subtab.View == view)
+                return subtab;
         }
 
         return null;
@@ -265,31 +270,36 @@ public class ModsTab : MonoBehaviour
 
     private int GetShowableSubtabCount()
     {
-        if (subtabButtons == null)
+        if (subtabs == null)
             return 0;
 
         var count = 0;
 
-        foreach (var subtabButton in subtabButtons)
+        foreach (var subtab in subtabs)
         {
-            if (subtabButton != null && CanShowSubtab(subtabButton.View))
+            if (subtab != null && CanShowSubtab(subtab.View))
                 count++;
         }
 
         return count;
     }
 
-    private void RefreshSubtabButtons()
+    private void RefreshSubtabs()
     {
-        if (subtabButtons == null)
-            return;
+        var visible =
+            IsViewingMod &&
+            GetShowableSubtabCount() > 1;
 
-        var visible = IsViewingMod && GetShowableSubtabCount() > 1;
-
-        foreach (var subtabButton in subtabButtons)
+        if (subtabs != null)
         {
-            subtabButton?.Refresh(visible);
+            foreach (var subtab in subtabs)
+            {
+                subtab?.Refresh(visible);
+            }
         }
+
+        leftControlPrompt?.gameObject.SetActive(visible);
+        rightControlPrompt?.gameObject.SetActive(visible);
     }
 
     public void ShowSubtab(ModsTabView view)
@@ -304,6 +314,8 @@ public class ModsTab : MonoBehaviour
         ModsTabView view,
         bool updateNavigation)
     {
+        var wasViewingMod = IsViewingMod;
+
         ModListView?.Hide();
         ModOptionsView?.Hide();
         ModControlsView?.Hide();
@@ -313,21 +325,24 @@ public class ModsTab : MonoBehaviour
         var activeView = ActiveView;
         activeView?.Show();
 
-
         if (IsViewingMod)
         {
             HideUnpauseAction();
             EnableCloseAction();
-            EnableTabShortcuts();
+
+            if (!wasViewingMod)
+                AddTabInput();
+            else
+                EnableTabButtons();
         }
         else
         {
-            DisableTabShortcuts();
+            RemoveTabInput();
             DisableCloseAction();
             ShowUnpauseAction();
         }
 
-        RefreshSubtabButtons();
+        RefreshSubtabs();
         UpdateResetButton();
 
         if (!updateNavigation || activeView == null)
@@ -357,30 +372,35 @@ public class ModsTab : MonoBehaviour
         {
             evaluateWhenPaused = true
         };
+
+        leftControlPrompt?.Init(
+            leftActionPress,
+            leftActionPress.GetPrimaryPlayerAction()
+        );
+
+        rightControlPrompt?.Init(
+            rightActionPress,
+            rightActionPress.GetPrimaryPlayerAction()
+        );
     }
 
-    public void EnableTabShortcuts()
+    public void EnableTabInput()
     {
         if (
-            _tabShortcutsEnabled ||
             !IsViewingMod ||
-            GetShowableSubtabCount() <= 1 ||
-            leftActionPress == null ||
-            rightActionPress == null)
+            GetShowableSubtabCount() <= 1)
         {
             return;
         }
 
-        var actions = new DredgePlayerActionBase[]
-        {
-            leftActionPress,
-            rightActionPress
-        };
+        EnableTabShortcuts();
+        EnableTabButtons();
+    }
 
-        GameManager.Instance.Input.AddActionListener(
-            actions,
-            ActionLayer.SYSTEM
-        );
+    public void EnableTabShortcuts()
+    {
+        if (leftActionPress == null || rightActionPress == null)
+            return;
 
         leftActionPress.ClearListeners();
         leftActionPress.OnPressComplete += OnLeftPressComplete;
@@ -389,22 +409,92 @@ public class ModsTab : MonoBehaviour
         rightActionPress.ClearListeners();
         rightActionPress.OnPressComplete += OnRightPressComplete;
         rightActionPress.Enable();
+    }
 
-        _tabShortcutsEnabled = true;
+    public void EnableTabButtons()
+    {
+        if (subtabs == null)
+            return;
+
+        foreach (var subtab in subtabs)
+        {
+            if (subtab?.Tab?.Button == null)
+                continue;
+
+            subtab.Tab.Button.interactable =
+                CanShowSubtab(subtab.View);
+        }
+    }
+
+    public void DisableTabInput()
+    {
+        DisableTabShortcuts();
+        DisableTabButtons();
     }
 
     public void DisableTabShortcuts()
     {
-        if (!_tabShortcutsEnabled)
+        if (leftActionPress != null)
+        {
+            leftActionPress.Disable(dispatchPressEnd: true);
+            leftActionPress.ClearListeners();
+        }
+
+        if (rightActionPress != null)
+        {
+            rightActionPress.Disable(dispatchPressEnd: true);
+            rightActionPress.ClearListeners();
+        }
+    }
+
+    public void DisableTabButtons()
+    {
+        if (subtabs == null)
             return;
 
-        leftActionPress.Disable(dispatchPressEnd: true);
-        leftActionPress.ClearListeners();
+        foreach (var subtab in subtabs)
+        {
+            if (subtab?.Tab?.Button != null)
+                subtab.Tab.Button.interactable = false;
+        }
+    }
 
-        rightActionPress.Disable(dispatchPressEnd: true);
-        rightActionPress.ClearListeners();
+    private void AddTabInput()
+    {
+        if (
+            !IsViewingMod ||
+            GetShowableSubtabCount() <= 1 ||
+            leftActionPress == null ||
+            rightActionPress == null)
+        {
+            DisableTabInput();
+            return;
+        }
 
-        if (GameManager.Instance?.Input != null)
+        if (_tabInputAdded)
+        {
+            EnableTabButtons();
+            return;
+        }
+
+        GameManager.Instance.Input.AddActionListener(
+            new DredgePlayerActionBase[]
+            {
+                leftActionPress,
+                rightActionPress
+            },
+            ActionLayer.SYSTEM
+        );
+
+        _tabInputAdded = true;
+        EnableTabInput();
+    }
+
+    private void RemoveTabInput()
+    {
+        if (
+            _tabInputAdded &&
+            GameManager.Instance?.Input != null)
         {
             GameManager.Instance.Input.RemoveActionListener(
                 new DredgePlayerActionBase[]
@@ -414,9 +504,11 @@ public class ModsTab : MonoBehaviour
                 },
                 ActionLayer.SYSTEM
             );
+
+            _tabInputAdded = false;
         }
 
-        _tabShortcutsEnabled = false;
+        DisableTabInput();
     }
 
     private void OnLeftPressComplete()
@@ -431,14 +523,14 @@ public class ModsTab : MonoBehaviour
 
     private void SwitchSubtab(int direction)
     {
-        if (subtabButtons == null || subtabButtons.Length <= 1)
+        if (subtabs == null || subtabs.Length <= 1)
             return;
 
         var currentIndex = -1;
 
-        for (var i = 0; i < subtabButtons.Length; i++)
+        for (var i = 0; i < subtabs.Length; i++)
         {
-            if (subtabButtons[i]?.View == CurrentView)
+            if (subtabs[i]?.View == CurrentView)
             {
                 currentIndex = i;
                 break;
@@ -448,17 +540,18 @@ public class ModsTab : MonoBehaviour
         if (currentIndex < 0)
             return;
 
-        for (var offset = 1; offset < subtabButtons.Length; offset++)
+        for (var offset = 1; offset < subtabs.Length; offset++)
         {
             var index =
-                (currentIndex + direction * offset + subtabButtons.Length) %
-                subtabButtons.Length;
+                (currentIndex + direction * offset + subtabs.Length) %
+                subtabs.Length;
 
-            var subtabButton = subtabButtons[index];
-            if (subtabButton == null || !CanShowSubtab(subtabButton.View))
+            var subtab = subtabs[index];
+            if (subtab == null || !CanShowSubtab(subtab.View))
                 continue;
 
-            ShowSubtab(subtabButton.View);
+            ShowSubtab(subtab.View);
+            GameManager.Instance.AudioPlayer.PlaySFX(panelSwapSFX, AudioLayer.SFX_UI);
             return;
         }
     }
