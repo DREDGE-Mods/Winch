@@ -9,6 +9,9 @@ using Winch.Data;
 
 namespace Winch.Util;
 
+/// <summary>
+/// Provides methods for registering mod controls and creating their underlying <see cref="PlayerAction"/> instances.
+/// </summary>
 public static class ControlUtil
 {
     private static readonly Dictionary<string, List<ModControl>> Controls = new();
@@ -59,6 +62,16 @@ public static class ControlUtil
             "CreateTwoAxisPlayerAction(PlayerAction, PlayerAction, PlayerAction, PlayerAction)"
         );
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the current mod using the generated title localization key <c>{modGUID}.{key}.title</c>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
     public static PlayerAction RegisterControl(
         string key,
         Key? keyboard = null,
@@ -81,6 +94,10 @@ public static class ControlUtil
         );
     }
 
+    /// <inheritdoc cref="RegisterControl(string, Key?, Mouse?, InputControlType?, bool, bool)"/>
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the current mod using the generated title and tooltip localization keys <c>{modGUID}.{key}.title</c> and <c>{modGUID}.{key}.tooltip</c>.
+    /// </summary>
     public static PlayerAction RegisterControlWithTooltip(
         string key,
         Key? keyboard = null,
@@ -103,6 +120,18 @@ public static class ControlUtil
         );
     }
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the current mod using the localization keys specified by <paramref name="titleKey"/> and <paramref name="tooltipKey"/>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="titleKey">The localization key used for the control title.</param>
+    /// <param name="tooltipKey">The localization key used for the control tooltip, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
     public static PlayerAction RegisterControl(
         string key,
         string titleKey,
@@ -124,6 +153,18 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the current mod using the localized title specified by <paramref name="title"/>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="title">The localized title displayed for the control.</param>
+    /// <param name="tooltip">The localized tooltip displayed for the control, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
     public static PlayerAction RegisterControl(
         string key,
         LocalizedString title,
@@ -145,6 +186,17 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the mod specified by <paramref name="modGUID"/> using the generated title localization key <c>{modGUID}.{key}.title</c>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
     public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
@@ -165,6 +217,10 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <inheritdoc cref="RegisterControlExplicit(string, string, Key?, Mouse?, InputControlType?, bool, bool)"/>
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the mod specified by <paramref name="modGUID"/> using the generated title and tooltip localization keys <c>{modGUID}.{key}.title</c> and <c>{modGUID}.{key}.tooltip</c>.
+    /// </summary>
     public static PlayerAction RegisterControlExplicitWithTooltip(
         string modGUID,
         string key,
@@ -185,6 +241,19 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the mod specified by <paramref name="modGUID"/> using the localization keys specified by <paramref name="titleKey"/> and <paramref name="tooltipKey"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="titleKey">The localization key used for the control title.</param>
+    /// <param name="tooltipKey">The localization key used for the control tooltip, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
     public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
@@ -209,6 +278,20 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers a control specified by <paramref name="key"/> for the mod specified by <paramref name="modGUID"/> using the localized title specified by <paramref name="title"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="title">The localized title displayed for the control.</param>
+    /// <param name="tooltip">The localized tooltip displayed for the control, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="keyboard">The default keyboard binding, or <see langword="null"/> for no keyboard binding.</param>
+    /// <param name="mouse">The default mouse binding, or <see langword="null"/> for no mouse binding.</param>
+    /// <param name="controller">The default controller binding, or <see langword="null"/> for no controller binding.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="PlayerAction"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="modGUID"/> or <paramref name="key"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
@@ -251,6 +334,14 @@ public static class ControlUtil
         return action;
     }
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the current mod using the generated title localization key <c>{modGUID}.{key}.title</c>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
     public static ModControl RegisterControl(
         string key,
         PlayerAction playerAction,
@@ -269,6 +360,10 @@ public static class ControlUtil
         );
     }
 
+    /// <inheritdoc cref="RegisterControl(string, PlayerAction, bool, bool)"/>
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the current mod using the generated title and tooltip localization keys <c>{modGUID}.{key}.title</c> and <c>{modGUID}.{key}.tooltip</c>.
+    /// </summary>
     public static ModControl RegisterControlWithTooltip(
         string key,
         PlayerAction playerAction,
@@ -287,6 +382,16 @@ public static class ControlUtil
         );
     }
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the current mod using the localization keys specified by <paramref name="titleKey"/> and <paramref name="tooltipKey"/>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="titleKey">The localization key used for the control title.</param>
+    /// <param name="tooltipKey">The localization key used for the control tooltip, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
     public static ModControl RegisterControl(
         string key,
         PlayerAction playerAction,
@@ -304,6 +409,16 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the current mod using the localized title specified by <paramref name="title"/>.
+    /// </summary>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="title">The localized title displayed for the control.</param>
+    /// <param name="tooltip">The localized tooltip displayed for the control, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
     public static ModControl RegisterControl(
         string key,
         PlayerAction playerAction,
@@ -321,6 +436,15 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the mod specified by <paramref name="modGUID"/> using the generated title localization key <c>{modGUID}.{key}.title</c>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
     public static ModControl RegisterControlExplicit(
         string modGUID,
         string key,
@@ -337,6 +461,10 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <inheritdoc cref="RegisterControlExplicit(string, string, PlayerAction, bool, bool)"/>
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the mod specified by <paramref name="modGUID"/> using the generated title and tooltip localization keys <c>{modGUID}.{key}.title</c> and <c>{modGUID}.{key}.tooltip</c>.
+    /// </summary>
     public static ModControl RegisterControlExplicitWithTooltip(
         string modGUID,
         string key,
@@ -353,6 +481,17 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the mod specified by <paramref name="modGUID"/> using the localization keys specified by <paramref name="titleKey"/> and <paramref name="tooltipKey"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="titleKey">The localization key used for the control title.</param>
+    /// <param name="tooltipKey">The localization key used for the control tooltip, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
     public static ModControl RegisterControlExplicit(
         string modGUID,
         string key,
@@ -373,6 +512,18 @@ public static class ControlUtil
             rebindable
         );
 
+    /// <summary>
+    /// Registers the existing <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> as a control for the mod specified by <paramref name="modGUID"/> using the localized title specified by <paramref name="title"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <param name="playerAction">The player action to register.</param>
+    /// <param name="title">The localized title displayed for the control.</param>
+    /// <param name="tooltip">The localized tooltip displayed for the control, or <see langword="null"/> for no tooltip.</param>
+    /// <param name="unbindable">Whether the control's binding can be removed.</param>
+    /// <param name="rebindable">Whether the control's binding can be changed.</param>
+    /// <returns>The registered <see cref="ModControl"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="modGUID"/> or <paramref name="key"/> is <see langword="null"/>, empty, or whitespace, or <paramref name="playerAction"/> is <see langword="null"/>.</exception>
     public static ModControl RegisterControlExplicit(
         string modGUID,
         string key,
@@ -415,6 +566,11 @@ public static class ControlUtil
     private static string GetControlTooltipKey(string modGUID, string key) =>
         $"{GetPlayerActionKey(modGUID, key)}.tooltip";
 
+    /// <summary>
+    /// Gets the controls registered by the mod specified by <paramref name="modGUID"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod whose controls to get.</param>
+    /// <returns>The controls registered by the specified mod.</returns>
     public static IReadOnlyList<ModControl> GetControls(string modGUID)
     {
         if (string.IsNullOrWhiteSpace(modGUID))
@@ -425,6 +581,12 @@ public static class ControlUtil
             : Array.Empty<ModControl>();
     }
 
+    /// <summary>
+    /// Gets the control specified by <paramref name="key"/> registered by the mod specified by <paramref name="modGUID"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the control.</param>
+    /// <param name="key">The unique key used to identify the control.</param>
+    /// <returns>The matching <see cref="ModControl"/>, or <see langword="null"/> if no matching control is registered.</returns>
     public static ModControl GetControl(string modGUID, string key)
     {
         if (string.IsNullOrWhiteSpace(modGUID))
@@ -435,15 +597,36 @@ public static class ControlUtil
             : null;
     }
 
+    /// <summary>
+    /// Gets all registered mod controls.
+    /// </summary>
+    /// <returns>An enumerable containing all registered <see cref="ModControl"/> instances.</returns>
     public static IEnumerable<ModControl> GetAllControls() =>
         Controls.Values.SelectMany(x => x);
 
+    /// <summary>
+    /// Determines whether the mod specified by <paramref name="modGUID"/> has any registered controls.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod to check.</param>
+    /// <returns><see langword="true"/> if the mod has at least one registered control; otherwise, <see langword="false"/>.</returns>
     public static bool HasControls(string modGUID) =>
         Controls.TryGetValue(modGUID, out var values) && values.Count > 0;
 
+    /// <summary>
+    /// Creates a <see cref="PlayerAction"/> specified by <paramref name="key"/> for the current mod.
+    /// </summary>
+    /// <param name="key">The key appended to the current mod GUID to form the player action name.</param>
+    /// <returns>The created <see cref="PlayerAction"/>.</returns>
     public static PlayerAction CreatePlayerAction(string key) =>
         CreatePlayerAction(ModAssemblyLoader.GetCurrentModGUID(), key);
 
+    /// <summary>
+    /// Creates a <see cref="PlayerAction"/> specified by <paramref name="key"/> for the mod specified by <paramref name="modGUID"/>.
+    /// </summary>
+    /// <param name="modGUID">The GUID of the mod that owns the player action.</param>
+    /// <param name="key">The key appended to <paramref name="modGUID"/> to form the player action name.</param>
+    /// <returns>The created <see cref="PlayerAction"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="modGUID"/> or <paramref name="key"/> is <see langword="null"/>, empty, or whitespace.</exception>
     public static PlayerAction CreatePlayerAction(string modGUID, string key)
     {
         return CreatePlayerActionInternal(GetPlayerActionKey(modGUID, key));
@@ -474,6 +657,13 @@ public static class ControlUtil
         );
     }
 
+    /// <summary>
+    /// Creates a <see cref="PlayerOneAxisAction"/> from the <see cref="PlayerAction"/> instances specified by <paramref name="negativeAction"/> and <paramref name="positiveAction"/>.
+    /// </summary>
+    /// <param name="negativeAction">The action representing negative axis input.</param>
+    /// <param name="positiveAction">The action representing positive axis input.</param>
+    /// <returns>The created <see cref="PlayerOneAxisAction"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="negativeAction"/> or <paramref name="positiveAction"/> is <see langword="null"/>.</exception>
     public static PlayerOneAxisAction CreateOneAxisPlayerAction(
         PlayerAction negativeAction,
         PlayerAction positiveAction)
@@ -500,6 +690,15 @@ public static class ControlUtil
         );
     }
 
+    /// <summary>
+    /// Creates a <see cref="PlayerTwoAxisAction"/> from the directional <see cref="PlayerAction"/> instances specified by <paramref name="leftAction"/>, <paramref name="rightAction"/>, <paramref name="downAction"/>, and <paramref name="upAction"/>.
+    /// </summary>
+    /// <param name="leftAction">The action representing left input.</param>
+    /// <param name="rightAction">The action representing right input.</param>
+    /// <param name="downAction">The action representing down input.</param>
+    /// <param name="upAction">The action representing up input.</param>
+    /// <returns>The created <see cref="PlayerTwoAxisAction"/>.</returns>
+    /// <exception cref="ArgumentNullException">Any directional action is <see langword="null"/>.</exception>
     public static PlayerTwoAxisAction CreateTwoAxisPlayerAction(
         PlayerAction leftAction,
         PlayerAction rightAction,
@@ -560,6 +759,11 @@ public static class ControlUtil
 
     private static readonly HashSet<PlayerAction> ModdedActions = new();
 
+    /// <summary>
+    /// Determines whether the <see cref="PlayerAction"/> specified by <paramref name="playerAction"/> was registered as a mod control.
+    /// </summary>
+    /// <param name="playerAction">The player action to check.</param>
+    /// <returns><see langword="true"/> if the player action belongs to a registered mod control; otherwise, <see langword="false"/>.</returns>
     public static bool IsModdedAction(PlayerAction playerAction) =>
         ModdedActions.Contains(playerAction);
 }
