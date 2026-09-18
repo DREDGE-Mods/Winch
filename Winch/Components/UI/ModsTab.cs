@@ -71,6 +71,8 @@ public class ModsTab : MonoBehaviour
     public bool HasCurrentModControls =>
         currentMod != null && RebindingUtil.HasRebindables(currentMod.GUID);
 
+    private DredgePlayerActionPress _closeAction;
+    private bool _closeActionEnabled;
     private bool _viewsInitialized;
 
     private static bool _automaticNavigation = false;
@@ -100,6 +102,7 @@ public class ModsTab : MonoBehaviour
     public void Start()
     {
         InitializeViews();
+        InitializeCloseAction();
 
         Refresh();
 
@@ -121,6 +124,8 @@ public class ModsTab : MonoBehaviour
 
     public void OnDisable()
     {
+        DisableCloseAction();
+
         ResetAllSettingsButton.gameObject.Activate();
 
         ApplicationEvents.Instance.OnSliderFocusToggled -=
@@ -250,6 +255,11 @@ public class ModsTab : MonoBehaviour
         var activeView = ActiveView;
         activeView?.Show();
 
+        if (IsViewingMod)
+            EnableCloseAction();
+        else
+            DisableCloseAction();
+
         UpdateResetButton();
 
         if (!updateNavigation || activeView == null)
@@ -257,6 +267,65 @@ public class ModsTab : MonoBehaviour
 
         activeView.ConfigureViewNavigation();
         activeView.ScrollToTop();
+    }
+
+    private void InitializeCloseAction()
+    {
+        if (_closeAction != null)
+            return;
+
+        _closeAction = new DredgePlayerActionPress(
+            "prompt.leave",
+            GameManager.Instance.Input.Controls.Unpause
+        )
+        {
+            showInControlArea = true,
+            evaluateWhenPaused = true
+        };
+
+        _closeAction.OnPressComplete += OnClosePressComplete;
+    }
+
+    private void EnableCloseAction()
+    {
+        if (_closeAction == null || _closeActionEnabled)
+            return;
+
+        GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
+
+        GameManager.Instance.Input.AddActionListener(
+            new DredgePlayerActionBase[] { _closeAction },
+            ActionLayer.SYSTEM
+        );
+
+        _closeActionEnabled = true;
+    }
+
+    private void DisableCloseAction()
+    {
+        if (!_closeActionEnabled)
+            return;
+
+        if (GameManager.Instance?.Input != null)
+        {
+            GameManager.Instance.Input.RemoveActionListener(
+                new DredgePlayerActionBase[] { _closeAction },
+                ActionLayer.SYSTEM
+            );
+        }
+
+        if (GameManager.Instance?.PauseListener != null)
+            GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
+
+        _closeActionEnabled = false;
+    }
+
+    private void OnClosePressComplete()
+    {
+        if (!IsViewingMod)
+            return;
+
+        ExitOptions();
     }
 
     public void ExitOptions()

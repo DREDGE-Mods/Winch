@@ -174,10 +174,16 @@ public sealed class ModControlsView : ModsView
                 image.color = alternatingColor;
             }
 
+            var canRebind =
+                _allowRebinding && rebindable.Rebindable;
+
+            var canUnbind =
+                canRebind && rebindable.Unbindable;
+
             entry.Init(
                 rebindable,
-                _allowRebinding,
-                _allowRebinding && rebindable.Unbindable
+                canRebind,
+                canUnbind
             );
 
             foreach (var bindingEntry in entry.ControlBindingEntryUIs)
@@ -187,7 +193,7 @@ public sealed class ModControlsView : ModsView
 
                 bindingEntry.OnEntrySelected += OnEntrySelected;
 
-                if (_allowRebinding)
+                if (canRebind)
                     bindingEntry.OnEntrySubmitted += OnEntrySubmitted;
             }
 
@@ -197,7 +203,7 @@ public sealed class ModControlsView : ModsView
             {
                 entry.ResetEntryUI.Init(
                     rebindable.PlayerAction,
-                    true
+                    canRebind
                 );
 
                 entry.ResetEntryUI.OnEntrySelected += OnResetEntrySelected;

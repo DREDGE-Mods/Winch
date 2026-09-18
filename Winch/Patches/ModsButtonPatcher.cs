@@ -665,6 +665,10 @@ internal static class ModsButtonPatcher
         GameManager.Instance.CanUnpause = true;
         if (options.id == 1)
         {
+            if (!ModsTab.Instance.IsViewingMod)
+            {
+                SettingsUtil.Create();
+            }
             if (ModsTab.Instance.currentWinch)
             {
                 WinchConfig.ResetToDefaultConfig();

@@ -10,6 +10,7 @@ public sealed class ModRebindable
     public PlayerAction PlayerAction { get; }
     public LocalizedString Title { get; }
     public LocalizedString Tooltip { get; }
+    public bool Rebindable { get; }
     public bool Unbindable { get; }
 
     internal ModRebindable(
@@ -18,6 +19,7 @@ public sealed class ModRebindable
         PlayerAction playerAction,
         LocalizedString title,
         LocalizedString tooltip,
+        bool rebindable,
         bool unbindable)
     {
         ModGUID = modGUID;
@@ -25,6 +27,7 @@ public sealed class ModRebindable
         PlayerAction = playerAction;
         Title = title;
         Tooltip = tooltip;
+        Rebindable = rebindable;
         Unbindable = unbindable;
     }
 }

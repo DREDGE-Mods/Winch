@@ -13,10 +13,20 @@ internal static class SaveManagerPatcher
     [HarmonyPatch(nameof(SaveManager.Init))]
     public static void Init(SaveManager __instance)
     {
-        WinchCore.Log.Debug($"Init()");
+        WinchCore.Log.Debug("Init()");
+
         try
         {
             SaveUtil.Initialize(__instance);
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
+
+        try
+        {
+            SettingsUtil.Initialize();
         }
         catch (System.Exception ex)
         {
@@ -182,6 +192,34 @@ internal static class SaveManagerPatcher
                     WinchCore.Log.Error($"Could not find gridConfiguration for gridKey: {gridKey}. Every grid key enum value is REQUIRED to be associated with a grid configuration in the GameConfigData or else the game will not initialize!");
                 }
             }
+        }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(SaveManager.Save))]
+    public static void Save()
+    {
+        try
+        {
+            SettingsUtil.Save();
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(SaveManager.SaveSettings))]
+    public static void SaveSettings()
+    {
+        try
+        {
+            SettingsUtil.Save();
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
         }
     }
 }
