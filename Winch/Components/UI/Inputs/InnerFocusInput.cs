@@ -99,13 +99,13 @@ public abstract class InnerFocusInput : Input, ISubmitHandler, IEventSystemHandl
         {
             SetActiveInput();
 
-            GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
+            ModsTab.Instance.DisableCloseAction();
             GameManager.Instance.Input.AddActionListener(actions, ActionLayer.SYSTEM);
         }
         else
         {
             GameManager.Instance.Input.RemoveActionListener(actions, ActionLayer.SYSTEM);
-            GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
+            ModsTab.Instance.EnableCloseAction();
         }
     }
 

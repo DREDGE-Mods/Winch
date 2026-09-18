@@ -4,8 +4,6 @@ using System.Linq;
 using System.Reflection;
 using InControl;
 using UnityEngine.Localization;
-using UnityEngine.UIElements;
-using Winch.Config;
 using Winch.Core;
 using Winch.Data;
 
@@ -63,6 +61,50 @@ public static class ControlUtil
 
     public static PlayerAction RegisterControl(
         string key,
+        Key? keyboard = null,
+        Mouse? mouse = null,
+        InputControlType? controller = null,
+        bool unbindable = true,
+        bool rebindable = true)
+    {
+        var modGUID = ModAssemblyLoader.GetCurrentModGUID();
+        return RegisterControlExplicit(
+            modGUID,
+            key,
+            GetControlTitleKey(modGUID, key),
+            null,
+            keyboard,
+            mouse,
+            controller,
+            unbindable,
+            rebindable
+        );
+    }
+
+    public static PlayerAction RegisterControlWithTooltip(
+        string key,
+        Key? keyboard = null,
+        Mouse? mouse = null,
+        InputControlType? controller = null,
+        bool unbindable = true,
+        bool rebindable = true)
+    {
+        var modGUID = ModAssemblyLoader.GetCurrentModGUID();
+        return RegisterControlExplicit(
+            modGUID,
+            key,
+            GetControlTitleKey(modGUID, key),
+            GetControlTooltipKey(modGUID, key),
+            keyboard,
+            mouse,
+            controller,
+            unbindable,
+            rebindable
+        );
+    }
+
+    public static PlayerAction RegisterControl(
+        string key,
         string titleKey,
         string tooltipKey = null,
         Key? keyboard = null,
@@ -70,30 +112,11 @@ public static class ControlUtil
         InputControlType? controller = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             ModAssemblyLoader.GetCurrentModGUID(),
             key,
             titleKey,
             tooltipKey,
-            keyboard,
-            mouse,
-            controller,
-            unbindable,
-            rebindable
-        );
-
-    public static PlayerAction RegisterControl(
-        string key,
-        Key? keyboard = null,
-        Mouse? mouse = null,
-        InputControlType? controller = null,
-        bool unbindable = true,
-        bool rebindable = true) =>
-        RegisterControl(
-            ModAssemblyLoader.GetCurrentModGUID(),
-            key,
-            key,
-            null,
             keyboard,
             mouse,
             controller,
@@ -110,7 +133,7 @@ public static class ControlUtil
         InputControlType? controller = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             ModAssemblyLoader.GetCurrentModGUID(),
             key,
             title,
@@ -122,7 +145,7 @@ public static class ControlUtil
             rebindable
         );
 
-    public static PlayerAction RegisterControl(
+    public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
         Key? keyboard = null,
@@ -130,10 +153,10 @@ public static class ControlUtil
         InputControlType? controller = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             modGUID,
             key,
-            GetPlayerActionKey(modGUID, key),
+            GetControlTitleKey(modGUID, key),
             null,
             keyboard,
             mouse,
@@ -142,7 +165,27 @@ public static class ControlUtil
             rebindable
         );
 
-    public static PlayerAction RegisterControl(
+    public static PlayerAction RegisterControlExplicitWithTooltip(
+        string modGUID,
+        string key,
+        Key? keyboard = null,
+        Mouse? mouse = null,
+        InputControlType? controller = null,
+        bool unbindable = true,
+        bool rebindable = true) =>
+        RegisterControlExplicit(
+            modGUID,
+            key,
+            GetControlTitleKey(modGUID, key),
+            GetControlTooltipKey(modGUID, key),
+            keyboard,
+            mouse,
+            controller,
+            unbindable,
+            rebindable
+        );
+
+    public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
         string titleKey,
@@ -152,12 +195,12 @@ public static class ControlUtil
         InputControlType? controller = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             modGUID,
             key,
             LocalizationUtil.CreateReference(titleKey),
             string.IsNullOrWhiteSpace(tooltipKey)
-                ? null
+                ? LocalizationUtil.Empty
                 : LocalizationUtil.CreateReference(tooltipKey),
             keyboard,
             mouse,
@@ -166,7 +209,7 @@ public static class ControlUtil
             rebindable
         );
 
-    public static PlayerAction RegisterControl(
+    public static PlayerAction RegisterControlExplicit(
         string modGUID,
         string key,
         LocalizedString title,
@@ -195,7 +238,7 @@ public static class ControlUtil
         if (controller.HasValue && controller.Value != InputControlType.None)
             action.AddDefaultBinding(controller.Value);
 
-        RegisterControl(
+        RegisterControlExplicit(
             modGUID,
             key,
             action,
@@ -211,11 +254,47 @@ public static class ControlUtil
     public static ModControl RegisterControl(
         string key,
         PlayerAction playerAction,
+        bool unbindable = true,
+        bool rebindable = true)
+    {
+        var modGUID = ModAssemblyLoader.GetCurrentModGUID();
+        return RegisterControlExplicit(
+            modGUID,
+            key,
+            playerAction,
+            GetControlTitleKey(modGUID, key),
+            null,
+            unbindable,
+            rebindable
+        );
+    }
+
+    public static ModControl RegisterControlWithTooltip(
+        string key,
+        PlayerAction playerAction,
+        bool unbindable = true,
+        bool rebindable = true)
+    {
+        var modGUID = ModAssemblyLoader.GetCurrentModGUID();
+        return RegisterControlExplicit(
+            modGUID,
+            key,
+            playerAction,
+            GetControlTitleKey(modGUID, key),
+            GetControlTooltipKey(modGUID, key),
+            unbindable,
+            rebindable
+        );
+    }
+
+    public static ModControl RegisterControl(
+        string key,
+        PlayerAction playerAction,
         string titleKey,
         string tooltipKey = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             ModAssemblyLoader.GetCurrentModGUID(),
             key,
             playerAction,
@@ -232,7 +311,7 @@ public static class ControlUtil
         LocalizedString tooltip = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             ModAssemblyLoader.GetCurrentModGUID(),
             key,
             playerAction,
@@ -242,7 +321,39 @@ public static class ControlUtil
             rebindable
         );
 
-    public static ModControl RegisterControl(
+    public static ModControl RegisterControlExplicit(
+        string modGUID,
+        string key,
+        PlayerAction playerAction,
+        bool unbindable = true,
+        bool rebindable = true) =>
+        RegisterControlExplicit(
+            modGUID,
+            key,
+            playerAction,
+            GetControlTitleKey(modGUID, key),
+            null,
+            unbindable,
+            rebindable
+        );
+
+    public static ModControl RegisterControlExplicitWithTooltip(
+        string modGUID,
+        string key,
+        PlayerAction playerAction,
+        bool unbindable = true,
+        bool rebindable = true) =>
+        RegisterControlExplicit(
+            modGUID,
+            key,
+            playerAction,
+            GetControlTitleKey(modGUID, key),
+            GetControlTooltipKey(modGUID, key),
+            unbindable,
+            rebindable
+        );
+
+    public static ModControl RegisterControlExplicit(
         string modGUID,
         string key,
         PlayerAction playerAction,
@@ -250,7 +361,7 @@ public static class ControlUtil
         string tooltipKey = null,
         bool unbindable = true,
         bool rebindable = true) =>
-        RegisterControl(
+        RegisterControlExplicit(
             modGUID,
             key,
             playerAction,
@@ -262,7 +373,7 @@ public static class ControlUtil
             rebindable
         );
 
-    public static ModControl RegisterControl(
+    public static ModControl RegisterControlExplicit(
         string modGUID,
         string key,
         PlayerAction playerAction,
@@ -297,6 +408,12 @@ public static class ControlUtil
         AddControl(control);
         return control;
     }
+
+    private static string GetControlTitleKey(string modGUID, string key) =>
+        $"{GetPlayerActionKey(modGUID, key)}.title";
+
+    private static string GetControlTooltipKey(string modGUID, string key) =>
+        $"{GetPlayerActionKey(modGUID, key)}.tooltip";
 
     public static IReadOnlyList<ModControl> GetControls(string modGUID)
     {

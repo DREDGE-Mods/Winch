@@ -255,10 +255,17 @@ public class ModsTab : MonoBehaviour
         var activeView = ActiveView;
         activeView?.Show();
 
+
         if (IsViewingMod)
+        {
+            HideUnpauseAction();
             EnableCloseAction();
+        }
         else
+        {
             DisableCloseAction();
+            ShowUnpauseAction();
+        }
 
         UpdateResetButton();
 
@@ -286,12 +293,10 @@ public class ModsTab : MonoBehaviour
         _closeAction.OnPressComplete += OnClosePressComplete;
     }
 
-    private void EnableCloseAction()
+    public void EnableCloseAction()
     {
         if (_closeAction == null || _closeActionEnabled)
             return;
-
-        GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
 
         GameManager.Instance.Input.AddActionListener(
             new DredgePlayerActionBase[] { _closeAction },
@@ -301,23 +306,27 @@ public class ModsTab : MonoBehaviour
         _closeActionEnabled = true;
     }
 
-    private void DisableCloseAction()
+    public void DisableCloseAction()
     {
         if (!_closeActionEnabled)
             return;
 
-        if (GameManager.Instance?.Input != null)
-        {
-            GameManager.Instance.Input.RemoveActionListener(
-                new DredgePlayerActionBase[] { _closeAction },
-                ActionLayer.SYSTEM
-            );
-        }
-
-        if (GameManager.Instance?.PauseListener != null)
-            GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
+        GameManager.Instance.Input.RemoveActionListener(
+            new DredgePlayerActionBase[] { _closeAction },
+            ActionLayer.SYSTEM
+        );
 
         _closeActionEnabled = false;
+    }
+
+    private void HideUnpauseAction()
+    {
+        GameManager.Instance.PauseListener.CanShowUnpauseAction(false);
+    }
+
+    private void ShowUnpauseAction()
+    {
+        GameManager.Instance.PauseListener.CanShowUnpauseAction(true);
     }
 
     private void OnClosePressComplete()
