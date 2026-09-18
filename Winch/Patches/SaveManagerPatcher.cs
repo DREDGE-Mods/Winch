@@ -199,6 +199,7 @@ internal static class SaveManagerPatcher
     [HarmonyPatch(nameof(SaveManager.Save))]
     public static void Save()
     {
+        WinchCore.Log.Debug($"SaveGameAndSettingsWhenNotForbidden()");
         try
         {
             SettingsUtil.Save();
@@ -213,6 +214,7 @@ internal static class SaveManagerPatcher
     [HarmonyPatch(nameof(SaveManager.SaveSettings))]
     public static void SaveSettings()
     {
+        WinchCore.Log.Debug($"SaveSettings()");
         try
         {
             SettingsUtil.Save();

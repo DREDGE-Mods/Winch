@@ -306,6 +306,7 @@ public sealed class ModControlsView : ModsView
 
             var navigation = button.navigation;
             navigation.mode = Navigation.Mode.Explicit;
+            if (navigation.selectOnLeft == null) navigation.selectOnLeft = fallbackNavigation.selectOnLeft;
             navigation.selectOnDown = fallbackNavigation.selectOnDown;
             button.navigation = navigation;
         }
@@ -316,6 +317,7 @@ public sealed class ModControlsView : ModsView
             var navigation = resetButton.navigation;
             navigation.mode = Navigation.Mode.Explicit;
             navigation.selectOnDown = fallbackNavigation.selectOnDown;
+            navigation.selectOnRight = fallbackNavigation.selectOnRight;
             resetButton.navigation = navigation;
         }
 

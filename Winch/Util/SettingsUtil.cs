@@ -27,6 +27,8 @@ public static class SettingsUtil
         settingsData.Load();
 
         initialized = true;
+
+        ControlUtil.LoadSavedBindings();
     }
 
     internal static void LoadParticipants(

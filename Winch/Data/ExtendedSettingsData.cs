@@ -1,8 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
+using Newtonsoft.Json.Linq;
 using Winch.Config;
 using Winch.Core;
 using Winch.Util;
@@ -13,11 +14,28 @@ public sealed class ExtendedSettingsData
 {
     private ModdedSettingsData settingsData = new();
 
+    private const ushort BindingDataFormatVersion = 2;
+
     internal sealed class ModdedSettingsData
     {
         public List<string> mods = new();
-        public Dictionary<string, string> controlBindings = new();
+        public Dictionary<string, Dictionary<string, ControlBindingData>> controlBindings = new();
         public Dictionary<string, Dictionary<string, JToken>> modData = new();
+    }
+
+    internal sealed class ControlBindingData
+    {
+        public ushort formatVersion = BindingDataFormatVersion;
+        public string data = string.Empty;
+
+        internal ControlBindingData()
+        {
+        }
+
+        internal ControlBindingData(string data)
+        {
+            this.data = data;
+        }
     }
 
     internal string Path =>
@@ -57,7 +75,11 @@ public sealed class ExtendedSettingsData
 
     internal void Save()
     {
+        settingsData.controlBindings =
+            ControlUtil.SaveBindings(settingsData.controlBindings);
+
         SettingsUtil.SaveParticipants(this);
+
         Write();
     }
 
@@ -194,4 +216,57 @@ public sealed class ExtendedSettingsData
         /// <returns>The default settings data.</returns>
         object Create();
     }
+
+    internal bool TryGetControlBinding(
+        string modGUID,
+        string key,
+        out ControlBindingData binding)
+    {
+        binding = null;
+
+        return settingsData.controlBindings.TryGetValue(
+                   modGUID,
+                   out var modBindings
+               ) &&
+               modBindings.TryGetValue(
+                   key,
+                   out binding
+               );
+    }
+
+    internal bool TryGetControlBinding(
+        ModAssembly mod,
+        string key,
+        out ControlBindingData binding) =>
+        TryGetControlBinding(
+            mod.GUID,
+            key,
+            out binding
+        );
+
+    internal void SetControlBinding(
+        string modGUID,
+        string key,
+        ControlBindingData binding)
+    {
+        if (!settingsData.controlBindings.TryGetValue(
+                modGUID,
+                out var modBindings))
+        {
+            modBindings = new Dictionary<string, ControlBindingData>();
+            settingsData.controlBindings.Add(modGUID, modBindings);
+        }
+
+        modBindings.AddOrChange(key, binding);
+    }
+
+    internal void SetControlBinding(
+        ModAssembly mod,
+        string key,
+        ControlBindingData binding) =>
+        SetControlBinding(
+            mod.GUID,
+            key,
+            binding
+        );
 }

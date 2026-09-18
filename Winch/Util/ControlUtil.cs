@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using InControl;
 using UnityEngine.Localization;
 using Winch.Core;
 using Winch.Data;
+using static Winch.Data.ExtendedSettingsData;
 
 namespace Winch.Util;
 
@@ -651,10 +654,15 @@ public static class ControlUtil
                 "Controls are not initialized yet."
             );
 
-        return (PlayerAction)CreatePlayerActionMethod.Invoke(
+        var playerAction = (PlayerAction)CreatePlayerActionMethod.Invoke(
             controls,
             new object[] { name }
         );
+
+        ModdedActions.SafeAdd(playerAction);
+        HideFromVanillaControls(playerAction);
+
+        return playerAction;
     }
 
     /// <summary>
@@ -753,8 +761,7 @@ public static class ControlUtil
 
         values.SafeAdd(control);
 
-        ModdedActions.SafeAdd(control.PlayerAction);
-        HideFromVanillaControls(control.PlayerAction);
+        LoadSavedBinding(control);
     }
 
     private static readonly HashSet<PlayerAction> ModdedActions = new();
@@ -774,4 +781,165 @@ public static class ControlUtil
     /// <returns><see langword="true"/> if the player action is not registered as a mod control; otherwise, <see langword="false"/>.</returns>
     public static bool IsVanillaAction(PlayerAction playerAction) =>
         !ModdedActions.Contains(playerAction);
+
+    private static readonly MethodInfo SavePlayerActionMethod =
+        typeof(PlayerAction).GetMethod(
+            "Save",
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            null,
+            new[] { typeof(BinaryWriter) },
+            null
+        ) ?? throw new MissingMethodException(
+            typeof(PlayerAction).FullName,
+            "Save(BinaryWriter)"
+        );
+
+    private static readonly MethodInfo LoadPlayerActionMethod =
+        typeof(PlayerAction).GetMethod(
+            "Load",
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            null,
+            new[]
+            {
+            typeof(BinaryReader),
+            typeof(ushort)
+            },
+            null
+        ) ?? throw new MissingMethodException(
+            typeof(PlayerAction).FullName,
+            "Load(BinaryReader, ushort)"
+        );
+
+    private static ControlBindingData SaveBinding(
+        PlayerAction playerAction)
+    {
+        using var sourceStream = new MemoryStream();
+        using var writer = new BinaryWriter(
+            sourceStream,
+            Encoding.UTF8,
+            leaveOpen: true
+        );
+
+        SavePlayerActionMethod.Invoke(
+            playerAction,
+            new object[] { writer }
+        );
+
+        writer.Flush();
+        sourceStream.Position = 0;
+
+        using var reader = new BinaryReader(
+            sourceStream,
+            Encoding.UTF8,
+            leaveOpen: true
+        );
+
+        // PlayerAction.Save writes the action name first.
+        // We don't need that, so exclude it from the data.
+        reader.ReadString();
+
+        var remainingLength =
+            (int)(sourceStream.Length - sourceStream.Position);
+
+        var data =
+            reader.ReadBytes(remainingLength);
+
+        return new ControlBindingData(
+            Convert.ToBase64String(data)
+        );
+    }
+
+    private static void LoadBinding(
+        PlayerAction playerAction,
+        ControlBindingData bindingData)
+    {
+        if (bindingData == null ||
+            string.IsNullOrWhiteSpace(bindingData.data))
+        {
+            return;
+        }
+
+        var bytes = Convert.FromBase64String(bindingData.data);
+
+        using var stream = new MemoryStream(bytes);
+
+        using var reader = new BinaryReader(
+            stream,
+            Encoding.UTF8
+        );
+
+        LoadPlayerActionMethod.Invoke(
+            playerAction,
+            new object[]
+            {
+                reader,
+                bindingData.formatVersion
+            }
+        );
+    }
+
+    internal static Dictionary<string, Dictionary<string, ControlBindingData>> SaveBindings(
+        Dictionary<string, Dictionary<string, ControlBindingData>> existingBindings)
+    {
+        var result = existingBindings ??
+            new Dictionary<string, Dictionary<string, ControlBindingData>>();
+
+        foreach (var modPair in Controls)
+        {
+            if (!result.TryGetValue(modPair.Key, out var bindings))
+            {
+                bindings = new Dictionary<string, ControlBindingData>();
+                result.Add(modPair.Key, bindings);
+            }
+
+            foreach (var control in modPair.Value)
+            {
+                if (!control.Rebindable)
+                    continue;
+
+                bindings[control.Key] =
+                    SaveBinding(control.PlayerAction);
+            }
+        }
+
+        return result;
+    }
+
+    internal static void LoadSavedBindings()
+    {
+        foreach (var control in GetAllControls())
+            LoadSavedBinding(control);
+    }
+
+    private static void LoadSavedBinding(
+        ModControl control)
+    {
+        if (!control.Rebindable)
+            return;
+
+        var settings = SettingsUtil.SettingsData;
+
+        if (!settings.TryGetControlBinding(
+                control.ModGUID,
+                control.Key,
+                out ControlBindingData binding))
+        {
+            return;
+        }
+
+        try
+        {
+            LoadBinding(
+                control.PlayerAction,
+                binding
+            );
+        }
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error(
+                $"Failed to load control binding {control.Key} " +
+                $"for {control.ModGUID}\n{ex}"
+            );
+        }
+    }
 }
