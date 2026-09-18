@@ -192,7 +192,7 @@ public abstract class ModsView : MonoBehaviour
             var fallbackNavigation = new Navigation
             {
                 mode = Navigation.Mode.Explicit,
-                selectOnLeft = footerSelectable,
+                selectOnLeft = currentSubtabSelectable ?? footerSelectable,
                 selectOnRight = footerSelectable,
                 selectOnUp = currentSubtabSelectable ?? footerSelectable,
                 selectOnDown = footerSelectable
