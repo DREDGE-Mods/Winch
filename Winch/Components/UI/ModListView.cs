@@ -1,21 +1,39 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.Utilities;
 using UnityEngine;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Config;
 using Winch.Core;
 using Winch.Util;
-using Sirenix.Utilities;
 
 namespace Winch.Components.UI;
 
 public sealed class ModListView : ModsView
 {
+    public static readonly LocalizedString winch = LocalizationUtil.CreateStringsReference("winch.name");
+    public static readonly LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
+    public static readonly LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
+
     public override ModsTabView ViewType => ModsTabView.ModList;
 
     public List<BasicButtonWrapper> ModButtons { get; } = new();
     public List<Label> ModLabels { get; } = new();
+
+    public override void Show()
+    {
+        base.Show();
+
+        ShowLocalizedHeader(tabHeader);
+        SetFooter(footerList, false);
+        SetSubtabButtonsVisible(false);
+        ConfigureSettingsBarNavigation(Navigation.Mode.Automatic);
+
+        foreach (var button in ModButtons)
+            button.SetCanBeClicked(true);
+    }
 
     public override void Clear()
     {
@@ -57,8 +75,6 @@ public sealed class ModListView : ModsView
 
         if (!ModsTab.AutomaticNavigation)
             ConfigureNavigation();
-
-        SelectFirst();
     }
 
     private static bool HasModSettings(ModAssembly mod)
@@ -75,8 +91,10 @@ public sealed class ModListView : ModsView
             .Rename("WinchButton");
 
         button.DeactivateButtonEffects();
-        button.GetOrAddComponent<LocalizedLabel>().LabelString = ModsTab.winchHeader;
+        button.GetOrAddComponent<LocalizedLabel>().LabelString = winch;
         button.GetComponent<BasicButtonWrapper>().OnClick += Owner.OnWinchClicked;
+
+        Select(button.Button);
 
         AddScrollMagnets(button.transform);
         ModButtons.Add(button);

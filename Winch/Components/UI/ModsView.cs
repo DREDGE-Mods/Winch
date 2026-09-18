@@ -3,6 +3,7 @@ using System.Linq;
 using InControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization;
 using UnityEngine.UI;
 using Winch.Util;
 
@@ -21,6 +22,8 @@ public abstract class ModsView : MonoBehaviour
     public RectTransform Content => Scroller?.content;
 
     public abstract ModsTabView ViewType { get; }
+
+    protected virtual Selectable SubtabSelectable => null;
 
     public virtual Selectable FirstSelectable =>
         GetTopLevelSelectables()
@@ -172,6 +175,160 @@ public abstract class ModsView : MonoBehaviour
                 Mathf.Abs(selectable.transform.position.x - sourceWorldX)
             )
             .FirstOrDefault();
+    }
+
+    public virtual void ConfigureViewNavigation()
+    {
+        if (Owner == null)
+            return;
+
+        var firstSelectable = FirstSelectable;
+
+        if (!ModsTab.AutomaticNavigation)
+        {
+            firstSelectable =
+                ConfigureNavigation(Owner.footerButton?.Button) ??
+                firstSelectable;
+        }
+
+        var footerSelectable = Owner.footerButton?.Button;
+        var bottomSelectable =
+            FindBottomSelectable(footerSelectable) ??
+            firstSelectable;
+
+        ConfigureFooterNavigation(bottomSelectable, SubtabSelectable);
+        ConfigureSubtabNavigation(SubtabSelectable);
+
+        if (firstSelectable != null)
+            Select(firstSelectable);
+
+        ConfigureSettingsBarNavigation(Navigation.Mode.Explicit);
+    }
+
+    protected void ShowLocalizedHeader(LocalizedString localizedString)
+    {
+        if (Owner == null)
+            return;
+
+        if (Owner.headerText != null)
+            Owner.headerText.gameObject.Deactivate();
+
+        if (Owner.headerTextLocalized != null)
+        {
+            Owner.headerTextLocalized.LabelString = localizedString;
+            Owner.headerTextLocalized.gameObject.Activate();
+        }
+    }
+
+    protected void ShowHeader(string text)
+    {
+        if (Owner == null)
+            return;
+
+        if (Owner.headerTextLocalized != null)
+            Owner.headerTextLocalized.gameObject.Deactivate();
+
+        if (Owner.headerText != null)
+        {
+            Owner.headerText.LabelString = text;
+            Owner.headerText.gameObject.Activate();
+        }
+    }
+
+    protected void SetFooter(LocalizedString localizedString, bool showButton)
+    {
+        if (Owner == null)
+            return;
+
+        if (Owner.footerText != null)
+            Owner.footerText.LabelString = localizedString;
+
+        Owner.footerButton?.gameObject.SetActive(showButton);
+    }
+
+    protected void SetSubtabButtonsVisible(bool visible)
+    {
+        if (Owner == null)
+            return;
+
+        Owner.optionsSubtabButton?.gameObject.SetActive(visible);
+        Owner.controlsSubtabButton?.gameObject.SetActive(visible);
+    }
+
+    protected void ConfigureSettingsBarNavigation(Navigation.Mode mode)
+    {
+        if (Owner == null)
+            return;
+
+        var resumeButton = Owner.resumeButton?.Button;
+        var saveAndQuitButton = Owner.saveAndQuitButton?.Button;
+        var resetAllSettingsButton = Owner.resetAllSettingsButton?.Button;
+
+        if (
+            resumeButton == null ||
+            saveAndQuitButton == null ||
+            resetAllSettingsButton == null)
+        {
+            return;
+        }
+
+        var resumeNavigation = resumeButton.navigation;
+        var saveAndQuitNavigation = saveAndQuitButton.navigation;
+        var resetAllSettingsNavigation = resetAllSettingsButton.navigation;
+
+        resumeNavigation.mode = mode;
+        saveAndQuitNavigation.mode = mode;
+        resetAllSettingsNavigation.mode = mode;
+
+        if (mode == Navigation.Mode.Explicit)
+        {
+            var footerButton = Owner.footerButton?.Button;
+
+            resumeNavigation.selectOnUp = footerButton;
+            saveAndQuitNavigation.selectOnUp = footerButton;
+            resetAllSettingsNavigation.selectOnUp = footerButton;
+
+            resetAllSettingsNavigation.selectOnRight = resumeButton;
+            resumeNavigation.selectOnRight = saveAndQuitButton;
+            resumeNavigation.selectOnLeft = resetAllSettingsButton;
+            saveAndQuitNavigation.selectOnLeft = resumeButton;
+        }
+
+        resumeButton.navigation = resumeNavigation;
+        saveAndQuitButton.navigation = saveAndQuitNavigation;
+        resetAllSettingsButton.navigation = resetAllSettingsNavigation;
+    }
+
+    private void ConfigureFooterNavigation(
+        Selectable bottomSelectable,
+        Selectable subtabSelectable)
+    {
+        var footerButton = Owner?.footerButton?.Button;
+        if (footerButton == null)
+            return;
+
+        var navigation = footerButton.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnLeft = subtabSelectable ?? bottomSelectable;
+        navigation.selectOnRight = subtabSelectable ?? bottomSelectable;
+        navigation.selectOnUp = bottomSelectable;
+        navigation.selectOnDown = Owner.resumeButton?.Button;
+        footerButton.navigation = navigation;
+    }
+
+    private void ConfigureSubtabNavigation(Selectable subtabSelectable)
+    {
+        var footerButton = Owner?.footerButton?.Button;
+        if (subtabSelectable == null || footerButton == null)
+            return;
+
+        var navigation = subtabSelectable.navigation;
+        navigation.mode = Navigation.Mode.Explicit;
+        navigation.selectOnLeft = footerButton;
+        navigation.selectOnRight = footerButton;
+        navigation.selectOnUp = footerButton;
+        navigation.selectOnDown = footerButton;
+        subtabSelectable.navigation = navigation;
     }
 
     public void HandleScrollInput()

@@ -1,25 +1,14 @@
-using System;
-using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Localization;
-using UnityEngine.UI;
 using Winch.Components.UI.Inputs;
-using Winch.Config;
 using Winch.Core;
 using Winch.Core.API;
 using Winch.Util;
-using Input = Winch.Components.UI.Inputs.Input;
 
 namespace Winch.Components.UI;
 
 public class ModsTab : MonoBehaviour
 {
-    public static readonly LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
-    public static readonly LocalizedString tabHeader = LocalizationUtil.CreateStringsReference("settings.tab.mods");
-    public static readonly LocalizedString footerList = LocalizationUtil.CreateStringsReference("settings.mods.footer.list");
-    public static readonly LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
-
     public static ModsTab Instance { get; private set; }
 
     public bool isCurrentTab =>
@@ -79,6 +68,9 @@ public class ModsTab : MonoBehaviour
     public bool ShowingOptions => CurrentView == ModsTabView.ModOptions;
     public bool ShowingControls => CurrentView == ModsTabView.ModControls;
 
+    public bool HasCurrentModControls =>
+        currentMod != null && RebindingUtil.HasRebindables(currentMod.GUID);
+
     private bool _viewsInitialized;
 
     private static bool _automaticNavigation = false;
@@ -115,7 +107,6 @@ public class ModsTab : MonoBehaviour
             .GetComponent<BasicButtonWrapper>()
             .OnClick += OnTabSelected;
 
-        headerTextLocalized.LabelString = tabHeader;
         footerButton.OnClick += ExitOptions;
     }
 
@@ -197,15 +188,6 @@ public class ModsTab : MonoBehaviour
         ModOptionsView.Clear();
         ModControlsView?.Clear();
 
-        headerText.gameObject.Deactivate();
-        headerTextLocalized.LabelString = winchHeader;
-        headerTextLocalized.gameObject.Activate();
-
-        footerText.LabelString = footerOptions;
-        footerButton.gameObject.Activate();
-
-        SetSubtabButtonsVisible(false);
-
         ModOptionsView.AddWinchOptions();
         SetView(ModsTabView.ModOptions, updateNavigation: true);
         ScrollToTop();
@@ -223,22 +205,11 @@ public class ModsTab : MonoBehaviour
         ModOptionsView.Clear();
         ModControlsView?.Clear();
 
-        headerTextLocalized.gameObject.Deactivate();
-        headerText.LabelString = mod.Name;
-        headerText.gameObject.Activate();
-
-        footerText.LabelString = footerOptions;
-        footerButton.gameObject.Activate();
-
         ModOptionsView.AddOptions(mod);
         DredgeEvent.TriggerBuildModConfigMenu(mod, this);
 
-        var hasControls = RebindingUtil.HasRebindables(mod.GUID);
-
-        if (hasControls)
+        if (HasCurrentModControls)
             ModControlsView?.Populate(mod);
-
-        SetSubtabButtonsVisible(hasControls);
 
         SetView(
             ModOptionsView.HasOptions
@@ -260,7 +231,7 @@ public class ModsTab : MonoBehaviour
 
     public void ShowControls()
     {
-        if (!RebindingUtil.HasRebindables(currentMod.GUID))
+        if (!HasCurrentModControls)
             return;
 
         SetView(ModsTabView.ModControls, updateNavigation: true);
@@ -275,136 +246,17 @@ public class ModsTab : MonoBehaviour
         ModControlsView?.Hide();
 
         CurrentView = view;
-        ActiveView?.Show();
 
-        if (view == ModsTabView.ModList)
-        {
-            headerTextLocalized.LabelString = tabHeader;
-            footerText.LabelString = footerList;
-        }
+        var activeView = ActiveView;
+        activeView?.Show();
 
-        if (view == ModsTabView.ModOptions)
-        {
-            headerTextLocalized.LabelString = winchHeader;
-            footerText.LabelString = footerOptions;
-        }
-
-        UpdateSubtabButtons();
         UpdateResetButton();
 
-        if (!updateNavigation || view == ModsTabView.ModList)
+        if (!updateNavigation || activeView == null)
             return;
 
-        ConfigureCurrentViewNavigation();
-        ActiveView?.ScrollToTop();
-    }
-
-    private void ConfigureCurrentViewNavigation()
-    {
-        var activeView = ActiveView;
-        if (activeView == null)
-            return;
-
-        var firstSelectable = activeView.FirstSelectable;
-
-        if (!AutomaticNavigation)
-        {
-            firstSelectable =
-                activeView.ConfigureNavigation(footerButton.Button) ??
-                firstSelectable;
-        }
-
-        var bottomSelectable =
-            activeView.FindBottomSelectable(footerButton.Button) ??
-            firstSelectable;
-
-        var subtabSelectable = GetAvailableSubtabSelectable();
-
-        var footerNavigation = footerButton.Button.navigation;
-        footerNavigation.mode = Navigation.Mode.Explicit;
-        footerNavigation.selectOnLeft =
-            subtabSelectable ?? bottomSelectable;
-        footerNavigation.selectOnRight =
-            subtabSelectable ?? bottomSelectable;
-        footerNavigation.selectOnUp = bottomSelectable;
-        footerNavigation.selectOnDown = resumeButton.Button;
-        footerButton.Button.navigation = footerNavigation;
-
-        if (subtabSelectable != null)
-        {
-            var subtabNavigation = subtabSelectable.navigation;
-            subtabNavigation.mode = Navigation.Mode.Explicit;
-            subtabNavigation.selectOnLeft = footerButton.Button;
-            subtabNavigation.selectOnRight = footerButton.Button;
-            subtabNavigation.selectOnUp = footerButton.Button;
-            subtabNavigation.selectOnDown = footerButton.Button;
-            subtabSelectable.navigation = subtabNavigation;
-        }
-
-        if (firstSelectable != null)
-            activeView.Select(firstSelectable);
-
-        ConfigureSettingsBarNavigation();
-    }
-
-    private Selectable GetAvailableSubtabSelectable()
-    {
-        if (!RebindingUtil.HasRebindables(currentMod.GUID))
-            return null;
-
-        if (CurrentView == ModsTabView.ModControls)
-        {
-            return ModOptionsView.HasOptions
-                ? optionsSubtabButton?.Button
-                : null;
-        }
-
-        return controlsSubtabButton?.Button;
-    }
-
-    private void SetSubtabButtonsVisible(bool visible)
-    {
-        optionsSubtabButton?.gameObject.SetActive(visible);
-        controlsSubtabButton?.gameObject.SetActive(visible);
-    }
-
-    private void UpdateSubtabButtons()
-    {
-        optionsSubtabButton?.SetCanBeClicked(
-            CurrentView == ModsTabView.ModControls &&
-            ModOptionsView.HasOptions
-        );
-
-        controlsSubtabButton?.SetCanBeClicked(
-            CurrentView == ModsTabView.ModOptions &&
-            RebindingUtil.HasRebindables(currentMod.GUID)
-        );
-    }
-
-    private void ConfigureSettingsBarNavigation()
-    {
-        var resumeNavigation = resumeButton.Button.navigation;
-        var saveAndQuitNavigation = saveAndQuitButton.Button.navigation;
-        var resetAllSettingsNavigation =
-            resetAllSettingsButton.Button.navigation;
-
-        resumeNavigation.mode = Navigation.Mode.Explicit;
-        saveAndQuitNavigation.mode = Navigation.Mode.Explicit;
-        resetAllSettingsNavigation.mode = Navigation.Mode.Explicit;
-
-        resumeNavigation.selectOnUp = footerButton.Button;
-        saveAndQuitNavigation.selectOnUp = footerButton.Button;
-        resetAllSettingsNavigation.selectOnUp = footerButton.Button;
-
-        resetAllSettingsNavigation.selectOnRight = resumeButton.Button;
-        resumeNavigation.selectOnRight = saveAndQuitButton.Button;
-        resumeNavigation.selectOnLeft = resetAllSettingsButton.Button;
-        saveAndQuitNavigation.selectOnLeft = resumeButton.Button;
-
-        resumeButton.Button.navigation = resumeNavigation;
-        saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
-        resetAllSettingsButton.Button.navigation =
-            resetAllSettingsNavigation;
+        activeView.ConfigureViewNavigation();
+        activeView.ScrollToTop();
     }
 
     public void ExitOptions()
@@ -416,43 +268,10 @@ public class ModsTab : MonoBehaviour
 
         settingsDialog.dialog.AddTabInput();
 
-        SetSubtabButtonsVisible(false);
-
         ModOptionsView?.Clear();
         ModControlsView?.Clear();
 
-        ModOptionsView?.Hide();
-        ModControlsView?.Hide();
-
-        CurrentView = ModsTabView.ModList;
-        ModListView?.Show();
+        SetView(ModsTabView.ModList, updateNavigation: false);
         ModListView?.SelectFirst();
-
-        headerText.gameObject.Deactivate();
-        headerTextLocalized.gameObject.Activate();
-
-        headerTextLocalized.LabelString = tabHeader;
-        footerText.LabelString = footerList;
-        footerButton.gameObject.Deactivate();
-
-        if (ModListView != null)
-        {
-            foreach (var button in ModListView.ModButtons)
-                button.SetCanBeClicked(true);
-        }
-
-        var resumeNavigation = resumeButton.Button.navigation;
-        var saveAndQuitNavigation = saveAndQuitButton.Button.navigation;
-        var resetAllSettingsNavigation =
-            resetAllSettingsButton.Button.navigation;
-
-        resumeNavigation.mode = Navigation.Mode.Automatic;
-        saveAndQuitNavigation.mode = Navigation.Mode.Automatic;
-        resetAllSettingsNavigation.mode = Navigation.Mode.Automatic;
-
-        resumeButton.Button.navigation = resumeNavigation;
-        saveAndQuitButton.Button.navigation = saveAndQuitNavigation;
-        resetAllSettingsButton.Button.navigation =
-            resetAllSettingsNavigation;
     }
 }

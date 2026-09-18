@@ -24,7 +24,7 @@ internal static class ModsButtonPatcher
     }
 
     // Change this between Footer and Header to compare the two layouts.
-    private const ModSettingsSubtabPlacement SubtabPlacement = ModSettingsSubtabPlacement.Header;
+    private static readonly ModSettingsSubtabPlacement SubtabPlacement = ModSettingsSubtabPlacement.Header;
 
     private const float SubtabButtonWidth = 225f;
     private const float SubtabButtonHeight = 50f;
@@ -98,7 +98,7 @@ internal static class ModsButtonPatcher
             modsListGrid.startAxis = GridLayoutGroup.Axis.Vertical;
             modsListGrid.childAlignment = TextAnchor.UpperCenter;
             var modsTab = generalTabbedPanel.tab.Instantiate(generalTabbedPanel.tab.transform.parent, false).Rename("ModsTab").gameObject.AddComponent<ModsTab>();
-            modsTab.GetOrAddComponent<LocalizedLabel>().LabelString = ModsTab.tabHeader;
+            modsTab.GetOrAddComponent<LocalizedLabel>().LabelString = ModListView.tabHeader;
             modsTab.settingsDialog = __instance;
             modsTab.panel = modsPanel.GetComponent<TabbedPanel>();
             modsTab.tab = modsTab.GetComponent<TabUI>();

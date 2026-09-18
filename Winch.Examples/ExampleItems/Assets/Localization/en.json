@@ -88,6 +88,8 @@
     "exampleitems.config.color.tooltip": "A dropdown menu with stock colors",
     "exampleitems.config.rebind.title": "Rebind",
     "exampleitems.config.rebind.tooltip": "A rebindable control",
+    "exampleitems.config.unbind.title": "Unbindable Rebind",
+    "exampleitems.config.unbind.tooltip": "An unbindable rebindable control",
 
     "exampleitems.recipe.name": "Recipe Name",
     "exampleitems.recipe.description": "Recipe Description",

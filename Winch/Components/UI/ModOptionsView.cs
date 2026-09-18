@@ -16,11 +16,19 @@ namespace Winch.Components.UI;
 
 public sealed class ModOptionsView : ModsView
 {
+    public static readonly LocalizedString winchHeader = LocalizationUtil.CreateStringsReference("winch.name");
+    public static readonly LocalizedString footerOptions = LocalizationUtil.CreateStringsReference("settings.mods.footer.options");
+
     private const int BottomPadding = 24;
 
     private readonly HashSet<Transform> _layoutSeparators = new();
 
     public override ModsTabView ViewType => ModsTabView.ModOptions;
+
+    protected override Selectable SubtabSelectable =>
+        Owner?.HasCurrentModControls == true
+            ? Owner.controlsSubtabButton?.Button
+            : null;
 
     public List<Transform> ModOptions { get; } = new();
 
@@ -33,6 +41,24 @@ public sealed class ModOptionsView : ModsView
         var layout = Content?.GetComponent<GridLayoutGroup>();
         if (layout != null)
             layout.padding.bottom = BottomPadding;
+    }
+
+    public override void Show()
+    {
+        base.Show();
+
+        if (Owner?.currentMod != null)
+            ShowHeader(Owner.currentMod.Name);
+        else
+            ShowLocalizedHeader(winchHeader);
+
+        SetFooter(footerOptions, true);
+
+        var hasControls = Owner?.HasCurrentModControls == true;
+        SetSubtabButtonsVisible(hasControls);
+
+        Owner?.optionsSubtabButton?.SetCanBeClicked(false);
+        Owner?.controlsSubtabButton?.SetCanBeClicked(hasControls);
     }
 
     public override void Clear()
@@ -94,7 +120,6 @@ public sealed class ModOptionsView : ModsView
             }
         }
     }
-
 
     public void AddOptions(ModAssembly mod)
     {
@@ -391,7 +416,7 @@ public sealed class ModOptionsView : ModsView
         clone.key = key;
         clone.name = key;
 
-        MakeLabelSelectable(clone.gameObject);
+        //MakeLabelSelectable(clone.gameObject);
         AddInputScrollMagnet(clone);
 
         // Right side of the label row.

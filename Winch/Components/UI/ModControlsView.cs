@@ -26,6 +26,12 @@ public sealed class ModControlsView : ModsView
 
     public override ModsTabView ViewType => ModsTabView.ModControls;
 
+    protected override Selectable SubtabSelectable =>
+        Owner?.HasCurrentModControls == true &&
+        Owner.ModOptionsView?.HasOptions == true
+            ? Owner.optionsSubtabButton?.Button
+            : null;
+
     public GameObject Header { get; set; }
     public GameObject ScrollerTopImage { get; set; }
 
@@ -213,10 +219,23 @@ public sealed class ModControlsView : ModsView
         ApplyLayout();
         base.Show();
 
-        Owner.footerText.LabelString =
+        if (Owner?.currentMod != null)
+            ShowHeader(Owner.currentMod.Name);
+
+        SetFooter(
             LocalizationUtil.CreateStringsReference(
                 "settings.bindings.label.info-idle"
-            );
+            ),
+            true
+        );
+
+        var hasControls = Owner?.HasCurrentModControls == true;
+        SetSubtabButtonsVisible(hasControls);
+
+        Owner?.optionsSubtabButton?.SetCanBeClicked(
+            hasControls && Owner.ModOptionsView?.HasOptions == true
+        );
+        Owner?.controlsSubtabButton?.SetCanBeClicked(false);
 
         UpdateFooter();
     }

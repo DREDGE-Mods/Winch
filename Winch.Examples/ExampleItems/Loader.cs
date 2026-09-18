@@ -47,7 +47,8 @@ public static class Loader
         ModConfig.OnConfigValueChanged += ModConfig_OnConfigValueChanged; // This always runs after OnConfigChanged
         DredgeEvent.OnBuildModConfigMenu += OnBuildModConfigMenu;
 
-        RebindingUtil.RegisterRebindable(GUID, "rebind", "exampleitems.config.rebind.title", "exampleitems.config.rebind.tooltip", InControl.Key.F3, InControl.Mouse.MiddleButton, InControl.InputControlType.LeftStickButton, true);
+        RebindingUtil.RegisterRebindable(GUID, "rebind", "exampleitems.config.rebind.title", "exampleitems.config.rebind.tooltip", InControl.Key.F3, InControl.Mouse.MiddleButton, InControl.InputControlType.LeftStickButton, false);
+        RebindingUtil.RegisterRebindable(GUID, "unbind", "exampleitems.config.unbind.title", "exampleitems.config.unbind.tooltip", InControl.Key.F2, InControl.Mouse.None, InControl.InputControlType.RightStickButton, true);
 
         // Saves
         SaveUtil.RegisterDataParticipant(Participant);

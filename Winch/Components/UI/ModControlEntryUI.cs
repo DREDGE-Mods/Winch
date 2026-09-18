@@ -94,20 +94,5 @@ public sealed class ModControlEntryUI : MonoBehaviour
 
             requester.enabled = true;
         }
-
-        if (ResetEntryUI != null)
-        {
-            var requester =
-                ResetEntryUI.gameObject
-                    .GetOrAddComponent<TextTooltipRequester>();
-
-            requester.LocalizedTitleKey =
-                ModRebindable.Title;
-
-            requester.LocalizedDescriptionKey =
-                ModRebindable.Tooltip;
-
-            requester.enabled = true;
-        }
     }
 }
