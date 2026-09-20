@@ -1,15 +1,13 @@
-﻿using Winch.Core;
+﻿using UnityEngine;
+using Winch.Core;
+using static TMPro.TMP_InputField;
 
 namespace Winch.Components.UI.Inputs;
 
 public class IntegerFieldInput : FieldInput
 {
-    protected override void Awake()
-    {
-        base.Awake();
-        inputField.keyboardType = UnityEngine.TouchScreenKeyboardType.NumbersAndPunctuation;
-        inputField.characterValidation = TMPro.TMP_InputField.CharacterValidation.Integer;
-    }
+    protected override TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.NumberPad;
+    protected override CharacterValidation CharacterValidation => CharacterValidation.Integer;
 
     protected override bool ValidateInput(string input)
     {

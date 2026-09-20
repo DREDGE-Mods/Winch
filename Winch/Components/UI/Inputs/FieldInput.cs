@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using Winch.Components.UI;
 using Winch.Core;
 using Winch.Patches;
+using static TMPro.TMP_InputField;
 
 namespace Winch.Components.UI.Inputs;
 
@@ -16,6 +17,9 @@ public class FieldInput : InnerFocusInput
     protected internal Label placeholder;
 
     protected override Selectable InnerSelectable => inputField;
+
+    protected virtual TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.Default;
+    protected virtual CharacterValidation CharacterValidation => CharacterValidation.None;
 
     public string InputFieldText
     {
@@ -45,6 +49,9 @@ public class FieldInput : InnerFocusInput
 
     protected virtual void Awake()
     {
+        inputField.keyboardType = KeyboardType;
+        inputField.characterValidation = CharacterValidation;
+
         inputField.ActivateInputField();
         inputField.onSelect.AddListener(OnSelect);
         inputField.onDeselect.AddListener(OnDeselect);

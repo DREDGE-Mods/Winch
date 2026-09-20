@@ -1,15 +1,13 @@
-﻿using Winch.Core;
+﻿using UnityEngine;
+using Winch.Core;
+using static TMPro.TMP_InputField;
 
 namespace Winch.Components.UI.Inputs;
 
 public class DecimalFieldInput : FieldInput
 {
-    protected override void Awake()
-    {
-        base.Awake();
-        inputField.keyboardType = UnityEngine.TouchScreenKeyboardType.NumbersAndPunctuation;
-        inputField.characterValidation = TMPro.TMP_InputField.CharacterValidation.Decimal;
-    }
+    protected override TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.NumbersAndPunctuation;
+    protected override CharacterValidation CharacterValidation => CharacterValidation.Decimal;
 
     protected override bool ValidateInput(string input)
     {
