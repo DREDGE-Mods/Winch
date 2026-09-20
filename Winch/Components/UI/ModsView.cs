@@ -35,7 +35,10 @@ public abstract class ModsView : MonoBehaviour
         Scroller = GetComponent<ScrollRect>() ?? GetComponentInChildren<ScrollRect>(true);
 
         if (Scroller != null)
+        {
             FocusGrabber = Scroller.gameObject.GetOrAddComponent<ControllerFocusGrabber>();
+            Scroller.gameObject.GetOrAddComponent<ScrollRectMagnetController>();
+        }
 
         ConfigureScrollRect();
     }
@@ -370,7 +373,6 @@ public abstract class ModsView : MonoBehaviour
                 continue;
 
             var magnet = selectable.GetOrAddComponent<TargetedScrollRectMagnet>();
-            magnet.scrollRect = Scroller;
             magnet.scrollTarget = scrollTarget;
 
             var uiSelectable = selectable.GetOrAddComponent<UISelectable>();

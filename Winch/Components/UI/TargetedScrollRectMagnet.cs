@@ -6,8 +6,13 @@ namespace Winch.Components.UI;
 
 public class TargetedScrollRectMagnet : MonoBehaviour, ISelectHandler, IEventSystemHandler
 {
-    public ScrollRect scrollRect;
+    public ScrollRectMagnetController magnetController;
     public RectTransform scrollTarget;
+
+    private void Awake()
+    {
+        FindMagnetController();
+    }
 
     public void OnSelect(BaseEventData eventData)
     {
@@ -19,17 +24,26 @@ public class TargetedScrollRectMagnet : MonoBehaviour, ISelectHandler, IEventSys
 
     public void ScrollToThis()
     {
-        if (scrollRect == null || scrollRect.content == null)
+        if (magnetController == null)
+        {
+            FindMagnetController();
+        }
+
+        if (magnetController == null)
             return;
 
-        var target = scrollTarget != null
+        RectTransform target = scrollTarget != null
             ? scrollTarget
             : transform as RectTransform;
 
-        if (target == null)
-            return;
+        magnetController.ScrollTo(target);
+    }
 
-        scrollRect.content.anchoredPosition =
-            scrollRect.GetSnapToPositionToBringChildIntoView(target);
+    private void FindMagnetController()
+    {
+        if (magnetController == null)
+        {
+            magnetController = GetComponentInParent<ScrollRectMagnetController>();
+        }
     }
 }
