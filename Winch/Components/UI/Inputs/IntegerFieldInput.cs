@@ -8,6 +8,7 @@ public class IntegerFieldInput : FieldInput
 {
     protected override TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.NumberPad;
     protected override CharacterValidation CharacterValidation => CharacterValidation.Integer;
+    protected override LineType LineType => LineType.SingleLine;
 
     protected override bool ValidateInput(string input)
     {

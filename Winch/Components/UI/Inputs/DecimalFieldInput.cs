@@ -8,6 +8,7 @@ public class DecimalFieldInput : FieldInput
 {
     protected override TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.NumbersAndPunctuation;
     protected override CharacterValidation CharacterValidation => CharacterValidation.Decimal;
+    protected override LineType LineType => LineType.SingleLine;
 
     protected override bool ValidateInput(string input)
     {

@@ -1,10 +1,15 @@
+using System;
+using Steamworks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Winch.Components.UI;
 using Winch.Core;
 using Winch.Patches;
+using Winch.Util;
+using static Tags;
 using static TMPro.TMP_InputField;
+using static UnityEngine.Networking.UnityWebRequest;
 
 namespace Winch.Components.UI.Inputs;
 
@@ -20,6 +25,7 @@ public class FieldInput : InnerFocusInput
 
     protected virtual TouchScreenKeyboardType KeyboardType => TouchScreenKeyboardType.Default;
     protected virtual CharacterValidation CharacterValidation => CharacterValidation.None;
+    protected virtual LineType LineType => LineType.SingleLine;//LineType.MultiLineNewline;
 
     public string InputFieldText
     {
@@ -51,6 +57,8 @@ public class FieldInput : InnerFocusInput
     {
         inputField.keyboardType = KeyboardType;
         inputField.characterValidation = CharacterValidation;
+        inputField.lineType = LineType;
+
 
         inputField.ActivateInputField();
         inputField.onSelect.AddListener(OnSelect);
@@ -60,6 +68,15 @@ public class FieldInput : InnerFocusInput
         inputField.onValidateInput += OnValidateInput;
 
         InitializePlaceholder();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        inputField.onSelect.RemoveListener(OnSelect);
+        inputField.onDeselect.RemoveListener(OnDeselect);
+        inputField.onEndEdit.RemoveListener(OnEndEdit);
+        inputField.onValueChanged.RemoveListener(OnValueChanged);
+        inputField.onValidateInput -= OnValidateInput;
     }
 
     protected virtual void InitializePlaceholder()
