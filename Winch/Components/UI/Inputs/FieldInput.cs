@@ -27,6 +27,11 @@ public class FieldInput : InnerFocusInput
     protected virtual CharacterValidation CharacterValidation => CharacterValidation.None;
     protected virtual LineType LineType => LineType.SingleLine;//LineType.MultiLineNewline;
 
+
+    private static FieldInput activeGamepadTextInput;
+
+    private Callback<GamepadTextInputDismissed_t> gamepadTextInputCallback;
+
     public string InputFieldText
     {
         get => inputField.text;
@@ -55,6 +60,8 @@ public class FieldInput : InnerFocusInput
 
     protected virtual void Awake()
     {
+        gamepadTextInputCallback = Callback<GamepadTextInputDismissed_t>.Create(OnGamepadTextInputDismissed);
+
         inputField.keyboardType = KeyboardType;
         inputField.characterValidation = CharacterValidation;
         inputField.lineType = LineType;
@@ -72,11 +79,36 @@ public class FieldInput : InnerFocusInput
 
     protected virtual void OnDestroy()
     {
+        gamepadTextInputCallback?.Dispose();
+
         inputField.onSelect.RemoveListener(OnSelect);
         inputField.onDeselect.RemoveListener(OnDeselect);
         inputField.onEndEdit.RemoveListener(OnEndEdit);
         inputField.onValueChanged.RemoveListener(OnValueChanged);
         inputField.onValidateInput -= OnValidateInput;
+    }
+
+    private void OnGamepadTextInputDismissed(GamepadTextInputDismissed_t param)
+    {
+        if (activeGamepadTextInput != this)
+            return;
+
+        activeGamepadTextInput = null;
+
+        ForceDeselect();
+
+        if (!param.m_bSubmitted)
+            return;
+
+        uint length = SteamUtils.GetEnteredGamepadTextLength();
+
+        if (!SteamUtils.GetEnteredGamepadTextInput(out string result, length))
+        {
+            WinchCore.Log.Error($"[FieldInput:{name}] Failed to get Steam Gamepad Text Input.");
+            return;
+        }
+
+        InputFieldText = result;
     }
 
     protected virtual void InitializePlaceholder()
@@ -90,6 +122,26 @@ public class FieldInput : InnerFocusInput
 
         WinchCore.Log.Debug($"[FieldInput:{name}] OnSelect({value})");
         inputField.caretPosition = inputField.text.Length;
+
+        if (GameManager.Instance.Input.IsUsingController && activeGamepadTextInput == null)
+        {
+            WinchCore.Log.Debug($"[FieldInput:{name}] Opening Steam Gamepad Text Input.");
+
+            bool success = SteamUtils.ShowGamepadTextInput(
+                EGamepadTextInputMode.k_EGamepadTextInputModeNormal,
+                inputField.lineType == LineType.SingleLine
+                    ? EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine
+                    : EGamepadTextInputLineMode.k_EGamepadTextInputLineModeMultipleLines,
+                LocalizationUtil.Resolve(localizedString),
+                1024,
+                inputField.text
+            );
+
+            if (success)
+                activeGamepadTextInput = this;
+            else
+                WinchCore.Log.Warn($"[FieldInput:{name}] Failed to open Steam Gamepad Text Input.");
+        }
     }
 
     private void OnDeselect(string value)
